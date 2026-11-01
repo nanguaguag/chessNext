@@ -7,6 +7,8 @@ import '../../application/review_models.dart';
 import 'review_options_dialog.dart';
 import 'review_chart.dart';
 import 'review_candidates_dialog.dart';
+import 'review_report_dialog.dart';
+import '../../application/review_report.dart';
 
 class ReviewPanel extends StatelessWidget {
   const ReviewPanel({super.key, required this.engine});
@@ -138,6 +140,34 @@ class ReviewPanel extends StatelessWidget {
                       onNavigate: engine.navigateToNode,
                     ),
                   ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.fact_check_outlined),
+                  label: const Text('查看着法评级'),
+                  onPressed: !canNavigate
+                      ? null
+                      : () {
+                          final snapshot = run;
+                          final report = ReviewReport.fromRun(snapshot);
+                          showDialog<void>(
+                            context: context,
+                            builder: (_) => ReviewReportDialog(
+                              report: report,
+                              onNavigate: (id) async {
+                                final session = engine.session;
+                                if (session.epoch != snapshot.epoch ||
+                                    session.revision != snapshot.revision ||
+                                    !session.tree.hasNode(id)) {
+                                  return false;
+                                }
+                                await engine.navigateToNode(id);
+                                return session.epoch == snapshot.epoch &&
+                                    session.revision == snapshot.revision &&
+                                    session.tree.cursorId == id;
+                              },
+                            ),
+                          );
+                        },
+                ),
                 const Text('红方视角 · 杀棋/上下界分别保留；无评分不计作0'),
                 SizedBox(
                   height: math.min(240, ids.length * extent),

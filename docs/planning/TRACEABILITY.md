@@ -164,3 +164,11 @@ ADR-014解释子查询缓存与集合完成条件；源站可接受阈值/准确
 WdlEstimate严格胜/和/负三整数总1000、视角反转/预期得分；EngineInfo可空、坏可选统计保留CP。EngineRequest.preferWdl向后默认false，App各搜索请求true偏好，UciEngine能力check/只变更/ready确认/不支持回退。缓存optional元数据和独立偏好键、CP旧格式兼容，支持WDL但缺请求数据不算完整命中；文件重开保留。分析面板显示模型胜和负，单独标和棋半分的预期得分，bound/mate不附普通概率文本。
 根flutter test162/162（显式官方NNUE）与flutter analyze无问题；macOS完整15/15通过，真实包内MultiPV及WDL展示、缓存/整谱等回归。新增5类型/解析/视角/缓存测试、3UCI选项/缺能力/ready超时测试、1真NNUE双先手、1文件重开和1组件视角/200%/bound测试；目标32/32通过。初轮1处lint修复；序列化wdl误混整数统计字段在静态复核纠正后roundtrip通过，未有最终失败。日志/tmp/chessnext-wdl-{unit,target,test,analyze,native}.log。核心未改沿用49。
 ADR-015。原生探针8行总1000/quit0另见协议归档；此功能只提供引擎模型数据，不声称网站胜率/准确率同公式或完整F32。下一预期损失/等级与错题；所有其他缺项继续。
+
+## 2026-11-02 / M3-16 / F32 → B18 模型着法评级报告
+
+实现：ReviewReport纯应用层快照，原生2*wins+draws整数预期损失；完成同父候选优先/后续换视角/真实终局，缺失/bound/mate/视角不匹配不评级；双方面板/均值分母/筛选/来源Tooltip、虚拟列表与epoch+revision跳转保护。ADR-016，项目明确版本，不宣称源站准确率或完整F32。
+
+验收：7模型测试（阈值等号/非法值/双方视角/候选优先与partial/零损失/缺失与无WDL/mate/bound/错视角/困毙），3组件测试（筛选跳转不dirty、复用节点ID过期保护、200%字号与空分母）；目标10/10通过。根全量显式官方NNUE `flutter test --reporter expanded`172/172；`flutter analyze`无问题。macOS完整 `flutter test integration_test/local_board_test.dart -d macos`15/15，扩展真实多候选流程：打开评级/关问题筛选/跳n1，revision不变。其它平台未验；OS焦点人工测试未验。
+
+首analyze6项nullable/大括号、后1项多余!警告，修复后无问题；首目标测试因API构造错误未编译，修后8通过2失败（夹具n2的b2e2落到己方炮），换合法b0c2后10通过，未削弱执行器。详细会话日志见SESSION_LOG。核心未改沿用49/49，不重复宣称本次新跑。

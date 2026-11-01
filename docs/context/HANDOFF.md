@@ -46,3 +46,10 @@ E15/WDL调查已完成，提交见git log。F33题库仅指南D、B21待核；�
 原生WDL数据不是网站准确率公式：下一可计算明确标示模型的预期得分损失（按走子方，raw半分千单位可用2*wins+draws整数避免阈值浮点），先before/after同预算/身份/无bound数据配对；不要凭cp造“准确率”。妙手/唯一守招和错失良机需多候选/杀棋语义另验。源站阈值2/5/10/20仅有UI证据，等号边界/聚合准确率仍未知，研究缺口保留。
 
 协议维护补记：AGENTS现明确初始调查限制已按用户授权扩展，离线优先与后续自建后端是顺序不是删范围；onboarding/pikafish Skills移除硬编码仅研究/spike措辞，保留实际状态核验与质量门槛。两个quick_validate在临时PyYAML6.0.3环境通过，证据context/validation/skills-2026-11-02.json。未改产品依赖或全局Python，纯文档维护不重复跑业务测试。业务最近ddbcc9b，根162/原生15不变；提交后工作树应干净。
+
+## M3-16进行中：模型着法评级（未提交/未验收）
+新增application/review_report.dart、features/review/review_report_dialog.dart，修改ReviewPanel入口；F32/B18复盘子项，native-wdl-loss-v1（2*wins+draws整数，父局面实际候选优先/否则后续局面换视角，缺失/mate/bound不评级），不是源站准确率公式。正在补单元/组件/真实macOS测试与ADR-016。首次flutter analyze失败6项（nullable run捕获和大括号），已修改但尚未重跑；不视作通过。工作树此功能WIP，无已知仍运行验证。最近已提交基线根162/原生15；恢复先git status与日志再继续测试。
+
+M3-16续：7模型+3组件10目标通过；全根真NNUE172/172、analyze无问题；真实macOS15/15含报告筛选/跳n1不dirty已过。ADR-016和追踪已写；最后移除无效!后最终根回归session52308待结束/log/tmp/chessnext-report-final.log，确认后再commit feat(review)中文。初编译测试构造API误用/后n2夹具非法bestmove导致2fail均如实记录，生产执行器不改。报告是自有native-wdl-loss-v1，不冒充网站准确率。docs/research/screenshots/E16/E17及E16/E17 AX是后续审计证据，尚未登记/提交；与报告分开docs提交。IAB tab4在官方古谱事林广记加载中，若继续先fresh AX；E16存题访客需登录已V、E17最近阅读访客空列表已V，恢复/持久化U。
+
+M3-16最终根回归已172/172通过，无待等待验证命令。所有本功能文件应独立feat(review)提交，工作树剩E16/E17研究截图/AX待下一docs登记。下一可审计最近阅读的打开/恢复边界并实现本地阅读历史，或拆本地错题收集与训练；不最终停下审查，尚有大量缺项。

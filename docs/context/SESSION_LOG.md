@@ -205,3 +205,8 @@ ADR-015。原生探针8行总1000/quit0另见协议归档；此功能只提供�
 
 ### 2026-11-02 Agent协议维护
 按skill-creator做窄范围更新：AGENTS同步既有持续实现/自建后端授权，project-onboarding与pikafish-engine去掉硬编码研究阶段，不扩大外部操作权限。首quick_validate系统Python缺yaml未成功；临时venv从官方PyPI装PyYAML6.0.3后两个Skill均通过，环境清理且产品依赖不变，记录context/validation/skills-2026-11-02.json。只改协议/文档，不宣称新业务功能；业务门槛沿最新WDL根162/原生15。
+
+2026-11-02 M3-16开始：新增原生WDL预期损失/分级报告，明确非源站准确率。首次flutter analyze失败6项（ReviewRun?捕获及大括号）；已修待重跑，尚未运行新报告测试。工作树保留WIP，不提交为完成。
+
+2026-11-02 M3-16：预期损失报告实现，ADR-016/TRACEABILITY。首目标编译失败（测试误用GameTree/WdlEstimate构造API）修复；后8通过2失败，定位n2夹具b2e2撞己炮被FiniteSearchExecutor正确拒绝，改合法b0c2后目标10/10。根真NNUE172/172；analyze余1个无效!删后无问题。macOS完整15/15（01:55），含新报告筛选/跳转不dirty；raw生命周期[]，不冒充人工OS焦点。核心未改49/49沿用。提交前最终根回归日志/tmp/chessnext-report-final.log，待命令结束确认；其它日志/tmp/chessnext-report-{target,full,analyze,native}.log。当前普通用户窗口PID38211仍在，不关闭。
+M3-16提交前最终根回归172/172通过，静态分析无问题及原生15结果不变；无待等待验证命令。下一研究证据分开提交，然后继续功能。

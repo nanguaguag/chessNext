@@ -38,3 +38,5 @@ FiniteSearchExecutor是纯应用层单次有限单PV执行器，整谱/单步候
 CandidateCollector统一单步与整谱多候选；ReviewRun/ReviewedCandidates区分partial与完成，主图仍用首个最佳请求原始评分。局面与查询复用双计数、100ms token/job进度、ReviewCandidatesDialog有界只读详情见ADR-014。
 
 WdlEstimate与EngineInfo.wdl/EngineRequest.preferWdl支持原生模型统计；UciEngine按check能力与ready同步，解析和缓存都保留可空/旧CP兼容。AnalysisPanel区分胜和负与预期得分，并通过协调器按显示方反转，详ADR-015。
+
+M3-16：application/review_report.dart纯快照报告与期望损失整数阈值，ReviewPanel只在开窗计算，review_report_dialog.dart红黑摘要/筛选/有界列表/来源解释与安全跳转；ADR-016。没有新的IO或引擎所有者；网站准确率/妙手公式未确认，不标相同算法。

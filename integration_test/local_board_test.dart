@@ -993,6 +993,15 @@ void main() {
       expect(engine.review!.cachedCount, 4);
       expect(engine.review!.cachedSearchCount, 8);
       expect(find.text('复用 8 次候选搜索'), findsOneWidget);
+      final revision = session.revision;
+      await tapVisible(find.text('查看着法评级'));
+      expect(find.text('模型着法评级'), findsOneWidget);
+      await tapVisible(find.widgetWithText(SwitchListTile, '只看问题着法'));
+      final assessment = find.byKey(const ValueKey('assessment-n1'));
+      await tapVisible(assessment);
+      expect(session.tree.cursorId, 'n1');
+      expect(session.revision, revision);
+      expect(find.text('模型着法评级'), findsNothing);
     },
   );
 }

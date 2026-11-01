@@ -28,16 +28,18 @@ FiniteSearchExecutor已统一整谱/单步的最终着法/PV与缓存校验及�
 
 - 原生WDL胜和负：能力握手/无能力回退/ready屏障、可空解析及缓存；分析面板区分模型胜/和/负与预期得分，支持红黑视角，bound/mate不伪装普通概率。网站准确率公式仍未知。
 
-实际边界与ADR-005至015见architecture/IMPLEMENTED_MODULES及DECISIONS。
+实际边界与ADR-005至016见architecture/IMPLEMENTED_MODULES及DECISIONS。
 
 ## 最新验证
 
-本切片根flutter test162/162（显式官方NNUE环境）、flutter analyze无问题；macOS完整15/15通过，含真实NNUE在新App/引擎实例复用与坏缓存重算；另有独立Dart进程协议验证。宿主Flutter测试进程未关开，人工OS应用重启/断电仍未验。核心上次49/49及dart analyze，本切片未改。4组perft曾与官方一致。
+本切片根flutter test172/172（显式官方NNUE环境）、flutter analyze无问题；macOS完整15/15通过，含真实NNUE在新App/引擎实例复用与坏缓存重算；另有独立Dart进程协议验证。宿主Flutter测试进程未关开，人工OS应用重启/断电仍未验。核心上次49/49及dart analyze，本切片未改。4组perft曾与官方一致。
 
 integration_test仅在测试文件保持framework-resumed；生产无覆盖。真实OS焦点/最小化/隐藏/人工视觉未验；Computer Use桌面权限未授，不绕过。其他Android/iOS/Windows/Linux尚未验证，移动FFI未实现。曾失败/中断/跳过的命令见SESSION_LOG，不隐去后改通过。
 
 ## 下一步与环境
 
-复盘预期损失与等级/准确率调查/错题→文件格式/图片GIF→棋谱库完善/最近阅读/工作区/外观声音帮助→自建后端/部署→五平台及完整历史规则。参考E12/E13/E14已实际快速/彻底执行与分支操作，算法/缓存规则未知不编造。
+复盘模型评级已实现；准确率公式调查/本地错题→文件格式/图片GIF→棋谱库完善/最近阅读/工作区/外观声音帮助→自建后端/部署→五平台及完整历史规则。参考E12/E13/E14已实际快速/彻底执行与分支操作，算法/缓存规则未知不编造。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest复核仍Pikafish2026-09-06，SHA/NNUE见engine/pikafish.lock.json。.local不入Git。普通macOS run曾已运行，旧窗口不主动关闭；测试会覆盖build入口，最终审查前重建普通入口。
+
+M3-16模型着法评级已实现：原生WDL预期损失、同父候选优先/后续换视角/终局、缺失不计正确；红黑摘要/筛选/来源解释/快照跳转保护，ADR-016，非网站准确率。根172与analyze、macOS15已通过，最终根回归172/172通过，无待等待验证命令。

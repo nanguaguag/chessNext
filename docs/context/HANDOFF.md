@@ -14,14 +14,16 @@ ReviewChart绘制当前选中线路、红方±10兵封顶图（真实数值在�
 
 ## 最新验证
 
-根flutter test104/104（显式PIKAFISH_EXECUTABLE和NETWORK包含真实NNUE）、flutter analyze无问题。核心上一切片49/49与dart analyze，本次未改。macOS上一完整12/12，曲线目标单项1/1通过（整树NNUE、结果/曲线导航、取消）。所有本功能代码应提交，以git status为准。
+根flutter test112/112（显式PIKAFISH_EXECUTABLE和NETWORK包含真实NNUE）、flutter analyze无问题。核心上一切片49/49与dart analyze，本次未改。macOS上一完整12/12，曲线目标单项1/1通过（整树NNUE、结果/曲线导航、取消）。所有本功能代码应提交，以git status为准。
 
 原生integration_test明确保持framework-resumed，只在测试文件；生产main无覆盖。真实OS焦点/最小化/人工视觉尚未验；Computer Use未授桌面权限，不绕过。Android/iOS/Windows/Linux未验证。普通flutter run旧会话22326以前存活，不自动杀用户窗口；测试会覆盖build内App入口，最终审查前普通flutter run重建。无仍需等待的验证命令。
 
 ## 下一条可执行
 
-引擎身份已经完成：Gateway.identity可空，name来自UCI；bundle签名后manifest，工作Isolate校验binary/NNUE并附ABI，见engine/ENGINE_IDENTITY。根104/104、analyze、macOS身份/NNUE单项1/1通过，上一完整12。crypto3.0.8由既有传递改直接依赖。接下来独立复盘缓存/跳过已有与跨重启；cache key必须完整历史+规则+引擎/NNUE+预算/模式/版本，排除cursor/lineAnchor/注释。未取得评分/partial/失败不冒充完整命中，坏缓存可重算且不损棋谱。接口优先，UI不IO。之后彻底候选/分级/错题→文件格式/图片GIF→工作区/外观声音帮助→自建后端→五平台及完整历史规则。分解独立功能与提交。
+引擎身份已经完成：Gateway.identity可空，name来自UCI；bundle签名后manifest，工作Isolate校验binary/NNUE并附ABI，见engine/ENGINE_IDENTITY。根104/104、analyze、macOS身份/NNUE单项1/1通过，上一完整12。crypto3.0.8由既有传递改直接依赖。M3-10会话缓存/跳过已完成：ReviewCacheRepository默认2048条LRU、review_cache_key.dart精确历史/身份/预算键，完成无bound才缓存、PV重验、缓存失败降级（ADR-012）。根112/112与analyze、macOS复盘/四局面复用/曲线/取消单项1/1。下一条独立文件缓存/重开复用（仍未实现）；cache key必须完整历史+规则+引擎/NNUE+预算/模式/版本，排除cursor/lineAnchor/注释。未取得评分/partial/失败不冒充完整命中，坏缓存可重算且不损棋谱。接口优先，UI不IO。之后彻底候选/分级/错题→文件格式/图片GIF→工作区/外观声音帮助→自建后端→五平台及完整历史规则。分解独立功能与提交。
 
 E12/E13源站证据已落盘：快速/彻底运行、整树4局面、范围/0队列/取消、同级切换/置顶/回退保持。试走在父局面新建并切同级分支；删除入口仅O未执行。缓存键、候选预算和准确率公式仍U，不能推断。IAB browser2 tab4已markHandoff，可失效，用同浏览器listTabs恢复。截图只研究、不作产品资源。
 
 环境Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。官方latest 2026-11-02复核仍2026-09-06，lock见docs/engine/pikafish.lock.json。工具/重跑命令见MACOS_RUN和COMMUNICATION_VALIDATION。
+
+最新提交见git log，M3-10完成后工作树应干净；所有验证命令已结束，无待等待进程。下一条文件缓存端口可直接实现lib/adapters/storage/FileReviewCacheRepository，注入App/Main，不复用棋谱目录。键和评分DTO已有，序列化需严格schema/尺寸/类型/合法PV/校验和，独立有界可再生缓存；冷启动跨App复用须真实macOS验证，不把本机同实例命中当重启。

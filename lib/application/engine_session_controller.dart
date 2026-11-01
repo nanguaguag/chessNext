@@ -6,6 +6,8 @@ import '../ports/engine_gateway.dart';
 import 'board_session.dart';
 
 import 'review_models.dart';
+import 'review_cache_key.dart';
+import '../ports/review_cache_repository.dart';
 
 part 'engine_play.dart';
 part 'engine_review.dart';
@@ -28,7 +30,8 @@ class EngineSessionController extends ChangeNotifier {
     this.session,
     this.factory, {
     this.deviceThreads = 1,
-  }) {
+    ReviewCacheRepository? reviewCache,
+  }) : reviewCache = reviewCache ?? MemoryReviewCacheRepository() {
     _lastRevision = session.positionRevision;
     _lastSessionEpoch = session.epoch;
     session.addListener(_changed);
@@ -36,6 +39,7 @@ class EngineSessionController extends ChangeNotifier {
   final BoardSession session;
   final EngineFactory? factory;
   final int deviceThreads;
+  final ReviewCacheRepository reviewCache;
   ReviewRun? _review;
   int _reviewJob = 0;
   int? _reviewToken;

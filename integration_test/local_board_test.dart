@@ -698,6 +698,25 @@ void main() {
       );
       expect(session.tree.cursorId, 'n0');
       expect(session.revision, revision);
+      final cachedJob = engine.startReview(
+        scope: ReviewScope.tree,
+        limits: ReviewLimits(depth: 4, moveTimeMs: null),
+      );
+      for (
+        var i = 0;
+        i < 100 && engine.review?.phase != ReviewPhase.completed;
+        i++
+      ) {
+        await tester.pump(const Duration(milliseconds: 50));
+      }
+      await cachedJob;
+      await tester.pumpAndSettle();
+      expect(engine.review!.cachedCount, 4);
+      expect(
+        engine.review!.results.values.every((r) => r.info!.token == 0),
+        isTrue,
+      );
+      expect(find.text('复用 4 个局面'), findsOneWidget);
       await tapVisible(find.byKey(const ValueKey('review-n1')));
       expect(session.tree.cursorId, 'n1');
       await tapVisible(find.byKey(const ValueKey('review-chart')));

@@ -11,3 +11,5 @@ EngineGateway提供可空identity与name。UciEngine仅在握手starting阶段�
 本切片未实现缓存。未来key仍必须包含规范根FEN、完整历史、规则profile、预算/线程/Hash/候选模式与算法版本；身份只是组成部分，不能只看末局面FEN、name或release复用结果。
 
 SHA256使用[官方Dart crypto 3.0.8](https://pub.dev/packages/crypto)，2026-11-02查证。原为锁定传递依赖，此次升级为显式直接依赖，版本未变；包归档校验见pubspec.lock。许可原文及登记见legal/LICENSING.md。没有改Pikafish源码或NNUE。
+
+后续M3-10已用此身份实现会话内存缓存，见ADR-012；身份切片自身不等同整谱缓存全量功能。

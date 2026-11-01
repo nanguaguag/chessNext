@@ -28,7 +28,13 @@ class ReviewPanel extends StatelessWidget {
       ).showSnackBar(const SnackBar(content: Text('棋谱已变化，请重新选择分析范围。')));
       return;
     }
-    unawaited(engine.startReview(scope: choice.scope, limits: choice.limits));
+    unawaited(
+      engine.startReview(
+        scope: choice.scope,
+        limits: choice.limits,
+        skipExisting: choice.skipExisting,
+      ),
+    );
   }
 
   @override
@@ -75,6 +81,8 @@ class ReviewPanel extends StatelessWidget {
               Semantics(liveRegion: true, child: Text(status)),
               if (run != null) ...[
                 Text('${run.results.length}/${run.nodeIds.length} 个局面'),
+                if (run.cachedCount > 0) Text('复用 ${run.cachedCount} 个局面'),
+                if (run.cacheNotice != null) Text(run.cacheNotice!),
                 if (run.active)
                   LinearProgressIndicator(
                     value: run.results.length / run.nodeIds.length,

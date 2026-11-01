@@ -2,6 +2,7 @@ import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/review_models.dart';
 import 'package:chess_next/features/review/review_panel.dart';
+import 'package:chess_next/features/review/review_options_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -99,5 +100,39 @@ void main() {
     await job;
     expect(find.text('已取消，保留已完成的局面'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+  testWidgets('reanalysis switch returns explicit force-recompute intent', (
+    tester,
+  ) async {
+    ReviewConfiguration? choice;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () async {
+                choice = await showDialog<ReviewConfiguration>(
+                  context: context,
+                  builder: (_) =>
+                      const ReviewOptionsDialog(threads: 1, hashMb: 16),
+                );
+              },
+              child: const Text('配置'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('配置'));
+    await tester.pumpAndSettle();
+    final toggle = find.widgetWithText(SwitchListTile, '跳过已分析的局面');
+    await tester.ensureVisible(toggle);
+    await tester.pumpAndSettle();
+    expect(tester.widget<SwitchListTile>(toggle).value, isTrue);
+    await tester.tap(toggle);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('开始整谱分析'));
+    await tester.pumpAndSettle();
+    expect(choice!.skipExisting, isFalse);
   });
 }

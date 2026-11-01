@@ -3,7 +3,8 @@ import '../../application/review_models.dart';
 import '../../ports/engine_gateway.dart';
 
 class ReviewConfiguration {
-  const ReviewConfiguration(this.scope, this.limits);
+  const ReviewConfiguration(this.scope, this.limits, this.skipExisting);
+  final bool skipExisting;
   final ReviewScope scope;
   final ReviewLimits limits;
 }
@@ -26,6 +27,7 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
   final nodes = TextEditingController(text: '0');
   final form = GlobalKey<FormState>();
   var scope = ReviewScope.line;
+  var skipExisting = true;
   String? error;
   @override
   void dispose() {
@@ -88,6 +90,13 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
                   () => scope = value ? ReviewScope.tree : ReviewScope.line,
                 ),
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('跳过已分析的局面'),
+                subtitle: const Text('仅复用相同引擎、权重、历史及预算的结果'),
+                value: skipExisting,
+                onChanged: (value) => setState(() => skipExisting = value),
+              ),
               Text('${widget.threads}线程 · ${widget.hashMb}MB · 单路最佳着法'),
               if (error != null)
                 Text(
@@ -123,6 +132,7 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
                 moveTimeMs: t == 0 ? null : (t * 1000).round(),
                 nodeLimit: n == 0 ? null : n,
               ),
+              skipExisting,
             ),
           );
         },

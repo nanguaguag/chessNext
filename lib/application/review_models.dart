@@ -78,6 +78,8 @@ class ReviewRun {
     required this.limits,
     required Iterable<String> nodeIds,
     this.phase = ReviewPhase.running,
+    this.cachedCount = 0,
+    this.cacheNotice,
     Map<String, ReviewedPosition> results = const {},
     this.currentNodeId,
     this.error,
@@ -90,6 +92,8 @@ class ReviewRun {
   final ReviewLimits limits;
   final List<String> nodeIds;
   final ReviewPhase phase;
+  final int cachedCount;
+  final String? cacheNotice;
   final Map<String, ReviewedPosition> results;
   final String? currentNodeId;
   final String? error;
@@ -100,6 +104,8 @@ class ReviewRun {
     Map<String, ReviewedPosition>? results,
     String? currentNodeId,
     String? error,
+    int? cachedCount,
+    String? cacheNotice,
   }) => ReviewRun(
     epoch: epoch,
     revision: revision,
@@ -108,6 +114,8 @@ class ReviewRun {
     limits: limits,
     nodeIds: nodeIds,
     phase: phase ?? this.phase,
+    cachedCount: cachedCount ?? this.cachedCount,
+    cacheNotice: cacheNotice ?? this.cacheNotice,
     results: results ?? this.results,
     currentNodeId: currentNodeId ?? this.currentNodeId,
     error: error ?? this.error,

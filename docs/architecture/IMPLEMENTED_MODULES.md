@@ -26,3 +26,5 @@ GameTree是文档唯一棋谱真值；Position缓存不可变。文字导入先�
 整谱队列实际采用EngineSessionController的engine_review.dart扩展，共享单EngineGateway；ReviewRun/ReviewedPosition和预算在review_models.dart，UI为features/review。内容revision使结果失效，读谱不移动队列。当前仅会话内原始评分，没有持久缓存/胜率算法；详ADR-011。
 
 EngineGateway的可空EngineIdentity记录经文件校验的制品身份，name来自实际UCI握手。verifyEngineBundle在工作Isolate校验manifest/可执行文件/NNUE，bundle脚本区分源二进制与签名后hash。详engine/ENGINE_IDENTITY。任意CLI无身份时仍可运行，后续缓存不得猜测。
+
+review_cache_key.dart结合真实身份/历史/预算/规则版本生成缓存键；ReviewCacheRepository与CachedEngineScore提供异步端口，默认MemoryReviewCacheRepository为2048条LRU。候选PV合法性在复用前验证，只有完成、无bound的单路结果可命中。IO失败降级和取消见ADR-012，文件持久化下一切片。

@@ -32,7 +32,7 @@ FiniteSearchExecutor已统一整谱/单步的最终着法/PV与缓存校验及�
 
 ## 最新验证
 
-M4-01e后根flutter test272/272（显式官方NNUE）与flutter analyze无问题；核心未改沿用65/65+dart analyze。macOS本片文件导出单项1/1、前片导入1/1通过，均真实文件流/原生写入，chooser注入。原生现21例，未本轮全跑21；历史完整/失败/修后单项见TRACEABILITY/SESSION_LOG，不扩大为整套全过。无待等待验证进程。
+M3-19后根flutter test284/284（显式官方NNUE）与flutter analyze无问题；核心未改沿用65/65+dart analyze。macOS本片文件导出单项1/1、前片导入1/1通过，均真实文件流/原生写入，chooser注入。原生现22例，未本轮全跑22；历史完整/失败/修后单项见TRACEABILITY/SESSION_LOG，不扩大为整套全过。无待等待验证进程。
 
 production main已装配文件导入/仅macOS文件导出，当前Debug/Release为user-selected.read-write且sandbox保留，实际Debug签名已核。真实系统Open/Save面板/外部授权/精确scope释放/Release实际签名及其它平台未验。Computer Use桌面未授权不绕过；native fixture仅framework-resumed，真实OS焦点/最小化/人工视觉未验。
 
@@ -61,3 +61,5 @@ M4-01c PGN文字交换已实现：后台真实worker/typed资料和评注导入�
 M4-01d只读文件导入已实现：官方file_selector1.1.0/端口/实际有界流UTF8/超时取消/预览和保护；根256/256、analyze、macOS目标1/1通过，核心未变65沿用。实际Debug签名sandbox+user-selected.read-only已核，系统面板人工选文件/其它平台未验。无待等待命令，下一外部文件导出技术验证。
 
 M4-01e macOS UTF8文件导出（五格式/开窗快照/取消边界/Foundation atomic/失败保留）已实现，272/analyze/native目标1通过；ADR-022。下一补审计字号/外观并单功能实现。其它平台writer/实际系统面板仍未验，不称完整对齐。
+
+M3-19全局字号已实现（标准100/大115/特大130/跟随系统/实时全路由与本机记忆/保存失败重试），E21/ADR-023。新增12测试，根284/284与analyze、原生字号1/1及旧设置1/1通过；不改谱、不重启搜索，系统非线性原对象保留。语言仍未做。无待等待验证，下一F21坐标/外观补审计后单功能。

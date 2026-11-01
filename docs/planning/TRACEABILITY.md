@@ -248,3 +248,11 @@ RecordFileExporter纯端口与取消令牌，MacOsRecordFileExporter官方保存
 技术探针swift research/spikes/atomic_file_probe.swift通过四边界；11适配器+5组件新增，根flutter test272/272（显式官方NNUE）最终exit0与flutter analyze无问题；macOS导出目标1/1 exit0，真实通道替换/新建/失败保留/符号链接/超限拒绝与UI快照保存；codesign实际Debug含sandbox+user-selected.read-write。核心未改沿用65；native文件现21项，未全跑21。系统保存面板选择注入，实际外部授权/作用域撤销/网络云盘/断电/Release签名/其它平台未验。
 
 探针首Swift precondition中throw表达式编译失败改先读再断言；widget首错误调用setComment改实际annotate，修后5/5。初analyze业务1及随后测试2项大括号info补齐，最终analyze0问题；根首272全过，最后修纯测试大括号后再完整272过。日志/tmp/chessnext-{atomic-probe,atomic-probe-final,file-export-adapter,file-export-widget,file-export-widget-final,file-export-full,file-export-full-final,file-export-analyze-initial,file-export-analyze,file-export-analyze-final,file-export-native,file-export-entitlements}.log。无后台验证未收尾。
+
+## 2026-11-02 / M3-19 / F27 → B15 全局字号
+
+E21三档100/115/130与系统/手动切换、同会话页间记忆为V；本地AppPreferences可选textSize/旧字段兼容与严格坏值、逐字段晚到合并/串行最新值/重试，TextSizeDialog即时全路由生效，普通设置表单保留字段。AppTextScaling保留系统TextScaler原对象/非线性，手动不乘系统；不改棋谱/dirty、搜索请求数不变。ADR-023/TEXT_SIZE_SLICE。
+
+新增6应用+6组件均通过，含OS200与变化模拟/自制非线性对象/键盘Tab到滑块/语义/窄窗/写失败重试/新App恢复；根显式官方NNUE flutter test284/284 exit0（52844）与flutter analyze无问题exit0（1360）。macOS字号真实偏好文件新App目标1/1（56302，00:07）及旧设置/资源恢复目标1/1（86147，00:06）均exit0。原生文件22用例，未全跑22；核心未改沿用65。真实OS系统设置操作/其它平台/语言与字体资源未验/未做。
+
+初组件4过2失败：touch tap不保证键盘焦点，改用实际Tab遍历到滑块再Right，不改生产焦点逻辑；SemanticsHandle需在test body finally dispose（addTearDown晚于framework校验），修测试后6/6、完整根全过。日志/tmp/chessnext-text-size-{application,widget,widget-final,full,analyze-initial,analyze,analyze-final,native,native-settings}.log，所有session结束。

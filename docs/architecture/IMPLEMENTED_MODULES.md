@@ -58,3 +58,5 @@ M4-01c：application/record_text_exchange.dart无Flutter/IO的格式协调+静�
 M4-01d：ports/record_file_picker.dart返回有界UTF8文字，FileSelectorRecordPicker独占插件/流/路径；ImportFileDialog预览确认、错误重试/退场代次，App共用文字导入保护；main注入，macOS只读用户选择权限且保留sandbox。ADR-021/RECORD_FILE_IMPORT_SLICE；系统面板人工选择与其它平台未验。
 
 M4-01e：RecordFileExporter与MacOsRecordFileExporter分离外部导出/内部保存；ExportTextDialog五格式文件保存/取消令牌、快照不改dirty；macOS/Runner/RecordFileWriter.swift仅负责有界UTF8通道校验及utility串行Foundation atomic写入。main只在macOS注入；Debug/Release权限按新写入用途升级user-selected.read-write，继续sandbox。ADR-022，实际OS保存面板/作用域释放/其它平台待验。
+
+M3-19：AppPreferences可选textSize枚举/Controller合并与retryPersistence，AppTextScaling全路由MediaQuery保留系统非线性与显式manual1/1.15/1.3；TextSizeDialog从原PreferencesDialog独立实时操作/错误重试，旧参数表单copyWith保留它。无新IO/引擎所有者；ADR-023，F27语言/字体资源仍后续。

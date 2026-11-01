@@ -1589,4 +1589,107 @@ void main() {
       }
     },
   );
+  testWidgets(
+    'native text size persists across app instances without changing records',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-text-size-');
+      final repository = FilePreferencesRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        session.playMove(Move.parse('h2e2'));
+        final tree = session.tree;
+        final revision = session.revision;
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('界面字号'));
+        await tap(find.byKey(const ValueKey('text-size-slider')));
+        for (
+          var i = 0;
+          i < 50 &&
+              (await repository.load())?.value.textSize !=
+                  TextSizePreference.large;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          (await repository.load())!.value.textSize,
+          TextSizePreference.large,
+        );
+        expect(
+          MediaQuery.textScalerOf(
+            tester.element(find.byType(XiangqiBoard)),
+          ).scale(20),
+          closeTo(23, .001),
+        );
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.dirty, isTrue);
+        await tap(find.text('关闭'));
+        await tap(find.widgetWithText(FilledButton, '应用设置'));
+        expect(
+          (await repository.load())!.value.textSize,
+          TextSizePreference.large,
+        );
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 50 &&
+              MediaQuery.textScalerOf(
+                    tester.element(find.byType(XiangqiBoard)),
+                  ).scale(20) !=
+                  23;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          MediaQuery.textScalerOf(
+            tester.element(find.byType(XiangqiBoard)),
+          ).scale(20),
+          closeTo(23, .001),
+        );
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('界面字号'));
+        expect(find.text('当前字号：大115%'), findsOneWidget);
+        await tap(find.text('跟随系统字号'));
+        for (
+          var i = 0;
+          i < 50 &&
+              (await repository.load())?.value.textSize !=
+                  TextSizePreference.system;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          (await repository.load())!.value.textSize,
+          TextSizePreference.system,
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }

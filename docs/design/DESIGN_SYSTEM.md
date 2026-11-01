@@ -11,3 +11,5 @@ Android 支持系统返回/预测返回和边到边安全区；iOS 支持安全�
 键盘：方向键移动棋盘焦点，Enter/Space 选子/落子，Escape 取消选中/关闭浮层。快捷键通过 Shortcuts/Actions 注册，避开文字输入；撤销和新局不得悄悄删除未保存棋谱。读屏播报方色、棋子、坐标、选中、非法原因与轮到谁。
 
 分析页提供 idle/loading/running/stopping/failed；云库有 loading/empty/offline/unauthorized；库有空草稿/加载/失败/迁移失败。尊重减少动画、系统字号、音量；后台停止高耗能搜索。视觉验收包含明暗、字体放大、横竖屏、鼠标/键盘/触屏和读屏。
+
+M3-19已实现TextSizeDialog：标准100/大115/特大130和系统开关，实时生效/错误重试/本机记忆。AppTextScaling在所有Navigator路由统一MediaQuery，系统TextScaler原对象保留，手动线性覆盖而非叠乘。200%系统下窄窗滚动/语义/键盘滑块已组件验证，棋盘命中几何不因字号改变；其它平台真实OS行为待验。

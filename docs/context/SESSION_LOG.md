@@ -252,3 +252,9 @@ M4-01c最终：根真NNUE238/238、flutter analyze无问题，旧文字原生1/1
 ### 2026-11-02 / E21 字号审计
 
 实际IAB browser2/tab4访客操作设置：手动0/1/2=100/115/130，follow重置、手调退出follow，115%离开回访保留；恢复原follow100返回自制棋谱。截图/AX落docs/research，commentary嵌图。没有登录、上传、复制库素材、OS桌面权限操作。非100系统与重载未知，接F27单功能开发。
+
+### 2026-11-02 / M3-19 全局字号
+
+按TEXT_SIZE_SLICE/E21，AppPreferences新增可选枚举/迟到逐字段合并/错误重试，AppTextScaling在Navigator上保留系统TextScaler或显式手动比例，不叠乘；独立即时字号Dialog，原参数表单保留最新字段。应用6/6；widget首4过2失败：触摸tap不获取键盘焦点与SemanticsHandle在addTearDown太晚，改测试实际Tab遍历后Right及body finally dispose，生产无迎合测试的焦点修改，最终6/6。初及最终analyze无问题。
+
+根显式PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK flutter test284/284 exit0（52844）；最终flutter analyze exit0（1360）。macOS字号目标56302 1/1 exit0（00:07），实际偏好文件/新App恢复与棋谱不变；旧设置/资源恢复86147 1/1 exit0（00:06），不自动开AI。原生当前22项未全跑22；核心不变65沿用。系统200与变动为组件模拟、非线性是自制对象验证保留identity，不当实际OS设置操作证据。所有命令收尾；日志/tmp/chessnext-text-size-*.log。下一F21坐标/外观，完整对标仍缺多项不停止工作。

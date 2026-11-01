@@ -1,9 +1,21 @@
 enum ThemePreference { system, light, dark }
 
+enum TextSizePreference { system, standard, large, extraLarge }
+
+extension TextSizeScale on TextSizePreference {
+  double? get manualScale => switch (this) {
+    TextSizePreference.system => null,
+    TextSizePreference.standard => 1,
+    TextSizePreference.large => 1.15,
+    TextSizePreference.extraLarge => 1.3,
+  };
+}
+
 /// Versioned, platform-neutral settings. AI roles and active searches are excluded.
 final class AppPreferences {
   AppPreferences({
     this.theme = ThemePreference.system,
+    this.textSize = TextSizePreference.system,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
@@ -24,10 +36,12 @@ final class AppPreferences {
     }
   }
   final ThemePreference theme;
+  final TextSizePreference textSize;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
     ThemePreference? theme,
+    TextSizePreference? textSize,
     int? threads,
     int? hashMb,
     int? multiPv,
@@ -35,6 +49,7 @@ final class AppPreferences {
     int? guideVersion,
   }) => AppPreferences(
     theme: theme ?? this.theme,
+    textSize: textSize ?? this.textSize,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
@@ -44,6 +59,7 @@ final class AppPreferences {
   Map<String, Object> toJson() => {
     'schema': 1,
     'theme': theme.name,
+    if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     'threads': threads,
     'hashMb': hashMb,
     'multiPv': multiPv,
@@ -53,6 +69,7 @@ final class AppPreferences {
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
         json['theme'] is! String ||
+        (json.containsKey('textSize') && json['textSize'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         ![
           'threads',
@@ -65,6 +82,9 @@ final class AppPreferences {
     try {
       return AppPreferences(
         theme: ThemePreference.values.byName(json['theme'] as String),
+        textSize: TextSizePreference.values.byName(
+          json['textSize'] as String? ?? 'system',
+        ),
         threads: json['threads'] as int,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
@@ -79,12 +99,20 @@ final class AppPreferences {
   bool operator ==(Object other) =>
       other is AppPreferences &&
       theme == other.theme &&
+      textSize == other.textSize &&
       threads == other.threads &&
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
       thinkTimeMs == other.thinkTimeMs &&
       guideVersion == other.guideVersion;
   @override
-  int get hashCode =>
-      Object.hash(theme, threads, hashMb, multiPv, thinkTimeMs, guideVersion);
+  int get hashCode => Object.hash(
+    theme,
+    textSize,
+    threads,
+    hashMb,
+    multiPv,
+    thinkTimeMs,
+    guideVersion,
+  );
 }

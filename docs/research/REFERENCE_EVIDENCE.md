@@ -121,3 +121,9 @@ V：底部首端图标从炮二进二跳回马２进３分支点（没有直接�
 V：底部末端图标从开始跳到马２进３分支点，再按一次到所选炮二进二末端（没有强制回主线马八进七/马８进７）。[到分支AX](E19-forward-to-fork-ax.txt)、[截图](screenshots/E19-forward-to-fork.png)、[所选末端AX](E19-forward-to-selected-end-ax.txt)、[截图](screenshots/E19-forward-to-selected-end.png)。与E18说明一致：优先严格前/后分支点，没有其它点则到首尾。
 
 U：多层嵌套分支/重复局面/当前根已有多个子节点等未在站点执行；用户更改线路后记忆范围仍需采样。项目增量应以稳定节点和所选线路实现严格前后最近分支，绝对首尾可保留为独立明确入口；读谱不改内容且应经引擎协调器暂停AI/保护旧结果。
+
+## E20 / 2026-11-02 自制PGN文件实际导出
+
+URL https://xiangqiai.com/#/，E19同一访客自制有分支棋树，当前炮二进二。保存/分享→分享/导出→PGN文件，先监听浏览器download再点击，V收到本机文件。源名xiangqiai_2026_11-02_05_38_47.pgn，151字节UTF8无BOM，SHA256 6f19538be1cb55cf50bc62f958f6ee842a9d39c0f0d4f9e3b5811d4f67b6e5f5，副本[样本](samples/E20-self-created-iccs.pgn)/[清单](samples/E20-manifest.json)/[导出后截图](screenshots/E20-pgn-export.png)。只含Agent自制棋步，不复制站点库或资源。
+
+V：标签Game=Chinese Chess、Result=*、FEN双字段初始局面w、Format=ICCS；正文B2-E2/B9-C7/H2-H4至当前选中支线末端，另一主线马八进七/马８进７不在输出。可证本样本路径导出，不能推断所有导出格式/设置/评注/终局/黑方先手/编码均同。PGN导入尚未在站点执行。官方格式调查另见PGN_RESEARCH，D与本操作V分开。

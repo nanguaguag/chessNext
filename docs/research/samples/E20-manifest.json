@@ -1,0 +1,17 @@
+{
+  "id": "E20",
+  "date": "2026-11-02 Asia/Shanghai",
+  "source": "https://xiangqiai.com/#/",
+  "method": "访客新局由Agent逐步点选生成，分享/导出→PGN文件，浏览器download事件确认；非站点棋谱库数据",
+  "path": "E20-self-created-iccs.pgn",
+  "bytes": 151,
+  "sha256": "6f19538be1cb55cf50bc62f958f6ee842a9d39c0f0d4f9e3b5811d4f67b6e5f5",
+  "encoding": "UTF-8，无BOM",
+  "moves": [
+    "b2e2",
+    "b9c7",
+    "h2h4"
+  ],
+  "scope": "根至当前所选着法路径；本样本原树另一分支未导出",
+  "rights": "棋步由本Agent自制，无第三方棋谱/注释/图片/代码；参考应用自动生成基本标签，仅技术格式夹具"
+}

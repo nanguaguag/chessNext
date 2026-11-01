@@ -1,0 +1,6 @@
+[Game "Chinese Chess"]
+[Result "*"]
+[FEN "rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w"]
+[Format "ICCS"]
+  1. B2-E2 B9-C7
+  2. H2-H4 *

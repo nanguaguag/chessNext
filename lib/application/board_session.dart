@@ -135,18 +135,19 @@ class BoardSession extends ChangeNotifier {
     if (canUndo) navigate(tree.current.parentId!);
   }
 
+  String? get nextNodeId {
+    final line = tree.currentLine;
+    final index = line.indexWhere((node) => node.id == tree.cursorId);
+    return index + 1 < line.length ? line[index + 1].id : null;
+  }
+
   void forward() {
-    if (canForward) navigate(tree.current.children.first);
+    final next = nextNodeId;
+    if (next != null) navigate(next);
   }
 
   void first() => navigate(tree.root.id);
-  void last() {
-    var node = tree.current;
-    while (node.children.isNotEmpty) {
-      node = tree.node(node.children.first);
-    }
-    navigate(node.id);
-  }
+  void last() => navigate(tree.currentLine.last.id);
 
   void annotate(String comment) {
     if (comment == tree.current.comment) return;

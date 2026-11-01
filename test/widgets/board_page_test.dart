@@ -29,7 +29,11 @@ void main() {
     await tester.tap(find.text('悔棋'));
     await tester.pump();
     expect(find.text('红方行棋'), findsOneWidget);
-    expect(find.text('1. 炮二平五'), findsNothing);
+    expect(find.text('1. 炮二平五'), findsOneWidget);
+    expect(
+      tester.widget<ListTile>(find.byKey(const ValueKey('move-n0'))).selected,
+      isTrue,
+    );
   });
   testWidgets('keyboard selection and narrow layout at 200% text scale', (
     tester,

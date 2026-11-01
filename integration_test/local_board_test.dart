@@ -82,7 +82,11 @@ void main() {
     await tester.tap(find.text('悔棋'));
     await tester.pumpAndSettle();
     expect(find.text('红方行棋'), findsOneWidget);
-    expect(find.text('1. 炮二平五'), findsNothing);
+    expect(find.text('1. 炮二平五'), findsOneWidget);
+    expect(
+      tester.widget<ListTile>(find.byKey(const ValueKey('move-n0'))).selected,
+      isTrue,
+    );
     // After flip h2/e2 are still addressed by board coordinates, not pixels.
     await tester.tap(find.byKey(const ValueKey('square-h2')));
     await tester.tap(find.byKey(const ValueKey('square-e2')));
@@ -548,4 +552,48 @@ void main() {
       await engine.dispose();
     }
   });
+  testWidgets(
+    'native reading list navigates future moves and keeps the chosen branch',
+    (tester) async {
+      await tester.pumpWidget(ChessNextApp(key: UniqueKey()));
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      Future<void> move(String from, String to) async {
+        await tester.tap(find.byKey(ValueKey('square-$from')));
+        await tester.tap(find.byKey(ValueKey('square-$to')));
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> read(String id) async {
+        final row = find.byKey(ValueKey('move-$id'));
+        await tester.ensureVisible(row);
+        await tester.tap(row);
+        await tester.pumpAndSettle();
+      }
+
+      await move('h2', 'e2');
+      await move('b9', 'c7');
+      await read('n0');
+      expect(session.moves, isEmpty);
+      expect(find.byKey(const ValueKey('move-n2')), findsOneWidget);
+      await read('n2');
+      expect(session.moves.length, 2);
+      await read('n0');
+      await move('b2', 'e2');
+      await move('h9', 'g7');
+      await read('n0');
+      expect(find.byKey(const ValueKey('move-n3')), findsOneWidget);
+      expect(find.byKey(const ValueKey('move-n1')), findsNothing);
+      await tester.ensureVisible(find.byTooltip('下一着'));
+      await tester.tap(find.byTooltip('下一着'));
+      await tester.pumpAndSettle();
+      expect(session.moves.single.toString(), 'b2e2');
+      expect(
+        tester.widget<ListTile>(find.byKey(const ValueKey('move-n3'))).selected,
+        isTrue,
+      );
+    },
+  );
 }

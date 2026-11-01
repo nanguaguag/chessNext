@@ -297,6 +297,27 @@ class EngineSessionController extends ChangeNotifier {
     }
   }
 
+  /// Reading a node pauses automatic play, while an active analysis may follow it.
+  Future<void> navigateToNode(String id) async {
+    if (_disposed || !session.tree.hasNode(id)) return;
+    if (!playing) {
+      session.navigate(id);
+      return;
+    }
+    final epoch = session.epoch;
+    final positionRevision = session.positionRevision;
+    final stopping = disable();
+    final generation = _generation;
+    await stopping;
+    if (!_disposed &&
+        generation == _generation &&
+        session.epoch == epoch &&
+        session.positionRevision == positionRevision &&
+        session.tree.hasNode(id)) {
+      session.navigate(id);
+    }
+  }
+
   int scoreFor(EngineInfo info, Side viewSide) =>
       session.position.turn == viewSide ? info.score : -info.score;
   String? boundFor(EngineInfo info, Side viewSide) {

@@ -1,3 +1,4 @@
+import 'features/records/move_list.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'application/app_preferences.dart';
 import 'application/preferences_controller.dart';
@@ -547,51 +548,46 @@ class _BoardPage extends StatelessWidget {
                   ),
                   Text('着法记录', style: Theme.of(context).textTheme.titleMedium),
                   const SizedBox(height: 12),
-                  if (session.moves.isEmpty)
-                    const Text('走出第一步，开始一盘新棋。')
-                  else
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 8,
-                      children: [
-                        for (final (i, node)
-                            in session.tree.path.skip(1).indexed)
-                          Tooltip(
-                            message: node.move.toString(),
-                            child: Chip(
-                              label: Text(
-                                '${i + 1}. ${ChineseNotation.format(session.tree.node(node.parentId!).position, node.move!)}',
-                              ),
-                            ),
-                          ),
-                      ],
-                    ),
+                  if (!session.hasMoves) const Text('尚无着法，选择棋子开始对局。'),
+                  MoveList(
+                    session: session,
+                    onNavigate: analysis.navigateToNode,
+                  ),
                   const SizedBox(height: 16),
                   Wrap(
                     spacing: 4,
                     children: [
                       IconButton(
-                        onPressed: session.canUndo ? session.first : null,
+                        onPressed: session.canUndo
+                            ? () =>
+                                  analysis.navigateToNode(session.tree.root.id)
+                            : null,
                         tooltip: '回到开始',
                         icon: const Icon(Icons.first_page),
                       ),
                       IconButton(
                         onPressed: session.canUndo
-                            ? () => analysis.playing
-                                  ? analysis.undoForPlay()
-                                  : session.undo()
+                            ? () => analysis.navigateToNode(
+                                session.tree.current.parentId!,
+                              )
                             : null,
                         tooltip: '上一着',
                         icon: const Icon(Icons.chevron_left),
                       ),
                       IconButton(
-                        onPressed: session.canForward ? session.forward : null,
+                        onPressed: session.canForward
+                            ? () => analysis.navigateToNode(session.nextNodeId!)
+                            : null,
                         tooltip: '下一着',
                         icon: const Icon(Icons.chevron_right),
                       ),
                       IconButton(
-                        onPressed: session.canForward ? session.last : null,
-                        tooltip: '主线末尾',
+                        onPressed: session.canForward
+                            ? () => analysis.navigateToNode(
+                                session.tree.currentLine.last.id,
+                              )
+                            : null,
+                        tooltip: '当前线路末尾',
                         icon: const Icon(Icons.last_page),
                       ),
                     ],
@@ -624,7 +620,7 @@ class _BoardPage extends StatelessWidget {
                       subtitle: Text(
                         id == session.tree.current.children.first ? '主线' : '变着',
                       ),
-                      onTap: () => session.navigate(id),
+                      onTap: () => analysis.navigateToNode(id),
                       trailing: PopupMenuButton<String>(
                         onSelected: (action) async {
                           if (action == 'main') {

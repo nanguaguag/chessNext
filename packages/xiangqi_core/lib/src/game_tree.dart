@@ -30,8 +30,21 @@ final class GameNode {
 
 /// Immutable variation tree with stable document-local node IDs and a cursor.
 final class GameTree {
-  GameTree._(Map<String, GameNode> nodes, this.cursorId, this._nextId)
-    : _nodes = Map.unmodifiable(nodes);
+  GameTree._(
+    Map<String, GameNode> nodes,
+    this.cursorId,
+    this._nextId, {
+    String? lineAnchorId,
+  }) : _nodes = Map.unmodifiable(nodes) {
+    final anchor = lineAnchorId != null && _nodes.containsKey(lineAnchorId)
+        ? lineAnchorId
+        : cursorId;
+    _lineAnchorId =
+        anchor == cursorId ||
+            lineThrough(anchor).any((node) => node.id == cursorId)
+        ? anchor
+        : cursorId;
+  }
   factory GameTree({Position? initial}) {
     final position = initial ?? Position.initial();
     if (!position.validateForPlay().isValid)
@@ -46,6 +59,7 @@ final class GameTree {
     'schema': 1,
     'rootFen': root.position.toFen(),
     'cursor': cursorId,
+    'lineAnchor': lineAnchorId,
     'nextId': _nextId,
     'nodes': [
       for (final node
@@ -137,7 +151,22 @@ final class GameTree {
       }
       if (nodes.length != raw.length)
         throw const FormatException('Unreachable node');
-      return GameTree._(nodes, json['cursor'] as String, json['nextId'] as int);
+      final anchor = json.containsKey('lineAnchor')
+          ? json['lineAnchor']
+          : json['cursor'];
+      if (anchor is! String || !nodes.containsKey(anchor)) {
+        throw const FormatException('Invalid reading-line anchor');
+      }
+      final tree = GameTree._(
+        nodes,
+        json['cursor'] as String,
+        json['nextId'] as int,
+        lineAnchorId: anchor,
+      );
+      if (tree.lineAnchorId != anchor) {
+        throw const FormatException('Reading line does not contain the cursor');
+      }
+      return tree;
     } on ArgumentError catch (error) {
       throw FormatException('Illegal game data: $error');
     } on TypeError {
@@ -146,15 +175,21 @@ final class GameTree {
   }
   final Map<String, GameNode> _nodes;
   final String cursorId;
+
+  /// Navigation metadata: remembers a chosen variation while moving to ancestors.
+  late final String _lineAnchorId;
+  String get lineAnchorId => _lineAnchorId;
   final int _nextId;
   GameNode get root => _nodes['n0']!;
   GameNode get current => _nodes[cursorId]!;
   int get nodeCount => _nodes.length;
   GameNode node(String id) =>
       _nodes[id] ?? (throw ArgumentError.value(id, 'id', 'Unknown node'));
-  List<GameNode> get path {
+  bool hasNode(String id) => _nodes.containsKey(id);
+  List<GameNode> get path => _pathTo(cursorId);
+  List<GameNode> _pathTo(String id) {
     final result = <GameNode>[];
-    GameNode? entry = current;
+    GameNode? entry = node(id);
     while (entry != null) {
       result.add(entry);
       entry = entry.parentId == null ? null : node(entry.parentId!);
@@ -162,9 +197,21 @@ final class GameTree {
     return List.unmodifiable(result.reversed);
   }
 
+  /// Ancestor path to the chosen variation followed by its main continuation.
+  List<GameNode> lineThrough(String id) {
+    final result = _pathTo(id).toList();
+    var entry = node(id);
+    while (entry.children.isNotEmpty) {
+      entry = node(entry.children.first);
+      result.add(entry);
+    }
+    return List.unmodifiable(result);
+  }
+
+  List<GameNode> get currentLine => lineThrough(lineAnchorId);
   GameTree goTo(String id) {
     node(id);
-    return GameTree._(_nodes, id, _nextId);
+    return GameTree._(_nodes, id, _nextId, lineAnchorId: lineAnchorId);
   }
 
   GameTree play(Move move) {
@@ -196,6 +243,7 @@ final class GameTree {
       {..._nodes, current.id: current._copy(comment: comment)},
       cursorId,
       _nextId,
+      lineAnchorId: lineAnchorId,
     );
   }
 
@@ -212,6 +260,7 @@ final class GameTree {
       },
       cursorId,
       _nextId,
+      lineAnchorId: lineAnchorId,
     );
   }
 
@@ -236,6 +285,7 @@ final class GameTree {
       },
       removed.contains(cursorId) ? parent.id : cursorId,
       _nextId,
+      lineAnchorId: lineAnchorId,
     );
   }
 }

@@ -1,8 +1,18 @@
+import 'dart:async';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/chess_next.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../support/fake_engine.dart';
+
+class DelayedStopFake extends FakeEngine {
+  Completer<void>? stopGate;
+  @override
+  Future<void> stop() async {
+    await stopGate?.future;
+    await super.stop();
+  }
+}
 
 Future<void> tick() => Future<void>.delayed(const Duration(milliseconds: 180));
 void main() {
@@ -123,4 +133,39 @@ void main() {
       expect(session.inputLocked, isFalse);
     },
   );
+  test(
+    'reading a historical node stops AI and discards its late best move',
+    () async {
+      await engine.setAiSide(Side.black, true);
+      session.playMove(Move.parse('h2e2'));
+      await tick();
+      fake.stopMove = Move.parse('b9c7');
+      await engine.navigateToNode('n0');
+      expect(engine.aiSides, isEmpty);
+      expect(session.tree.cursorId, 'n0');
+      expect(session.tree.nodeCount, 2);
+      expect(session.inputLocked, isFalse);
+      expect(session.tree.currentLine.map((node) => node.id), ['n0', 'n1']);
+    },
+  );
+  test('a delayed stop cannot navigate over a newer human move', () async {
+    final delayed = DelayedStopFake();
+    fake = delayed;
+    await engine.setAiSide(Side.black, true);
+    session.playMove(Move.parse('h2e2'));
+    await tick();
+    final gate = Completer<void>();
+    delayed.stopGate = gate;
+    addTearDown(() {
+      if (!gate.isCompleted) gate.complete();
+    });
+    final reading = engine.navigateToNode('n0');
+    expect(session.inputLocked, isFalse);
+    expect(session.playMove(Move.parse('b9c7')), isTrue);
+    gate.complete();
+    await reading;
+    expect(session.tree.cursorId, 'n2');
+    expect(session.moves.map((move) => move.toString()), ['h2e2', 'b9c7']);
+    expect(engine.aiSides, isEmpty);
+  });
 }

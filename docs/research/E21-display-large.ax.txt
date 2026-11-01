@@ -1,0 +1,38 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/settings/display".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/settings/display
+	1 container app
+		2 container
+			35 text 
+			4 text 设置 Esc 返回棋盘
+		5 container
+			6 link Description: 棋盘与棋子, Value: xiangqiai.com/#
+			7 text 下棋与分析
+			8 link Description: 人机对弈, Value: xiangqiai.com/#
+			9 link Description: 分析与标记, Value: xiangqiai.com/#
+			10 text 通用
+			11 link Description: 显示与语言, Value: xiangqiai.com/#
+			12 link Description: 声音与动画, Value: xiangqiai.com/#
+			13 link Description: 关于, Value: xiangqiai.com/#
+		14 heading 显示与语言, Value: 2
+			15 text 显示与语言
+		16 text 字号 115%
+		17 container
+			18 text 跟随系统
+			19 switch 0
+		20 container
+			21 text 1. 炮二平五 　马８进７
+		22 text 中炮对屏风马，最常见的开局之一。
+		23 slider (settable, integer) Description: 字号, Value: 1
+		24 text 标准
+		25 text 大
+		26 text 特大
+		27 button 语言 简体中文 
+			28 text 语言
+			29 text 简体中文
+			36 text 
+		31 text 布局预设
+		32 布局预设
+			33 radio button 棋盘靠左, Value: 0
+			34 radio button 棋盘居中, Value: 1
+
+The focused UI element is 23 slider (settable, integer) Description: 字号, Value: 1

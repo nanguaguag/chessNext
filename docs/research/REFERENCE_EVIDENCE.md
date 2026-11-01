@@ -127,3 +127,11 @@ U：多层嵌套分支/重复局面/当前根已有多个子节点等未在站�
 URL https://xiangqiai.com/#/，E19同一访客自制有分支棋树，当前炮二进二。保存/分享→分享/导出→PGN文件，先监听浏览器download再点击，V收到本机文件。源名xiangqiai_2026_11-02_05_38_47.pgn，151字节UTF8无BOM，SHA256 6f19538be1cb55cf50bc62f958f6ee842a9d39c0f0d4f9e3b5811d4f67b6e5f5，副本[样本](samples/E20-self-created-iccs.pgn)/[清单](samples/E20-manifest.json)/[导出后截图](screenshots/E20-pgn-export.png)。只含Agent自制棋步，不复制站点库或资源。
 
 V：标签Game=Chinese Chess、Result=*、FEN双字段初始局面w、Format=ICCS；正文B2-E2/B9-C7/H2-H4至当前选中支线末端，另一主线马八进七/马８进７不在输出。可证本样本路径导出，不能推断所有导出格式/设置/评注/终局/黑方先手/编码均同。PGN导入尚未在站点执行。官方格式调查另见PGN_RESEARCH，D与本操作V分开。
+
+## E21 / 2026-11-02 显示字号实际设置
+
+URL https://xiangqiai.com/#/settings/display，访客桌面IAB，本机系统字号100%，初始follow开。仅自制E19棋树，所有AI关。菜单→设置→显示与语言。
+
+V：关“跟随系统”后slider0；设2显示130%（特大），设1显示115%（大），预览及页面字号变化。开跟随显示100%且slider0；再关仍100%，未保留115%手动值。在follow开时直接设slider1，自动变follow关/115%。选115%按Escape回棋盘，再按菜单→设置→显示与语言，仍115%/follow关，证明本页导航间记忆，未重载/重启浏览器，不推断长期存储。自制谱着法/分支仍在，无落子/分析。最后恢复follow开/100%，Escape回原棋谱，已markHandoff。
+
+[130%截图](screenshots/E21-display-extra-large.png)/[AX](E21-display-extra-large.ax.txt)、[115%截图](screenshots/E21-display-large.png)/[AX](E21-display-large.ax.txt)、[大字号棋盘](screenshots/E21-board-large.png)、[恢复截图](screenshots/E21-display-restored.png)。截图仅证据，非产品素材。系统非100%/不同平台非线性比例、页重载/跨进程记忆、语言选择与布局切换本轮未验（U/O）。

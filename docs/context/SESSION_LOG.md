@@ -248,3 +248,7 @@ M4-01c最终：根真NNUE238/238、flutter analyze无问题，旧文字原生1/1
 官方Apple .atomic与sandbox.md经urllib读取原站正文（web工具不支持text/markdown），Dart rename官方契约不作安全覆盖承诺。先自有Foundation探针，新建/替换/目录失败/文件父路径失败保留原内容；首Swift precondition自动闭包不可throw编译失败，调整为先读取再断言后exit0。无OS权限自动化/绕过。
 
 实现端口/typed失败和取消令牌、macOS保存选择适配器、Swift私有通道utility原子写、五格式UI快照保存；Debug/Release由read-only改read-write+sandbox，对应真实新用途。适配器11/11；widget首测试API setComment误用编译失败修annotate后5/5；初analyze业务1后测试2大括号info修复。全量显式官方NNUE flutter test先272/272（25846），最后测试括号后完整272/272（49290）exit0；flutter analyze最终47048 exit0无问题；macOS原生导出目标80542 1/1 exit0（00:04），实际writer覆盖/新建与失败不破坏/符号链接/超限及UI快照；实际Debug签名含read-write和sandbox。核心不变沿用65/65；其它20原生没重跑，实际Open/Save面板与外部授权/精确scope回收/Release/其余平台未验。日志/tmp/chessnext-file-export-*.log与atomic-probe-*.log。所有验证session已结束。下一字号外观审计及单功能增量，完整对标仍未完成。
+
+### 2026-11-02 / E21 字号审计
+
+实际IAB browser2/tab4访客操作设置：手动0/1/2=100/115/130，follow重置、手调退出follow，115%离开回访保留；恢复原follow100返回自制棋谱。截图/AX落docs/research，commentary嵌图。没有登录、上传、复制库素材、OS桌面权限操作。非100系统与重载未知，接F27单功能开发。

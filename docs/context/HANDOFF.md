@@ -11,3 +11,7 @@ macOS构建修复：加入SDK官方Podfile及xcconfig的Pods引用。默认adhoc
 普通App已重新用flutter run启动并保留开发会话。尝试detach后该环境终端关闭会导致App退出，因此未再detach。不要自动终止用户对局。其他诊断进程已收尾；/tmp诊断日志不提交，不记录临时VM服务凭证。
 
 下一步B16稳定ID棋树/分支注释/游标/保存恢复，再B14生产引擎/分析UI。尚未实现移动FFI/Windows/Linux/完整历史裁决。基线b3b423a、校验9b515d2、终局6e7fd77已提交，本轮UI提交见git log。
+
+## M2-05接续
+
+GameTree分支/注释/导航已实现，根13测试和core30测试及分析通过。后退现在移动游标，保留子树；新局需检查hasContent而非canUndo。下一步磁盘保存与恢复（包括分支/注释/游标），再引擎主UI。用户要求持续推进至全站对齐，不提前将对标视为完成。

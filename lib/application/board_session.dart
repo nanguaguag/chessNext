@@ -1,20 +1,20 @@
 import 'package:flutter/foundation.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 
-/// In-memory local play; tree navigation and persistence follow separately.
+/// In-memory document and cursor; persistence is provided through a separate port.
 class BoardSession extends ChangeNotifier {
-  BoardSession({Position? initial})
-    : _position = initial ?? Position.initial() {
-    if (!_position.validateForPlay().isValid) {
-      throw ArgumentError('Invalid starting position');
-    }
+  BoardSession({Position? initial}) : _tree = GameTree(initial: initial) {
     _refresh();
   }
-  Position _position;
-  Position get position => _position;
-  final List<Position> _history = [];
-  final List<Move> _moves = [];
-  List<Move> get moves => List.unmodifiable(_moves);
+  GameTree _tree;
+  GameTree get tree => _tree;
+  Position get position => tree.current.position;
+  List<Move> get moves =>
+      List.unmodifiable(tree.path.skip(1).map((node) => node.move!));
+  bool get hasMoves => tree.nodeCount > 1;
+  bool get hasContent => hasMoves || tree.root.comment.isNotEmpty;
+  int _revision = 0;
+  int get revision => _revision;
   Square? _selected;
   Square? get selected => _selected;
   bool _flipped = false;
@@ -24,7 +24,8 @@ class BoardSession extends ChangeNotifier {
   late List<Move> _legal;
   late BoardOutcome _outcome;
   BoardOutcome get outcome => _outcome;
-  bool get canUndo => _history.isNotEmpty;
+  bool get canUndo => tree.current.parentId != null;
+  bool get canForward => tree.current.children.isNotEmpty;
   Set<Square> get targets =>
       _legal.where((m) => m.from == _selected).map((m) => m.to).toSet();
   String get status {
@@ -49,9 +50,9 @@ class BoardSession extends ChangeNotifier {
     } else if (_selected != null) {
       final move = Move(_selected!, square);
       if (_legal.contains(move)) {
-        _history.add(position);
-        _moves.add(move);
-        _position = position.play(move);
+        final before = tree.nodeCount;
+        _tree = tree.play(move);
+        if (tree.nodeCount != before) _revision++;
         _selected = null;
         _refresh();
       } else {
@@ -67,10 +68,47 @@ class BoardSession extends ChangeNotifier {
     notifyListeners();
   }
 
+  void navigate(String id) {
+    _tree = tree.goTo(id);
+    _selected = null;
+    _notice = null;
+    _refresh();
+    notifyListeners();
+  }
+
   void undo() {
-    if (!canUndo) return;
-    _position = _history.removeLast();
-    _moves.removeLast();
+    if (canUndo) navigate(tree.current.parentId!);
+  }
+
+  void forward() {
+    if (canForward) navigate(tree.current.children.first);
+  }
+
+  void first() => navigate(tree.root.id);
+  void last() {
+    var node = tree.current;
+    while (node.children.isNotEmpty) {
+      node = tree.node(node.children.first);
+    }
+    navigate(node.id);
+  }
+
+  void annotate(String comment) {
+    if (comment == tree.current.comment) return;
+    _tree = tree.annotate(comment);
+    _revision++;
+    notifyListeners();
+  }
+
+  void promote(String id) {
+    _tree = tree.promote(id);
+    _revision++;
+    notifyListeners();
+  }
+
+  void deleteBranch(String id) {
+    _tree = tree.deleteBranch(id);
+    _revision++;
     _selected = null;
     _notice = null;
     _refresh();
@@ -83,9 +121,8 @@ class BoardSession extends ChangeNotifier {
   }
 
   void newGame() {
-    _position = Position.initial();
-    _history.clear();
-    _moves.clear();
+    _tree = GameTree();
+    _revision++;
     _selected = null;
     _notice = null;
     _refresh();

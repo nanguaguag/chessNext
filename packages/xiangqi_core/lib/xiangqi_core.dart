@@ -4,3 +4,4 @@ library;
 export 'src/position.dart';
 export 'src/validation.dart';
 export 'src/outcome.dart';
+export 'src/game_tree.dart';

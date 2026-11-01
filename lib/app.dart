@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'application/board_session.dart';
 import 'features/board/xiangqi_board.dart';
 
@@ -44,7 +45,7 @@ class _BoardPage extends StatelessWidget {
   final BoardSession session;
   final VoidCallback toggleTheme;
   Future<void> _newGame(BuildContext context) async {
-    if (session.canUndo) {
+    if (session.hasContent) {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -184,9 +185,91 @@ class _BoardPage extends StatelessWidget {
                           Chip(label: Text('${i + 1}. ${session.moves[i]}')),
                       ],
                     ),
+                  const SizedBox(height: 16),
+                  Wrap(
+                    spacing: 4,
+                    children: [
+                      IconButton(
+                        onPressed: session.canUndo ? session.first : null,
+                        tooltip: '回到开始',
+                        icon: const Icon(Icons.first_page),
+                      ),
+                      IconButton(
+                        onPressed: session.canUndo ? session.undo : null,
+                        tooltip: '上一着',
+                        icon: const Icon(Icons.chevron_left),
+                      ),
+                      IconButton(
+                        onPressed: session.canForward ? session.forward : null,
+                        tooltip: '下一着',
+                        icon: const Icon(Icons.chevron_right),
+                      ),
+                      IconButton(
+                        onPressed: session.canForward ? session.last : null,
+                        tooltip: '主线末尾',
+                        icon: const Icon(Icons.last_page),
+                      ),
+                    ],
+                  ),
+                  TextFormField(
+                    key: ValueKey('comment-${session.tree.cursorId}'),
+                    initialValue: session.tree.current.comment,
+                    inputFormatters: [
+                      TextInputFormatter.withFunction(
+                        (oldValue, newValue) =>
+                            newValue.text.length <= 10000 ? newValue : oldValue,
+                      ),
+                    ],
+                    decoration: const InputDecoration(
+                      labelText: '当前局面注释',
+                      helperText: '注释按局面保留，回退后走新棋会创建变着',
+                    ),
+                    maxLines: 3,
+                    onChanged: session.annotate,
+                  ),
+                  for (final id in session.tree.current.children)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text('继续 ${session.tree.node(id).move}'),
+                      subtitle: Text(
+                        id == session.tree.current.children.first ? '主线' : '变着',
+                      ),
+                      onTap: () => session.navigate(id),
+                      trailing: PopupMenuButton<String>(
+                        onSelected: (action) async {
+                          if (action == 'main') {
+                            session.promote(id);
+                            return;
+                          }
+                          final confirmed = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('删除这条变着？'),
+                              content: const Text('包含其后续着法和注释。'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () =>
+                                      Navigator.pop(context, false),
+                                  child: const Text('取消'),
+                                ),
+                                FilledButton(
+                                  onPressed: () => Navigator.pop(context, true),
+                                  child: const Text('删除'),
+                                ),
+                              ],
+                            ),
+                          );
+                          if (confirmed == true) session.deleteBranch(id);
+                        },
+                        itemBuilder: (context) => const [
+                          PopupMenuItem(value: 'main', child: Text('提升为主线')),
+                          PopupMenuItem(value: 'delete', child: Text('删除变着')),
+                        ],
+                      ),
+                    ),
                   const SizedBox(height: 24),
                   Text(
-                    '当前对局未保存，关闭应用后不会保留。',
+                    '当前棋谱仅在内存中，关闭应用后不会保留。',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

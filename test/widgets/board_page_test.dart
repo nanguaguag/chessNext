@@ -71,4 +71,25 @@ void main() {
     expect(find.bySemanticsLabel(RegExp('红方帅 e0')), findsOneWidget);
     semantics.dispose();
   });
+  testWidgets('comments and continuations survive cursor navigation', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1120, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    await tester.pumpWidget(const ChessNextApp());
+    await tester.tap(find.byKey(const ValueKey('square-h2')));
+    await tester.tap(find.byKey(const ValueKey('square-e2')));
+    await tester.pump();
+    await tester.ensureVisible(find.byKey(const ValueKey('comment-n1')));
+    await tester.enterText(find.byKey(const ValueKey('comment-n1')), '中炮注释');
+    await tester.pump();
+    await tester.tap(find.byTooltip('回到开始'));
+    await tester.pump();
+    expect(find.text('继续 h2e2'), findsOneWidget);
+    await tester.tap(find.byTooltip('下一着'));
+    await tester.pump();
+    expect(find.text('中炮注释'), findsOneWidget);
+  });
 }

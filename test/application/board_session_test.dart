@@ -39,4 +39,31 @@ void main() {
     expect(s.position.toFen(), before);
     expect(s.status, '黑方获胜 · 困毙');
   });
+  test('navigation preserves variations, comments and revision semantics', () {
+    final s = BoardSession();
+    addTearDown(s.dispose);
+    s.tap(Square.parse('h2'));
+    s.tap(Square.parse('e2'));
+    s.annotate('中炮');
+    final revision = s.revision;
+    s.first();
+    expect(s.hasContent, isTrue);
+    expect(s.revision, revision);
+    s.forward();
+    expect(s.tree.current.comment, '中炮');
+    s.first();
+    s.tap(Square.parse('c3'));
+    s.tap(Square.parse('c4'));
+    expect(s.tree.root.children.length, 2);
+    final variant = s.tree.cursorId;
+    s.promote(variant);
+    s.first();
+    s.forward();
+    expect(s.tree.cursorId, variant);
+    s.deleteBranch(variant);
+    expect(s.tree.cursorId, 'n0');
+    s.forward();
+    expect(s.tree.current.comment, '中炮');
+    expect(() => s.moves.clear(), throwsUnsupportedError);
+  });
 }

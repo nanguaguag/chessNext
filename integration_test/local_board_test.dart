@@ -596,4 +596,44 @@ void main() {
       );
     },
   );
+  testWidgets(
+    'native current-move variants switch, promote and confirm deletion',
+    (tester) async {
+      await tester.pumpWidget(ChessNextApp(key: UniqueKey()));
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      session.playMove(Move.parse('h2e2'));
+      session.playMove(Move.parse('b9c7'));
+      session.first();
+      session.playMove(Move.parse('b2e2'));
+      await tester.pumpAndSettle();
+      Future<void> tapVisible(Finder finder) async {
+        await tester.ensureVisible(finder);
+        await tester.pumpAndSettle();
+        await tester.tap(finder);
+        await tester.pumpAndSettle();
+      }
+
+      await tapVisible(find.byKey(const ValueKey('sibling-n1')));
+      expect(session.tree.cursorId, 'n1');
+      expect(session.tree.currentLine.last.id, 'n2');
+      await tapVisible(find.byKey(const ValueKey('sibling-actions-n3')));
+      await tapVisible(find.text('提升为主线'));
+      expect(session.tree.root.children.first, 'n3');
+      expect(session.tree.cursorId, 'n1');
+      await tapVisible(find.byKey(const ValueKey('sibling-actions-n1')));
+      await tapVisible(find.text('删除变着'));
+      await tapVisible(find.text('取消'));
+      expect(session.tree.hasNode('n2'), isTrue);
+      await tapVisible(find.byKey(const ValueKey('sibling-actions-n1')));
+      await tapVisible(find.text('删除变着'));
+      await tapVisible(find.text('删除'));
+      expect(session.tree.hasNode('n1'), isFalse);
+      expect(session.tree.hasNode('n2'), isFalse);
+      expect(session.tree.cursorId, 'n0');
+      expect(session.dirty, isTrue);
+    },
+  );
 }

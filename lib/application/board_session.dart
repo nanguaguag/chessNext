@@ -157,7 +157,9 @@ class BoardSession extends ChangeNotifier {
   }
 
   void promote(String id) {
-    _tree = tree.promote(id);
+    final next = tree.promote(id);
+    if (identical(next, tree)) return;
+    _tree = next;
     _revision++;
     notifyListeners();
   }

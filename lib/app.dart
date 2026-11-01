@@ -1,4 +1,5 @@
 import 'features/records/move_list.dart';
+import 'features/records/variation_panel.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'application/app_preferences.dart';
 import 'application/preferences_controller.dart';
@@ -608,51 +609,7 @@ class _BoardPage extends StatelessWidget {
                     maxLines: 3,
                     onChanged: session.annotate,
                   ),
-                  for (final id in session.tree.current.children)
-                    ListTile(
-                      contentPadding: EdgeInsets.zero,
-                      title: Tooltip(
-                        message: session.tree.node(id).move.toString(),
-                        child: Text(
-                          '继续 ${ChineseNotation.format(session.position, session.tree.node(id).move!)}',
-                        ),
-                      ),
-                      subtitle: Text(
-                        id == session.tree.current.children.first ? '主线' : '变着',
-                      ),
-                      onTap: () => analysis.navigateToNode(id),
-                      trailing: PopupMenuButton<String>(
-                        onSelected: (action) async {
-                          if (action == 'main') {
-                            session.promote(id);
-                            return;
-                          }
-                          final confirmed = await showDialog<bool>(
-                            context: context,
-                            builder: (context) => AlertDialog(
-                              title: const Text('删除这条变着？'),
-                              content: const Text('包含其后续着法和注释。'),
-                              actions: [
-                                TextButton(
-                                  onPressed: () =>
-                                      Navigator.pop(context, false),
-                                  child: const Text('取消'),
-                                ),
-                                FilledButton(
-                                  onPressed: () => Navigator.pop(context, true),
-                                  child: const Text('删除'),
-                                ),
-                              ],
-                            ),
-                          );
-                          if (confirmed == true) session.deleteBranch(id);
-                        },
-                        itemBuilder: (context) => const [
-                          PopupMenuItem(value: 'main', child: Text('提升为主线')),
-                          PopupMenuItem(value: 'delete', child: Text('删除变着')),
-                        ],
-                      ),
-                    ),
+                  VariationPanel(session: session, engine: analysis),
                   const SizedBox(height: 24),
                   Text(
                     session.dirty

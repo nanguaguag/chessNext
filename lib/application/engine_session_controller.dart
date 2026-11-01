@@ -318,6 +318,31 @@ class EngineSessionController extends ChangeNotifier {
     }
   }
 
+  /// Deletes only the exact document revision the user confirmed. Stop automatic
+  /// play before editing so a late bestmove cannot recreate the removed branch.
+  Future<bool> deleteConfirmedBranch(
+    String id, {
+    required int epoch,
+    required int revision,
+  }) async {
+    bool valid() =>
+        !_disposed &&
+        session.epoch == epoch &&
+        session.revision == revision &&
+        session.tree.hasNode(id) &&
+        session.tree.node(id).parentId != null;
+    if (!valid()) return false;
+    if (playing) {
+      final stopping = disable();
+      final generation = _generation;
+      await stopping;
+      if (generation != _generation || !valid()) return false;
+    }
+    if (!valid()) return false;
+    session.deleteBranch(id);
+    return true;
+  }
+
   int scoreFor(EngineInfo info, Side viewSide) =>
       session.position.turn == viewSide ? info.score : -info.score;
   String? boundFor(EngineInfo info, Side viewSide) {

@@ -251,6 +251,7 @@ final class GameTree {
     final entry = node(id);
     if (entry.parentId == null) return this;
     final parent = node(entry.parentId!);
+    if (parent.children.first == id) return this;
     return GameTree._(
       {
         ..._nodes,

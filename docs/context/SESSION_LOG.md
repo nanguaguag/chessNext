@@ -121,3 +121,8 @@ GameTree.currentLine含所选变着与游标之后主线；lineAnchor只读导�
 
 ### E13续审（2026-11-02）
 源站自制四局面棋树完成彻底分析；范围/同级切换/置顶/建议试走见REFERENCE_EVIDENCE E13。建议试走在父局面新增并切换分支已验证；未执行站点删除。当前只有研究文档与截图变化，不将其记为业务实现。下一条F13当前着同级分支面板，之后F32共享单引擎队列。
+
+## 2026-11-02 / M2-12 / F13 → B16 当前着分支面板
+
+VariationPanel分开当前着同级与下一着子节点，中文/坐标/选中/主线、提升/删除、有界列表和200%字号。提升已主线为无操作；确认删除绑定文档epoch+内容revision，等待AI停止后再删，迟到落子及新编辑均保护。取消保留原树。
+验证：根flutter test81/81（显式官方NNUE环境）、flutter analyze无问题；核心dart test49/49与dart analyze无问题；完整macOS11/11通过，新增同级切换/置顶不跳节点/取消/删除子树。原生保持framework-resumed前提、真实OS焦点/视觉仍未验。日志/tmp/chessnext-variants-{test,analyze,core,native}.log。无新增依赖。建议试走、复盘缓存等仍后续，不标F13完整。

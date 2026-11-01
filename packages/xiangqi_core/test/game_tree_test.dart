@@ -23,6 +23,7 @@ void main() {
           .play(Move.parse('c3c4'));
       final promoted = tree.promote('n2');
       expect(promoted.root.children, ['n2', 'n1']);
+      expect(identical(promoted.promote('n2'), promoted), isTrue);
       expect(promoted.cursorId, tree.cursorId);
       expect(promoted.current.position.toFen(), tree.current.position.toFen());
       expect(tree.root.children, ['n1', 'n2']);

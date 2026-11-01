@@ -34,3 +34,5 @@ FileReviewCacheRepository由main注入ApplicationSupport/chessnext-analysis-cach
 engine_candidates.dart/CandidateRun处理当前着法的父局面候选，EngineSessionController.batch统一分析/AI/整谱/候选互斥。ReviewCacheAccess抽出共用缓存IO和PV/允许集验证。BoardSession.playVariation原子创建/切换父局面同级着法，控制器等stop并检查完整快照后提交。表现位于CandidatePanel/OptionsDialog；原始cp/mate/bound，不冒充源站可接受筛选或胜率。详ADR-013。
 
 FiniteSearchExecutor是纯应用层单次有限单PV执行器，整谱/单步候选共用；临时订阅只接请求token及允许首着，最终bestmove与完整PV合法性/匹配后才赋分和缓存，取消/错误finally等待清理。不启动进程/不接管新任务。缓存新增remove以清理schema合法但目标PV不合法的条目，仍不触及棋谱目录。
+
+CandidateCollector统一单步与整谱多候选；ReviewRun/ReviewedCandidates区分partial与完成，主图仍用首个最佳请求原始评分。局面与查询复用双计数、100ms token/job进度、ReviewCandidatesDialog有界只读详情见ADR-014。

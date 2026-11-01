@@ -9,7 +9,12 @@ extension EngineReview on EngineSessionController {
     ReviewScope scope = ReviewScope.line,
     required ReviewLimits limits,
     bool skipExisting = true,
+    ReviewMode mode = ReviewMode.best,
+    int maximum = 5,
   }) async {
+    if (mode == ReviewMode.candidates && (maximum < 2 || maximum > 256)) {
+      throw ArgumentError('Invalid candidate count');
+    }
     if (_disposed) return;
     final stopping = disable();
     final intent = _generation;
@@ -40,6 +45,8 @@ extension EngineReview on EngineSessionController {
       revision: revision,
       tree: tree,
       scope: scope,
+      mode: mode,
+      maximum: mode == ReviewMode.best ? 1 : maximum,
       limits: limits,
       nodeIds: List.unmodifiable(nodes.reversed),
     );
@@ -66,7 +73,12 @@ extension EngineReview on EngineSessionController {
       for (final id in _review!.nodeIds) {
         if (!_reviewValid(job)) return;
         final node = tree.node(id);
-        _review = _review!.copy(currentNodeId: id);
+        _clearBatchInfo();
+        _review = _review!.copy(
+          currentNodeId: id,
+          currentCandidate: 0,
+          currentCandidateLimit: 0,
+        );
         _notify();
         if (!_reviewValid(job)) return;
         ReviewedPosition result;
@@ -77,28 +89,68 @@ extension EngineReview on EngineSessionController {
             status: ReviewScoreStatus.terminal,
           );
         } else {
-          final token = ++_generation;
-          final request = EngineRequest.fromTree(
-            token: token,
-            gameId: epoch,
-            tree: tree.goTo(id),
-            depth: limits.depth,
-            moveTimeMs: limits.moveTimeMs,
-            nodeLimit: limits.nodeLimit,
-            threads: _settings.threads,
-            hashMb: _settings.hashMb,
-            multiPv: 1,
-          );
-          final outcome = await FiniteSearchExecutor(engine, cache).execute(
-            request,
-            isCurrent: () => _reviewValid(job),
-            skipExisting: skipExisting,
-          );
-          if (!_reviewValid(job) || outcome == null) return;
-          final info = outcome.info;
-          if (outcome.cached) {
+          var previousHits = 0;
+          final collection =
+              await CandidateCollector(
+                FiniteSearchExecutor(engine, cache),
+              ).collect(
+                position: node.position,
+                maximum: _review!.maximum,
+                skipExisting: skipExisting,
+                isCurrent: () => _reviewValid(job),
+                makeRequest: (allowed) => EngineRequest.fromTree(
+                  token: ++_generation,
+                  gameId: epoch,
+                  tree: tree.goTo(id),
+                  depth: limits.depth,
+                  moveTimeMs: limits.moveTimeMs,
+                  nodeLimit: limits.nodeLimit,
+                  threads: _settings.threads,
+                  hashMb: _settings.hashMb,
+                  multiPv: 1,
+                  searchMoves: allowed,
+                ),
+                onSearch: (number, total) {
+                  _clearBatchInfo();
+                  _review = _review!.copy(
+                    currentCandidate: number,
+                    currentCandidateLimit: total,
+                  );
+                  _notify();
+                },
+                onInfo: (info) =>
+                    _recordBatchInfo(info, () => _reviewValid(job)),
+                onCandidate: (entries, hits) {
+                  _review = _review!.copy(
+                    candidateResults: {
+                      ..._review!.candidateResults,
+                      id: ReviewedCandidates(entries, complete: false),
+                    },
+                    cachedSearchCount:
+                        _review!.cachedSearchCount + hits - previousHits,
+                    cacheNotice: cache.notice,
+                  );
+                  previousHits = hits;
+                  _notify();
+                },
+              );
+          if (!_reviewValid(job) || collection == null) return;
+          final info = collection.entries.firstOrNull?.info;
+          if (collection.entries.isNotEmpty &&
+              collection.cacheHits == collection.searches) {
             _review = _review!.copy(cachedCount: _review!.cachedCount + 1);
           }
+          _review = _review!.copy(
+            candidateResults: {
+              ..._review!.candidateResults,
+              id: ReviewedCandidates(
+                collection.entries,
+                complete: true,
+                notice: collection.notice,
+              ),
+            },
+            cacheNotice: cache.notice,
+          );
           result = ReviewedPosition(
             nodeId: id,
             turn: node.position.turn,
@@ -107,12 +159,12 @@ extension EngineReview on EngineSessionController {
                 : ReviewScoreStatus.scored,
             info: info,
           );
-          _review = _review!.copy(cacheNotice: cache.notice);
         }
         _review = _review!.copy(results: {..._review!.results, id: result});
         _notify();
       }
       if (!_reviewValid(job)) return;
+      _clearBatchInfo();
       _review = _review!.copy(phase: ReviewPhase.completed);
       _status = '整谱分析已完成';
       _notify();

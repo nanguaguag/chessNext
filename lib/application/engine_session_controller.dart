@@ -9,6 +9,7 @@ import 'review_models.dart';
 import 'candidate_models.dart';
 import 'review_cache_access.dart';
 import 'finite_search_executor.dart';
+import 'candidate_collector.dart';
 import '../ports/review_cache_repository.dart';
 
 part 'engine_play.dart';
@@ -45,6 +46,29 @@ class EngineSessionController extends ChangeNotifier {
   final ReviewCacheRepository reviewCache;
   CandidateRun? _candidates;
   int _candidateJob = 0;
+  EngineInfo? _batchInfo, _batchPending;
+  Timer? _batchTimer;
+  EngineInfo? get batchInfo =>
+      batching && _batchInfo?.token == _generation ? _batchInfo : null;
+  void _clearBatchInfo() {
+    _batchTimer?.cancel();
+    _batchTimer = null;
+    _batchInfo = null;
+    _batchPending = null;
+  }
+
+  void _recordBatchInfo(EngineInfo info, bool Function() valid) {
+    if (!valid() || info.token != _generation) return;
+    _batchPending = info;
+    _batchTimer ??= Timer(const Duration(milliseconds: 100), () {
+      _batchTimer = null;
+      if (!valid() || _batchPending?.token != _generation) return;
+      _batchInfo = _batchPending;
+      _batchPending = null;
+      _notify();
+    });
+  }
+
   ReviewRun? _review;
   int _reviewJob = 0;
   EngineGateway? _engine;
@@ -265,6 +289,7 @@ class EngineSessionController extends ChangeNotifier {
 
   void _failed(Object exception, int generation) {
     if (_disposed || generation != _generation) return;
+    _clearBatchInfo();
     _aiSides.clear();
     _thinking = false;
     _playSearch = null;
@@ -291,6 +316,7 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   Future<void> disable() async {
+    _clearBatchInfo();
     final stoppingCandidates = inspectingCandidates;
     final candidateJob = ++_candidateJob;
     if (stoppingCandidates) {
@@ -430,6 +456,7 @@ class EngineSessionController extends ChangeNotifier {
   @override
   void dispose() {
     _disposed = true;
+    _clearBatchInfo();
     _generation++;
     _restart?.cancel();
     _flush?.cancel();

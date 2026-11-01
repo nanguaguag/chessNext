@@ -1,6 +1,25 @@
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../ports/engine_gateway.dart';
 
+enum ReviewMode { best, candidates }
+
+class CandidateEvaluation {
+  const CandidateEvaluation(this.move, this.info);
+  final Move move;
+  final EngineInfo? info;
+}
+
+class ReviewedCandidates {
+  ReviewedCandidates(
+    Iterable<CandidateEvaluation> entries, {
+    required this.complete,
+    this.notice,
+  }) : entries = List.unmodifiable(entries);
+  final List<CandidateEvaluation> entries;
+  final bool complete;
+  final String? notice;
+}
+
 enum ReviewScope { line, tree }
 
 enum ReviewPhase { running, stopping, cancelled, completed, failed, stale }
@@ -79,12 +98,19 @@ class ReviewRun {
     required Iterable<String> nodeIds,
     this.phase = ReviewPhase.running,
     this.cachedCount = 0,
+    this.cachedSearchCount = 0,
+    this.mode = ReviewMode.best,
+    this.maximum = 1,
+    this.currentCandidate = 0,
+    this.currentCandidateLimit = 0,
+    Map<String, ReviewedCandidates> candidateResults = const {},
     this.cacheNotice,
     Map<String, ReviewedPosition> results = const {},
     this.currentNodeId,
     this.error,
   }) : nodeIds = List.unmodifiable(nodeIds),
-       results = Map.unmodifiable(results);
+       results = Map.unmodifiable(results),
+       candidateResults = Map.unmodifiable(candidateResults);
   final int epoch;
   final int revision;
   final GameTree tree;
@@ -93,6 +119,10 @@ class ReviewRun {
   final List<String> nodeIds;
   final ReviewPhase phase;
   final int cachedCount;
+  final int cachedSearchCount;
+  final ReviewMode mode;
+  final int maximum, currentCandidate, currentCandidateLimit;
+  final Map<String, ReviewedCandidates> candidateResults;
   final String? cacheNotice;
   final Map<String, ReviewedPosition> results;
   final String? currentNodeId;
@@ -105,6 +135,10 @@ class ReviewRun {
     String? currentNodeId,
     String? error,
     int? cachedCount,
+    int? cachedSearchCount,
+    int? currentCandidate,
+    int? currentCandidateLimit,
+    Map<String, ReviewedCandidates>? candidateResults,
     String? cacheNotice,
   }) => ReviewRun(
     epoch: epoch,
@@ -115,6 +149,12 @@ class ReviewRun {
     nodeIds: nodeIds,
     phase: phase ?? this.phase,
     cachedCount: cachedCount ?? this.cachedCount,
+    cachedSearchCount: cachedSearchCount ?? this.cachedSearchCount,
+    mode: mode,
+    maximum: maximum,
+    currentCandidate: currentCandidate ?? this.currentCandidate,
+    currentCandidateLimit: currentCandidateLimit ?? this.currentCandidateLimit,
+    candidateResults: candidateResults ?? this.candidateResults,
     cacheNotice: cacheNotice ?? this.cacheNotice,
     results: results ?? this.results,
     currentNodeId: currentNodeId ?? this.currentNodeId,

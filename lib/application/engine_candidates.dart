@@ -57,6 +57,7 @@ extension EngineCandidates on EngineSessionController {
     _notify();
     if (!_candidateValid(job)) return;
     if (remaining.isEmpty) {
+      _clearBatchInfo();
       _candidates = _candidates!.copy(
         phase: ReviewPhase.completed,
         notice: '父局面无合法候选',
@@ -81,47 +82,45 @@ extension EngineCandidates on EngineSessionController {
         engine.options,
         reviewCache,
       );
-      while (_candidateValid(job) &&
-          remaining.isNotEmpty &&
-          _candidates!.results.length < maximum) {
-        final token = ++_generation;
-        final request = EngineRequest.fromTree(
-          token: token,
-          gameId: epoch,
-          tree: target,
-          depth: limits.depth,
-          moveTimeMs: limits.moveTimeMs,
-          nodeLimit: limits.nodeLimit,
-          threads: _settings.threads,
-          hashMb: _settings.hashMb,
-          multiPv: 1,
-          searchMoves: _candidates!.results.isEmpty ? null : remaining,
-        );
-        final outcome = await FiniteSearchExecutor(engine, cache).execute(
-          request,
-          isCurrent: () => _candidateValid(job),
-          skipExisting: skipExisting,
-        );
-        if (!_candidateValid(job) || outcome == null) return;
-        final move = outcome.move;
-        final info = outcome.info;
-        if (outcome.cached) {
-          _candidates = _candidates!.copy(
-            cachedCount: _candidates!.cachedCount + 1,
+      final collection =
+          await CandidateCollector(FiniteSearchExecutor(engine, cache)).collect(
+            position: target.current.position,
+            maximum: maximum,
+            skipExisting: skipExisting,
+            isCurrent: () => _candidateValid(job),
+            makeRequest: (allowed) => EngineRequest.fromTree(
+              token: ++_generation,
+              gameId: epoch,
+              tree: target,
+              depth: limits.depth,
+              moveTimeMs: limits.moveTimeMs,
+              nodeLimit: limits.nodeLimit,
+              threads: _settings.threads,
+              hashMb: _settings.hashMb,
+              multiPv: 1,
+              searchMoves: allowed,
+            ),
+            onSearch: (_, _) {
+              _clearBatchInfo();
+              _notify();
+            },
+            onInfo: (info) =>
+                _recordBatchInfo(info, () => _candidateValid(job)),
+            onCandidate: (entries, hits) {
+              _candidates = _candidates!.copy(
+                results: entries,
+                cachedCount: hits,
+                notice: cache.notice,
+              );
+              _notify();
+            },
           );
-        }
-        if (move == null) {
-          _candidates = _candidates!.copy(notice: '引擎未返回更多可评估着法');
-          break;
-        }
-        if (!remaining.remove(move)) throw StateError('Duplicate candidate');
-        _candidates = _candidates!.copy(
-          results: [..._candidates!.results, CandidateEvaluation(move, info)],
-          notice: cache.notice,
-        );
-        _notify();
+      if (!_candidateValid(job) || collection == null) return;
+      if (collection.notice != null) {
+        _candidates = _candidates!.copy(notice: collection.notice);
       }
       if (!_candidateValid(job)) return;
+      _clearBatchInfo();
       _candidates = _candidates!.copy(
         phase: ReviewPhase.completed,
         notice: _candidates!.notice ?? cache.notice,

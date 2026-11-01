@@ -6,6 +6,7 @@ import '../../application/engine_session_controller.dart';
 import '../../application/review_models.dart';
 import 'review_options_dialog.dart';
 import 'review_chart.dart';
+import 'review_candidates_dialog.dart';
 
 class ReviewPanel extends StatelessWidget {
   const ReviewPanel({super.key, required this.engine});
@@ -33,6 +34,8 @@ class ReviewPanel extends StatelessWidget {
         scope: choice.scope,
         limits: choice.limits,
         skipExisting: choice.skipExisting,
+        mode: choice.mode,
+        maximum: choice.maximum,
       ),
     );
   }
@@ -51,7 +54,8 @@ class ReviewPanel extends StatelessWidget {
       final status = switch (phase) {
         ReviewPhase.running => '正在分析',
         ReviewPhase.stopping => '正在取消',
-        ReviewPhase.cancelled => '已取消，保留已完成的局面',
+        ReviewPhase.cancelled =>
+          run!.mode == ReviewMode.best ? '已取消，保留已完成的局面' : '已取消，保留已完成搜索与局面',
         ReviewPhase.completed =>
           missing == 0 ? '分析完成' : '分析结束，$missing个局面未取得评分',
         ReviewPhase.failed => run!.error ?? '分析失败',
@@ -82,6 +86,8 @@ class ReviewPanel extends StatelessWidget {
               if (run != null) ...[
                 Text('${run.results.length}/${run.nodeIds.length} 个局面'),
                 if (run.cachedCount > 0) Text('复用 ${run.cachedCount} 个局面'),
+                if (run.mode == ReviewMode.candidates)
+                  Text('复用 ${run.cachedSearchCount} 次候选搜索'),
                 if (run.cacheNotice != null) Text(run.cacheNotice!),
                 if (run.active)
                   LinearProgressIndicator(
@@ -90,6 +96,19 @@ class ReviewPanel extends StatelessWidget {
                 if (run.phase == ReviewPhase.running &&
                     run.currentNodeId != null)
                   Text('当前：${_notation(run, run.currentNodeId!)}'),
+                if (run.phase == ReviewPhase.running &&
+                    run.currentCandidateLimit > 0)
+                  Text(
+                    '候选 ${run.currentCandidate}/${run.currentCandidateLimit}${engine.batchInfo == null ? '' : ' · 深度${engine.batchInfo!.depth}'}',
+                  ),
+                if (run.currentNodeId != null &&
+                    run.mode == ReviewMode.candidates &&
+                    run.candidateResults[run.currentNodeId]?.complete == false)
+                  TextButton(
+                    onPressed: () =>
+                        showReviewCandidates(context, run, run.currentNodeId!),
+                    child: const Text('查看当前局面的部分候选'),
+                  ),
               ],
               const SizedBox(height: 8),
               if (run?.active ?? false)
@@ -142,6 +161,17 @@ class ReviewPanel extends StatelessWidget {
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
                         ),
+                        trailing:
+                            run.mode == ReviewMode.candidates &&
+                                run.candidateResults.containsKey(id)
+                            ? IconButton(
+                                key: ValueKey('review-candidates-$id'),
+                                tooltip: '查看局面候选',
+                                icon: const Icon(Icons.format_list_numbered),
+                                onPressed: () =>
+                                    showReviewCandidates(context, run, id),
+                              )
+                            : null,
                         onTap: canNavigate
                             ? () => engine.navigateToNode(id)
                             : null,

@@ -75,6 +75,9 @@ class CandidatePanel extends StatelessWidget {
                     value: run.results.length / math.max(1, run.total),
                   ),
                 if (run.notice != null) Text(run.notice!),
+                if (run.phase == ReviewPhase.running &&
+                    engine.batchInfo != null)
+                  Text('当前候选深度 ${engine.batchInfo!.depth}'),
               ],
               const SizedBox(height: 8),
               if (run?.active ?? false)

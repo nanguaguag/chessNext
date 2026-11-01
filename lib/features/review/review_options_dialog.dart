@@ -3,7 +3,15 @@ import '../../application/review_models.dart';
 import '../../ports/engine_gateway.dart';
 
 class ReviewConfiguration {
-  const ReviewConfiguration(this.scope, this.limits, this.skipExisting);
+  const ReviewConfiguration(
+    this.scope,
+    this.limits,
+    this.skipExisting, {
+    this.mode = ReviewMode.best,
+    this.maximum = 1,
+  });
+  final ReviewMode mode;
+  final int maximum;
   final bool skipExisting;
   final ReviewScope scope;
   final ReviewLimits limits;
@@ -25,6 +33,8 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
   final depth = TextEditingController(text: '16');
   final seconds = TextEditingController(text: '2');
   final nodes = TextEditingController(text: '0');
+  final maximum = TextEditingController(text: '5');
+  var mode = ReviewMode.best;
   final form = GlobalKey<FormState>();
   var scope = ReviewScope.line;
   var skipExisting = true;
@@ -34,6 +44,7 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
     depth.dispose();
     seconds.dispose();
     nodes.dispose();
+    maximum.dispose();
     super.dispose();
   }
 
@@ -53,11 +64,40 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text('逐局面计算最佳着法。时间、深度或节点任一先达到即停止；0为不限，至少设置一项。'),
+              DropdownButtonFormField<ReviewMode>(
+                initialValue: mode,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: '分析方式'),
+                items: const [
+                  DropdownMenuItem(value: ReviewMode.best, child: Text('最佳着法')),
+                  DropdownMenuItem(
+                    value: ReviewMode.candidates,
+                    child: Text('多候选'),
+                  ),
+                ],
+                onChanged: (value) => setState(() => mode = value!),
+              ),
+              Text(
+                mode == ReviewMode.best
+                    ? '逐局面计算最佳着法。任一预算先达到即停止；0为不限，至少设置一项。'
+                    : '每个局面计算多个不同合法候选，每个候选单独使用预算。评分受预算影响；0为不限，至少限制一项。',
+              ),
+              if (mode == ReviewMode.candidates)
+                TextFormField(
+                  controller: maximum,
+                  keyboardType: TextInputType.number,
+                  decoration: const InputDecoration(labelText: '每局面最多候选数'),
+                  validator: (text) {
+                    final n = int.tryParse(text ?? '');
+                    return n == null || n < 2 || n > 256 ? '请输入2至256的整数' : null;
+                  },
+                ),
               TextFormField(
                 controller: seconds,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: '每局面用时（秒）'),
+                decoration: InputDecoration(
+                  labelText: mode == ReviewMode.best ? '每局面用时（秒）' : '每个候选用时（秒）',
+                ),
                 validator: (text) {
                   final n = double.tryParse(text ?? '');
                   return n == null ||
@@ -72,13 +112,17 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
               TextFormField(
                 controller: depth,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: '每局面深度'),
+                decoration: InputDecoration(
+                  labelText: mode == ReviewMode.best ? '每局面深度' : '每个候选深度',
+                ),
                 validator: (text) => integer(text, EngineRequest.maxDepth),
               ),
               TextFormField(
                 controller: nodes,
                 keyboardType: TextInputType.number,
-                decoration: const InputDecoration(labelText: '每局面节点数'),
+                decoration: InputDecoration(
+                  labelText: mode == ReviewMode.best ? '每局面节点数' : '每个候选节点数',
+                ),
                 validator: (text) => integer(text, EngineRequest.maxNodeLimit),
               ),
               SwitchListTile(
@@ -133,6 +177,8 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
                 nodeLimit: n == 0 ? null : n,
               ),
               skipExisting,
+              mode: mode,
+              maximum: mode == ReviewMode.best ? 1 : int.parse(maximum.text),
             ),
           );
         },

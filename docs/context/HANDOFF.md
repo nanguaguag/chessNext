@@ -32,3 +32,8 @@ E12/E13/E14源站证据落盘，IAB browser2 tab4已markHandoff（可失效，�
 FiniteSearchExecutor已统一单次有限请求、最终bestmove/PV/完整合法性、缓存与取消/流错误finally清理；两套后台info捕获已移除，仍唯一EngineGateway。坏PV缓存有remove，只删派生缓存。根142/142+analyze、macOS完整14/14通过；6执行器+文件套8目标及6组件目标通过。核心未改49。最后所有验证命令已结束，无待等待进程，工作树提交后应干净。
 Fake Widget异步清理经历首轮2失败/停滞并INT自有进程52684、有限pump4失败；TRACE定位subscription.cancel Future在真实zone，pumpUntil需要runAsync推进真实异步+模拟帧。TRACE完全移除；最终全量142与analyze通过。别删除生产finally await来迎合Fake时钟。旧段135为上一切片，当前142。
 下一条按planning/THOROUGH_REVIEW_SLICE.md实施整谱多候选模式，方案仍P；不要调用startCandidates嵌startReview（会停掉自己）。抽CandidateCollector纯应用服务共用FiniteSearchExecutor，再扩ReviewRun模式/候选集合与partial、局面/搜索缓存双计数、配置与详情/进度。完成完整门槛再独立feat(review)中文commit；随后胜率/错题等所有功能继续，不能最终停下审查。
+
+## M3-14最新（完成，提交见git log）
+CandidateCollector已共用单步/整谱，ReviewMode最佳/多候选，完整与partial集合/主分只用首请求、局面与候选查询复用双计数、100ms batchInfo和只读候选详情。根151/151+analyze、macOS完整15/15通过（四局面每节点2候选、重跑4局面/8搜索命中），核心49未改。没有待等待验证命令；提交后工作树应干净。ADR-014、THOROUGH_REVIEW_SLICE尾部与TRACEABILITY说明范围；旧段142是前一重构切片。
+下一条原生UCI_ShowWDL：固定官方tag uci.cpp已在线查证输出win/draw/loss三整数（和1000），不要自己由cp编造概率；先做实际CLI通信probe再加EngineInfo/解析/请求选项和缓存metadata/键/能力处理，之后UI/复盘损失与分类。原始CP可保留，mate/bound/无WDL不能冒充普通概率。源站准确率公式仍未知，需继续审计而非假称相同。
+官方指南2026-11-02重读出现标准（推荐）与题库声明，但当前实际UI此前只操作快速/彻底；这是D与V差异，待新增E15证据并续审题库/标准入口，不能只按文档标运行成功。https://xiangqiai.com/guide/ 与固定源码 https://raw.githubusercontent.com/official-pikafish/Pikafish/Pikafish-2026-09-06/src/uci.cpp 。当前IAB browser2 tab4仍markHandoff，访客自制棋谱。

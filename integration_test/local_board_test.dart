@@ -673,9 +673,17 @@ void main() {
       final revision = session.revision;
       Future<void> tapVisible(Finder finder) async {
         await tester.ensureVisible(finder);
-        await tester.pumpAndSettle();
+        if (engine.batching) {
+          await tester.pump(const Duration(milliseconds: 50));
+        } else {
+          await tester.pumpAndSettle();
+        }
         await tester.tap(finder);
-        await tester.pumpAndSettle();
+        if (engine.batching) {
+          await tester.pump(const Duration(milliseconds: 50));
+        } else {
+          await tester.pumpAndSettle();
+        }
       }
 
       await tapVisible(find.text('分析整盘棋'));
@@ -835,9 +843,17 @@ void main() {
           .engine;
       Future<void> tapVisible(Finder target) async {
         await tester.ensureVisible(target);
-        await tester.pumpAndSettle();
+        if (engine.batching) {
+          await tester.pump(const Duration(milliseconds: 50));
+        } else {
+          await tester.pumpAndSettle();
+        }
         await tester.tap(target);
-        await tester.pumpAndSettle();
+        if (engine.batching) {
+          await tester.pump(const Duration(milliseconds: 50));
+        } else {
+          await tester.pumpAndSettle();
+        }
       }
 
       await tapVisible(find.text('分析替代候选'));
@@ -880,6 +896,94 @@ void main() {
       await tester.pumpAndSettle();
       expect(engine.candidates!.cachedCount, 2);
       expect(engine.candidates!.phase, ReviewPhase.completed);
+    },
+  );
+  testWidgets(
+    'native multi-candidate review configures branches, details and cache counts',
+    (tester) async {
+      await tester.pumpWidget(
+        ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
+      );
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      final engine = tester.widget<PlayPanel>(find.byType(PlayPanel)).engine;
+      session.playMove(Move.parse('h2e2'));
+      session.playMove(Move.parse('b9c7'));
+      session.first();
+      session.playMove(Move.parse('b2e2'));
+      session.first();
+      await tester.pumpAndSettle();
+      Future<void> tapVisible(Finder target) async {
+        await tester.pump(const Duration(milliseconds: 50));
+        await tester.ensureVisible(target);
+        if (engine.batching) {
+          await tester.pump(const Duration(milliseconds: 50));
+        } else {
+          await tester.pumpAndSettle();
+        }
+        await tester.tap(target);
+        if (engine.batching) {
+          await tester.pump(const Duration(milliseconds: 50));
+        } else {
+          await tester.pumpAndSettle();
+        }
+      }
+
+      await tapVisible(find.text('分析整盘棋'));
+      await tapVisible(find.text('最佳着法'));
+      await tapVisible(find.text('多候选').last);
+      Finder field(String label) => find.byWidgetPredicate(
+        (w) => w is TextField && w.decoration?.labelText == label,
+      );
+      for (final item in {
+        '每局面最多候选数': '2',
+        '每个候选用时（秒）': '0',
+        '每个候选深度': '4',
+      }.entries) {
+        await tester.ensureVisible(field(item.key));
+        await enterNativeText(tester, field(item.key), item.value);
+      }
+      await tapVisible(find.text('包括所有变着'));
+      await tapVisible(find.text('开始整谱分析'));
+      for (
+        var i = 0;
+        i < 200 && engine.review?.phase != ReviewPhase.completed;
+        i++
+      ) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      final run = engine.review!;
+      expect(run.phase, ReviewPhase.completed);
+      expect(run.mode, ReviewMode.candidates);
+      expect(run.results.length, 4);
+      expect(
+        run.candidateResults.values.every(
+          (c) => c.entries.length == 2 && c.complete,
+        ),
+        isTrue,
+      );
+      expect(session.tree.cursorId, 'n0');
+      await tapVisible(find.byKey(const ValueKey('review-candidates-n1')));
+      expect(find.text('局面候选详情'), findsOneWidget);
+      for (final candidate in run.candidateResults['n1']!.entries) {
+        expect(
+          find.byKey(ValueKey('review-detail-${candidate.move}')),
+          findsOneWidget,
+        );
+      }
+      await tapVisible(find.text('关闭'));
+      await engine.startReview(
+        scope: ReviewScope.tree,
+        mode: ReviewMode.candidates,
+        maximum: 2,
+        limits: ReviewLimits(depth: 4, moveTimeMs: null),
+      );
+      await tester.pumpAndSettle();
+      expect(engine.review!.cachedCount, 4);
+      expect(engine.review!.cachedSearchCount, 8);
+      expect(find.text('复用 8 次候选搜索'), findsOneWidget);
     },
   );
 }

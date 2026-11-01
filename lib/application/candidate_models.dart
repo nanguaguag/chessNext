@@ -1,12 +1,5 @@
 import 'package:xiangqi_core/xiangqi_core.dart';
-import '../ports/engine_gateway.dart';
 import 'review_models.dart';
-
-class CandidateEvaluation {
-  const CandidateEvaluation(this.move, this.info);
-  final Move move;
-  final EngineInfo? info;
-}
 
 class CandidateRun {
   CandidateRun({

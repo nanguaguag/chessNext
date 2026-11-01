@@ -10,3 +10,5 @@
 6. 进度区分局面与当前候选。FiniteSearchExecutor.onInfo可经控制器统一100ms合并batchInfo（token+job有效才显示），不再维护两套最终评分捕获；切搜索/取消/销毁清计时器。活动分析原有info合并不变。
 
 验收：line/tree各节点唯一、2候选首着不同且属于目标、第一评分正确、cached局面/搜索计数、模式/预算/max改变命中条件、partial取消保留与0候选/无分、AI/分析抢占及旧epoch、纯读谱不改目标、配置非法与200%字号、详情虚拟列表；真实NNUE分支多局面和macOS配置/取消/缓存。根flutter test+analyze后独立中文feat(review)提交。需要改前验证FiniteSearchExecutor前置当前提交是否已通过，不将本P标实现。
+
+M3-14续：上述有限多候选/partial/双计数/详情已按ADR-014实施验收，具体测试及平台见TRACEABILITY；不把可接受筛选公式未知或所有F32子功能标为完成。

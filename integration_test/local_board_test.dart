@@ -1,3 +1,4 @@
+import '../test/support/memory_clipboard.dart';
 import 'package:chess_next/features/help/onboarding_dialog.dart';
 import 'package:chess_next/adapters/storage/file_recent_reading_repository.dart';
 import 'package:chess_next/features/library/recent_reading_dialog.dart';
@@ -394,7 +395,9 @@ void main() {
       await tester.ensureVisible(find.text('导出文字'));
       await tester.tap(find.text('导出文字'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('FEN + 着法'));
+      await tester.tap(find.byKey(const ValueKey('export-format')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('FEN + 着法').last);
       await tester.pump();
       final exported = tester
           .widget<SelectableText>(find.byKey(const ValueKey('export-text')))
@@ -1285,4 +1288,103 @@ void main() {
       }
     },
   );
+  testWidgets('native PGN text preserves metadata, comments and saved branches', (
+    tester,
+  ) async {
+    final directory = await (await getApplicationDocumentsDirectory())
+        .createTemp('.chessnext-pgn-');
+    final games = FileGameRepository(() async => directory);
+    const pgn =
+        '[Game "Chinese Chess"]\n[Format "ICCS"]\n[Event "原生PGN自制"]\n'
+        '[Custom "未知标签"]\n[Result "1/2-1/2"]\n{根评}\n1. B2-E2 {炮评} B9-C7 2. H2-H4 {后续评注} 1/2-1/2';
+    final clipboard = MemoryClipboard()..text = pgn;
+    Widget app() => ChessNextApp(
+      key: UniqueKey(),
+      repository: FileGameRepository(() async => directory),
+      clipboard: clipboard,
+    );
+    Future<void> tap(Finder target) async {
+      await tester.ensureVisible(target);
+      await tester.pumpAndSettle();
+      await tester.tap(target);
+      await tester.pumpAndSettle();
+    }
+
+    try {
+      await tester.pumpWidget(app());
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      await tap(find.text('导入文字'));
+      await tap(find.text('读取剪贴板'));
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('import-text')))
+            .controller!
+            .text,
+        pgn,
+      );
+      await tap(find.text('导入'));
+      expect(session.tree.nodeCount, 4);
+      expect(session.metadata.tags['Custom'], '未知标签');
+      expect(session.metadata.result, '1/2-1/2');
+      expect(session.outcome.isTerminal, isFalse);
+      session.first();
+      session.playMove(Move.parse('h2e2'));
+      session.navigate('n2');
+      await tester.pumpAndSettle();
+      expect(session.tree.nodeCount, 5);
+      await tap(find.text('导出文字'));
+      await tap(find.byKey(const ValueKey('export-format')));
+      await tap(find.text('PGN（中文）').last);
+      await tap(find.text('复制'));
+      final copied = PgnCodec.parse(clipboard.text!);
+      expect(copied.tree.nodeCount, 3);
+      expect(copied.tree.current.move, Move.parse('b9c7'));
+      expect(copied.tree.root.comment, '根评');
+      expect(copied.tree.node('n1').comment, '炮评');
+      expect(copied.tags['Custom'], '未知标签');
+      expect(copied.tags['Format'], 'Chinese');
+      expect(session.metadata.tags['Format'], 'ICCS');
+      await tap(find.text('关闭'));
+      await tap(find.text('保存棋谱'));
+      await enterNativeText(
+        tester,
+        find.byKey(const ValueKey('record-name')),
+        '原生PGN验证',
+      );
+      await tap(find.widgetWithText(FilledButton, '保存'));
+      for (var i = 0; i < 50 && session.dirty; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(session.dirty, isFalse);
+      final saved = (await games.list()).games.single;
+      expect(saved.tree.nodeCount, 5);
+      expect(saved.metadata.tags['Custom'], '未知标签');
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(app());
+      await tester.pumpAndSettle();
+      await tap(find.text('棋谱库'));
+      final row = find.widgetWithText(ListTile, '原生PGN验证');
+      for (var i = 0; i < 50 && row.evaluate().isEmpty; i++) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      await tap(row);
+      final restored = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      expect(restored.tree.nodeCount, 5);
+      expect(restored.tree.cursorId, 'n2');
+      expect(restored.tree.node('n3').comment, '后续评注');
+      expect(restored.metadata.tags['Custom'], '未知标签');
+      expect(restored.metadata.result, '1/2-1/2');
+      expect(tester.takeException(), isNull);
+    } finally {
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await directory.delete(recursive: true);
+    }
+  });
 }

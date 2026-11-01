@@ -233,3 +233,6 @@ M4-01a最终门槛：核心dart test61/61、dart analyze无问题；根显式NNU
 M4-01b中间：存储首10/10、表单加入后目标15/15，再补Editor限额纠错；根真NNUE226/226、flutter analyze无问题，核心65/65；核心analyze首1条测试空List类型推断警告，补Object?后无问题。覆盖保护以dirty判断修复清空最后资料未提示，已命名空草稿可恢复。macOS完整18执行中/tmp/chessnext-metadata-native.log，无完成声明。
 M4-01b原生首完整18项：17通过1失败，新增用例库打开时find.text同名匹配草稿标题和库条目导致Too many elements。改限定ListTile并等该行；首次替换漏savedRow声明导致单项原生构建编译失败，补声明后重验。均不是通过，不隐去；生产源未改。原生修后日志/tmp/chessnext-metadata-native-final.log，flutter analyze复验中。
 M4-01b提交门槛：根真NNUE226/226、flutter analyze无问题；核心65/65、最终dart analyze无问题。原生完整首18项17通过1失败/测试定位修订一次漏变量编译失败已如实记，最终资料单项1/1（00:09）通过，源未改，覆盖18用例但非最后一条18/18。无待等待验证命令。下一PGN文字交换（非filepicker），模型与草稿资料已经可用。
+2026-11-02 M4-01c：RecordTextExchange真实Isolate传输初5/5；接typed导入/资料/评注、取消代次/route保护、App确认后复验、快照导出/五格式及评注选择。初UI analyze5项大括号已限定dart fix，旧3组件更新worker等待/Dropdown选择，目标执行中，尚无全量/新原生，不计完成。
+M4-01c中间：目标15/15通过；全根首真NNUE238/238。flutter analyze余1项use_build_context_synchronously（自定义active getter已含mounted但flow不识别），Navigator前补显式mounted后全根/analyze复验。原生新PGN已写，未跑，不计完成。取消PopScope/代次/active+alive区分防晚结果关其它窗口与控件永久busy。
+M4-01c最终：根真NNUE238/238、flutter analyze无问题，旧文字原生1/1（00:05）、新PGN原生1/1（00:11）通过且exit0确认。真实worker+实际完整文件保存/新App恢复，剪贴板端口注入不触系统；尚无系统filepicker。没有核心变更，沿用65/65。当前无待等待验证，准备独立中文feat(notation)提交。

@@ -1,3 +1,4 @@
+import 'application/record_text_exchange.dart';
 import 'features/metadata/record_metadata_dialog.dart';
 import 'features/help/onboarding_dialog.dart';
 import 'features/help/offline_help_dialog.dart';
@@ -409,18 +410,29 @@ class _BoardPage extends StatelessWidget {
     if (!context.mounted) return;
     final epoch = session.epoch;
     final revision = session.revision;
-    final tree = await showDialog<GameTree>(
+    final positionRevision = session.positionRevision;
+    bool current() =>
+        session.epoch == epoch &&
+        session.revision == revision &&
+        session.positionRevision == positionRevision;
+    void stale() => ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('导入期间棋谱已变化，请重新导入。')));
+    final imported = await showDialog<ImportedRecord>(
       context: context,
       builder: (_) => ImportTextDialog(clipboard: clipboard),
     );
-    if (tree == null || !context.mounted) return;
-    if (session.epoch != epoch || session.revision != revision) return;
+    if (imported == null || !context.mounted) return;
+    if (!current()) {
+      stale();
+      return;
+    }
     if (session.dirty) {
       final choice = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('导入前保留当前棋谱？'),
-          content: const Text('导入成功后将替换当前棋谱。'),
+          content: const Text('导入成功后将替换当前棋谱及资料。'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context),
@@ -438,11 +450,36 @@ class _BoardPage extends StatelessWidget {
         ),
       );
       if (choice == null || !context.mounted) return;
+      if (!current()) {
+        stale();
+        return;
+      }
       if (choice == 'save' && (!await _save(context) || !context.mounted)) {
         return;
       }
+      if (!current()) {
+        stale();
+        return;
+      }
     }
-    library.importTree(tree);
+    library.importTree(
+      imported.tree,
+      metadata: imported.metadata,
+      title: imported.source == TextSourceFormat.pgn ? '导入PGN棋谱' : '导入棋谱',
+    );
+  }
+
+  Future<void> _export(BuildContext context) async {
+    final tree = session.tree;
+    final metadata = session.metadata;
+    await showDialog<void>(
+      context: context,
+      builder: (_) => ExportTextDialog(
+        tree: tree,
+        metadata: metadata,
+        clipboard: clipboard,
+      ),
+    );
   }
 
   Future<void> _restoreDraft(BuildContext context) async {
@@ -614,13 +651,7 @@ class _BoardPage extends StatelessWidget {
                         label: const Text('导入文字'),
                       ),
                       OutlinedButton.icon(
-                        onPressed: () => showDialog<void>(
-                          context: context,
-                          builder: (_) => ExportTextDialog(
-                            tree: session.tree,
-                            clipboard: clipboard,
-                          ),
-                        ),
+                        onPressed: () => _export(context),
                         icon: const Icon(Icons.ios_share),
                         label: const Text('导出文字'),
                       ),

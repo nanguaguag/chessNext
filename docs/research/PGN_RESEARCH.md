@@ -15,3 +15,5 @@ V：E20下载自制151字节UTF8无BOM样本，[PGN](samples/E20-self-created-ic
 随后App文字交换与文件端口分片接入；目前GameTree/本地SavedGame无赛事/棋手元数据持久化，不能解析后悄悄丢掉标签却宣称完整资料导入。应先加资料模型/存储可选字段或明确预览与用户确认损失；UI必须可审查。之后逐项WXF/变着/多局/GBK等，待对应主规范与自制fixture，不一次宣称所有PGN均兼容。
 
 M4-01b续：GameMetadata/BoardSession/SavedGame的可选资料字段、本地保存和草稿已验收；GameTree仍专管棋树，资料并列保持。PGN交换界面/文件入口仍未接，下一按独立增量，不将资料模型当PGN导入可用。
+
+M4-01c续：单局ICCS/中文PGN文字/剪贴板交换已进App，实际worker/资料评注/快照及原生完整存谱恢复已验；系统文件选择和其它PGN特性仍未完成，不能把文字导入当文件对话框已验证。

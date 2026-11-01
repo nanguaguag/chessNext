@@ -1,3 +1,5 @@
+import 'package:chess_next/application/record_text_exchange.dart';
+import '../support/pump_until.dart';
 import 'package:chess_next/app.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/features/transfer/text_transfer_dialog.dart';
@@ -52,6 +54,10 @@ void main() {
       );
       await tester.pump();
       await tester.tap(find.text('导入'));
+      await pumpUntil(
+        tester,
+        () => find.textContaining('第1步不合法').evaluate().isNotEmpty,
+      );
       await tester.pumpAndSettle();
       expect(find.textContaining('第1步不合法'), findsOneWidget);
       expect(session.hasMoves, isFalse);
@@ -61,6 +67,7 @@ void main() {
       );
       await tester.pump();
       await tester.tap(find.text('导入'));
+      await pumpUntil(tester, () => session.moves.length == 2);
       await tester.pumpAndSettle();
       expect(session.moves.length, 2);
       expect(session.dirty, isTrue);
@@ -72,9 +79,14 @@ void main() {
       );
       await tester.pump();
       await tester.tap(find.text('导入'));
+      await pumpUntil(
+        tester,
+        () => find.text('导入前保留当前棋谱？').evaluate().isNotEmpty,
+      );
       await tester.pumpAndSettle();
       expect(find.text('导入前保留当前棋谱？'), findsOneWidget);
       await tester.tap(find.text('取消'));
+      await pumpUntil(tester, () => session.moves.length == 2);
       await tester.pumpAndSettle();
       expect(session.moves.length, 2);
     },
@@ -88,7 +100,7 @@ void main() {
         MaterialApp(
           home: Builder(
             builder: (context) => TextButton(
-              onPressed: () => showDialog<GameTree>(
+              onPressed: () => showDialog<ImportedRecord>(
                 context: context,
                 builder: (_) => ImportTextDialog(clipboard: clipboard),
               ),
@@ -120,7 +132,9 @@ void main() {
           ),
         ),
       );
-      await tester.tap(find.text('FEN + 着法'));
+      await tester.tap(find.byKey(const ValueKey('export-format')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('FEN + 着法').last);
       await tester.pump();
       await tester.tap(find.text('复制'));
       await tester.pumpAndSettle();
@@ -146,13 +160,16 @@ void main() {
       );
       await tester.pump();
       await tester.tap(find.text('导入'));
+      await pumpUntil(tester, () => find.text('1. 炮二平五').evaluate().isNotEmpty);
       await tester.pumpAndSettle();
       expect(find.text('1. 炮二平五'), findsOneWidget);
       expect(find.text('2. 马２进３'), findsOneWidget);
       expect(find.byTooltip('h2e2'), findsOneWidget);
       await tester.tap(find.text('导出文字'));
       await tester.pumpAndSettle();
-      await tester.tap(find.text('中文棋谱'));
+      await tester.tap(find.byKey(const ValueKey('export-format')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('中文棋谱').last);
       await tester.pump();
       await tester.tap(find.text('复制'));
       await tester.pumpAndSettle();

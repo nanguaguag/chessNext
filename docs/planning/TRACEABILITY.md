@@ -223,3 +223,12 @@ Material3资料表单/六常用字段和记录结果、只提交改动、未知/
 macOS完整18项首轮17通过1失败，新资料用例库条目与草稿同名文本匹配歧义；修ListTile限定/等待行时漏声明又一次构建失败，补后资料单项1/1（00:09）通过。生产源未因测试修订改变；原生覆盖包括完整保存资料/新App打开原保存/恢复独立metadata-only草稿/原谱保持不变，不虚构最后一条命令18/18。raw生命周期[]，不当人工OS焦点；其它平台未验。日志SESSION_LOG。
 
 ADR-019/RECORD_METADATA_SLICE；仍未接PGN交换UI和文件端口，不能标F08/F12全完成。没有新增依赖或第三方资产。
+
+## 2026-11-02 / M4-01c / F07,F12 → B19 PGN文字交换
+
+RecordTextExchange/ImportedRecord纯应用接口，静态Isolate.run真实领域DTO与错误字符串传输，识别PGN或旧文字并保留完整资料/根与逐着评注；只起始BOM处理，中间资料BOM保留。ImportTextDialog忙态/取消/Clipboard晚到保护，PopScope+代次+route拦退场尚mounted时的旧回调；App解析/确认/先保存后核epoch+内容/位置修订。导出捕获开窗快照，五格式Dropdown/PGN评注选择/无损失败禁复制/明确范围，派生标签根据实际根和格式重算。
+
+新增5应用+7组件（及更新旧文字3），目标15/15；真实worker/Unicode/错误/旧格式、PGN资料评注、快照、不支持不改文档、Cancel及Escape退场防关新route、Clipboard晚到、确认/先保存期间文档变化、200%评注错误与显式省略。根真NNUE238/238、flutter analyze无问题；初5项大括号限定修，后1项mounted flow lint补显式guard后最终回归。核心未改沿用65/65+dart analyze。
+
+macOS旧文字传输相关单项1/1（00:05）通过；新PGN真实worker/注入剪贴板端口/实际文件全树保存+新App恢复进行中，结果后补。不会触系统剪贴板，不将该端口注入称系统clipboard验收。其它平台/OS人工视觉仍未验；系统文件选择/拖放与多方言不在此片完成范围。ADR-020/PGN_EXCHANGE_SLICE。
+M4-01c原生最终：新PGN单项1/1（00:11）通过：真实worker导入标签/评注，建立另一根分支并选中中途节点；PGN只复制所选两步，而完整本地存谱保留5节点/未来评注/未知资料，新App文件适配器重开仍完整。复制为注入MemoryClipboard端口，未触系统剪贴板。旧文字单项1/1（00:05）已过；最终root/analyze和两原生命令exit0确认，无待等待验证。

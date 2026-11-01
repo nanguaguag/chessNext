@@ -52,3 +52,5 @@ M2-14：application/reading_navigation.dart纯目标计算；BoardSession按tree
 M4-01a：packages/xiangqi_core/lib/src/pgn_record.dart纯Dart有限单局PGN codec和不可变标签包装，不拥有应用会话/IO；原始规范与自制样本E20，根互操作fixture验证。尚未接App/文档资料持久化，UI仍只有原文字格式，不能因export声明而冒称完整PGN功能。
 
 M4-01b：core GameMetadata与PGN共用有界验证；BoardSession并列文档资料/修订，MetadataEditor快照应用；RecordMetadataDialog只字段编辑/未知只读保留。SavedGame可选metadata、FileGame/Draft转传，Draft key和恢复带资料；dirty覆盖保护不再依赖实际hasContent，命名空草稿可恢复。ADR-019。引擎普通分析/AI保持，复盘按既有内容修订策略过期。
+
+M4-01c：application/record_text_exchange.dart无Flutter/IO的格式协调+静态Isolate.run，ImportedRecord携tree/metadata/source；ImportTextDialog TextImporter注入与PopScope/代次/route收尾；App导入确认/保存后复验并原子入库会话，导出开窗快照。ExportTextDialog五格式/PGN评注选项/不可无损错误禁复制。ADR-020；系统文件入口仍后续。

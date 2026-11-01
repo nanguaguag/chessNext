@@ -1,0 +1,50 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++			400 button
++			401 text 皮卡鱼象棋
++			402 button ? 登录 登录后棋谱保存到云端
++				403 text ?
++				404 text 登录
++				405 text 登录后棋谱保存到云端
++				406 image
++			407 container
++				408 text 棋谱
++				409 button 棋谱库
++					410 image
++					411 text 棋谱库
++				412 button 错题本
++					413 image
++					414 text 错题本
++				415 button 最近阅读
++					416 image
++					417 text 最近阅读
++				418 text 本局
++				419 button 棋谱分析
++					420 image
++					421 text 棋谱分析
++				422 button 显示模式 分析
++					423 image
++					424 text 显示模式
++					425 text 分析
++				426 button 导入棋谱
++					427 image
++					428 text 导入棋谱
++				429 button 导出与分享
++					430 image
++					431 text 导出与分享
++				432 text 帮助
++				433 link Description: 象棋 AI 使用指南, Value: xiangqiai.com/guide/
++				434 button 新手引导
++					435 image
++					436 text 新手引导
++				437 button 按钮说明
++					438 image
++					439 text 按钮说明
++				440 link Description: 切换旧版 加载或对弈遇到问题时可尝试, Value: old.xiangqiai.com/#/rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR%20w
++			441 button 问题反馈
++				442 image
++				443 text 问题反馈
++			444 button 设置
++				445 image
++				446 text 设置
+The focused UI element is 3 button 菜单

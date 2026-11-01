@@ -1,0 +1,44 @@
+# {"release": "Pikafish-2026-09-06", "commit": "4c17cee11f888ae1d48a9494f2e2239f019f0a1f", "binary_sha256": "3a11f9034ef723bb4068e4cf88a79a12d99507474ba118fa916ec2cecd4f4abe", "network_sha256": "7d13d73569a9b571ba0eb20cf1596247bc2a42738967e61afef6482b231e900e"}
+> uci
+Pikafish 2026-09-06 by the Pikafish developers (see AUTHORS file)
+id name Pikafish 2026-09-06
+id author the Pikafish developers (see AUTHORS file)
+
+option name Debug Log File type string default <empty>
+option name NumaPolicy type string default auto
+option name Threads type spin default 1 min 1 max 1024
+option name Hash type spin default 16 min 1 max 33554432
+option name Clear Hash type button
+option name Ponder type check default false
+option name MultiPV type spin default 1 min 1 max 128
+option name Move Overhead type spin default 10 min 0 max 5000
+option name nodestime type spin default 0 min 0 max 10000
+option name UCI_ShowWDL type check default false
+option name EvalFile type string default pikafish.nnue
+uciok
+> setoption name UCI_ShowWDL value true
+> isready
+readyok
+> position startpos
+> go depth 4
+info string Available processors: 0-9
+info string Using 1 thread
+info string NNUE evaluation using pikafish.nnue (64MiB, (62083, 1024, 32, 32, 1))
+info string Network replica 1: Shared memory.
+info depth 1 seldepth 3 multipv 1 score cp 22 wdl 61 926 13 nodes 53 nps 53000 hashfull 0 tbhits 0 time 1 pv b2e2
+info depth 2 seldepth 3 multipv 1 score cp 98 wdl 483 516 1 nodes 108 nps 108000 hashfull 0 tbhits 0 time 1 pv b2e2
+info depth 3 seldepth 4 multipv 1 score cp 157 wdl 880 120 0 nodes 174 nps 174000 hashfull 0 tbhits 0 time 1 pv b2e2
+info depth 4 seldepth 7 multipv 1 score cp 72 wdl 274 724 2 nodes 720 nps 720000 hashfull 0 tbhits 0 time 1 pv b2e2 b9c7 b0c2 g9e7
+bestmove b2e2 ponder b9c7
+> position startpos moves h2e2
+> go depth 4
+info string Available processors: 0-9
+info string Using 1 thread
+info string NNUE evaluation using pikafish.nnue (64MiB, (62083, 1024, 32, 32, 1))
+info string Network replica 1: Shared memory.
+info depth 1 seldepth 5 multipv 1 score cp -48 wdl 5 855 140 nodes 52 nps 52000 hashfull 0 tbhits 0 time 1 pv a6a5 a3a4
+info depth 2 seldepth 5 multipv 1 score cp -38 wdl 8 890 102 nodes 221 nps 221000 hashfull 0 tbhits 0 time 1 pv h9g7
+info depth 3 seldepth 5 multipv 1 score cp -39 wdl 8 889 103 nodes 285 nps 285000 hashfull 0 tbhits 0 time 1 pv h9g7 h0g2 i9h9
+info depth 4 seldepth 5 multipv 1 score cp -36 wdl 8 896 96 nodes 367 nps 367000 hashfull 0 tbhits 0 time 1 pv h9g7 h0g2 i9h9 b0c2
+bestmove h9g7 ponder h0g2
+> quit

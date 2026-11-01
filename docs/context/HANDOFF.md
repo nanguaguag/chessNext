@@ -37,3 +37,5 @@ Fake Widget异步清理经历首轮2失败/停滞并INT自有进程52684、有�
 CandidateCollector已共用单步/整谱，ReviewMode最佳/多候选，完整与partial集合/主分只用首请求、局面与候选查询复用双计数、100ms batchInfo和只读候选详情。根151/151+analyze、macOS完整15/15通过（四局面每节点2候选、重跑4局面/8搜索命中），核心49未改。没有待等待验证命令；提交后工作树应干净。ADR-014、THOROUGH_REVIEW_SLICE尾部与TRACEABILITY说明范围；旧段142是前一重构切片。
 下一条原生UCI_ShowWDL：固定官方tag uci.cpp已在线查证输出win/draw/loss三整数（和1000），不要自己由cp编造概率；先做实际CLI通信probe再加EngineInfo/解析/请求选项和缓存metadata/键/能力处理，之后UI/复盘损失与分类。原始CP可保留，mate/bound/无WDL不能冒充普通概率。源站准确率公式仍未知，需继续审计而非假称相同。
 官方指南2026-11-02重读出现标准（推荐）与题库声明，但当前实际UI此前只操作快速/彻底；这是D与V差异，待新增E15证据并续审题库/标准入口，不能只按文档标运行成功。https://xiangqiai.com/guide/ 与固定源码 https://raw.githubusercontent.com/official-pikafish/Pikafish/Pikafish-2026-09-06/src/uci.cpp 。当前IAB browser2 tab4仍markHandoff，访客自制棋谱。
+
+E15/WDL调查已完成，提交见git log。F33题库仅指南D、B21待核；当前访客实际模式只有快速/彻底，不能猜标准参数。IAB tab4现在模式选择器打开（快速505/彻底508/取消511是当次索引，必须fresh AX再用），已markHandoff。WDL实际CLI8行/总和1000/quit0，见engine/WDL_RESEARCH与validation/wdl-protocol-2026-11-02.txt、tools/probe_wdl.py；App还未启用/解析。最后样本black raw -36,8/896/96。下一按该文档实施类型/请求/选项/解析/缓存/视角展示，先端口与失败模型，逐增量测试commit。没有待等待验证命令。

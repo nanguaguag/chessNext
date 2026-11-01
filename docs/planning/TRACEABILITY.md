@@ -197,3 +197,11 @@ Material3四步只读教学/前后/跳过/完成/手动重放，App/main生产�
 
 失败留痕：首目标7+1因全局错误文字重复匹配（状态栏+Snackbar），改Snackbar限定后过；App集成2项大括号修；新增慢读测试漏dart:async导致全根加载失败/analyze2项，补import后最终201/201。没有降低业务断言或绕过保存失败。聚光跟随真实控件/操作闯关未实现，不把本只读四步视为参考交互完全一致。
 M3-18最终：模态让位后根真NNUE201/201、analyze通过；原生引导最终单项1/1（00:04）再次通过，相关设置恢复1/1结果保留。无待等待验证命令。production main已启用首次引导，默认测试宿主不自动弹出；启用模式已独立验证。
+
+## 2026-11-02 / M2-14 / F01,F13 → B05,B16 分支点导航
+
+ReadingNavigation纯应用目标：严格祖先/所选currentLine最近分支点（多子节点），无则到绝对开始/所选末尾，当前点排除、其它支线分叉不截断。BoardSession按不可变树对象缓存，选子/info不重扫。App保留绝对首尾，增加双箭头Tooltip/窄屏Wrap/禁用状态；闭包捕获目标+epoch/revision/positionRevision，旧UI不能作用复用ID的新文档，统一引擎协调器暂停AI和迟到结果保护；帮助补语义。
+
+5应用+3组件=8新增：空/单线/根及嵌套fork/所选短支线/删除提升/千步迭代；200%字号往返与绝对首尾、AI思考stop返回bestmove丢弃、旧按钮新文档保护。目标8/8，全根显式官方NNUE209/209、flutter analyze无问题；macOS读谱用例补中段两子分支，往返根/分支/所选末端且nodeCount/revision/clean不变，单项1/1（00:08）通过。领域无改动沿用核心49，不称其它平台已验。
+
+首目标因未直接导入扩展所属engine_session_controller library而编译失败，补import后过；AI夹具预先改有限pump避免思考进度条settle，未改生产异步收尾。E19单中段参考已V，嵌套/根fork是明确项目扩展验收，未冒充参考全部边界。

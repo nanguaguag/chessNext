@@ -46,3 +46,5 @@ F18：ports/recent_reading_repository.dart独立元数据/恢复接口；applica
 F29首片：features/help/offline_help_dialog.dart只读展示层，原创9主题/搜索/折叠/选中文字；AppBar装配入口，无应用IO或引擎依赖。手动分步/首次提示仍后续独立增量，验证TRACEABILITY。
 
 F29第二片：OnboardingDialog纯展示四步/类型化GuideExit，OfflineHelpDialog返回HelpAction由App协调；AppPreferences可选guideVersion与PreferencesController.markGuideSeen处理错误/初始化合并/保存，App/main显式firstRun开关和安全导航。Settings保存copyWith保留非表单字段。ADR-018，真实控件聚光操作闯关尚未实现。
+
+M2-14：application/reading_navigation.dart纯目标计算；BoardSession按tree对象缓存；App双箭头保留绝对首尾并绑定epoch/内容与位置修订回调，经现有EngineSessionController.navigateToNode。E19/BRANCH_NAVIGATION_SLICE与TRACEABILITY说明范围，无规则修改。

@@ -41,3 +41,10 @@ OnboardingDialog四步只读前后/跳过/完成，guideVersion可选schema1旧0
 ## 下一条：E19分支导航
 E19研究文件/AX/截图已写入docs/research并登记，尚待独立docs提交，不混进引导功能。IAB browser2 tab4自制谱正常方向：炮八平五/马２进３/马八进七/马８进７，回第二着追加炮二进二为选中同级。首端从alt末端到第二着分支点、再到root；末端从root到第二着再到所选炮二进二，均V。站点嵌套/根多分支未验，不编造。markHandoff已做，压缩恢复先rewriteDocumentation/fresh AX。
 下一M2-14 F01/F13 B05/B16：BoardSession增加严格前/后最近分支点目标，上一扫描祖先排除当前，下一沿currentLine排除当前，children.length>1算分支，无则root/所选line末尾。保留现有绝对首尾，另加清晰Tooltip的两按钮，经唯一EngineSessionController.navigateToNode暂停AI/旧结果保护，不dirty不写谱。先写验收/计划，再应用/组件/真实macOS导航测试，全根test+analyze后中文独立commit。随后错题训练/文件格式/外观布局/自建后端/五平台等继续，不能最终停下。
+
+## M2-14最新：分支导航完成（提交见git log）
+ReadingNavigation纯应用严格祖先/所选currentLine前后分支目标，BoardSession按tree对象缓存，App保留绝对首尾另加两个Tooltip双箭头，捕获epoch/revision/positionRevision阻止旧按钮作用新文档，经engine.navigateToNode暂停AI；离线帮助补语义。5应用+3组件目标8/8，根真NNUE209/209、analyze、macOS读谱相关单项1/1（00:08）通过；核心未改49沿用。首次缺扩展library直接import编译失败已修，日志SESSION_LOG。无待等待验证命令，应独立feat(records)中文提交。
+
+下一E20 PGN研究：浏览器从本轮自制谱导出PGN，下载路径/Users/huzongyao/Downloads/xiangqiai_2026_11-02_05_38_47.pgn（仅本Agent自制样本，不是站点棋谱库）；151字节UTF8无BOM，SHA256 6f19538be1cb55cf50bc62f958f6ee842a9d39c0f0d4f9e3b5811d4f67b6e5f5。四标签Game Chinese Chess / Result * / FEN双字段初始w / Format ICCS，正文1.B2-E2 B9-C7、2.H2-H4 *，只导出根到当前alt路径，原另一分支和未来不在样本；不由此推断所有PGN模式。E20截图已在docs/research/screenshots/E20-pgn-export.png，其它样本/证据尚未登记，独立docs提交，不混产品。
+已web查官方xqbase原始规范 https://www.xqbase.com/protocol/cchess_pgn.htm （2006修订）：Game首标签/标签-着法/默认Chinese、可ICCS/WXF/花括号评注/结果终止/多局；不可直接套国际象棋SAN。不要复制规范例谱或第三方parser代码，仅原创解析。另打开pgnfen2是国际象棋译文，不拿其50步等当中国象棋规则。下一先落研究及PGN增量计划，再实现有限单局ICCS/中文PGN交换、元数据/注释/变着损失提示与合法性原子校验；若完整头/分支需新文档模型则独立拆片，不一次假称全部格式支持。用户持续推进约束不变，不能最终停下。
+IAB browser2 tab4保留本轮自制炮八平五/马２进３/炮二进二选中分支末端，刚导出后面板已收起，markHandoff；压缩先rewriteDocumentation/fresh AX。

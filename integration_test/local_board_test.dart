@@ -643,6 +643,29 @@ void main() {
         tester.widget<ListTile>(find.byKey(const ValueKey('move-n3'))).selected,
         isTrue,
       );
+      session.playMove(
+        Move.parse('b9c7'),
+      ); // n5, sibling of n4 after selected n3.
+      final revision = session.revision;
+      session.markSaved(revision);
+      await tester.pumpAndSettle();
+      Future<void> branch(String tooltip, String expected) async {
+        final target = find.byTooltip(tooltip);
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+        expect(session.tree.cursorId, expected);
+      }
+
+      await branch('上一分支点或开始', 'n3');
+      await branch('上一分支点或开始', 'n0');
+      await branch('下一分支点或末尾', 'n3');
+      await branch('下一分支点或末尾', 'n5');
+      expect(session.tree.currentLine.last.id, 'n5');
+      expect(session.tree.nodeCount, 6);
+      expect(session.revision, revision);
+      expect(session.dirty, isFalse);
     },
   );
   testWidgets(

@@ -1,3 +1,4 @@
+import 'reading_navigation.dart';
 import 'package:flutter/foundation.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 
@@ -152,6 +153,16 @@ class BoardSession extends ChangeNotifier {
 
   void undo() {
     if (canUndo) navigate(tree.current.parentId!);
+  }
+
+  GameTree? _navigationTree;
+  ReadingNavigation? _navigation;
+  ReadingNavigation get readingNavigation {
+    if (!identical(_navigationTree, tree)) {
+      _navigationTree = tree;
+      _navigation = ReadingNavigation(tree);
+    }
+    return _navigation!;
   }
 
   String? get nextNodeId {

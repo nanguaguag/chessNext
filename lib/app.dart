@@ -281,6 +281,26 @@ class _BoardPage extends StatelessWidget {
   final LibraryController library;
   final RecentReadingController readings;
   final EngineSessionController analysis;
+  Widget _branchButton(String? target, String tooltip, IconData icon) {
+    final epoch = session.epoch;
+    final revision = session.revision;
+    final positionRevision = session.positionRevision;
+    return IconButton(
+      tooltip: tooltip,
+      icon: Icon(icon),
+      onPressed: target == null
+          ? null
+          : () {
+              if (session.epoch == epoch &&
+                  session.revision == revision &&
+                  session.positionRevision == positionRevision &&
+                  session.tree.hasNode(target)) {
+                unawaited(analysis.navigateToNode(target));
+              }
+            },
+    );
+  }
+
   Future<void> _newGame(BuildContext context) async {
     if (session.dirty && session.hasContent) {
       final confirmed = await showDialog<bool>(
@@ -669,6 +689,11 @@ class _BoardPage extends StatelessWidget {
                         tooltip: '回到开始',
                         icon: const Icon(Icons.first_page),
                       ),
+                      _branchButton(
+                        session.readingNavigation.previousBranchId,
+                        '上一分支点或开始',
+                        Icons.keyboard_double_arrow_left,
+                      ),
                       IconButton(
                         onPressed: session.canUndo
                             ? () => analysis.navigateToNode(
@@ -684,6 +709,11 @@ class _BoardPage extends StatelessWidget {
                             : null,
                         tooltip: '下一着',
                         icon: const Icon(Icons.chevron_right),
+                      ),
+                      _branchButton(
+                        session.readingNavigation.nextBranchId,
+                        '下一分支点或末尾',
+                        Icons.keyboard_double_arrow_right,
                       ),
                       IconButton(
                         onPressed: session.canForward

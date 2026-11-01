@@ -132,4 +132,33 @@ void main() {
       expect(find.textContaining('复制失败'), findsOneWidget);
     },
   );
+  testWidgets(
+    'Chinese notation imports and exports from the Material dialogs',
+    (tester) async {
+      desktop(tester);
+      final clipboard = TestClipboard();
+      await tester.pumpWidget(ChessNextApp(clipboard: clipboard));
+      await tester.tap(find.text('导入文字'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('import-text')),
+        '1. 炮二平五 馬２進３',
+      );
+      await tester.pump();
+      await tester.tap(find.text('导入'));
+      await tester.pumpAndSettle();
+      expect(find.text('1. 炮二平五'), findsOneWidget);
+      expect(find.text('2. 马２进３'), findsOneWidget);
+      expect(find.byTooltip('h2e2'), findsOneWidget);
+      await tester.tap(find.text('导出文字'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('中文棋谱'));
+      await tester.pump();
+      await tester.tap(find.text('复制'));
+      await tester.pumpAndSettle();
+      expect(clipboard.text, contains('moves 炮二平五 马２进３'));
+      final tree = TextRecord.parse(clipboard.text!);
+      expect(tree.path.last.move.toString(), 'b9c7');
+    },
+  );
 }

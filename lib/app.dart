@@ -420,8 +420,16 @@ class _BoardPage extends StatelessWidget {
                       spacing: 8,
                       runSpacing: 8,
                       children: [
-                        for (var i = 0; i < session.moves.length; i++)
-                          Chip(label: Text('${i + 1}. ${session.moves[i]}')),
+                        for (final (i, node)
+                            in session.tree.path.skip(1).indexed)
+                          Tooltip(
+                            message: node.move.toString(),
+                            child: Chip(
+                              label: Text(
+                                '${i + 1}. ${ChineseNotation.format(session.tree.node(node.parentId!).position, node.move!)}',
+                              ),
+                            ),
+                          ),
                       ],
                     ),
                   const SizedBox(height: 16),
@@ -473,7 +481,12 @@ class _BoardPage extends StatelessWidget {
                   for (final id in session.tree.current.children)
                     ListTile(
                       contentPadding: EdgeInsets.zero,
-                      title: Text('继续 ${session.tree.node(id).move}'),
+                      title: Tooltip(
+                        message: session.tree.node(id).move.toString(),
+                        child: Text(
+                          '继续 ${ChineseNotation.format(session.position, session.tree.node(id).move!)}',
+                        ),
+                      ),
                       subtitle: Text(
                         id == session.tree.current.children.first ? '主线' : '变着',
                       ),

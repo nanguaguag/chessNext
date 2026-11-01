@@ -17,7 +17,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('square-e2')));
     await tester.pump();
     expect(find.text('黑方行棋'), findsOneWidget);
-    expect(find.text('1. h2e2'), findsOneWidget);
+    expect(find.text('1. 炮二平五'), findsOneWidget);
     await tester.tap(find.text('翻转'));
     await tester.pump();
     expect(find.text('黑方行棋'), findsOneWidget);
@@ -25,11 +25,11 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('取消'));
     await tester.pumpAndSettle();
-    expect(find.text('1. h2e2'), findsOneWidget);
+    expect(find.text('1. 炮二平五'), findsOneWidget);
     await tester.tap(find.text('悔棋'));
     await tester.pump();
     expect(find.text('红方行棋'), findsOneWidget);
-    expect(find.text('1. h2e2'), findsNothing);
+    expect(find.text('1. 炮二平五'), findsNothing);
   });
   testWidgets('keyboard selection and narrow layout at 200% text scale', (
     tester,
@@ -87,7 +87,7 @@ void main() {
     await tester.pump();
     await tester.tap(find.byTooltip('回到开始'));
     await tester.pump();
-    expect(find.text('继续 h2e2'), findsOneWidget);
+    expect(find.text('继续 炮二平五'), findsOneWidget);
     await tester.tap(find.byTooltip('下一着'));
     await tester.pump();
     expect(find.text('中炮注释'), findsOneWidget);
@@ -111,12 +111,12 @@ void main() {
       expect(find.text('已保存到本地 · 我的中炮'), findsOneWidget);
       await tester.tap(find.text('新局'));
       await tester.pumpAndSettle();
-      expect(find.text('1. h2e2'), findsNothing);
+      expect(find.text('1. 炮二平五'), findsNothing);
       await tester.tap(find.text('棋谱库'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('我的中炮'));
       await tester.pumpAndSettle();
-      expect(find.text('1. h2e2'), findsOneWidget);
+      expect(find.text('1. 炮二平五'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

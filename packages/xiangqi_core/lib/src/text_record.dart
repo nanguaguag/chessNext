@@ -1,3 +1,4 @@
+import 'chinese_notation.dart';
 import 'game_tree.dart';
 import 'position.dart';
 import 'validation.dart';
@@ -17,6 +18,15 @@ abstract final class TextRecord {
     var root = parts.first.trim();
     if (root.startsWith('fen ')) root = root.substring(4).trim();
     Position initial;
+    String moveText;
+    final bareNotation =
+        parts.length == 1 && root != 'startpos' && !root.contains('/');
+    moveText = bareNotation
+        ? root
+        : parts.length > 1
+        ? parts[1]
+        : '';
+    if (bareNotation) root = 'startpos';
     try {
       initial = root == 'startpos'
           ? Position.initial()
@@ -28,15 +38,20 @@ abstract final class TextRecord {
       throw const FormatException('初始局面无效，请在局面编辑器中检查棋子数量、落点和先手');
     }
     var tree = GameTree(initial: initial);
-    final moves = parts.length == 1 || parts[1].trim().isEmpty
+    moveText = moveText.replaceAll(RegExp(r'(?<!\S)[0-9]+\.(?:\.\.)?'), ' ');
+    final moves = moveText.trim().isEmpty
         ? <String>[]
-        : parts[1].trim().split(RegExp(r'\s+'));
+        : moveText.trim().split(RegExp(r'\s+'));
     if (moves.length > 1999) throw const FormatException('着法超过1999步限制');
     for (var i = 0; i < moves.length; i++) {
       try {
-        tree = tree.play(Move.parse(moves[i]));
+        final token = moves[i];
+        final move = RegExp(r'^[a-iA-I][0-9]-?[a-iA-I][0-9]$').hasMatch(token)
+            ? Move.parse(token.toLowerCase().replaceAll('-', ''))
+            : ChineseNotation.parse(tree.current.position, token);
+        tree = tree.play(move);
       } on FormatException {
-        throw FormatException('第${i + 1}步格式错误：${moves[i]}（例如h2e2）');
+        throw FormatException('第${i + 1}步格式错误或无合法匹配：${moves[i]}（例如h2e2或炮二平五）');
       } on ArgumentError {
         throw FormatException('第${i + 1}步不合法：${moves[i]}');
       } on StateError {
@@ -47,8 +62,15 @@ abstract final class TextRecord {
   }
 
   /// Exports only the root-to-cursor path. Other branches and comments are lost.
-  static String path(GameTree tree) {
-    final moves = tree.path.map((n) => n.move).whereType<Move>().join(' ');
+  static String path(GameTree tree, {bool chinese = false}) {
+    final moves = tree.path
+        .where((n) => n.move != null)
+        .map(
+          (n) => chinese
+              ? ChineseNotation.format(tree.node(n.parentId!).position, n.move!)
+              : n.move.toString(),
+        )
+        .join(' ');
     return '${tree.root.position.toFen()}${moves.isEmpty ? '' : ' moves $moves'}';
   }
 }

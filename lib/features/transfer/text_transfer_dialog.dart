@@ -61,7 +61,7 @@ class _ImportTextDialogState extends State<ImportTextDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             const Text(
-              '支持FEN局面和FEN + moves + UCI着法，也可输入position startpos moves h2e2。导入后建立新的本地棋谱。',
+              '支持FEN、UCI/ICCS坐标及中文着法（如1. 炮二平五 马２进３）。自定义初始局面用FEN + moves + 着法。导入后建立新棋谱。',
             ),
             const SizedBox(height: 12),
             TextField(
@@ -113,12 +113,12 @@ class ExportTextDialog extends StatefulWidget {
 }
 
 class _ExportTextDialogState extends State<ExportTextDialog> {
-  bool withMoves = false;
+  String format = 'fen';
   bool busy = false;
   String? status;
-  String get value => withMoves
-      ? TextRecord.path(widget.tree)
-      : widget.tree.current.position.toFen();
+  String get value => format == 'fen'
+      ? widget.tree.current.position.toFen()
+      : TextRecord.path(widget.tree, chinese: format == 'chinese');
   Future<void> _copy() async {
     final copy = value;
     setState(() {
@@ -145,14 +145,15 @@ class _ExportTextDialogState extends State<ExportTextDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            SegmentedButton<bool>(
+            SegmentedButton<String>(
               segments: const [
-                ButtonSegment(value: false, label: Text('当前局面FEN')),
-                ButtonSegment(value: true, label: Text('FEN + 着法')),
+                ButtonSegment(value: 'fen', label: Text('当前局面FEN')),
+                ButtonSegment(value: 'uci', label: Text('FEN + 着法')),
+                ButtonSegment(value: 'chinese', label: Text('中文棋谱')),
               ],
-              selected: {withMoves},
+              selected: {format},
               onSelectionChanged: (values) => setState(() {
-                withMoves = values.single;
+                format = values.single;
                 status = null;
               }),
             ),

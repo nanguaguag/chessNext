@@ -11,6 +11,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
+class LifecycleTrace extends WidgetsBindingObserver {
+  final states = <AppLifecycleState>[];
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) => states.add(state);
+}
+
+Future<void> enterNativeText(
+  WidgetTester tester,
+  Finder finder,
+  String value,
+) async {
+  await tester.tap(finder);
+  await tester.pumpAndSettle();
+  await tester.enterText(finder, value);
+  await tester.pumpAndSettle();
+  final editable = finder.evaluate().single.widget is EditableText
+      ? finder
+      : find.descendant(of: finder, matching: find.byType(EditableText));
+  expect(tester.widget<EditableText>(editable).controller.text, value);
+}
+
 void main() {
   IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   testWidgets('macOS local board supports a full interactive move cycle', (
@@ -24,14 +45,14 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('square-e2')));
     await tester.pumpAndSettle();
     expect(find.text('黑方行棋'), findsOneWidget);
-    expect(find.text('1. h2e2'), findsOneWidget);
+    expect(find.text('1. 炮二平五'), findsOneWidget);
     await tester.tap(find.text('翻转'));
     await tester.pumpAndSettle();
     expect(find.text('黑方行棋'), findsOneWidget);
     await tester.tap(find.text('悔棋'));
     await tester.pumpAndSettle();
     expect(find.text('红方行棋'), findsOneWidget);
-    expect(find.text('1. h2e2'), findsNothing);
+    expect(find.text('1. 炮二平五'), findsNothing);
     // After flip h2/e2 are still addressed by board coordinates, not pixels.
     await tester.tap(find.byKey(const ValueKey('square-h2')));
     await tester.tap(find.byKey(const ValueKey('square-e2')));
@@ -40,13 +61,13 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('取消'));
     await tester.pumpAndSettle();
-    expect(find.text('1. h2e2'), findsOneWidget);
+    expect(find.text('1. 炮二平五'), findsOneWidget);
     await tester.tap(find.text('新局'));
     await tester.pumpAndSettle();
     await tester.tap(find.widgetWithText(FilledButton, '开始新局'));
     await tester.pumpAndSettle();
     expect(find.text('红方行棋'), findsOneWidget);
-    expect(find.text('1. h2e2'), findsNothing);
+    expect(find.text('1. 炮二平五'), findsNothing);
     await tester.tap(find.byTooltip('切换明暗主题'));
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
@@ -69,7 +90,8 @@ void main() {
         await tester.pumpAndSettle();
         await tester.tap(find.text('保存棋谱'));
         await tester.pumpAndSettle();
-        await tester.enterText(
+        await enterNativeText(
+          tester,
           find.byKey(const ValueKey('record-name')),
           '原生磁盘恢复测试',
         );
@@ -103,12 +125,12 @@ void main() {
         await tester.pumpAndSettle();
         for (
           var i = 0;
-          i < 50 && find.text('1. h2e2').evaluate().isEmpty;
+          i < 50 && find.text('1. 炮二平五').evaluate().isEmpty;
           i++
         ) {
           await tester.pump(const Duration(milliseconds: 100));
         }
-        expect(find.text('1. h2e2'), findsOneWidget);
+        expect(find.text('1. 炮二平五'), findsOneWidget);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
@@ -140,7 +162,11 @@ void main() {
     await tester.ensureVisible(find.byTooltip('引擎参数'));
     await tester.tap(find.byTooltip('引擎参数'));
     await tester.pumpAndSettle();
-    await tester.enterText(find.widgetWithText(TextFormField, '同时分析变化数'), '2');
+    await enterNativeText(
+      tester,
+      find.widgetWithText(TextFormField, '同时分析变化数'),
+      '2',
+    );
     await tester.tap(find.widgetWithText(FilledButton, '应用'));
     await tester.pumpAndSettle();
     for (
@@ -161,6 +187,9 @@ void main() {
   testWidgets('bundled AI replies, changes its move and undoes both plies', (
     tester,
   ) async {
+    final lifecycle = LifecycleTrace();
+    WidgetsBinding.instance.addObserver(lifecycle);
+    addTearDown(() => WidgetsBinding.instance.removeObserver(lifecycle));
     await tester.pumpWidget(
       ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
     );
@@ -192,7 +221,7 @@ void main() {
       session.moves.length,
       2,
       reason:
-          '${playState.status}; ${playState.error}; playing=${playState.playing}; thinking=${playState.thinking}',
+          '${playState.status}; ${playState.error}; playing=${playState.playing}; thinking=${playState.thinking}; lifecycle=${lifecycle.states}',
     );
     expect(session.moves.last, isNot(old));
     expect(session.tree.node('n1').children.length, 2);
@@ -252,7 +281,8 @@ void main() {
       await tester.ensureVisible(find.text('导入文字'));
       await tester.tap(find.text('导入文字'));
       await tester.pumpAndSettle();
-      await tester.enterText(
+      await enterNativeText(
+        tester,
         find.byKey(const ValueKey('import-text')),
         'startpos moves a0a9',
       );
@@ -263,9 +293,10 @@ void main() {
       expect(session.hasMoves, isFalse);
       await tester.tap(find.byKey(const ValueKey('import-text')));
       await tester.pumpAndSettle();
-      await tester.enterText(
+      await enterNativeText(
+        tester,
         find.byKey(const ValueKey('import-text')),
-        'position startpos moves h2e2 b9c7',
+        '1. 炮二平五 馬２進３',
       );
       await tester.pumpAndSettle();
       expect(
@@ -273,7 +304,7 @@ void main() {
             .widget<TextField>(find.byKey(const ValueKey('import-text')))
             .controller!
             .text,
-        'position startpos moves h2e2 b9c7',
+        '1. 炮二平五 馬２進３',
       );
       await tester.tap(find.text('导入'));
       await tester.pumpAndSettle();

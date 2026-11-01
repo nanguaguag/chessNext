@@ -121,14 +121,14 @@ void main() {
       expect(find.text('编辑前保留当前棋谱？'), findsOneWidget);
       await tester.tap(find.text('取消'));
       await tester.pumpAndSettle();
-      expect(find.text('1. h2e2'), findsOneWidget);
+      expect(find.text('1. 炮二平五'), findsOneWidget);
       await tester.tap(find.text('编辑局面'));
       await tester.pumpAndSettle();
       await tester.tap(find.text('继续编辑'));
       await tester.pumpAndSettle();
       await tester.tap(find.byTooltip('取消编辑'));
       await tester.pumpAndSettle();
-      expect(find.text('1. h2e2'), findsOneWidget);
+      expect(find.text('1. 炮二平五'), findsOneWidget);
     },
   );
   testWidgets(

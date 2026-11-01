@@ -37,4 +37,35 @@ void main() {
       expect(session.moves, isEmpty);
     },
   );
+  testWidgets(
+    'losing application focus cancels AI without applying a late result',
+    (tester) async {
+      tester.view.physicalSize = const Size(1120, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      addTearDown(
+        () => tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        ),
+      );
+      final engine = FakeEngine();
+      await tester.pumpWidget(ChessNextApp(engineFactory: () async => engine));
+      await tester.ensureVisible(find.text('引擎执黑'));
+      await tester.tap(find.text('引擎执黑'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('square-h2')));
+      await tester.tap(find.byKey(const ValueKey('square-e2')));
+      await tester.pump(const Duration(milliseconds: 200));
+      expect(engine.requests, isNotEmpty);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pumpAndSettle();
+      expect(find.text('分析已停止'), findsOneWidget);
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      expect(session.moves.length, 1);
+      expect(session.inputLocked, isFalse);
+    },
+  );
 }

@@ -1,0 +1,69 @@
+Browser tab: 2, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container app
+		2 container
+			39 button 菜单
+				40 image
+				41 text 菜单
+			42 button 新局
+				43 image
+				44 text 新局
+			45 checkbox Description: 引擎执红, Value: 0
+				46 image
+				47 text 引擎执红
+			48 checkbox Description: 引擎执黑, Value: 0
+				49 image
+				50 text 引擎执黑
+			51 checkbox Description: 分析模式, Value: 0
+				52 image
+				53 text 分析模式
+			54 button 立即出招
+				55 image
+				56 text 立即出招
+			57 button 变招
+				58 image
+				59 text 变招
+			60 container 翻转
+				61 container
+					62 image
+					63 text 翻转
+			64 button 导入
+				65 image
+				66 text 导入
+			67 container 保存 / 分享
+				68 container
+					69 image
+					70 text 保存 / 分享
+			71 checkbox Description: 编辑, Value: 0
+				72 image
+				73 text 编辑
+			38 container displayArea
+				74 splitter Description: 调整左栏宽度, Value: 22
+				75 splitter Description: 调整棋盘宽度, Value: 70
+				76 text 开始
+				77 splitter Description: 调整上下分区, Value: 55
+				78 container
+					79 text 开始
+					80 button (disabled) 下一着 ›
+					81 text 选择棋谱中的着法，查看变着与注释
+					82 text entry area (settable) van-field-7-input
+				83 text 走几步棋后，这里会画出局势曲线
+				84 container
+					85 text 引擎
+					86 button 重置布局
+					87 button 引擎参数
+						88 image
+					89 button 开始分析
+						90 image
+						91 text 开始分析
+					92 text 也可以点工具栏的
+					93 image
+					94 text 按钮
+				95 splitter Description: 调整上下分区, Value: 55
+				96 container
+					97 text 云库
+					98 text 着法 红方 评分 1 将５进１ 和棋 2 将５平６ 和棋
+			99 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+			100 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

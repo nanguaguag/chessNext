@@ -1,3 +1,5 @@
+import 'package:chess_next/features/play/play_panel.dart';
+import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/adapters/engine/bundled_engine.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:path_provider/path_provider.dart';
@@ -145,5 +147,49 @@ void main() {
     expect(find.text('分析已停止'), findsOneWidget);
     await tester.pumpWidget(const SizedBox.shrink());
     await tester.pumpAndSettle();
+  });
+  testWidgets('bundled AI replies, changes its move and undoes both plies', (
+    tester,
+  ) async {
+    await tester.pumpWidget(ChessNextApp(engineFactory: openBundledEngine));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('引擎执黑'));
+    await tester.tap(find.text('引擎执黑'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('square-h2')));
+    await tester.tap(find.byKey(const ValueKey('square-e2')));
+    final session = tester
+        .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+        .session;
+    for (var i = 0; i < 100 && session.moves.length < 2; i++) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(session.moves.length, 2);
+    final old = session.moves.last;
+    await tester.ensureVisible(find.text('变招'));
+    await tester.tap(find.text('变招'));
+    for (
+      var i = 0;
+      i < 100 && (session.moves.length < 2 || session.moves.last == old);
+      i++
+    ) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(session.moves.length, 2);
+    expect(session.moves.last, isNot(old));
+    expect(session.tree.node('n1').children.length, 2);
+    await tester.ensureVisible(find.text('悔棋'));
+    await tester.tap(find.text('悔棋'));
+    await tester.pumpAndSettle();
+    expect(session.moves, isEmpty);
+    await tester.ensureVisible(find.text('引擎执红'));
+    await tester.tap(find.text('引擎执红'));
+    await tester.pump();
+    await tester.ensureVisible(find.text('停止对弈'));
+    await tester.tap(find.text('停止对弈'));
+    await tester.pumpAndSettle();
+    final engine = tester.widget<PlayPanel>(find.byType(PlayPanel)).engine;
+    expect(engine.aiSides, isEmpty);
+    expect(session.inputLocked, isFalse);
   });
 }

@@ -1,4 +1,4 @@
-import 'package:chess_next/application/analysis_controller.dart';
+import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/chess_next.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -10,7 +10,7 @@ void main() {
     () async {
       final session = BoardSession();
       final engine = FakeEngine();
-      final analysis = AnalysisController(session, () async => engine);
+      final analysis = EngineSessionController(session, () async => engine);
       addTearDown(() {
         analysis.dispose();
         session.dispose();
@@ -45,7 +45,7 @@ void main() {
     () async {
       final session = BoardSession();
       final engine = FakeEngine();
-      final analysis = AnalysisController(
+      final analysis = EngineSessionController(
         session,
         () async => engine,
         deviceThreads: 2,
@@ -71,7 +71,7 @@ void main() {
     'unavailable engine reports a recoverable state rather than fabricated output',
     () async {
       final session = BoardSession();
-      final analysis = AnalysisController(session, null);
+      final analysis = EngineSessionController(session, null);
       addTearDown(() {
         analysis.dispose();
         session.dispose();

@@ -1,6 +1,6 @@
 # 当前状态
 
-日期2026-11-02（Asia/Shanghai）。M3-02：本地棋谱分支/保存已实现，正式Pikafish分析已接主App；全站对标尚未完成。
+日期2026-11-02（Asia/Shanghai）。M3-03：本地棋谱分支/保存已实现，正式Pikafish分析已接主App；全站对标尚未完成。
 
 用户要求持续推进至全站对齐，每功能先flutter test/flutter analyze再单独中文Conventional Commit，不提前停下来审查。用户已选在线部分自建可替换后端并提供部署方案；旧的在线/账号“延期”仅表示先后顺序，不再永久排除。许可按要求暂不处理，不阻挡本地开发。
 
@@ -20,3 +20,8 @@
 下一项F03本地AI对弈（分析互斥、执方、催招/变招/悔棋）→局面编辑、FEN/棋谱导入导出、自动草稿→整谱复盘/错题→设置/体验→在线后端与五平台。B16仓库当前单窗口快照实现，见ADR-005，不声称SQLite、断电fsync或跨进程写事务通过。历史长将长捉/重复/自然限着、移动FFI、Windows/Linux、正式签名公证仍未完成。
 
 现有用户运行窗口不要自动关闭；测试创建的App与helper已收尾。以git status/git log为准；无需依赖聊天记忆。环境Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。
+
+## M3-03最新
+
+分析功能已提交af25944。EngineSessionController统一分析与AI的单引擎所有权，AI逻辑放在engine_play.dart同库扩展。支持执红/黑/双AI、1/3/10秒和0.05至600秒自定义、催招、基于searchmoves排除的变招、对弈悔棋回到人类回合、AI回合输入锁和分析互斥。旧token/positionRevision结果不落子，变招保留原线路并提升新线路为主线。EngineRequest.fromTree直接使用不可变棋树已验证的缓存局面，不每次重放全部历史。
+验证：带官方引擎环境根flutter test41/41、flutter analyze无问题；原生4/4包含实际AI应手、变招及双步悔棋。棋力等级和对弈设置持久化尚未实现，不能标F03/F22全部对齐。下一项局面编辑器，依据E10新审计证据实现清空/先手/互换/校验边界。

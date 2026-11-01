@@ -156,6 +156,7 @@ class _XiangqiBoardState extends State<XiangqiBoard> {
       child: Semantics(
         label: label,
         button: true,
+        enabled: !session.inputLocked && !session.outcome.isTerminal,
         selected: selected,
         onTap: () => _tap(square),
         child: ExcludeSemantics(

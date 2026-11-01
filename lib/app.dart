@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'application/board_session.dart';
-import 'application/analysis_controller.dart';
+import 'application/engine_session_controller.dart';
 import 'features/analysis/analysis_panel.dart';
+import 'features/play/play_panel.dart';
 import 'application/library_controller.dart';
 import 'ports/game_repository.dart';
 import 'features/library/library_dialog.dart';
@@ -26,12 +27,12 @@ class _ChessNextAppState extends State<ChessNextApp>
     with WidgetsBindingObserver {
   final session = BoardSession();
   late final LibraryController library;
-  late final AnalysisController analysis;
+  late final EngineSessionController analysis;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
-    analysis = AnalysisController(
+    analysis = EngineSessionController(
       session,
       widget.engineFactory,
       deviceThreads: widget.deviceThreads,
@@ -91,7 +92,7 @@ class _BoardPage extends StatelessWidget {
   final BoardSession session;
   final VoidCallback toggleTheme;
   final LibraryController library;
-  final AnalysisController analysis;
+  final EngineSessionController analysis;
   Future<void> _newGame(BuildContext context) async {
     if (session.dirty && session.hasContent) {
       final confirmed = await showDialog<bool>(
@@ -244,7 +245,11 @@ class _BoardPage extends StatelessWidget {
                         label: const Text('新局'),
                       ),
                       OutlinedButton.icon(
-                        onPressed: session.canUndo ? session.undo : null,
+                        onPressed: session.canUndo
+                            ? () => analysis.playing
+                                  ? analysis.undoForPlay()
+                                  : session.undo()
+                            : null,
                         icon: const Icon(Icons.undo),
                         label: const Text('悔棋'),
                       ),
@@ -313,7 +318,11 @@ class _BoardPage extends StatelessWidget {
                         icon: const Icon(Icons.first_page),
                       ),
                       IconButton(
-                        onPressed: session.canUndo ? session.undo : null,
+                        onPressed: session.canUndo
+                            ? () => analysis.playing
+                                  ? analysis.undoForPlay()
+                                  : session.undo()
+                            : null,
                         tooltip: '上一着',
                         icon: const Icon(Icons.chevron_left),
                       ),
@@ -401,6 +410,8 @@ class _BoardPage extends StatelessWidget {
           final sidePanel = Column(
             children: [
               panel,
+              const SizedBox(height: 12),
+              PlayPanel(engine: analysis),
               const SizedBox(height: 12),
               AnalysisPanel(analysis: analysis),
             ],

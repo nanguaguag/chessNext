@@ -164,9 +164,12 @@ class UciEngine implements EngineGateway {
     if (!request.root.validateForPlay().isValid) {
       throw ArgumentError('Invalid root');
     }
-    var position = request.root;
-    for (final move in request.moves) {
-      position = position.play(move);
+    final position = request.position;
+    if (request.searchMoves != null) {
+      final legal = position.legalMoves.toSet();
+      if (!request.searchMoves!.every(legal.contains)) {
+        throw ArgumentError('Illegal searchmoves');
+      }
     }
     if (position.boardOutcome().isTerminal) {
       throw ArgumentError('Terminal position');
@@ -208,7 +211,10 @@ class UciEngine implements EngineGateway {
         : request.moveTimeMs != null
         ? 'movetime ${request.moveTimeMs}'
         : 'infinite';
-    _send('go $limit');
+    final candidates = request.searchMoves == null
+        ? ''
+        : ' searchmoves ${request.searchMoves!.join(' ')}';
+    _send('go $limit$candidates');
     return EngineSearch(request.token, result.future);
   });
   @override

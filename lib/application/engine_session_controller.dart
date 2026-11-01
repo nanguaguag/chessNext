@@ -5,6 +5,8 @@ import 'package:xiangqi_core/xiangqi_core.dart';
 import '../ports/engine_gateway.dart';
 import 'board_session.dart';
 
+part 'engine_play.dart';
+
 typedef EngineFactory = Future<EngineGateway> Function();
 
 class AnalysisSettings {
@@ -18,9 +20,14 @@ class AnalysisSettings {
   final int multiPv;
 }
 
-class AnalysisController extends ChangeNotifier {
-  AnalysisController(this.session, this.factory, {this.deviceThreads = 1}) {
+class EngineSessionController extends ChangeNotifier {
+  EngineSessionController(
+    this.session,
+    this.factory, {
+    this.deviceThreads = 1,
+  }) {
     _lastRevision = session.positionRevision;
+    _lastSessionEpoch = session.epoch;
     session.addListener(_changed);
   }
   final BoardSession session;
@@ -55,6 +62,18 @@ class AnalysisController extends ChangeNotifier {
   int _generation = 0;
   int _lastRevision = 0;
   int _searchRevision = 0;
+  final Set<Side> _aiSides = {};
+  bool _thinking = false;
+  bool _changingAlternative = false;
+  bool _suppressRestart = false;
+  bool _applyingEngine = false;
+  int _thinkTimeMs = 1000;
+  int _lastSessionEpoch = 0;
+  String? _lastAiNode;
+  int _lastAiEpoch = -1;
+  Move? _lastAiMove;
+  EngineSearch? _playSearch;
+  final Map<(int, String), Set<Move>> _exclusions = {};
   Timer? _restart;
   Timer? _flush;
   Move? get recommended {
@@ -79,7 +98,19 @@ class AnalysisController extends ChangeNotifier {
     _lastRevision = session.positionRevision;
     _clear();
     _restart?.cancel();
+    if (_suppressRestart) return;
+    if (_lastSessionEpoch != session.epoch) {
+      _lastSessionEpoch = session.epoch;
+      _lastAiNode = null;
+      _exclusions.clear();
+    }
+    if (!_applyingEngine) _exclusions.clear();
     final generation = ++_generation;
+    if (playing) {
+      unawaited(_syncPlay(generation, delayed: true));
+      return;
+    }
+
     if (_enabled) {
       _busy = true;
       _status = '正在切换局面';
@@ -131,6 +162,10 @@ class AnalysisController extends ChangeNotifier {
 
   Future<void> enable() async {
     if (_disposed || _enabled) return;
+    _aiSides.clear();
+    _thinking = false;
+    _playSearch = null;
+    session.setInputLocked(false);
     _enabled = true;
     _error = null;
     _busy = true;
@@ -155,10 +190,9 @@ class AnalysisController extends ChangeNotifier {
       }
       _searchRevision = session.positionRevision;
       final search = await engine.start(
-        EngineRequest(
+        EngineRequest.fromTree(
           token: generation,
-          root: session.tree.root.position,
-          moves: session.moves,
+          tree: session.tree,
           threads: _settings.threads,
           hashMb: _settings.hashMb,
           multiPv: _settings.multiPv,
@@ -183,12 +217,16 @@ class AnalysisController extends ChangeNotifier {
 
   void _failed(Object exception, int generation) {
     if (_disposed || generation != _generation) return;
+    _aiSides.clear();
+    _thinking = false;
+    _playSearch = null;
+    session.setInputLocked(false);
     _enabled = false;
     _busy = false;
     _error = exception is StateError && exception.message == '本地分析引擎尚未安装'
         ? exception.message
-        : '本地分析失败，请重新尝试';
-    _status = '分析不可用';
+        : '本地引擎操作失败，请重新尝试';
+    _status = '本地引擎不可用';
     _clear();
     _opening = null;
     final engine = _engine;
@@ -200,6 +238,10 @@ class AnalysisController extends ChangeNotifier {
   }
 
   Future<void> disable() async {
+    _aiSides.clear();
+    _thinking = false;
+    _playSearch = null;
+    session.setInputLocked(false);
     _enabled = false;
     _busy = false;
     _status = '分析已停止';
@@ -231,6 +273,8 @@ class AnalysisController extends ChangeNotifier {
     if (_enabled) {
       _busy = true;
       await _run(++_generation);
+    } else if (playing) {
+      await _syncPlay(++_generation);
     }
   }
 

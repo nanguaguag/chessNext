@@ -27,6 +27,7 @@ class BoardSession extends ChangeNotifier {
   }
 
   void replaceTree(GameTree value) {
+    _inputLocked = false;
     _tree = value;
     _revision++;
     _savedRevision = _revision;
@@ -38,6 +39,16 @@ class BoardSession extends ChangeNotifier {
     notifyListeners();
   }
 
+  bool _inputLocked = false;
+  bool get inputLocked => _inputLocked;
+  void setInputLocked(bool value) {
+    if (_inputLocked == value) return;
+    _inputLocked = value;
+    _selected = null;
+    notifyListeners();
+  }
+
+  List<Move> get legalMoves => List.unmodifiable(_legal);
   Square? _selected;
   Square? get selected => _selected;
   bool _flipped = false;
@@ -66,7 +77,7 @@ class BoardSession extends ChangeNotifier {
   }
 
   void tap(Square square) {
-    if (_outcome.isTerminal) return;
+    if (_outcome.isTerminal || _inputLocked) return;
     _notice = null;
     if (square == _selected) {
       _selected = null;
@@ -75,17 +86,30 @@ class BoardSession extends ChangeNotifier {
     } else if (_selected != null) {
       final move = Move(_selected!, square);
       if (_legal.contains(move)) {
-        final before = tree.nodeCount;
-        _tree = tree.play(move);
-        _positionRevision++;
-        if (tree.nodeCount != before) _revision++;
-        _selected = null;
-        _refresh();
+        playMove(move);
+        return;
       } else {
         _notice = '此处不能落子，请选择标记位置';
       }
     }
     notifyListeners();
+  }
+
+  bool playMove(Move move, {bool fromEngine = false}) {
+    if (_outcome.isTerminal ||
+        (_inputLocked && !fromEngine) ||
+        !_legal.contains(move)) {
+      return false;
+    }
+    final before = tree.nodeCount;
+    _tree = tree.play(move);
+    _positionRevision++;
+    if (tree.nodeCount != before) _revision++;
+    _selected = null;
+    _notice = null;
+    _refresh();
+    notifyListeners();
+    return true;
   }
 
   void cancelSelection() {
@@ -151,6 +175,7 @@ class BoardSession extends ChangeNotifier {
   }
 
   void newGame() {
+    _inputLocked = false;
     _tree = GameTree();
     _revision++;
     _savedRevision = _revision;

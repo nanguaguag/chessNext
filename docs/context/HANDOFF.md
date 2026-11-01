@@ -9,3 +9,7 @@
 重跑bash tools/check.sh；CHECK_MACOS_INTEGRATION=1额外原生窗口测试。根无引擎环境时仅live-adapter测试会skip，不能写成通过；check脚本为本机.local设置环境。普通flutter run -d macos恢复正常入口。不要自动终止用户旧窗口/未保存对局；不把测试构建仍留在磁盘当作已运行普通入口。
 
 下一功能：F03 AI对弈，复用端口并与分析互斥；保留request generation与positionRevision过滤旧结果，所有落子必须走Session合法性校验。随后编辑/FEN导入导出/草稿/复盘，再后端和移动。全站未完成，不要发最终完成声明。
+
+## M3-03接续
+
+分析控制器已重命名为EngineSessionController，分析与AI共用单实例；旧analysis_controller.dart路径不再有效。AI功能41根测试和4原生测试通过；先完成本功能commit再继续编辑器。已审计站点E10：清空保留先手并留下黑将d9/红帅e0；初始局面重置红先；红黑互换为纵向映射rank=9-rank并换色、换先手；将帅照面显示提示，Done仍可点但拒绝提交。证据docs/research/editor-*-2026-11-02*。复制FEN toast出现但浏览器剪贴板API返回空，未把导出值算验证成功。后续编辑草稿必须独立，取消不改原文档，确认替换需保护dirty。

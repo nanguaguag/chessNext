@@ -7,6 +7,7 @@ class FakeEngine implements EngineGateway {
   final requests = <EngineRequest>[];
   final results = <Completer<Move?>>[];
   int stops = 0;
+  Move? stopMove;
   @override
   EngineLifecycle phase = EngineLifecycle.stopped;
   @override
@@ -65,7 +66,7 @@ class FakeEngine implements EngineGateway {
   Future<void> stop() async {
     if (results.isNotEmpty && !results.last.isCompleted) {
       stops++;
-      results.last.complete(null);
+      results.last.complete(stopMove);
     }
     phase = EngineLifecycle.ready;
   }

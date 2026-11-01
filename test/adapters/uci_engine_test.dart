@@ -150,4 +150,30 @@ void main() {
       await engine.dispose();
     },
   );
+  test('searchmoves is sent last and illegal subsets are rejected', () async {
+    final transport = FakeTransport();
+    final engine = UciEngine(transport);
+    addTearDown(engine.dispose);
+    final search = await engine.start(
+      EngineRequest.fromTree(
+        token: 1,
+        tree: GameTree(),
+        depth: 1,
+        searchMoves: [Move.parse('h2e2')],
+      ),
+    );
+    expect(transport.commands.last, 'go depth 1 searchmoves h2e2');
+    transport.output.add('bestmove h2e2');
+    await search.bestMove;
+    await expectLater(
+      engine.start(
+        EngineRequest(
+          token: 2,
+          root: Position.initial(),
+          searchMoves: [Move.parse('a9a8')],
+        ),
+      ),
+      throwsArgumentError,
+    );
+  });
 }

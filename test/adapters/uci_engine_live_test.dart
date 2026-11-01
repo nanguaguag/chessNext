@@ -30,6 +30,18 @@ void main() {
       expect(root.legalMoves, contains(best));
       expect(seen.any((e) => e.multiPv == 2), isTrue);
       expect(engine.options['Threads']?.type, 'spin');
+      final restricted = await engine.start(
+        EngineRequest(
+          token: 9,
+          root: root,
+          depth: 3,
+          searchMoves: [Move.parse('h2e2')],
+        ),
+      );
+      expect(
+        await restricted.bestMove.timeout(const Duration(seconds: 10)),
+        Move.parse('h2e2'),
+      );
       for (var token = 2; token <= 6; token++) {
         final current = await engine.start(
           EngineRequest(token: token, root: root),

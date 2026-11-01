@@ -26,33 +26,90 @@ class EngineOption {
 }
 
 class EngineRequest {
-  EngineRequest({
+  factory EngineRequest({
+    required int token,
+    required Position root,
+    Iterable<Move> moves = const [],
+    int? depth,
+    int? moveTimeMs,
+    int threads = 1,
+    int hashMb = 16,
+    int multiPv = 1,
+    Iterable<Move>? searchMoves,
+  }) {
+    final history = List<Move>.unmodifiable(moves);
+    var position = root;
+    for (final move in history) {
+      position = position.play(move);
+    }
+    return EngineRequest._(
+      token: token,
+      root: root,
+      moves: history,
+      position: position,
+      depth: depth,
+      moveTimeMs: moveTimeMs,
+      threads: threads,
+      hashMb: hashMb,
+      multiPv: multiPv,
+      searchMoves: searchMoves,
+    );
+  }
+  factory EngineRequest.fromTree({
+    required int token,
+    required GameTree tree,
+    int? depth,
+    int? moveTimeMs,
+    int threads = 1,
+    int hashMb = 16,
+    int multiPv = 1,
+    Iterable<Move>? searchMoves,
+  }) => EngineRequest._(
+    token: token,
+    root: tree.root.position,
+    position: tree.current.position,
+    moves: List.unmodifiable(tree.path.skip(1).map((n) => n.move!)),
+    depth: depth,
+    moveTimeMs: moveTimeMs,
+    threads: threads,
+    hashMb: hashMb,
+    multiPv: multiPv,
+    searchMoves: searchMoves,
+  );
+  EngineRequest._({
     required this.token,
     required this.root,
-    Iterable<Move> moves = const [],
+    required this.moves,
+    required this.position,
     this.depth,
     this.moveTimeMs,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
-  }) : moves = List.unmodifiable(moves) {
+    Iterable<Move>? searchMoves,
+  }) : searchMoves = searchMoves == null
+           ? null
+           : List.unmodifiable(searchMoves.toSet()) {
     if ((depth != null && depth! < 1) ||
         (moveTimeMs != null && moveTimeMs! < 1) ||
         (depth != null && moveTimeMs != null) ||
         threads < 1 ||
         hashMb < 1 ||
-        multiPv < 1) {
+        multiPv < 1 ||
+        (this.searchMoves != null && this.searchMoves!.isEmpty)) {
       throw ArgumentError('Invalid search parameters');
     }
   }
   final int token;
   final Position root;
+  final Position position;
   final List<Move> moves;
   final int? depth;
   final int? moveTimeMs;
   final int threads;
   final int hashMb;
   final int multiPv;
+  final List<Move>? searchMoves;
 }
 
 class EngineInfo {

@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
-import '../../application/analysis_controller.dart';
+import '../../application/engine_session_controller.dart';
 import '../../ports/engine_gateway.dart';
 
 class AnalysisPanel extends StatelessWidget {
   const AnalysisPanel({super.key, required this.analysis});
-  final AnalysisController analysis;
+  final EngineSessionController analysis;
   Future<void> _settings(BuildContext context) async {
     final form = GlobalKey<FormState>();
     var threads = analysis.settings.threads;

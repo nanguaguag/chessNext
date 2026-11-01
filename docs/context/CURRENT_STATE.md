@@ -13,7 +13,7 @@
 - 不可变棋树稳定ID、分支/注释、同级与下一着面板、提升无操作保护/删除确认和AI迟到结果保护。
 - 本地命名保存/搜索/打开/备份；独立300ms自动草稿/dirty副本恢复/退出失败保护；主题、资源和AI用时独立偏好，逐字段初始化合并/坏文件保护。
 - 独立局面编辑含棋子盒/连续放置/拖动移除/右键/红黑先/清空初始互换/旋转镜像；无效完成留草稿。
-- FEN/UCI/ICCS/中文文字导入导出，合法性/错误步数/限额、未保存保护、剪贴板失败与异步修改保护。尚缺PGN/XQF/CBR等格式。
+- FEN/UCI/ICCS/中文文字导入导出，合法性/错误步数/限额、未保存保护、剪贴板失败与异步修改保护。单局PGN ICCS/中文已接入，尚缺XQF/CBR等格式。
 - 单引擎UCI适配器、取消屏障/超时/EOF/迟到结果、MultiPV分析/红黑评分/箭头/参数；AI执红黑/双AI、用时/催招/变招/双步悔棋/输入锁。组合depth/time/nodes、文档epoch与资源/TT复用。
 - macOS沙箱与包内签名helper/NNUE；EngineIdentity区分源与签名后hash、工作Isolate运行前校验NNUE/二进制、ABI、实际UCI名称。
 - 整谱最佳着法有限队列（当前线路含未来/整树、子节点先处理）、进度/结果/取消/抢占/过期；原始cp/mate/bound/无评分/终局分开，纯读谱不改队列。
@@ -32,9 +32,9 @@ FiniteSearchExecutor已统一整谱/单步的最终着法/PV与缓存校验及�
 
 ## 最新验证
 
-本切片根flutter test238/238（显式官方NNUE环境）、flutter analyze无问题；macOS完整16/16及最终最近阅读单项1/1通过，含真实NNUE在新App/引擎实例复用与坏缓存重算；另有独立Dart进程协议验证。宿主Flutter测试进程未关开，人工OS应用重启/断电仍未验。核心65/65及dart analyze通过，本轮新增棋谱资料，规则逻辑未改。4组perft曾与官方一致。
+M4-01e后根flutter test272/272（显式官方NNUE）与flutter analyze无问题；核心未改沿用65/65+dart analyze。macOS本片文件导出单项1/1、前片导入1/1通过，均真实文件流/原生写入，chooser注入。原生现21例，未本轮全跑21；历史完整/失败/修后单项见TRACEABILITY/SESSION_LOG，不扩大为整套全过。无待等待验证进程。
 
-integration_test仅在测试文件保持framework-resumed；生产无覆盖。真实OS焦点/最小化/隐藏/人工视觉未验；Computer Use桌面权限未授，不绕过。其他Android/iOS/Windows/Linux尚未验证，移动FFI未实现。曾失败/中断/跳过的命令见SESSION_LOG，不隐去后改通过。
+production main已装配文件导入/仅macOS文件导出，当前Debug/Release为user-selected.read-write且sandbox保留，实际Debug签名已核。真实系统Open/Save面板/外部授权/精确scope释放/Release实际签名及其它平台未验。Computer Use桌面未授权不绕过；native fixture仅framework-resumed，真实OS焦点/最小化/人工视觉未验。
 
 ## 下一步与环境
 
@@ -59,3 +59,5 @@ M4-01b棋谱资料已实现：只读未知字段保留/常用资料编辑、meta
 M4-01c PGN文字交换已实现：后台真实worker/typed资料和评注导入，确认及保存后再核文档；开窗快照/五格式与评注选项/无损失败禁复制/取消退场保护。目标15/15，根238/238+analyze，macOS旧文字1/1与新PGN1/1通过，无待等待验证命令。剪贴板端口注入，不触系统；尚无系统文件入口，核心未改65沿用。下一UTF8文字棋谱文件导入及文件服务/平台边界。
 
 M4-01d只读文件导入已实现：官方file_selector1.1.0/端口/实际有界流UTF8/超时取消/预览和保护；根256/256、analyze、macOS目标1/1通过，核心未变65沿用。实际Debug签名sandbox+user-selected.read-only已核，系统面板人工选文件/其它平台未验。无待等待命令，下一外部文件导出技术验证。
+
+M4-01e macOS UTF8文件导出（五格式/开窗快照/取消边界/Foundation atomic/失败保留）已实现，272/analyze/native目标1通过；ADR-022。下一补审计字号/外观并单功能实现。其它平台writer/实际系统面板仍未验，不称完整对齐。

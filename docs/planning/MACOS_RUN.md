@@ -40,3 +40,5 @@ BoardSession负责内存会话、历史与状态通知，View不直接调用引�
 
 主应用已接本地库和分析面板。执行python3 tools/setup_pikafish.py准备官方制品，再flutter run -d macos，会自动将本机校验后的引擎/网络打入构建产物并签名helper；不再需要手工签名。若制品缺失，棋盘仍可用，分析报告不可用。当前构建签名用于本地开发，不声称正式公证通过。
 最新原生集成3/3通过，包含真实Documents保存恢复以及包内引擎NNUE搜索、多PV切换与停止。Engine资源只存在.local和build，不提交Git。
+
+文字文件交换：生产main已注入单UTF8文件导入及五格式文件导出；当前Debug/Release user-selected.read-write（导入切片历史曾只读），sandbox始终开启。保存经Foundation atomic私有通道，原生集成以注入chooser+真实沙箱容器文件验证；实际系统Open/Save面板/外部授权/Release实际签名待平台人工验收。此未验状态不代表无功能入口，也不能称已通过外部位置验证。

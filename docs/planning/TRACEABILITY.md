@@ -240,3 +240,11 @@ RecordFilePicker端口、官方file_selector1.1.0适配器，stat/实际字节/�
 11适配器+7组件目标18/18、显式官方NNUE环境根flutter test256/256与flutter analyze无问题均exit0。macOS原生新文件单项1/1 exit0（实际UTF8文件流、工作Isolate、预览不改谱/确认、资料评注保存、源字节不变），plugin/Pod注册编译通过，codesign实际Debug包含sandbox和user-selected.read-only。系统chooser为注入，不宣称NSOpenPanel实际选文件已验；Release实际构建签名、其它平台、GBK/二进制/拖放/多局仍未验/未做。核心未变沿用65/65。
 
 初widget编译失败因测试误用LibrarySnapshot.single及session.navigateTo，改为games.single/navigate；第二次6过1失败因WXF测试缺Game首标签，修夹具后目标18全过。初analyze两项冗余import清理，最终全量通过。日志/tmp/chessnext-file-import-{adapter,widget,widget-final,target,full,analyze-initial,analyze,native}.log；没有待等待验证命令。
+
+## 2026-11-02 / M4-01e / F12 → B11,B19 UTF8文字文件导出
+
+RecordFileExporter纯端口与取消令牌，MacOsRecordFileExporter官方保存面板+原生私有通道；ExportTextDialog五格式/评注沿开窗快照、状态/重试/迟到选择丢弃，不清dirty、不改本地库绑定。原生RecordFileWriter utility串行Foundation atomic写入、有界UTF8/路径校验/拒绝目录与符号链接、错误不传路径。权限因实际写入用途升级user-selected.read-write，sandbox保留。ADR-022/RECORD_FILE_EXPORT_SLICE。F08单UTF8文件导入由M4-01d覆盖，之前该片标题F07,F12漏列F08，在此补追踪，不把全F08关闭。
+
+技术探针swift research/spikes/atomic_file_probe.swift通过四边界；11适配器+5组件新增，根flutter test272/272（显式官方NNUE）最终exit0与flutter analyze无问题；macOS导出目标1/1 exit0，真实通道替换/新建/失败保留/符号链接/超限拒绝与UI快照保存；codesign实际Debug含sandbox+user-selected.read-write。核心未改沿用65；native文件现21项，未全跑21。系统保存面板选择注入，实际外部授权/作用域撤销/网络云盘/断电/Release签名/其它平台未验。
+
+探针首Swift precondition中throw表达式编译失败改先读再断言；widget首错误调用setComment改实际annotate，修后5/5。初analyze业务1及随后测试2项大括号info补齐，最终analyze0问题；根首272全过，最后修纯测试大括号后再完整272过。日志/tmp/chessnext-{atomic-probe,atomic-probe-final,file-export-adapter,file-export-widget,file-export-widget-final,file-export-full,file-export-full-final,file-export-analyze-initial,file-export-analyze,file-export-analyze-final,file-export-native,file-export-entitlements}.log。无后台验证未收尾。

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/record_text_exchange.dart';
 import '../../ports/text_clipboard.dart';
+import '../../ports/record_file_exporter.dart';
 
 class ImportTextDialog extends StatefulWidget {
   const ImportTextDialog({
@@ -163,10 +164,12 @@ class ExportTextDialog extends StatefulWidget {
     required this.tree,
     required this.clipboard,
     this.metadata = GameMetadata.empty,
+    this.fileExporter,
   });
   final GameTree tree;
   final GameMetadata metadata;
   final TextClipboard clipboard;
+  final RecordFileExporter? fileExporter;
   @override
   State<ExportTextDialog> createState() => _ExportTextDialogState();
 }
@@ -175,6 +178,57 @@ class _ExportTextDialogState extends State<ExportTextDialog> {
   TextExportFormat format = TextExportFormat.fen;
   bool busy = false, includeComments = true;
   String? status;
+  bool dismissed = false;
+  FileExportCancellation? fileCancellation;
+  bool get active =>
+      mounted && !dismissed && ModalRoute.of(context)?.isCurrent == true;
+  void _dismiss() {
+    dismissed = true;
+    fileCancellation?.cancel();
+  }
+
+  @override
+  void dispose() {
+    _dismiss();
+    super.dispose();
+  }
+
+  Future<void> _saveFile() async {
+    final text = rendering.text;
+    if (text == null || widget.fileExporter == null) return;
+    final extension = format.isPgn
+        ? 'pgn'
+        : format == TextExportFormat.fen
+        ? 'fen'
+        : 'txt';
+    final cancellation = FileExportCancellation();
+    fileCancellation = cancellation;
+    setState(() {
+      busy = true;
+      status = null;
+    });
+    try {
+      final result = await widget.fileExporter!.saveText(
+        text: text,
+        extension: extension,
+        cancellation: cancellation,
+      );
+      if (active) {
+        setState(
+          () => status = result == RecordFileExportResult.saved
+              ? '文件已保存'
+              : '已取消文件保存',
+        );
+      }
+    } on RecordExportException catch (e) {
+      if (active) setState(() => status = e.message);
+    } catch (_) {
+      if (active) setState(() => status = '文件导出失败，请重试或复制文字。');
+    } finally {
+      if (mounted && !dismissed) setState(() => busy = false);
+    }
+  }
+
   ({String? text, String? error}) get rendering {
     try {
       return (
@@ -213,82 +267,96 @@ class _ExportTextDialogState extends State<ExportTextDialog> {
   @override
   Widget build(BuildContext context) {
     final rendered = rendering;
-    return AlertDialog(
-      title: const Text('导出文字'),
-      content: SizedBox(
-        width: 620,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('导出打开窗口时的棋谱快照。'),
-              DropdownButtonFormField<TextExportFormat>(
-                key: const ValueKey('export-format'),
-                initialValue: format,
-                isExpanded: true,
-                decoration: const InputDecoration(labelText: '导出格式'),
-                items: _formats.entries
-                    .map(
-                      (e) =>
-                          DropdownMenuItem(value: e.key, child: Text(e.value)),
-                    )
-                    .toList(),
-                onChanged: busy
-                    ? null
-                    : (value) {
-                        if (value != null) {
-                          setState(() {
-                            format = value;
-                            status = null;
-                          });
-                        }
-                      },
-              ),
-              if (format.isPgn)
-                CheckboxListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: const Text('包含路径评注'),
-                  value: includeComments,
+    return PopScope<void>(
+      onPopInvokedWithResult: (didPop, _) {
+        if (didPop) _dismiss();
+      },
+      child: AlertDialog(
+        title: const Text('导出文字'),
+        content: SizedBox(
+          width: 620,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('导出打开窗口时的棋谱快照。'),
+                DropdownButtonFormField<TextExportFormat>(
+                  key: const ValueKey('export-format'),
+                  initialValue: format,
+                  isExpanded: true,
+                  decoration: const InputDecoration(labelText: '导出格式'),
+                  items: _formats.entries
+                      .map(
+                        (e) => DropdownMenuItem(
+                          value: e.key,
+                          child: Text(e.value),
+                        ),
+                      )
+                      .toList(),
                   onChanged: busy
                       ? null
-                      : (value) => setState(() {
-                          includeComments = value ?? false;
-                          status = null;
-                        }),
+                      : (value) {
+                          if (value != null) {
+                            setState(() {
+                              format = value;
+                              status = null;
+                            });
+                          }
+                        },
                 ),
-              const SizedBox(height: 16),
-              if (rendered.text != null)
-                SelectableText(
-                  rendered.text!,
-                  key: const ValueKey('export-text'),
-                ),
-              if (rendered.error != null)
+                if (format.isPgn)
+                  CheckboxListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('包含路径评注'),
+                    value: includeComments,
+                    onChanged: busy
+                        ? null
+                        : (value) => setState(() {
+                            includeComments = value ?? false;
+                            status = null;
+                          }),
+                  ),
+                const SizedBox(height: 16),
+                if (rendered.text != null)
+                  SelectableText(
+                    rendered.text!,
+                    key: const ValueKey('export-text'),
+                  ),
+                if (rendered.error != null)
+                  Text(
+                    rendered.error!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                const SizedBox(height: 16),
                 Text(
-                  rendered.error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                  format.isPgn
+                      ? 'PGN保留棋谱资料与所选评注，仅含初始局面至当前着。其它分支及后续着法不会导出；完整棋树请保存到本地库。'
+                      : 'FEN只含当前局面；其它普通文字格式只含初始局面至当前着。分支、后续、评注和资料不在这些格式内，完整内容请保存到本地库。',
                 ),
-              const SizedBox(height: 16),
-              Text(
-                format.isPgn
-                    ? 'PGN保留棋谱资料与所选评注，仅含初始局面至当前着。其它分支及后续着法不会导出；完整棋树请保存到本地库。'
-                    : 'FEN只含当前局面；其它普通文字格式只含初始局面至当前着。分支、后续、评注和资料不在这些格式内，完整内容请保存到本地库。',
-              ),
-              if (status != null) Text(status!),
-            ],
+                if (status != null) Text(status!),
+              ],
+            ),
           ),
         ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('关闭'),
+          ),
+          FilledButton(
+            onPressed: busy || rendered.text == null ? null : _copy,
+            child: const Text('复制'),
+          ),
+          if (widget.fileExporter != null)
+            FilledButton.tonal(
+              onPressed: busy || rendered.text == null ? null : _saveFile,
+              child: const Text('保存文件'),
+            ),
+        ],
       ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('关闭'),
-        ),
-        FilledButton(
-          onPressed: busy || rendered.text == null ? null : _copy,
-          child: const Text('复制'),
-        ),
-      ],
     );
   }
 }

@@ -56,3 +56,5 @@ M4-01b：core GameMetadata与PGN共用有界验证；BoardSession并列文档资
 M4-01c：application/record_text_exchange.dart无Flutter/IO的格式协调+静态Isolate.run，ImportedRecord携tree/metadata/source；ImportTextDialog TextImporter注入与PopScope/代次/route收尾；App导入确认/保存后复验并原子入库会话，导出开窗快照。ExportTextDialog五格式/PGN评注选项/不可无损错误禁复制。ADR-020；系统文件入口仍后续。
 
 M4-01d：ports/record_file_picker.dart返回有界UTF8文字，FileSelectorRecordPicker独占插件/流/路径；ImportFileDialog预览确认、错误重试/退场代次，App共用文字导入保护；main注入，macOS只读用户选择权限且保留sandbox。ADR-021/RECORD_FILE_IMPORT_SLICE；系统面板人工选择与其它平台未验。
+
+M4-01e：RecordFileExporter与MacOsRecordFileExporter分离外部导出/内部保存；ExportTextDialog五格式文件保存/取消令牌、快照不改dirty；macOS/Runner/RecordFileWriter.swift仅负责有界UTF8通道校验及utility串行Foundation atomic写入。main只在macOS注入；Debug/Release权限按新写入用途升级user-selected.read-write，继续sandbox。ADR-022，实际OS保存面板/作用域释放/其它平台待验。

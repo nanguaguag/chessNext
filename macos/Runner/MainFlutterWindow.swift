@@ -2,6 +2,7 @@ import Cocoa
 import FlutterMacOS
 
 class MainFlutterWindow: NSWindow {
+  private var recordFileWriter: RecordFileWriter?
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
     let windowFrame = self.frame
@@ -10,6 +11,7 @@ class MainFlutterWindow: NSWindow {
     self.minSize = NSSize(width: 520, height: 640)
 
     RegisterGeneratedPlugins(registry: flutterViewController)
+    recordFileWriter = RecordFileWriter(messenger: flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
   }

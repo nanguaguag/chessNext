@@ -1,3 +1,4 @@
+import 'ports/record_file_exporter.dart';
 import 'features/transfer/import_file_dialog.dart';
 import 'ports/record_file_picker.dart';
 import 'application/record_text_exchange.dart';
@@ -47,6 +48,7 @@ class ChessNextApp extends StatefulWidget {
     this.preferencesRepository,
     this.clipboard,
     this.filePicker,
+    this.fileExporter,
     this.engineFactory,
     this.reviewCache,
     this.deviceThreads = 1,
@@ -56,6 +58,7 @@ class ChessNextApp extends StatefulWidget {
   final DraftRepository? draftRepository;
   final TextClipboard? clipboard;
   final RecordFilePicker? filePicker;
+  final RecordFileExporter? fileExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
@@ -252,6 +255,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       preferences: preferences,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       filePicker: widget.filePicker,
+      fileExporter: widget.fileExporter,
       session: session,
       library: library,
       readings: readings,
@@ -271,6 +275,7 @@ class _BoardPage extends StatelessWidget {
     required this.session,
     required this.clipboard,
     this.filePicker,
+    this.fileExporter,
     required this.toggleTheme,
     required this.showGuide,
     required this.library,
@@ -283,6 +288,7 @@ class _BoardPage extends StatelessWidget {
   final DraftController? drafts;
   final TextClipboard clipboard;
   final RecordFilePicker? filePicker;
+  final RecordFileExporter? fileExporter;
   final BoardSession session;
   final VoidCallback toggleTheme;
   final Future<void> Function() showGuide;
@@ -487,6 +493,7 @@ class _BoardPage extends StatelessWidget {
         tree: tree,
         metadata: metadata,
         clipboard: clipboard,
+        fileExporter: fileExporter,
       ),
     );
   }

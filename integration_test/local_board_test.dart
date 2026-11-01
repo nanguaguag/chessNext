@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'package:chess_next/adapters/platform/macos_record_file_exporter.dart';
+import 'package:chess_next/ports/record_file_exporter.dart';
 import 'package:chess_next/adapters/platform/file_selector_record_picker.dart';
 import 'package:file_selector/file_selector.dart';
 import '../test/support/memory_clipboard.dart';
@@ -1452,6 +1455,132 @@ void main() {
         expect(saved.metadata.tags['Custom'], '保留');
         expect(saved.tree.current.comment, '炮注');
         expect(await source.readAsBytes(), bytes);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native file export atomically saves snapshot and protects existing files on failure',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-file-export-');
+      final target = File('${directory.path}/自制.pgn');
+      await target.writeAsString('原文件内容');
+      var choices = 0;
+      final exporter = MacOsRecordFileExporter(
+        chooser: (extension) async {
+          choices++;
+          expect(extension, 'pgn');
+          return target.path;
+        },
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(key: UniqueKey(), fileExporter: exporter),
+        );
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        session.playMove(Move.parse('h2e2'));
+        session.annotate('导出炮注');
+        session.updateMetadata(GameMetadata({'Event': '导出时资料'}));
+        await tap(find.text('导出文字'));
+        session.playMove(Move.parse('b9c7'));
+        final revision = session.revision;
+        await tap(find.byKey(const ValueKey('export-format')));
+        await tap(find.text('PGN（ICCS）').last);
+        await tap(find.text('保存文件'));
+        for (var i = 0; i < 100 && find.text('文件已保存').evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(find.text('文件已保存'), findsOneWidget);
+        expect(choices, 1);
+        final record = PgnCodec.parse(await target.readAsString());
+        expect(record.tree.nodeCount, 2);
+        expect(record.tree.current.comment, '导出炮注');
+        expect(record.tags['Event'], '导出时资料');
+        expect(session.tree.nodeCount, 3);
+        expect(session.revision, revision);
+        expect(session.dirty, isTrue);
+        final goodBytes = await target.readAsBytes();
+        await expectLater(
+          MacOsRecordFileExporter(
+            chooser: (_) async => '${target.path}/invalid.pgn',
+          ).saveText(
+            text: '不能替换旧文件',
+            extension: 'pgn',
+            cancellation: FileExportCancellation(),
+          ),
+          throwsA(
+            isA<RecordExportException>().having(
+              (e) => e.failure,
+              'failure',
+              RecordExportFailure.write,
+            ),
+          ),
+        );
+        await expectLater(
+          MacOsRecordFileExporter(
+            chooser: (_) async => directory.path,
+          ).saveText(
+            text: '目录不应被替换',
+            extension: 'pgn',
+            cancellation: FileExportCancellation(),
+          ),
+          throwsA(isA<RecordExportException>()),
+        );
+        final link = Link('${directory.path}/link.pgn');
+        await link.create(target.path);
+        await expectLater(
+          MacOsRecordFileExporter(chooser: (_) async => link.path).saveText(
+            text: '不跟随符号链接写文件',
+            extension: 'pgn',
+            cancellation: FileExportCancellation(),
+          ),
+          throwsA(isA<RecordExportException>()),
+        );
+        expect(await link.target(), target.path);
+        await expectLater(
+          MacOsRecordFileExporter.channel.invokeMethod<void>('writeAtomic', {
+            'path': target.path,
+            'bytes': Uint8List(256001),
+          }),
+          throwsA(
+            isA<PlatformException>().having(
+              (e) => e.code,
+              'code',
+              'invalid_export',
+            ),
+          ),
+        );
+        expect(await target.readAsBytes(), goodBytes);
+        final newlyCreated = File('${directory.path}/new.fen');
+        expect(
+          await MacOsRecordFileExporter(
+            chooser: (_) async => newlyCreated.path,
+          ).saveText(
+            text: session.position.toFen(),
+            extension: 'fen',
+            cancellation: FileExportCancellation(),
+          ),
+          RecordFileExportResult.saved,
+        );
+        expect(
+          utf8.decode(await newlyCreated.readAsBytes()),
+          session.position.toFen(),
+        );
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

@@ -8,3 +8,4 @@ export 'src/game_tree.dart';
 export 'src/setup_draft.dart';
 export 'src/text_record.dart';
 export 'src/chinese_notation.dart';
+export 'src/pgn_record.dart';

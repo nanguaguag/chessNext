@@ -49,3 +49,13 @@ ReadingNavigation纯应用严格祖先/所选currentLine前后分支目标，Boa
 已web查官方xqbase原始规范 https://www.xqbase.com/protocol/cchess_pgn.htm （2006修订）：Game首标签/标签-着法/默认Chinese、可ICCS/WXF/花括号评注/结果终止/多局；不可直接套国际象棋SAN。不要复制规范例谱或第三方parser代码，仅原创解析。另打开pgnfen2是国际象棋译文，不拿其50步等当中国象棋规则。下一先落研究及PGN增量计划，再实现有限单局ICCS/中文PGN交换、元数据/注释/变着损失提示与合法性原子校验；若完整头/分支需新文档模型则独立拆片，不一次假称全部格式支持。用户持续推进约束不变，不能最终停下。
 IAB browser2 tab4保留本轮自制炮八平五/马２进３/炮二进二选中分支末端，刚导出后面板已收起，markHandoff；压缩先rewriteDocumentation/fresh AX。
 E20样本与manifest/PGN_RESEARCH/REFERENCE_EVIDENCE现已落盘登记，下载SHA已再次核对；仅研究，无PGN业务实现。准备独立docs提交后按纯Dart codec→App资料与文字交换→文件端口分片推进，研究限制在PGN_RESEARCH。主来源xqbase规范不复制例谱/代码。
+
+## M4-01a最新：PGN codec完成（提交见git log）
+packages/xiangqi_core/lib/src/pgn_record.dart+export：PgnRecord规范化四基础标签/其它标签不可变保留；单局ICCS/Chinese/根及逐着和结果后评注/回合结果校验、PGN红r别名限定/输入输出限额；拒绝WXF/括号变着/多局/NAG。path只当前路径，评注花括号报错或明确includeComments:false；输入侧标签预算/输出逐段预算，不先分配超长结果。PGN_CODEC_SLICE。尚未接App，不宣称可导入PGN文件。
+新增核心12+根E20互操作1；核心完整61/61+dart analyze、根真NNUE210/210+flutter analyze通过，无待等待命令。日志/tmp/chessnext-pgn-{target,reference,core-final,core-final-analyze,root-full,root-analyze}.log；首核心全套60+1失败是测试未指定Chinese导致默认ICCS Format差异，修测试显式格式后过，严格全Map断言保留。无UI/引擎改动，本片没空跑macOS。
+
+## 下一功能：棋谱资料与存储（PGN接App前置）
+建议独立M4-01b F10/F12/B16/B19：GameMetadata纯Dart有界不可变opaque标签（最多64、key64/值4096/无控制字符、Result可选4值），四PGN派生标签由codec校验，不让BoardSession依赖PGN解析器。BoardSession持有metadata、updateMetadata仅内容revision/dirty（不positionRevision），replaceTree可选metadata一次原子提交/newGame清空；编辑表单只改已变的赛事/地点/日期/轮次/红黑/结果，未知/派生标签保留，无操作不dirty。
+SavedGame新增可选GameMetadata默认empty（可const empty），FileGameRepository schema1可选metadata字段/旧文件无字段默认empty/坏metadata转FormatException走有效备份/损坏原件保护；同包FileDraftRepository.save必须转传metadata，DraftController的_DraftKey加入metadata，恢复importTree也传它，避免只改资料不自动保存或恢复丢标签。LibraryController.save捕获metadata，同epoch晚编辑仍dirty；open/recover/importTree一次带metadata。最近阅读身份仍根/路径，不复制内容。
+再加Material3棋谱资料编辑入口与200%字号/错误/旧文档确认保护，测试未知标签/metadata-only dirty与草稿/新实例保存恢复/坏文件备份/延迟保存/分析不重启。根test+analyze、核心新增对应测试+analyze、相关macOS保存/草稿验证后独立中文commit。之后M4-01c接PGN文字交换和文件端口，明确导出路径/评注/未支持特性。别直接让PGN标签被GameTree导入丢掉或把codec当全功能。
+当前基线f7d2bb9分支导航，ec69d78研究，PGN提交见git log；IAB tab4自制谱alt末端已markHandoff，下载原文件与SHA见前段及E20manifest。用户持续推进全站/每功能门槛后提交的约束不变，未全部对齐不能最终停下。

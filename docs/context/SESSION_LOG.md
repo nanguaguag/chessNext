@@ -226,3 +226,6 @@ E19研究独立提交：自制单中段分支首尾图标实际先到严格前�
 2026-11-02 M2-14开始：E19已V，纯应用分支目标/会话缓存/独立双箭头/epoch与修订回调保护；初代码analyze无问题。目标首加载失败（Dart扩展setAiSide/playing未显式import所属library），修import后重跑；AI夹具用有限pump避免无限进度条settle，尚未全根/原生，不计完成。
 M2-14最终：目标8/8，根真NNUE209/209、analyze无问题、macOS读谱单项1/1（00:08）通过，无待等待命令。提交后下一E20自制PGN样本研究独立提交；本片无规则或依赖变更。
 E20调查完成：参考真实导出Agent自制PGN151字节，download事件确认及SHA复核，研究副本+manifest/截图/主规范链接落docs；没有复制站点棋谱库或代码。纯文档/自制夹具，不重复业务测试。下一PGN纯Dart有限codec独立增量，App未支持PGN不能标实现。
+2026-11-02 M4-01a：纯DartPgnRecord/PgnCodec和有限profile计划，11核心+1根E20互操作测试已写；目标执行中/tmp/chessnext-pgn-{target,reference}.log，未完成全量门槛/未提交。App无PGN入口不能标可用。原始规范/样本独立登记ec69d78。
+M4-01a初目标核心11/11与根E20互操作1/1通过；加输入侧标签预算和邻接转义/64标签上限第12测试后，核心全量60通过1失败：比较Chinese元数据却用默认ICCS输出，差异正是Format字段；改测试明确指定Chinese导出（保留严格全Map比较）。同轮根真NNUE210/210、flutter analyze与core dart analyze通过。核心最终全套重跑中，不将60+1失败写通过。
+M4-01a最终门槛：核心dart test61/61、dart analyze无问题；根显式NNUEflutter test210/210、flutter analyze无问题。无待等待验证命令，无UI/原生改动不空跑macOS。只codec，下一GameMetadata/保存草稿前置，再PGN交换界面，不误称App支持PGN。所有新增实现原创，未引依赖。

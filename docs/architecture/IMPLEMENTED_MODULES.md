@@ -48,3 +48,5 @@ F29首片：features/help/offline_help_dialog.dart只读展示层，原创9主�
 F29第二片：OnboardingDialog纯展示四步/类型化GuideExit，OfflineHelpDialog返回HelpAction由App协调；AppPreferences可选guideVersion与PreferencesController.markGuideSeen处理错误/初始化合并/保存，App/main显式firstRun开关和安全导航。Settings保存copyWith保留非表单字段。ADR-018，真实控件聚光操作闯关尚未实现。
 
 M2-14：application/reading_navigation.dart纯目标计算；BoardSession按tree对象缓存；App双箭头保留绝对首尾并绑定epoch/内容与位置修订回调，经现有EngineSessionController.navigateToNode。E19/BRANCH_NAVIGATION_SLICE与TRACEABILITY说明范围，无规则修改。
+
+M4-01a：packages/xiangqi_core/lib/src/pgn_record.dart纯Dart有限单局PGN codec和不可变标签包装，不拥有应用会话/IO；原始规范与自制样本E20，根互操作fixture验证。尚未接App/文档资料持久化，UI仍只有原文字格式，不能因export声明而冒称完整PGN功能。

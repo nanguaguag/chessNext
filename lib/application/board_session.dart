@@ -58,6 +58,8 @@ class BoardSession extends ChangeNotifier {
     return '${position.turn == Side.red ? '红方' : '黑方'}行棋${position.isInCheck(position.turn) ? ' · 将军' : ''}';
   }
 
+  bool isLegalMove(Move move) => _legal.contains(move);
+
   void _refresh() {
     _legal = position.legalMoves.toList(growable: false);
     _outcome = position.boardOutcome();

@@ -18,7 +18,14 @@ String pieceName(Piece piece) => switch ((piece.side, piece.type)) {
 };
 
 class XiangqiBoard extends StatefulWidget {
-  const XiangqiBoard({super.key, required this.session});
+  const XiangqiBoard({
+    super.key,
+    required this.session,
+    this.recommendation,
+    this.reply,
+  });
+  final Move? recommendation;
+  final Move? reply;
   final BoardSession session;
   @override
   State<XiangqiBoard> createState() => _XiangqiBoardState();
@@ -96,7 +103,15 @@ class _XiangqiBoardState extends State<XiangqiBoard> {
               ),
               child: Stack(
                 children: [
-                  Positioned.fill(child: CustomPaint(painter: _BoardPainter())),
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: _BoardPainter(
+                        recommendation: widget.recommendation,
+                        reply: widget.reply,
+                        flipped: session.flipped,
+                      ),
+                    ),
+                  ),
                   for (var row = 0; row < 10; row++)
                     for (var col = 0; col < 9; col++)
                       _cell(
@@ -229,6 +244,11 @@ class _XiangqiBoardState extends State<XiangqiBoard> {
 }
 
 class _BoardPainter extends CustomPainter {
+  _BoardPainter({this.recommendation, this.reply, this.flipped = false});
+  final Move? recommendation;
+  final Move? reply;
+  final bool flipped;
+
   @override
   void paint(Canvas canvas, Size size) {
     final step = size.width / 9;
@@ -267,8 +287,40 @@ class _BoardPainter extends CustomPainter {
       canvas,
       Offset((size.width - text.width) / 2, step * 5 - text.height / 2),
     );
+    void arrow(Move move, Color color) {
+      Offset location(Square square) => point(
+        (flipped ? 8 - square.file : square.file).toDouble(),
+        (flipped ? square.rank : 9 - square.rank).toDouble(),
+      );
+      final from = location(move.from);
+      final to = location(move.to);
+      final distance = (to - from).distance;
+      if (distance == 0) return;
+      final unit = (to - from) / distance;
+      final start = from + unit * step * .3;
+      final end = to - unit * step * .3;
+      final arrowPaint = Paint()
+        ..color = color
+        ..strokeWidth = 4
+        ..strokeCap = StrokeCap.round;
+      canvas.drawLine(start, end, arrowPaint);
+      final wing = Offset(-unit.dy, unit.dx) * step * .12;
+      final base = end - unit * step * .22;
+      final head = Path()
+        ..moveTo(end.dx, end.dy)
+        ..lineTo((base + wing).dx, (base + wing).dy)
+        ..lineTo((base - wing).dx, (base - wing).dy)
+        ..close();
+      canvas.drawPath(head, arrowPaint);
+    }
+
+    if (reply != null) arrow(reply!, const Color(0xff965ba3));
+    if (recommendation != null) arrow(recommendation!, const Color(0xff226b9c));
   }
 
   @override
-  bool shouldRepaint(covariant _BoardPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _BoardPainter oldDelegate) =>
+      recommendation != oldDelegate.recommendation ||
+      reply != oldDelegate.reply ||
+      flipped != oldDelegate.flipped;
 }

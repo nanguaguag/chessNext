@@ -35,3 +35,8 @@ BoardSession负责内存会话、历史与状态通知，View不直接调用引�
 本机默认adhoc签名的designated requirement为二进制cdhash，后续重建后沙箱初始化等待；进程采样停于_libsecinit_appsandbox。将应用设置为独立dev.chessnext.app，并仅在Debug配置使用稳定的同identifier签名要求，重建后可继续使用本应用开发容器。App Sandbox始终开启，没有清理用户容器或修改系统隐私设置。Release保留单独签名配置；此配置不代表已完成正式签名、公证或发行。
 
 暂存诊断日志在/tmp，不提交调试服务地址。后续设备或正式开发证书环境应复核签名配置。
+
+## M3-02更新
+
+主应用已接本地库和分析面板。执行python3 tools/setup_pikafish.py准备官方制品，再flutter run -d macos，会自动将本机校验后的引擎/网络打入构建产物并签名helper；不再需要手工签名。若制品缺失，棋盘仍可用，分析报告不可用。当前构建签名用于本地开发，不声称正式公证通过。
+最新原生集成3/3通过，包含真实Documents保存恢复以及包内引擎NNUE搜索、多PV切换与停止。Engine资源只存在.local和build，不提交Git。

@@ -1,35 +1,22 @@
 # 当前状态
 
-日期：2026-11-01，Asia/Shanghai。M2-05：已实现棋谱分支/注释/导航，以及可用flutter run -d macos启动的Material3离线双人棋盘；整体产品和M2尚未完成。
+日期2026-11-02（Asia/Shanghai）。M3-02：本地棋谱分支/保存已实现，正式Pikafish分析已接主App；全站对标尚未完成。
 
-用户要求离线优先，登录后/在线服务延期；许可暂不处理，不阻挡本地开发。每功能执行flutter test、flutter analyze通过后中文Conventional Commit。规则在纯Dart包，UI仅通过BoardSession访问会话，不直接接引擎或存储。
+用户要求持续推进至全站对齐，每功能先flutter test/flutter analyze再单独中文Conventional Commit，不提前停下来审查。用户已选在线部分自建可替换后端并提供部署方案；旧的在线/账号“延期”仅表示先后顺序，不再永久排除。许可按要求暂不处理，不阻挡本地开发。
 
-## 已实现
+## 当前实现
 
-- 基线b3b423a；局面校验9b515d2；将死/困毙6e7fd77；本轮macOS棋盘功能独立提交，哈希见git log。
-- 主应用lib/main.dart、lib/app.dart；BoardSession内存走子历史；棋盘绘制、语义、点击/键盘选子落子、提示、单步悔棋、翻转、新局确认、着法记录、主题和终局提示。
-- macos平台工程，1120×850初始窗口/520×640最小窗口。Debug稳定签名identifier dev.chessnext.app，Sandbox开启。Podfile与Pods配置引用补齐，解决加入集成测试后的构建问题。
-- Pikafish仍在research/spikes/flutter_engine_probe验证；主界面尚无AI分析/AI对弈。
+- d3ba721 macOS棋盘；fd295fa棋谱分支/注释/游标、主线提升/变着删除；9e408b2本地保存/命名搜索/打开/备份恢复。
+- 53e4f4f正式EngineGateway/UciEngine/Process运输；本轮AnalysisController与主界面分析面板、cp/mate/bound视角归一化、MultiPV、深度/时间/NPS、推荐/回复箭头、线程/Hash/变化数设置。内容revision、positionRevision和引擎generation分别隔离保存与搜索竞态。
+- macOS构建脚本从.local核对hash后复制官方引擎/NNUE/许可到Resources并签名helper；Sandbox开启。不在Git提交二进制。缺少.local时仍能构建棋盘，分析明确不可用。
+- 离线规则为纯Dart包；IO与引擎都经端口注入，组件测试使用显式内存/假引擎。
 
-## 本轮验证
+## 最近验证
 
-根flutter test11/11、flutter analyze无问题；规则26/26及analyze通过；引擎2/2及analyze通过；macOS原生integration_test1/1通过。flutter run -d macos实际启动成功，且从测试入口重建回普通入口后再次启动成功。未授予Computer Use桌面权限，无法截图/人工点击验收；系统自动置前返回失败，但进程和Flutter连接成功，原生测试完成。证据与命令见planning/MACOS_RUN.md。
+带PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK环境的根flutter test33/33、flutter analyze无问题；核心32测试及分析通过。macOS原生3/3：双人棋盘、Documents临时目录真实保存/新实例恢复、应用包内官方NNUE搜索/切换MultiPV=2/停止。未授Computer Use权限，不能声称截图/人工视觉验收通过。2026-11-02重查官方latest仍指向2026-09-06。
 
-## 下一步/限制
+## 接续
 
-B16棋谱磁盘保存恢复；随后B14生产引擎端口和主UI分析集成。为满足本次macOS运行请求，先交付线性内存会话和UI，不冒充完整B16。关闭App不保留当前棋局，界面已提示。历史长将长捉/重复/自然限着仍未实现；Android/iOS/其他桌面、性能热测、正式签名公证未验收。
+下一项F03本地AI对弈（分析互斥、执方、催招/变招/悔棋）→局面编辑、FEN/棋谱导入导出、自动草稿→整谱复盘/错题→设置/体验→在线后端与五平台。B16仓库当前单窗口快照实现，见ADR-005，不声称SQLite、断电fsync或跨进程写事务通过。历史长将长捉/重复/自然限着、移动FFI、Windows/Linux、正式签名公证仍未完成。
 
-曾尝试detach，但终端会话结束后App也退出；已重新启动flutter run，保留活跃开发会话供用户运行。用户可自行关闭。用git status确认提交后工作树；不要关闭用户后续自行开始的对局。环境Flutter3.44.6/Dart3.12.2、macOS14.4 arm64/Xcode15.0。
-
-M2-05：纯Dart GameTree提供不可变分支、稳定节点ID、注释、主线提升和子树删除；BoardSession基于棋树导航，后退不再删除棋谱，前进可恢复已有着法，hasContent独立于游标保护新局。UI有分支选择、主线/删除菜单、注释与前后导航。根Flutter13/13及analyze通过；核心30/30及analyze通过。磁盘保存尚未实现。
-最新用户要求持续对齐全站所有功能，每功能验证后提交；账号/在线服务纳入远期目标，不以旧延期记录当作永久排除，真实服务仍需依赖确认。
-
-## M2-06最新状态
-
-fd295fa分支/注释已提交。现新增GameRepository与FileGameRepository、版本化棋树编解码、本地保存/按名搜索/打开、备份恢复与脏状态保护。main注入平台Documents存储；测试默认内存适配器不触及用户文件。晚到保存、读取中导航、销毁期间IO均有测试。根flutter test23/23、flutter analyze无问题；核心32/32与analyze通过；macOS原生集成2/2（真实沙箱Documents临时子目录保存及新App实例恢复）通过。
-待做：自动草稿/崩溃恢复、重命名/删除/分类/导入导出、AI主界面和其余全站能力。保存需显式点击；未保存修改关闭仍会丢失，UI有明确提示。当前本地库与网站账号库并非同一服务。技术方案见ADR-005。
-
-## M3-01最新状态
-
-9e408b2已提交本地保存/恢复。新增正式EngineGateway/UciEngine/ProcessEngineTransport：握手能力、类型化option/info/cp/mate/bound/MultiPV、停止bestmove屏障、请求token、搜索参数/局面校验、超时和EOF失败、进程清理。正式适配器在根测试运行官方NNUE（深度8、多PV、5轮停止），不是只运行诊断spike。带PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK环境的根flutter test29/29与flutter analyze通过；无环境时真实引擎测试明确skip。tools/check.sh现为本机官方制品设置环境。主UI尚未连接新端口。
-用户已选择在线部分自建可替换后端并提供部署方案，后续不可将其永久排除；不依赖网站账号服务，也不能伪造云库/识图结果。
+现有用户运行窗口不要自动关闭；测试创建的App与helper已收尾。以git status/git log为准；无需依赖聊天记忆。环境Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。

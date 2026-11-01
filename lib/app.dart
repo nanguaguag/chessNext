@@ -1,33 +1,57 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'application/board_session.dart';
+import 'application/analysis_controller.dart';
+import 'features/analysis/analysis_panel.dart';
 import 'application/library_controller.dart';
 import 'ports/game_repository.dart';
 import 'features/library/library_dialog.dart';
 import 'features/board/xiangqi_board.dart';
 
 class ChessNextApp extends StatefulWidget {
-  const ChessNextApp({super.key, this.repository});
+  const ChessNextApp({
+    super.key,
+    this.repository,
+    this.engineFactory,
+    this.deviceThreads = 1,
+  });
+  final EngineFactory? engineFactory;
+  final int deviceThreads;
   final GameRepository? repository;
   @override
   State<ChessNextApp> createState() => _ChessNextAppState();
 }
 
-class _ChessNextAppState extends State<ChessNextApp> {
+class _ChessNextAppState extends State<ChessNextApp>
+    with WidgetsBindingObserver {
   final session = BoardSession();
   late final LibraryController library;
+  late final AnalysisController analysis;
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
+    analysis = AnalysisController(
+      session,
+      widget.engineFactory,
+      deviceThreads: widget.deviceThreads,
+    );
     library = LibraryController(
       session,
       widget.repository ?? MemoryGameRepository(),
     );
   }
 
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state != AppLifecycleState.resumed) analysis.disable();
+  }
+
   ThemeMode mode = ThemeMode.system;
   @override
   void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    analysis.dispose();
     library.dispose();
     session.dispose();
     super.dispose();
@@ -49,6 +73,7 @@ class _ChessNextAppState extends State<ChessNextApp> {
     home: _BoardPage(
       session: session,
       library: library,
+      analysis: analysis,
       toggleTheme: () => setState(
         () => mode = mode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,
       ),
@@ -61,10 +86,12 @@ class _BoardPage extends StatelessWidget {
     required this.session,
     required this.toggleTheme,
     required this.library,
+    required this.analysis,
   });
   final BoardSession session;
   final VoidCallback toggleTheme;
   final LibraryController library;
+  final AnalysisController analysis;
   Future<void> _newGame(BuildContext context) async {
     if (session.dirty && session.hasContent) {
       final confirmed = await showDialog<bool>(
@@ -126,7 +153,7 @@ class _BoardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([session, library]),
+    listenable: Listenable.merge([session, library, analysis]),
     builder: (context, _) => Scaffold(
       appBar: AppBar(
         title: const Text('chessNext'),
@@ -167,10 +194,14 @@ class _BoardPage extends StatelessWidget {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SizedBox(
-                    width: (constraints.maxWidth - 48)
+                    width: (constraints.maxWidth - 48 - (wide ? 344 : 0))
                         .clamp(432, 540)
                         .toDouble(),
-                    child: XiangqiBoard(session: session),
+                    child: XiangqiBoard(
+                      session: session,
+                      recommendation: analysis.recommended,
+                      reply: analysis.reply,
+                    ),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -367,30 +398,46 @@ class _BoardPage extends StatelessWidget {
               ),
             ),
           );
-          return SingleChildScrollView(
-            child: Center(
-              child: ConstrainedBox(
-                constraints: const BoxConstraints(maxWidth: 1120),
-                child: Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: wide
-                      ? Row(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Expanded(
+          final sidePanel = Column(
+            children: [
+              panel,
+              const SizedBox(height: 12),
+              AnalysisPanel(analysis: analysis),
+            ],
+          );
+          return Center(
+            child: ConstrainedBox(
+              constraints: const BoxConstraints(maxWidth: 1120),
+              child: Padding(
+                padding: const EdgeInsets.all(24),
+                child: wide
+                    ? Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Expanded(
+                            child: SingleChildScrollView(
                               child: Align(
                                 alignment: Alignment.topCenter,
                                 child: board,
                               ),
                             ),
-                            const SizedBox(width: 24),
-                            SizedBox(width: 320, child: panel),
+                          ),
+                          const SizedBox(width: 24),
+                          SizedBox(
+                            width: 320,
+                            child: SingleChildScrollView(child: sidePanel),
+                          ),
+                        ],
+                      )
+                    : SingleChildScrollView(
+                        child: Column(
+                          children: [
+                            board,
+                            const SizedBox(height: 24),
+                            sidePanel,
                           ],
-                        )
-                      : Column(
-                          children: [board, const SizedBox(height: 24), panel],
                         ),
-                ),
+                      ),
               ),
             ),
           );

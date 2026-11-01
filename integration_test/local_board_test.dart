@@ -1,3 +1,5 @@
+import 'package:chess_next/adapters/engine/bundled_engine.dart';
+import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:chess_next/adapters/storage/file_game_repository.dart';
 import 'package:chess_next/app.dart';
@@ -104,4 +106,44 @@ void main() {
       }
     },
   );
+  testWidgets('bundled Pikafish analyzes offline, switches MultiPV and stops', (
+    tester,
+  ) async {
+    await tester.pumpWidget(ChessNextApp(engineFactory: openBundledEngine));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('开始分析'));
+    await tester.tap(find.text('开始分析'));
+    for (
+      var i = 0;
+      i < 100 && find.textContaining('红分').evaluate().isEmpty;
+      i++
+    ) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.textContaining('红分'), findsWidgets);
+    expect(
+      tester.widget<XiangqiBoard>(find.byType(XiangqiBoard)).recommendation,
+      isNotNull,
+    );
+    await tester.ensureVisible(find.byTooltip('引擎参数'));
+    await tester.tap(find.byTooltip('引擎参数'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextFormField, '同时分析变化数'), '2');
+    await tester.tap(find.widgetWithText(FilledButton, '应用'));
+    await tester.pumpAndSettle();
+    for (
+      var i = 0;
+      i < 100 && find.byKey(const ValueKey('pv-2')).evaluate().isEmpty;
+      i++
+    ) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(find.byKey(const ValueKey('pv-2')), findsOneWidget);
+    await tester.ensureVisible(find.text('停止分析'));
+    await tester.tap(find.text('停止分析'));
+    await tester.pumpAndSettle();
+    expect(find.text('分析已停止'), findsOneWidget);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+  });
 }

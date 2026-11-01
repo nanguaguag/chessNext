@@ -4,7 +4,7 @@
 
 **已提供可运行的 macOS Material 3 离线双人棋盘。** 支持合法落子、悔棋、翻转、新局确认、将死/困毙提示、明暗主题及键盘操作。根目录运行 `flutter pub get`、`flutter run -d macos`，详见 [macOS运行说明](docs/planning/MACOS_RUN.md)。
 
-Pikafish通信已在独立诊断工程验证，分析面板尚未接入主App；棋谱保存与恢复、分支注释和AI对弈继续增量推进。登录后与在线服务延期，引擎/NNUE仅在本机忽略目录，不提交制品。
+主App现已接入本地棋谱保存恢复、分支注释、Pikafish分析与多路变化、评分箭头和引擎参数。AI对弈及其余功能继续增量推进。登录后与在线服务延期，引擎/NNUE仅在本机忽略目录，不提交制品。
 
 从 [当前状态](docs/context/CURRENT_STATE.md) 和 [交接](docs/context/HANDOFF.md) 恢复工作；Agent 先读 [AGENTS.md](AGENTS.md)。
 

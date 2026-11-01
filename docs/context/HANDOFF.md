@@ -1,6 +1,6 @@
-# 会话交接 / M2-01
+# 会话交接 / M2-02
 
-先读AGENTS、README、CURRENT_STATE、DECISIONS，git status确认实际状态。用户已授权按计划实现离线业务，旧的“只调查/只诊断”限制不再适用；登录后功能延期；许可事项暂不处理、不阻挡本地开发。
+先读AGENTS、README、CURRENT_STATE、DECISIONS，git status确认实际状态；基线提交b3b423a，每功能通过flutter test和flutter analyze后中文规范提交。用户已授权按计划实现离线业务，旧的“只调查/只诊断”限制不再适用；登录后功能延期；许可事项暂不处理、不阻挡本地开发。
 
 本轮B15首切片完成：packages/xiangqi_core（无Flutter/IO），入口lib/xiangqi_core.dart。先读该包README，了解UCI坐标、FEN格式、语义校验与历史裁决边界。不要将legalMoves作为完整对局裁决，不将可解析FEN直接当作适合native搜索的合法局面。
 
@@ -10,4 +10,6 @@
 
 已有通信重跑：根目录 python3 tools/setup_pikafish.py 校验/获取固定版本；python3 tools/run_macos_probe.py 做应用内helper继承sandbox签名验证。日志及manifest见docs/engine/COMMUNICATION_VALIDATION.md。Flutter test与macOS App已跑通；外部helper被Sandbox拒绝，应用内签名成功，不关闭Sandbox。
 
-本轮未做：完整业务UI/持久化、完整终局/重复裁决、移动FFI、Windows/Linux、正式签名、公证、性能热测。无后台进程，无git提交，main仍无历史基线。Skills官方校验器此前缺PyYAML，尚未补跑，Ruby YAML替代校验曾通过。
+本轮未做：完整业务UI/持久化、完整终局/重复裁决、移动FFI、Windows/Linux、正式签名、公证、性能热测。无后台进程，已有基线提交和功能提交；以git log查看实际哈希。Skills官方校验器此前缺PyYAML，尚未补跑，Ruby YAML替代校验曾通过。
+
+M2-02已新增validateForPlay，详见纯Dart包README。根flutter test5/5、dart test20/20、引擎2/2，三处analyze通过；下一步B15将死/困毙终局与历史裁决接口，再B16棋树。用bash tools/check.sh执行全部门槛，测试前确保.local制品齐全。

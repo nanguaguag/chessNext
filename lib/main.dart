@@ -13,6 +13,7 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ChessNextApp(
+      showFirstRunGuide: true,
       recentReadingRepository: FileRecentReadingRepository(
         getApplicationSupportDirectory,
       ),

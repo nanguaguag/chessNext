@@ -218,3 +218,7 @@ F18提交门槛最终：根真NNUE189/189、flutter analyze无问题、完整原
 E18补审已独立登记：按钮说明15组可见/关闭，手动引导1/4可重放和跳过；未开启引擎，未宣称分支跳转已操作。研究文档/截图单独docs提交，产品基线5acdeda不变，后续F29离线帮助。
 2026-11-02 F29离线帮助开始：9原创主题与实际控件说明/搜索折叠，AppBar入口，无IO或引擎调用。先方案，目标3组件及原生首测试补充；首analyze无问题，新增测试后待复验，目标/tmp/chessnext-help-target.log。尚未提交。
 F29 M3-17门槛：目标3/3，全根真NNUE192/192、flutter analyze无问题，macOS首项1/1（00:06）通过。无失败/跳过，日志/tmp/chessnext-help-{target,full,analyze,native}.log。核心/引擎未改不重复其未变原生全16；下一手动分步/首次提示版本记忆。
+2026-11-02 F29第二片开始：ONBOARDING_SLICE/ADR018提案，guideVersion可选字段/Preferences.markGuideSeen/Settings copyWith保留标记、App生产firstRun开关+帮助返回动作+四步只读dialog。代码阶段analyze无问题，新增5应用/3组件目标后待结果/tmp/chessnext-guide-target.log；新原生尚未写，不计完成。
+F29第二片目标首轮7通过1失败：错误提示同时存在状态栏与Snackbar，测试全局find匹配过宽；改限Snackbar验证后8/8通过。App集成后analyze2项大括号已修，最终全根真NNUE200/200、analyze无问题；macOS新首次引导/文件偏好重建/手动重放单项1/1（00:04）通过。额外复验相关原生设置恢复项进行中，不重复无变化的引擎全套。E19新自制谱分支跳转已操作，证据AX/截图待登记独立docs提交。
+F29引导相关macOS设置恢复单项1/1（00:06）通过。补慢读时不盖住已开用户对话框/手动仍可用，第4组件测试首轮忘导入dart:async导致Completer未定义、全根加载失败1/analyze2项；补必要import后重新全量与analyze，未计失败轮为通过。最终日志/tmp/chessnext-guide-final{,-analyze}.log，尚待末尾确认。
+M3-18提交门槛最终：根真NNUE201/201、analyze无问题、原生引导末轮1/1（00:04）、设置恢复相关项1/1（00:06）均通过，无待等待验证命令。产品本切片独立中文feat(help)提交；E19研究已登记但独立docs提交，下一分支导航。未标聚光闯关/五平台/人工OS已完成。

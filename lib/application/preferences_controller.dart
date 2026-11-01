@@ -17,6 +17,7 @@ class PreferencesController extends ChangeNotifier {
   bool _disposed = false;
   bool _applying = false;
   bool get saving => _writing != null;
+  bool get initialized => _initialized;
   String? error;
   String status = '使用默认设置';
   final Set<String> _edited = {};
@@ -81,6 +82,9 @@ class PreferencesController extends ChangeNotifier {
         value = _bounded(
           stored.copyWith(
             theme: _edited.contains('theme') ? previous.theme : null,
+            guideVersion: _edited.contains('guideVersion')
+                ? previous.guideVersion
+                : null,
             threads: _edited.contains('threads') ? previous.threads : null,
             hashMb: _edited.contains('hashMb') ? previous.hashMb : null,
             multiPv: _edited.contains('multiPv') ? previous.multiPv : null,
@@ -107,6 +111,21 @@ class PreferencesController extends ChangeNotifier {
     }
   }
 
+  Future<bool> markGuideSeen() async {
+    if (!_initialized || loading) await initialize();
+    if (_disposed) return false;
+    if (!_allowWrite) {
+      error = '新手引导标记未保存，请先重试读取或恢复设置。原文件已保留。';
+      _notify();
+      return false;
+    }
+    final version = value.guideVersion < AppPreferences.currentGuideVersion
+        ? AppPreferences.currentGuideVersion
+        : value.guideVersion;
+    await apply(value.copyWith(guideVersion: version));
+    return !_disposed && error == null;
+  }
+
   Future<void> setTheme(ThemePreference theme) =>
       apply(value.copyWith(theme: theme));
   Future<void> apply(AppPreferences next) {
@@ -120,6 +139,7 @@ class PreferencesController extends ChangeNotifier {
 
   void _recordEdits(AppPreferences next) {
     if (next.theme != value.theme) _edited.add('theme');
+    if (next.guideVersion != value.guideVersion) _edited.add('guideVersion');
     if (next.threads != value.threads) _edited.add('threads');
     if (next.hashMb != value.hashMb) _edited.add('hashMb');
     if (next.multiPv != value.multiPv) _edited.add('multiPv');

@@ -1,3 +1,4 @@
+import 'features/help/onboarding_dialog.dart';
 import 'features/help/offline_help_dialog.dart';
 import 'application/recent_reading_controller.dart';
 import 'ports/recent_reading_repository.dart';
@@ -44,6 +45,7 @@ class ChessNextApp extends StatefulWidget {
     this.engineFactory,
     this.reviewCache,
     this.deviceThreads = 1,
+    this.showFirstRunGuide = false,
   });
   final PreferencesRepository? preferencesRepository;
   final DraftRepository? draftRepository;
@@ -51,6 +53,7 @@ class ChessNextApp extends StatefulWidget {
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
+  final bool showFirstRunGuide;
   final GameRepository? repository;
   final RecentReadingRepository? recentReadingRepository;
   @override
@@ -93,7 +96,53 @@ class _ChessNextAppState extends State<ChessNextApp>
       widget.preferencesRepository ?? MemoryPreferencesRepository(),
     );
     preferences.addListener(_preferencesChanged);
-    unawaited(preferences.initialize());
+    unawaited(_initializePreferences());
+  }
+
+  bool _guideOpen = false;
+  Future<void> _initializePreferences() async {
+    await preferences.initialize();
+    if (!mounted ||
+        !widget.showFirstRunGuide ||
+        preferences.error != null ||
+        preferences.value.guideVersion >= AppPreferences.currentGuideVersion) {
+      return;
+    }
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && navigatorKey.currentState?.canPop() == false) {
+        unawaited(_showGuide());
+      }
+    });
+  }
+
+  Future<void> _rememberGuide({bool retry = false}) async {
+    if (retry) await preferences.initialize();
+    final saved = await preferences.markGuideSeen();
+    if (!mounted || saved) return;
+    messengerKey.currentState?.showSnackBar(
+      SnackBar(
+        content: Text(preferences.error ?? '引导标记未能保存，下次启动可能再次显示。'),
+        action: SnackBarAction(
+          label: '重试',
+          onPressed: () => unawaited(_rememberGuide(retry: true)),
+        ),
+      ),
+    );
+  }
+
+  Future<void> _showGuide() async {
+    final context = navigatorKey.currentContext;
+    if (!mounted || _guideOpen || context == null) return;
+    _guideOpen = true;
+    try {
+      final result = await showDialog<GuideExit>(
+        context: context,
+        builder: (_) => const OnboardingDialog(),
+      );
+      if (mounted && result != null) await _rememberGuide();
+    } finally {
+      _guideOpen = false;
+    }
   }
 
   void _preferencesChanged() {
@@ -154,6 +203,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   }
 
   final navigatorKey = GlobalKey<NavigatorState>();
+  final messengerKey = GlobalKey<ScaffoldMessengerState>();
   ThemeMode get mode => switch (preferences.value.theme) {
     ThemePreference.system => ThemeMode.system,
     ThemePreference.light => ThemeMode.light,
@@ -180,6 +230,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   @override
   Widget build(BuildContext context) => MaterialApp(
     navigatorKey: navigatorKey,
+    scaffoldMessengerKey: messengerKey,
     title: 'chessNext',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
@@ -199,6 +250,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       library: library,
       readings: readings,
       analysis: analysis,
+      showGuide: _showGuide,
       toggleTheme: () => unawaited(
         preferences.setTheme(
           mode == ThemeMode.dark ? ThemePreference.light : ThemePreference.dark,
@@ -213,6 +265,7 @@ class _BoardPage extends StatelessWidget {
     required this.session,
     required this.clipboard,
     required this.toggleTheme,
+    required this.showGuide,
     required this.library,
     required this.readings,
     required this.analysis,
@@ -224,6 +277,7 @@ class _BoardPage extends StatelessWidget {
   final TextClipboard clipboard;
   final BoardSession session;
   final VoidCallback toggleTheme;
+  final Future<void> Function() showGuide;
   final LibraryController library;
   final RecentReadingController readings;
   final EngineSessionController analysis;
@@ -410,10 +464,15 @@ class _BoardPage extends StatelessWidget {
           IconButton(
             tooltip: '帮助与按钮说明',
             icon: const Icon(Icons.help_outline),
-            onPressed: () => showDialog<void>(
-              context: context,
-              builder: (_) => const OfflineHelpDialog(),
-            ),
+            onPressed: () async {
+              final action = await showDialog<HelpAction>(
+                context: context,
+                builder: (_) => const OfflineHelpDialog(),
+              );
+              if (action == HelpAction.guide && context.mounted) {
+                await showGuide();
+              }
+            },
           ),
           IconButton(
             tooltip: '应用设置',

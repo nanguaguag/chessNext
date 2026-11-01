@@ -137,7 +137,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
               : () async {
                   if (!form.currentState!.validate()) return;
                   await widget.preferences.apply(
-                    AppPreferences(
+                    widget.preferences.value.copyWith(
                       theme: theme,
                       threads: threads,
                       hashMb: hash,

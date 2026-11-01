@@ -1,3 +1,4 @@
+import 'package:chess_next/features/help/onboarding_dialog.dart';
 import 'package:chess_next/adapters/storage/file_recent_reading_repository.dart';
 import 'package:chess_next/features/library/recent_reading_dialog.dart';
 import 'package:chess_next/ports/game_repository.dart';
@@ -1094,6 +1095,68 @@ void main() {
         expect(restored.tree.nodeCount, 3);
         expect(restored.dirty, isFalse);
         expect((await games.load('native_recent')).tree.cursorId, 'n2');
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native first-run guide persists acknowledgment and replays without altering the game',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-guide-');
+      final repository = FilePreferencesRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        showFirstRunGuide: true,
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+      );
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 50 && find.byType(OnboardingDialog).evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(find.text('1 / 4'), findsOneWidget);
+        expect(await repository.load(), isNull);
+        await tester.tap(find.text('跳过引导'));
+        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 50 && (await repository.load())?.value.guideVersion != 1;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await repository.load())!.value.guideVersion, 1);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tester.pumpAndSettle();
+        expect(find.byType(OnboardingDialog), findsNothing);
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final tree = session.tree;
+        await tester.tap(find.byTooltip('帮助与按钮说明'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('新手引导'));
+        await tester.pumpAndSettle();
+        expect(find.text('1 / 4'), findsOneWidget);
+        await tester.tap(find.text('跳过引导'));
+        await tester.pumpAndSettle();
+        expect(session.tree, same(tree));
+        expect(session.dirty, isFalse);
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

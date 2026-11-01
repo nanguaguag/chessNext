@@ -8,6 +8,7 @@ final class AppPreferences {
     this.hashMb = 16,
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
+    this.guideVersion = 0,
   }) {
     if (threads < 1 ||
         threads > 1024 ||
@@ -16,24 +17,29 @@ final class AppPreferences {
         multiPv < 1 ||
         multiPv > 256 ||
         thinkTimeMs < 50 ||
-        thinkTimeMs > 600000) {
+        thinkTimeMs > 600000 ||
+        guideVersion < 0 ||
+        guideVersion > 1000000) {
       throw ArgumentError('Invalid preferences');
     }
   }
   final ThemePreference theme;
-  final int threads, hashMb, multiPv, thinkTimeMs;
+  static const currentGuideVersion = 1;
+  final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
     ThemePreference? theme,
     int? threads,
     int? hashMb,
     int? multiPv,
     int? thinkTimeMs,
+    int? guideVersion,
   }) => AppPreferences(
     theme: theme ?? this.theme,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
     thinkTimeMs: thinkTimeMs ?? this.thinkTimeMs,
+    guideVersion: guideVersion ?? this.guideVersion,
   );
   Map<String, Object> toJson() => {
     'schema': 1,
@@ -42,10 +48,12 @@ final class AppPreferences {
     'hashMb': hashMb,
     'multiPv': multiPv,
     'thinkTimeMs': thinkTimeMs,
+    if (guideVersion != 0) 'guideVersion': guideVersion,
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
         json['theme'] is! String ||
+        (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         ![
           'threads',
           'hashMb',
@@ -61,6 +69,7 @@ final class AppPreferences {
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
+        guideVersion: json['guideVersion'] as int? ?? 0,
       );
     } on ArgumentError {
       throw const FormatException('Invalid preference value');
@@ -73,7 +82,9 @@ final class AppPreferences {
       threads == other.threads &&
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
-      thinkTimeMs == other.thinkTimeMs;
+      thinkTimeMs == other.thinkTimeMs &&
+      guideVersion == other.guideVersion;
   @override
-  int get hashCode => Object.hash(theme, threads, hashMb, multiPv, thinkTimeMs);
+  int get hashCode =>
+      Object.hash(theme, threads, hashMb, multiPv, thinkTimeMs, guideVersion);
 }

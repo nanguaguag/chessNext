@@ -1,6 +1,8 @@
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 
+enum HelpAction { guide }
+
 class _HelpEntry {
   const _HelpEntry(this.id, this.icon, this.title, this.body);
   final String id, title, body;
@@ -153,6 +155,10 @@ class _OfflineHelpDialogState extends State<OfflineHelpDialog> {
         ),
       ),
       actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, HelpAction.guide),
+          child: const Text('新手引导'),
+        ),
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('关闭'),

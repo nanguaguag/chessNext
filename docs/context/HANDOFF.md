@@ -32,3 +32,12 @@ E18研究独立提交见git log：按钮说明实际开关、引导首步重放/
 features/help/offline_help_dialog.dart原创9主题/标题正文搜索/折叠/空态清空/只读可选文字，AppBar帮助与按钮说明入口。方案OFFLINE_HELP_SLICE，本片不含自动首次/手动分步引导，不标全F29。新增3组件：200%/搜索/开关不改文档、不触引擎和仓储；目标3/3、全根真NNUE192/192、analyze无问题、macOS首测试1/1（00:06）通过。日志/tmp/chessnext-help-{target,full,analyze,native}.log；无待等待验证命令。应已独立feat(help)中文commit，工作树核对。
 
 下一F29手动四步引导+首次提示标记：建议新增guideVersion可选schema1偏好（旧默认0），逐字段晚到合并与错误保护沿用，production main显式启用首次引导，测试宿主可关闭自动弹窗并单独验证启用模式；手动重放永远可用。四步只读/安全教学、前后/跳过/完成/版本记忆，不暗中开AI或改谱。先方案+接口/失败模型后实施，注意设置保存失败要提示且可重试；不把纯说明当网站交互完全一样。随后分支跳转/本地错题/格式与其余所有缺项继续，不能最终停下。
+
+## M3-18最新：四步/首次引导完成（提交见git log）
+OnboardingDialog四步只读前后/跳过/完成，guideVersion可选schema1旧0/当前1/未来不降；PreferencesController.markGuideSeen读失败不覆盖原件、逐字段late merge，Settings用当前copyWith保存防清标记。main显式showFirstRunGuide:true，默认宿主不自动弹；成功加载后无用户模态才自动显示，手动从帮助返回HelpAction.guide进App协调。skip/complete才记，Escape不记；写失败Snackbar重试先重读，无开AI/改谱。ONBOARDING_SLICE/ADR-018；不是网站聚光操作闯关，F29该交互差距仍留。
+
+5应用+4组件=9新增，最终根真NNUE201/201、analyze无问题；macOS引导/文件偏好新实例/重放最终1/1（00:04）、相关设置恢复1/1（00:06）通过。上次完整原生16，此片只跑相关项，文件现共17用例，不宣称17全跑。日志/tmp/chessnext-guide-{target,final,final-analyze,native-final,settings-native}.log，无待等待验证命令。首全局错误文字重复匹配、App2项大括号、新慢读测试缺dart:async编译失败均已修并日志留痕。
+
+## 下一条：E19分支导航
+E19研究文件/AX/截图已写入docs/research并登记，尚待独立docs提交，不混进引导功能。IAB browser2 tab4自制谱正常方向：炮八平五/马２进３/马八进七/马８进７，回第二着追加炮二进二为选中同级。首端从alt末端到第二着分支点、再到root；末端从root到第二着再到所选炮二进二，均V。站点嵌套/根多分支未验，不编造。markHandoff已做，压缩恢复先rewriteDocumentation/fresh AX。
+下一M2-14 F01/F13 B05/B16：BoardSession增加严格前/后最近分支点目标，上一扫描祖先排除当前，下一沿currentLine排除当前，children.length>1算分支，无则root/所选line末尾。保留现有绝对首尾，另加清晰Tooltip的两按钮，经唯一EngineSessionController.navigateToNode暂停AI/旧结果保护，不dirty不写谱。先写验收/计划，再应用/组件/真实macOS导航测试，全根test+analyze后中文独立commit。随后错题训练/文件格式/外观布局/自建后端/五平台等继续，不能最终停下。

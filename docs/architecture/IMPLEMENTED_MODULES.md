@@ -44,3 +44,5 @@ M3-16：application/review_report.dart纯快照报告与期望损失整数阈值
 F18：ports/recent_reading_repository.dart独立元数据/恢复接口；application/recent_reading_controller.dart监听库和会话、epoch绑定/300ms合并/晚到合并/串行写；adapters/storage/file_recent_reading_repository.dart版本JSON/备份；features/library/recent_reading_dialog.dart最近阅读和dirty确认；App/main装配及生命周期flush。LibraryController.documentEpoch与open可选标记保护ID重用。ADR-017，不写棋谱内容。
 
 F29首片：features/help/offline_help_dialog.dart只读展示层，原创9主题/搜索/折叠/选中文字；AppBar装配入口，无应用IO或引擎依赖。手动分步/首次提示仍后续独立增量，验证TRACEABILITY。
+
+F29第二片：OnboardingDialog纯展示四步/类型化GuideExit，OfflineHelpDialog返回HelpAction由App协调；AppPreferences可选guideVersion与PreferencesController.markGuideSeen处理错误/初始化合并/保存，App/main显式firstRun开关和安全导航。Settings保存copyWith保留非表单字段。ADR-018，真实控件聚光操作闯关尚未实现。

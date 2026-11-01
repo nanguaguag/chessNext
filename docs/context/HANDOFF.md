@@ -50,3 +50,6 @@ GameTree可选lineAnchor导航元数据/schema1旧数据兼容；currentLine含�
 
 ## M2-12最新
 当前着分支面板已完成，提交见git log。根81/81、analyze、核心49/49和dart analyze、原生11/11通过。E13研究先独立提交4fc0b3b，包含彻底整树完成、回退/置顶/建议试走；参考删除仅观察未执行。代码确认删除绑定epoch/revision，暂停AI，过期不删除。下一条F32整谱队列，先共享引擎互斥/取消/原始cp-mate-bound/未取评分明确状态，之后曲线与缓存独立增量。原生测试已退出，无后台验证待等待；普通run旧窗口仍不主动关闭。
+
+## M3-07最新
+最佳着法整谱队列已完成，提交见git log。根94/94（真实NNUE四局面）、flutter analyze无问题，macOS完整12/12。核心未改沿用49。新增engine_review.dart及review_models.dart、features/review面板和独立State配置对话框，详ADR-011。结果只内存；严格取消/过期/无评分，不伪造准确率。下一条红方视角评分曲线：cp/mate/bound保留、缺失断线、点击/键盘节点跳转；再独立缓存与彻底候选。测试已结束，无待等待验证命令；普通旧run窗口不自动关闭。

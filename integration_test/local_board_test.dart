@@ -1,3 +1,4 @@
+import 'package:chess_next/application/review_models.dart';
 import 'package:chess_next/ports/engine_gateway.dart';
 import 'package:flutter/services.dart';
 import 'package:chess_next/features/analysis/analysis_panel.dart';
@@ -634,6 +635,68 @@ void main() {
       expect(session.tree.hasNode('n2'), isFalse);
       expect(session.tree.cursorId, 'n0');
       expect(session.dirty, isTrue);
+    },
+  );
+  testWidgets(
+    'native bundled engine reviews branches and supports cancellation',
+    (tester) async {
+      await tester.pumpWidget(
+        ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
+      );
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      final engine = tester.widget<PlayPanel>(find.byType(PlayPanel)).engine;
+      session.playMove(Move.parse('h2e2'));
+      session.playMove(Move.parse('b9c7'));
+      session.first();
+      session.playMove(Move.parse('b2e2'));
+      session.first();
+      await tester.pumpAndSettle();
+      final revision = session.revision;
+      Future<void> tapVisible(Finder finder) async {
+        await tester.ensureVisible(finder);
+        await tester.pumpAndSettle();
+        await tester.tap(finder);
+        await tester.pumpAndSettle();
+      }
+
+      await tapVisible(find.text('分析整盘棋'));
+      Finder field(String label) => find.byWidgetPredicate(
+        (w) => w is TextField && w.decoration?.labelText == label,
+      );
+      await enterNativeText(tester, field('每局面用时（秒）'), '0');
+      await enterNativeText(tester, field('每局面深度'), '4');
+      await tapVisible(find.text('包括所有变着'));
+      await tapVisible(find.text('开始整谱分析'));
+      for (
+        var i = 0;
+        i < 150 && engine.review?.phase != ReviewPhase.completed;
+        i++
+      ) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      expect(engine.review!.phase, ReviewPhase.completed);
+      expect(engine.review!.results.length, 4);
+      expect(
+        engine.review!.results.values.every((r) => r.info != null),
+        isTrue,
+      );
+      expect(session.tree.cursorId, 'n0');
+      expect(session.revision, revision);
+      await tapVisible(find.byKey(const ValueKey('review-n1')));
+      expect(session.tree.cursorId, 'n1');
+      final job = engine.startReview(
+        limits: ReviewLimits(depth: 255, moveTimeMs: 100000),
+      );
+      await tester.pump(const Duration(milliseconds: 100));
+      await tapVisible(find.text('取消整谱分析'));
+      await job;
+      expect(engine.review!.phase, ReviewPhase.cancelled);
+      expect(engine.enabled, isFalse);
+      expect(engine.aiSides, isEmpty);
+      expect(session.tree.cursorId, 'n1');
     },
   );
 }

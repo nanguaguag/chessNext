@@ -32,6 +32,12 @@ extension EnginePlay on EngineSessionController {
 
   Future<void> setAiSide(Side side, bool active) async {
     if (_disposed) return;
+    if (reviewing) {
+      final stopping = disable();
+      final intent = _generation;
+      await stopping;
+      if (_disposed || intent != _generation) return;
+    }
     _enabled = false;
     _busy = false;
     _error = null;

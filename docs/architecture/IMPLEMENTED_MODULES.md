@@ -7,7 +7,7 @@
 | 纯Dart领域 | packages/xiangqi_core | 棋盘规则、FEN、编辑草稿、不可变棋树与文字格式；不依赖Flutter/IO |
 | 会话 | lib/application/board_session.dart | 当前文档、游标、选中、dirty/revision/epoch/positionRevision、输入锁 |
 | 棋谱用例 | lib/application/library_controller.dart | 保存/打开/导入新文档；读取竞态与保存失败状态 |
-| 引擎调度 | lib/application/engine_session_controller.dart + engine_play.dart | 单引擎所有权、分析/AI互斥、取消/迟到结果、资源预算 |
+| 引擎调度 | lib/application/engine_session_controller.dart + engine_play.dart + engine_review.dart | 单引擎所有权、分析/AI/整谱互斥、取消/迟到结果、资源预算 |
 | 端口 | lib/ports | EngineGateway、GameRepository、TextClipboard；UI不实例化进程/文件IO |
 | 适配器 | lib/adapters | UCI进程、沙箱资源定位、文件快照仓库、Flutter剪贴板 |
 | 表现 | lib/features | board/editor/library/analysis/play/transfer；编辑草稿与导入结果确认前不覆盖会话 |
@@ -22,3 +22,5 @@ GameTree是文档唯一棋谱真值；Position缓存不可变。文字导入先�
 自动草稿由DraftController/DraftRepository负责，FileDraftRepository只写chessnext-drafts；显式库仍只写chessnext-records。恢复创建未保存副本。正常退出/后台在composition root协调flush，失败选择在Material对话框呈现。设计边界和未验证持久性见ADR-006。
 
 偏好设置由无Flutter的AppPreferences值对象、PreferencesController及独立PreferencesRepository组成；ApplicationSupport文件适配器与棋谱/草稿隔离。EngineSessionController.configureSession一次更新资源与AI用时，主题变动不触发搜索。实际能力限制在握手后再验证；生命周期策略见ADR-008。
+
+整谱队列实际采用EngineSessionController的engine_review.dart扩展，共享单EngineGateway；ReviewRun/ReviewedPosition和预算在review_models.dart，UI为features/review。内容revision使结果失效，读谱不移动队列。当前仅会话内原始评分，没有持久缓存/胜率算法；详ADR-011。

@@ -5,7 +5,10 @@ import 'package:xiangqi_core/xiangqi_core.dart';
 import '../ports/engine_gateway.dart';
 import 'board_session.dart';
 
+import 'review_models.dart';
+
 part 'engine_play.dart';
+part 'engine_review.dart';
 
 typedef EngineFactory = Future<EngineGateway> Function();
 
@@ -33,6 +36,10 @@ class EngineSessionController extends ChangeNotifier {
   final BoardSession session;
   final EngineFactory? factory;
   final int deviceThreads;
+  ReviewRun? _review;
+  int _reviewJob = 0;
+  int? _reviewToken;
+  EngineInfo? _reviewInfo;
   EngineGateway? _engine;
   Future<EngineGateway>? _opening;
   StreamSubscription<EngineInfo>? _subscription;
@@ -99,6 +106,7 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   void _changed() {
+    _reviewChanged();
     if (_lastRevision == session.positionRevision) return;
     _lastRevision = session.positionRevision;
     _clear();
@@ -110,6 +118,10 @@ class EngineSessionController extends ChangeNotifier {
       _exclusions.clear();
     }
     if (!_applyingEngine) _exclusions.clear();
+    if (reviewing) {
+      _notify();
+      return;
+    }
     final generation = ++_generation;
     if (playing) {
       unawaited(_syncPlay(generation, delayed: true));
@@ -156,6 +168,7 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   void _onInfo(EngineInfo info) {
+    _onReviewInfo(info);
     if (_disposed ||
         !_enabled ||
         info.token != _generation ||
@@ -173,6 +186,12 @@ class EngineSessionController extends ChangeNotifier {
 
   Future<void> enable() async {
     if (_disposed || _enabled) return;
+    if (reviewing) {
+      final stopping = disable();
+      final intent = _generation;
+      await stopping;
+      if (_disposed || intent != _generation) return;
+    }
     _aiSides.clear();
     _thinking = false;
     _playSearch = null;
@@ -250,6 +269,10 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   Future<void> disable() async {
+    final stoppingReview = _review?.active ?? false;
+    final reviewJob = ++_reviewJob;
+    if (stoppingReview) _review = _review!.copy(phase: ReviewPhase.stopping);
+    _reviewToken = null;
     _aiSides.clear();
     _thinking = false;
     _playSearch = null;
@@ -265,7 +288,14 @@ class EngineSessionController extends ChangeNotifier {
     _notify();
     try {
       await _engine?.stop();
+      if (!_disposed && reviewJob == _reviewJob && stoppingReview) {
+        _review = _review!.copy(phase: ReviewPhase.cancelled);
+        _notify();
+      }
     } catch (e) {
+      if (reviewJob == _reviewJob && stoppingReview) {
+        _review = _review!.copy(phase: ReviewPhase.failed, error: '停止引擎失败');
+      }
       _failed(e, generation);
     }
   }
@@ -284,6 +314,12 @@ class EngineSessionController extends ChangeNotifier {
         value.multiPv < 1 ||
         value.multiPv > maxPv) {
       throw ArgumentError('Unsupported settings');
+    }
+    if (reviewing) {
+      final stopping = disable();
+      final intent = _generation;
+      await stopping;
+      if (_disposed || intent != _generation) return;
     }
     _settings = value;
     _thinkTimeMs = thinkTimeMs;

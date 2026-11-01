@@ -2,6 +2,7 @@ import 'package:xiangqi_core/xiangqi_core.dart';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../ports/game_repository.dart';
+import '../ports/recent_reading_repository.dart';
 import 'board_session.dart';
 
 class LibraryController extends ChangeNotifier {
@@ -11,6 +12,8 @@ class LibraryController extends ChangeNotifier {
   bool busy = false;
   String? error;
   String? currentId;
+  int? _documentEpoch;
+  int? get documentEpoch => _documentEpoch;
   String title = '未命名棋谱';
   LibrarySnapshot snapshot = const LibrarySnapshot([]);
   bool _disposed = false;
@@ -51,7 +54,7 @@ class LibraryController extends ChangeNotifier {
     final epoch = session.epoch;
     final revision = session.revision;
     final id =
-        currentId ??
+        (documentEpoch == epoch ? currentId : null) ??
         List.generate(
           16,
           (_) => Random.secure().nextInt(256).toRadixString(16).padLeft(2, '0'),
@@ -65,6 +68,7 @@ class LibraryController extends ChangeNotifier {
     await repository.save(game);
     if (!_disposed && session.epoch == epoch) {
       currentId = id;
+      _documentEpoch = epoch;
       title = name.trim();
       session.markSaved(revision);
     }
@@ -75,7 +79,7 @@ class LibraryController extends ChangeNotifier {
       unreadable: snapshot.unreadable,
     );
   });
-  Future<bool> open(String id) => _perform(() async {
+  Future<bool> open(String id, {RecentReading? reading}) => _perform(() async {
     final epoch = session.epoch;
     final revision = session.revision;
     final positionRevision = session.positionRevision;
@@ -86,10 +90,20 @@ class LibraryController extends ChangeNotifier {
         session.positionRevision != positionRevision) {
       throw StateError('读取期间对局已变化，请重新打开');
     }
-    session.replaceTree(game.tree);
+    if (reading != null && reading.gameId != id) {
+      throw StateError('阅读标记与棋谱不匹配');
+    }
+    final restored = reading?.restore(game.tree);
+    session.replaceTree(restored?.tree ?? game.tree);
+    if (restored?.matched == false) {
+      error = '原阅读位置已变化，已打开棋谱保存时的位置。未保存的分支请从自动草稿恢复。';
+    }
     currentId = game.id;
+    _documentEpoch = session.epoch;
     title = game.title;
-    if (game.recovered) error = '主文件异常，已从备份恢复，请核对棋谱后保存';
+    if (game.recovered) {
+      error = [?error, '主文件异常，已从备份恢复，请核对棋谱后保存'].join('；');
+    }
   });
   void startPosition(Position position) =>
       importTree(GameTree(initial: position), title: '局面分析');
@@ -97,6 +111,7 @@ class LibraryController extends ChangeNotifier {
   void importTree(GameTree tree, {String title = '导入棋谱'}) {
     session.replaceTree(tree, saved: false);
     currentId = null;
+    _documentEpoch = null;
     this.title = title;
     _notify();
   }
@@ -104,6 +119,7 @@ class LibraryController extends ChangeNotifier {
   void newGame() {
     session.newGame();
     currentId = null;
+    _documentEpoch = null;
     title = '未命名棋谱';
     _notify();
   }

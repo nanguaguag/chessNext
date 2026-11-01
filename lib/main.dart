@@ -1,3 +1,4 @@
+import 'adapters/storage/file_recent_reading_repository.dart';
 import 'adapters/storage/file_review_cache_repository.dart';
 import 'adapters/storage/file_preferences_repository.dart';
 import 'adapters/storage/file_draft_repository.dart';
@@ -12,6 +13,9 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
   runApp(
     ChessNextApp(
+      recentReadingRepository: FileRecentReadingRepository(
+        getApplicationSupportDirectory,
+      ),
       repository: FileGameRepository(getApplicationDocumentsDirectory),
       draftRepository: FileDraftRepository(getApplicationDocumentsDirectory),
       preferencesRepository: FilePreferencesRepository(

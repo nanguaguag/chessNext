@@ -40,3 +40,5 @@ CandidateCollector统一单步与整谱多候选；ReviewRun/ReviewedCandidates�
 WdlEstimate与EngineInfo.wdl/EngineRequest.preferWdl支持原生模型统计；UciEngine按check能力与ready同步，解析和缓存都保留可空/旧CP兼容。AnalysisPanel区分胜和负与预期得分，并通过协调器按显示方反转，详ADR-015。
 
 M3-16：application/review_report.dart纯快照报告与期望损失整数阈值，ReviewPanel只在开窗计算，review_report_dialog.dart红黑摘要/筛选/有界列表/来源解释与安全跳转；ADR-016。没有新的IO或引擎所有者；网站准确率/妙手公式未确认，不标相同算法。
+
+F18：ports/recent_reading_repository.dart独立元数据/恢复接口；application/recent_reading_controller.dart监听库和会话、epoch绑定/300ms合并/晚到合并/串行写；adapters/storage/file_recent_reading_repository.dart版本JSON/备份；features/library/recent_reading_dialog.dart最近阅读和dirty确认；App/main装配及生命周期flush。LibraryController.documentEpoch与open可选标记保护ID重用。ADR-017，不写棋谱内容。

@@ -1,3 +1,6 @@
+import 'package:chess_next/adapters/storage/file_recent_reading_repository.dart';
+import 'package:chess_next/features/library/recent_reading_dialog.dart';
+import 'package:chess_next/ports/game_repository.dart';
 import 'dart:io';
 import 'package:chess_next/features/review/candidate_panel.dart';
 import 'package:chess_next/adapters/storage/file_review_cache_repository.dart';
@@ -1002,6 +1005,82 @@ void main() {
       expect(session.tree.cursorId, 'n1');
       expect(session.revision, revision);
       expect(find.text('模型着法评级'), findsNothing);
+    },
+  );
+  testWidgets(
+    'native recent reading reopens a fresh app at an independent saved cursor',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-recent-');
+      try {
+        final games = FileGameRepository(() async => directory);
+        await games.save(
+          SavedGame(
+            id: 'native_recent',
+            title: '原生阅读位置',
+            tree: GameTree().play(Move.parse('h2e2')).play(Move.parse('b9c7')),
+            modifiedAt: DateTime.utc(2026),
+          ),
+        );
+        Widget app() => ChessNextApp(
+          key: UniqueKey(),
+          repository: FileGameRepository(() async => directory),
+          recentReadingRepository: FileRecentReadingRepository(
+            () async => directory,
+          ),
+        );
+        Future<void> tap(Finder target) async {
+          await tester.ensureVisible(target);
+          await tester.pumpAndSettle();
+          await tester.tap(target);
+          await tester.pumpAndSettle();
+        }
+
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.text('棋谱库'));
+        for (var i = 0; i < 50 && find.text('原生阅读位置').evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tap(find.text('原生阅读位置'));
+        final session = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis
+            .session;
+        expect(session.tree.cursorId, 'n2');
+        await tap(find.byTooltip('回到开始'));
+        expect(session.tree.cursorId, 'n0');
+        expect(session.dirty, isFalse);
+        await tap(find.widgetWithText(OutlinedButton, '最近阅读'));
+        final readings = tester
+            .widget<RecentReadingDialog>(find.byType(RecentReadingDialog))
+            .readings;
+        await readings.flush();
+        expect(readings.entries.single.path, isEmpty);
+        expect((await games.load('native_recent')).tree.cursorId, 'n2');
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.widgetWithText(OutlinedButton, '最近阅读'));
+        for (var i = 0; i < 50 && find.text('原生阅读位置').evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tap(find.text('原生阅读位置'));
+        final restored = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis
+            .session;
+        expect(restored.tree.cursorId, 'n0');
+        expect(restored.tree.nodeCount, 3);
+        expect(restored.dirty, isFalse);
+        expect((await games.load('native_recent')).tree.cursorId, 'n2');
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
     },
   );
 }

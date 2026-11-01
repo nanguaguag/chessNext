@@ -211,3 +211,7 @@ ADR-015。原生探针8行总1000/quit0另见协议归档；此功能只提供�
 2026-11-02 M3-16：预期损失报告实现，ADR-016/TRACEABILITY。首目标编译失败（测试误用GameTree/WdlEstimate构造API）修复；后8通过2失败，定位n2夹具b2e2撞己炮被FiniteSearchExecutor正确拒绝，改合法b0c2后目标10/10。根真NNUE172/172；analyze余1个无效!删后无问题。macOS完整15/15（01:55），含新报告筛选/跳转不dirty；raw生命周期[]，不冒充人工OS焦点。核心未改49/49沿用。提交前最终根回归日志/tmp/chessnext-report-final.log，待命令结束确认；其它日志/tmp/chessnext-report-{target,full,analyze,native}.log。当前普通用户窗口PID38211仍在，不关闭。
 M3-16提交前最终根回归172/172通过，静态分析无问题及原生15结果不变；无待等待验证命令。下一研究证据分开提交，然后继续功能。
 2026-11-02 E16/E17浏览器实际审计：存题登录提示/最近阅读访客空态/公开只读页标题但着法未加载/返回历史仍空；证据登记REFERENCE_EVIDENCE，不标历史生成成功。研究资源仅docs，未入App资产，无产品代码更改，不重复业务测试。下一独立F18离线历史P。
+2026-11-02 F18开始：最近阅读接口/控制器/文件存储/对话框和装配WIP，先方案/失败模型，未测试，analyze在/tmp/chessnext-recent-analyze.log，恢复以HANDOFF末尾为准。
+F18中间验证：目标15/15、根真NNUE187/187通过；首analyze7项大括号，用dart fix限指定规则修7处，后新增force条件换行补大括号。原生测试夹具误读AnalysisPanel.engine（实际analysis）2编译错误及测试无用import修复；随后analyze无问题。发现库刷新可重绑外部替换文档，补documentEpoch及另存ID保护/回归测试，最终根回归进行中。未将首轮静态失败或原生未跑算通过。
+F18最终阶段：macOS完整16/16（02:07）通过，新App/Repository与文件保存位置独立恢复；raw生命周期[]。补同现备份/路径失效时两条提示都保留，新增1应用测试；根真NNUE189/189，随后analyze发现1项use_null_aware_elements，改?error语法后重新全根/analyze进行中。该修订不改变存储或恢复算法，最终加原生最近阅读单项。
+F18提交门槛最终：根真NNUE189/189、flutter analyze无问题、完整原生16/16及最后最近阅读单项1/1通过。无待等待验证命令。HANDOFF历史归档并缩短当前恢复路径，CurrentState更新；工作树功能提交后只剩E18研究文档/截图，后续独立docs提交再做F29离线帮助。

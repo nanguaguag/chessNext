@@ -1,3 +1,6 @@
+import 'application/recent_reading_controller.dart';
+import 'ports/recent_reading_repository.dart';
+import 'features/library/recent_reading_dialog.dart';
 import 'ports/review_cache_repository.dart';
 import 'features/review/review_panel.dart';
 import 'features/review/candidate_panel.dart';
@@ -33,6 +36,7 @@ class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
     super.key,
     this.repository,
+    this.recentReadingRepository,
     this.draftRepository,
     this.preferencesRepository,
     this.clipboard,
@@ -47,6 +51,7 @@ class ChessNextApp extends StatefulWidget {
   final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
   final GameRepository? repository;
+  final RecentReadingRepository? recentReadingRepository;
   @override
   State<ChessNextApp> createState() => _ChessNextAppState();
 }
@@ -55,6 +60,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     with WidgetsBindingObserver {
   final session = BoardSession();
   late final LibraryController library;
+  late final RecentReadingController readings;
   late final DraftController? drafts;
   late final PreferencesController preferences;
   late final EngineSessionController analysis;
@@ -72,6 +78,11 @@ class _ChessNextAppState extends State<ChessNextApp>
       session,
       widget.repository ?? MemoryGameRepository(),
     );
+    readings = RecentReadingController(
+      library,
+      widget.recentReadingRepository ?? MemoryRecentReadingRepository(),
+    );
+    unawaited(readings.initialize());
     drafts = widget.draftRepository == null
         ? null
         : DraftController(session, library, widget.draftRepository!);
@@ -101,6 +112,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       }
       if (drafts != null) unawaited(drafts!.flush());
       unawaited(preferences.flush());
+      unawaited(readings.flush());
     }
   }
 
@@ -109,6 +121,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     await analysis.disable();
     await drafts?.flush();
     await preferences.flush();
+    await readings.flush();
     if (!mounted) return AppExitResponse.exit;
     if (session.dirty &&
         session.hasContent &&
@@ -156,6 +169,8 @@ class _ChessNextAppState extends State<ChessNextApp>
       unawaited(drafts!.flush());
       drafts!.dispose();
     }
+    unawaited(readings.flush());
+    readings.dispose();
     library.dispose();
     session.dispose();
     super.dispose();
@@ -181,6 +196,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       session: session,
       library: library,
+      readings: readings,
       analysis: analysis,
       toggleTheme: () => unawaited(
         preferences.setTheme(
@@ -197,6 +213,7 @@ class _BoardPage extends StatelessWidget {
     required this.clipboard,
     required this.toggleTheme,
     required this.library,
+    required this.readings,
     required this.analysis,
     this.drafts,
     required this.preferences,
@@ -207,6 +224,7 @@ class _BoardPage extends StatelessWidget {
   final BoardSession session;
   final VoidCallback toggleTheme;
   final LibraryController library;
+  final RecentReadingController readings;
   final EngineSessionController analysis;
   Future<void> _newGame(BuildContext context) async {
     if (session.dirty && session.hasContent) {
@@ -538,6 +556,17 @@ class _BoardPage extends StatelessWidget {
                               ),
                         icon: const Icon(Icons.folder_open),
                         label: const Text('棋谱库'),
+                      ),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.history),
+                        label: const Text('最近阅读'),
+                        onPressed: library.busy
+                            ? null
+                            : () => showDialog<void>(
+                                context: context,
+                                builder: (_) =>
+                                    RecentReadingDialog(readings: readings),
+                              ),
                       ),
                     ],
                   ),

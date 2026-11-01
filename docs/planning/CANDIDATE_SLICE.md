@@ -15,3 +15,5 @@ EngineSessionController增加engine_candidates.dart part与独立job/token/info�
 原子试走：BoardSession新增playVariation(parentId,move)，先由不可变tree.goTo(parent).play生成结果，再一次替换/refresh/notify；不能先navigate再play导致AI在中间局面重启。已有节点复用不增加内容dirty，新节点才增加revision；当前着本身为无操作。协调器绑定run epoch/revision/positionRevision/父节点/候选move，disable等待后再次验证generation与快照，再原子提交；否则返回失败不改树。试走暂停AI/候选，保留旧分支/注释，不自动置顶。UI当前着禁用、已存其他候选为切换、新候选为试走。
 
 验收：核心/会话原子新分支与已有分支/no-op；候选首着唯一/完整父历史/有限预算/无评分/非法和重复bestmove；取消/抢占/文档与导航变化/监听重入/缓存迟到；试走父子执方不同仍正确、停止期间新操作保护。组件配置NaN/全0/候选数、200%字号、列表/状态/试走。真实NNUE两种执方/至少2个不同合法候选，macOS包内引擎单步→试走入同级→旧分支保留。每增量flutter test/analyze后中文commit。胜率/准确率/彻底整谱仍后续，不以入口完成全量。
+
+M3-12续：本文件最初P已按单步切片实施，代码见ADR-013/IMPLEMENTED_MODULES，实际验收见TRACEABILITY；整树彻底候选、源站筛选公式仍未实施/未知，不将初始计划整体标完成。

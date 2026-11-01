@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'package:chess_next/features/review/candidate_panel.dart';
 import 'package:chess_next/adapters/storage/file_review_cache_repository.dart';
 import 'package:chess_next/application/review_models.dart';
 import 'package:chess_next/ports/engine_gateway.dart';
@@ -814,6 +815,71 @@ void main() {
         await tester.pumpAndSettle();
         await temp.delete(recursive: true);
       }
+    },
+  );
+  testWidgets(
+    'native candidates analyze the parent and trial a sibling without losing the game',
+    (tester) async {
+      await tester.pumpWidget(
+        ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
+      );
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      session.playMove(Move.parse('h2e2'));
+      session.playMove(Move.parse('b9c7'));
+      await tester.pumpAndSettle();
+      final engine = tester
+          .widget<CandidatePanel>(find.byType(CandidatePanel))
+          .engine;
+      Future<void> tapVisible(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      await tapVisible(find.text('分析替代候选'));
+      Finder field(String label) => find.byWidgetPredicate(
+        (w) => w is TextField && w.decoration?.labelText == label,
+      );
+      for (final input in {
+        '每个候选用时（秒）': '0',
+        '每个候选深度': '4',
+        '最多候选数（含首选）': '2',
+      }.entries) {
+        await tester.ensureVisible(field(input.key));
+        await enterNativeText(tester, field(input.key), input.value);
+      }
+      await tapVisible(find.text('开始候选分析'));
+      for (
+        var i = 0;
+        i < 150 && engine.candidates?.phase != ReviewPhase.completed;
+        i++
+      ) {
+        await tester.pump(const Duration(milliseconds: 100));
+      }
+      final run = engine.candidates!;
+      expect(run.phase, ReviewPhase.completed);
+      expect(run.results.length, 2);
+      expect(run.parentId, 'n1');
+      expect(run.position.turn, Side.black);
+      final alternative = run.results.firstWhere(
+        (r) => r.move != session.tree.current.move,
+      );
+      await tapVisible(find.byKey(ValueKey('trial-${alternative.move}')));
+      expect(session.tree.current.move, alternative.move);
+      expect(session.position.turn, Side.red);
+      expect(session.tree.node('n1').children.length, 2);
+      expect(session.tree.hasNode('n2'), isTrue);
+      await engine.startCandidates(
+        limits: ReviewLimits(depth: 4, moveTimeMs: null),
+        maximum: 2,
+      );
+      await tester.pumpAndSettle();
+      expect(engine.candidates!.cachedCount, 2);
+      expect(engine.candidates!.phase, ReviewPhase.completed);
     },
   );
 }

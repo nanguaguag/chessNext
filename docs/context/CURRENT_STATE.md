@@ -20,16 +20,18 @@
 - 红方评分曲线、杀棋三角/上下界箭头/缺失断线/数值绘图封顶，点击/键盘/语义/滑块导航。
 - 2048条会话LRU缓存和跳过已有：完整历史+已验证引擎/NNUE+规则/精确预算键，完成无bound才命中、PV重验；失败降级真实计算。正式main已注入ApplicationSupport文件缓存（独立目录、checksum/schema、限额/淘汰、损坏重算），可跨实例/进程读取。详engine/REVIEW_CACHE。
 
-实际边界与ADR-005至012见architecture/IMPLEMENTED_MODULES及DECISIONS。
+- 单步父局面候选与原子试走：逐次排除不同合法首着、每候选有限预算、缓存复用；根分析自身下一着，普通着法分析其父局面。导航/编辑过期、取消/抢占/停止失败保护，不自动写棋谱；点击试走才创建/切换同级，保留原分支。源站可接受筛选/胜率公式仍未知。
+
+实际边界与ADR-005至013见architecture/IMPLEMENTED_MODULES及DECISIONS。
 
 ## 最新验证
 
-本切片根flutter test119/119（显式官方NNUE环境）、flutter analyze无问题；macOS完整13/13通过，含真实NNUE在新App/引擎实例复用与坏缓存重算；另有独立Dart进程协议验证。宿主Flutter测试进程未关开，人工OS应用重启/断电仍未验。核心上次49/49及dart analyze，本切片未改。4组perft曾与官方一致。
+本切片根flutter test135/135（显式官方NNUE环境）、flutter analyze无问题；macOS完整14/14和最终候选单项1/1通过，含真实NNUE在新App/引擎实例复用与坏缓存重算；另有独立Dart进程协议验证。宿主Flutter测试进程未关开，人工OS应用重启/断电仍未验。核心上次49/49及dart analyze，本切片未改。4组perft曾与官方一致。
 
 integration_test仅在测试文件保持framework-resumed；生产无覆盖。真实OS焦点/最小化/隐藏/人工视觉未验；Computer Use桌面权限未授，不绕过。其他Android/iOS/Windows/Linux尚未验证，移动FFI未实现。曾失败/中断/跳过的命令见SESSION_LOG，不隐去后改通过。
 
 ## 下一步与环境
 
-彻底候选/胜率等级/错题→文件格式/图片GIF→棋谱库完善/最近阅读/工作区/外观声音帮助→自建后端/部署→五平台及完整历史规则。参考E12/E13已实际快速/彻底执行与分支操作，算法/缓存规则未知不编造。
+整谱多候选模式/胜率等级/错题→文件格式/图片GIF→棋谱库完善/最近阅读/工作区/外观声音帮助→自建后端/部署→五平台及完整历史规则。参考E12/E13/E14已实际快速/彻底执行与分支操作，算法/缓存规则未知不编造。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest复核仍Pikafish2026-09-06，SHA/NNUE见engine/pikafish.lock.json。.local不入Git。普通macOS run曾已运行，旧窗口不主动关闭；测试会覆盖build入口，最终审查前重建普通入口。

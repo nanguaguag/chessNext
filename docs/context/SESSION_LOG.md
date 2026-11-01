@@ -160,3 +160,14 @@ FileReviewCacheRepository正式main注入ApplicationSupport/chessnext-analysis-c
 
 ### E14 / 2026-11-02候选续审
 源站最多候选5减至2禁用，0秒/深度4/节点0/当前2局面运行完成；新自制线路追加中文卒３进１/炮八平五，单步父局面候选执行成功。既有视图左右镜像，日志只记录可见中文与实际结果，不凭屏幕坐标写FEN。详情REFERENCE_EVIDENCE E14；下一实现方案CANDIDATE_SLICE为P非业务完成。未再执行源站试走/删除/登录。
+
+### M3-12 WIP / 2026-11-02
+候选调度/父局面试走与UI已实现未提交，应用12（含真实NNUE）/组件3目标测试通过；全量及原生整套仍待结果。共用缓存访问抽取时18个目标回归有1live因无环境跳过；最终全量显式环境会覆盖。首次静态检查11处大括号lint已修，暂无最终整套结论。详HANDOFF WIP，不能标本功能已交付。
+
+## 2026-11-02 / M3-12 / F13,F32 → B18 单步父局面候选与试走
+
+CandidateRun/engine_candidates/CandidatePanel及配置：当前着父局面（根节点自身）、有限每候选预算、逐次排除合法首着、2..256候选策略、原始cp/mate/bound/无评分、进度/取消/失败/过期和缓存复用。源站可接受阈值仍U，不宣称同筛选/胜率算法。共享单引擎batching互斥；无bestmove保留真实原因，PV首着不匹配不赋分，非法/重复bestmove失败。
+BoardSession.playVariation原子创建/切换同级，已有节点/当前着不产生多余dirty，保留旧分支与注释；控制器等stop后重新验epoch/revision/positionRevision/generation，停止失败或新操作不试走。清理取消后迟到失败的opening Future，下一次启动可重试。ReviewCacheAccess抽取整谱/候选共用缓存IO与允许集/PV校验。
+根flutter test135/135（显式官方NNUE环境）、flutter analyze无问题；macOS完整14/14以及最终候选单项1/1通过。新增13应用/真实NNUE测试+3组件测试，含父历史/唯一候选/无分/停止/互斥/旧ID/缓存迟到、原子通知、当前着无操作、stop失败/late factory失败重试/0候选原因、NaN/全0/数量/200%字号。真实包内NNUE黑方父局面候选→试走同级→旧分支保留→重算复用2候选。核心未改，沿用49/49及dart analyze。
+首次全量133通过1失败：旧注释导航测试直接点击被AppBar遮挡的按钮，hit-test告警后未导航；修为ensureVisible/pumpAndSettle并断言hitTestable，复跑134通过；最后增加无bestmove原因回归后135通过。早期目标缓存回归17通过/1live未设环境跳过，不算真引擎通过；最终显式环境覆盖。最初11条lint已修，失败均保留。日志/tmp/chessnext-candidates-{unit,widget,test,analyze,native,native-target}.log。ADR-013。
+下一条整谱多候选模式，先把单次有限搜索/缓存/最终PV校验抽成可复用执行器，防止队列与单步各维护一套循环；仍单引擎所有权。胜率/准确率/错题及其他功能继续，不标整站对齐。

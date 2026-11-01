@@ -57,11 +57,12 @@ extension EngineReview on EngineSessionController {
         hashMb: _settings.hashMb.clamp(1, maxHash),
         multiPv: _settings.multiPv.clamp(1, maxPv),
       );
-      final identity = engine.identity;
-      var cacheHealthy = identity != null;
-      if (!cacheHealthy) {
-        _review = _review!.copy(cacheNotice: '引擎身份未验证，本次不复用缓存');
-      }
+      final cache = ReviewCacheAccess(
+        engine.identity,
+        engine.options,
+        reviewCache,
+      );
+      _review = _review!.copy(cacheNotice: cache.notice);
       for (final id in _review!.nodeIds) {
         if (!_reviewValid(job)) return;
         final node = tree.node(id);
@@ -89,36 +90,11 @@ extension EngineReview on EngineSessionController {
             hashMb: _settings.hashMb,
             multiPv: 1,
           );
-          final key = identity == null
-              ? null
-              : reviewCacheKey(identity, request, engine.options);
-          CachedEngineScore? cached;
-          if (skipExisting && cacheHealthy && key != null) {
-            try {
-              cached = await reviewCache
-                  .load(key)
-                  .timeout(const Duration(seconds: 2));
-              if (cached != null) {
-                if (cached.key != key) {
-                  throw const FormatException('Wrong cache key');
-                }
-                var position = node.position;
-                for (final move in cached.info.pv) {
-                  position = position.play(move);
-                }
-              }
-            } catch (_) {
-              cached = null;
-              cacheHealthy = false;
-              if (_reviewValid(job)) {
-                _review = _review!.copy(cacheNotice: '缓存读取失败，本次重新计算');
-              }
-            }
-          }
+          final cached = skipExisting ? await cache.read(request) : null;
           if (!_reviewValid(job)) return;
           EngineInfo? info;
           if (cached != null) {
-            info = cached.info;
+            info = cached;
             _review = _review!.copy(cachedCount: _review!.cachedCount + 1);
           } else {
             _reviewToken = token;
@@ -138,26 +114,11 @@ extension EngineReview on EngineSessionController {
                 : ReviewScoreStatus.scored,
             info: info,
           );
-          if (cached == null &&
-              cacheHealthy &&
-              key != null &&
-              info != null &&
-              info.bound == null &&
-              info.depth > 0 &&
-              info.pv.isNotEmpty &&
-              info.pv.length <= 256) {
-            try {
-              await reviewCache
-                  .save(CachedEngineScore(key: key, info: info))
-                  .timeout(const Duration(seconds: 2));
-            } catch (_) {
-              cacheHealthy = false;
-              if (_reviewValid(job)) {
-                _review = _review!.copy(cacheNotice: '缓存保存失败，分析结果仍可查看');
-              }
-            }
+          if (cached == null) {
+            await cache.write(request, info);
             if (!_reviewValid(job)) return;
           }
+          _review = _review!.copy(cacheNotice: cache.notice);
         }
         _reviewToken = null;
         _review = _review!.copy(results: {..._review!.results, id: result});

@@ -115,6 +115,25 @@ class BoardSession extends ChangeNotifier {
     return true;
   }
 
+  /// Creates or selects an alternative from its parent in one notification.
+  bool playVariation(String parentId, Move move) {
+    if (_inputLocked ||
+        !tree.hasNode(parentId) ||
+        !tree.node(parentId).position.legalMoves.contains(move)) {
+      return false;
+    }
+    final next = tree.goTo(parentId).play(move);
+    if (next.cursorId == tree.cursorId) return true;
+    if (next.nodeCount != tree.nodeCount) _revision++;
+    _tree = next;
+    _positionRevision++;
+    _selected = null;
+    _notice = null;
+    _refresh();
+    notifyListeners();
+    return true;
+  }
+
   void cancelSelection() {
     _selected = null;
     _notice = null;

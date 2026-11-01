@@ -88,10 +88,16 @@ void main() {
     await tester.pump();
     await tester.ensureVisible(find.byKey(const ValueKey('comment-n1')));
     await tester.enterText(find.byKey(const ValueKey('comment-n1')), '中炮注释');
-    await tester.pump();
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byTooltip('回到开始'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('回到开始').hitTestable(), findsOneWidget);
     await tester.tap(find.byTooltip('回到开始'));
     await tester.pump();
     expect(find.text('继续 炮二平五'), findsOneWidget);
+    await tester.ensureVisible(find.byTooltip('下一着'));
+    await tester.pumpAndSettle();
+    expect(find.byTooltip('下一着').hitTestable(), findsOneWidget);
     await tester.tap(find.byTooltip('下一着'));
     await tester.pump();
     expect(find.text('中炮注释'), findsOneWidget);

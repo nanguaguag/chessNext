@@ -1,5 +1,6 @@
 import 'ports/review_cache_repository.dart';
 import 'features/review/review_panel.dart';
+import 'features/review/candidate_panel.dart';
 import 'features/records/move_list.dart';
 import 'features/records/variation_panel.dart';
 import 'package:flutter/foundation.dart' as foundation;
@@ -663,6 +664,8 @@ class _BoardPage extends StatelessWidget {
               AnalysisPanel(analysis: analysis),
               const SizedBox(height: 12),
               ReviewPanel(engine: analysis),
+              const SizedBox(height: 12),
+              CandidatePanel(engine: analysis),
             ],
           );
           return Center(

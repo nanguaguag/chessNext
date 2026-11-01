@@ -6,11 +6,13 @@ import '../ports/engine_gateway.dart';
 import 'board_session.dart';
 
 import 'review_models.dart';
-import 'review_cache_key.dart';
+import 'candidate_models.dart';
+import 'review_cache_access.dart';
 import '../ports/review_cache_repository.dart';
 
 part 'engine_play.dart';
 part 'engine_review.dart';
+part 'engine_candidates.dart';
 
 typedef EngineFactory = Future<EngineGateway> Function();
 
@@ -40,6 +42,11 @@ class EngineSessionController extends ChangeNotifier {
   final EngineFactory? factory;
   final int deviceThreads;
   final ReviewCacheRepository reviewCache;
+  CandidateRun? _candidates;
+  int _candidateJob = 0;
+  int? _candidateToken;
+  EngineInfo? _candidateInfo;
+  Set<Move> _candidateAllowed = {};
   ReviewRun? _review;
   int _reviewJob = 0;
   int? _reviewToken;
@@ -78,6 +85,7 @@ class EngineSessionController extends ChangeNotifier {
   String? get error => _error;
   bool _disposed = false;
   int _generation = 0;
+  int? _stopFailedGeneration;
   int _lastRevision = 0;
   int _searchRevision = 0;
   final Set<Side> _aiSides = {};
@@ -113,6 +121,7 @@ class EngineSessionController extends ChangeNotifier {
 
   void _changed() {
     _reviewChanged();
+    _candidatesChanged();
     if (_lastRevision == session.positionRevision) return;
     _lastRevision = session.positionRevision;
     _clear();
@@ -124,7 +133,7 @@ class EngineSessionController extends ChangeNotifier {
       _exclusions.clear();
     }
     if (!_applyingEngine) _exclusions.clear();
-    if (reviewing) {
+    if (batching) {
       _notify();
       return;
     }
@@ -155,7 +164,14 @@ class EngineSessionController extends ChangeNotifier {
       _opening = null;
       unawaited(previous.dispose());
     }
-    final engine = await (_opening ??= factory!());
+    final opening = _opening ??= factory!();
+    EngineGateway engine;
+    try {
+      engine = await opening;
+    } catch (_) {
+      if (identical(_opening, opening)) _opening = null;
+      rethrow;
+    }
     if (_disposed) {
       await engine.dispose();
       throw StateError('Analysis disposed');
@@ -175,6 +191,7 @@ class EngineSessionController extends ChangeNotifier {
 
   void _onInfo(EngineInfo info) {
     _onReviewInfo(info);
+    _onCandidateInfo(info);
     if (_disposed ||
         !_enabled ||
         info.token != _generation ||
@@ -192,7 +209,7 @@ class EngineSessionController extends ChangeNotifier {
 
   Future<void> enable() async {
     if (_disposed || _enabled) return;
-    if (reviewing) {
+    if (batching) {
       final stopping = disable();
       final intent = _generation;
       await stopping;
@@ -280,6 +297,12 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   Future<void> disable() async {
+    final stoppingCandidates = inspectingCandidates;
+    final candidateJob = ++_candidateJob;
+    if (stoppingCandidates) {
+      _candidates = _candidates!.copy(phase: ReviewPhase.stopping);
+    }
+    _candidateToken = null;
     final stoppingReview = _review?.active ?? false;
     final reviewJob = ++_reviewJob;
     if (stoppingReview) _review = _review!.copy(phase: ReviewPhase.stopping);
@@ -299,11 +322,22 @@ class EngineSessionController extends ChangeNotifier {
     _notify();
     try {
       await _engine?.stop();
+      if (!_disposed && candidateJob == _candidateJob && stoppingCandidates) {
+        _candidates = _candidates!.copy(phase: ReviewPhase.cancelled);
+        _notify();
+      }
       if (!_disposed && reviewJob == _reviewJob && stoppingReview) {
         _review = _review!.copy(phase: ReviewPhase.cancelled);
         _notify();
       }
     } catch (e) {
+      _stopFailedGeneration = generation;
+      if (candidateJob == _candidateJob && stoppingCandidates) {
+        _candidates = _candidates!.copy(
+          phase: ReviewPhase.failed,
+          error: '停止引擎失败',
+        );
+      }
       if (reviewJob == _reviewJob && stoppingReview) {
         _review = _review!.copy(phase: ReviewPhase.failed, error: '停止引擎失败');
       }
@@ -326,7 +360,7 @@ class EngineSessionController extends ChangeNotifier {
         value.multiPv > maxPv) {
       throw ArgumentError('Unsupported settings');
     }
-    if (reviewing) {
+    if (batching) {
       final stopping = disable();
       final intent = _generation;
       await stopping;

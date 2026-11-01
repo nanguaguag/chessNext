@@ -1,33 +1,29 @@
 # 会话交接
 
-2026-11-02 Asia/Shanghai。先读AGENTS、README、CURRENT_STATE、DECISIONS和git status/log。旧交接存history/2026-11-02-before-review-handoff.md，详细验证/失败在SESSION_LOG与TRACEABILITY；以此文件和磁盘为当前事实。
+2026-11-02 Asia/Shanghai。先读AGENTS/README/CURRENT_STATE/DECISIONS及git status/log；当前以本文件及磁盘为准，旧交接保存在history/2026-11-02-before-candidates-handoff.md，历史失败/跳过见SESSION_LOG/TRACEABILITY。
 
-用户授权持续业务实现直到所有可确认功能对齐，一功能一中文Conventional Commit，先全量flutter test/flutter analyze；真实macOS运行已授权。在线自建可替换后端+部署方案，许可暂缓不阻挡。尚未完整对齐，不能结束给整站完成审查。
+用户要求持续业务实现直到所有可确认功能对齐，一功能一中文Conventional Commit，先全量flutter test/flutter analyze；真实macOS运行已授权。在线自建可替换后端+部署方案；许可按要求暂缓不阻挡。尚未完整对齐，不可结束给整站完成审查。
 
-## 当前实现与提交
+## 当前实现
 
-最近09f2f47当前着分支面板（同级/下一着、置顶、确认删除版本保护）；dcc2a4e单引擎整谱队列。红视角曲线f72fe76；引擎身份本次提交见git log。已有棋盘、规则、编辑、分支/注释、显式保存、FEN/UCI/ICCS/中文交换、自动草稿、主题/资源偏好、分析与AI、组合限额及资源/TT复用。路径见architecture/IMPLEMENTED_MODULES。
+最近048355e文件复盘缓存、6f79296候选研究；M3-12单步候选/父局面试走本次提交见git log。已有棋盘/规则/编辑/分支/注释/本地保存、FEN/UCI/ICCS/中文、独立自动草稿与偏好、UCI分析/AI、资源复用/组合预算/身份校验、整谱最佳着法队列/曲线/缓存。模块映射IMPLEMENTED_MODULES，ADR005–013。
 
-复盘：EngineSessionController的engine_review.dart扩展共享唯一EngineGateway；ReviewRun快照epoch/revision/范围，当前线路含未来或整树每节点一次，子节点先处理，不移动游标。有限depth/time/nodes至少一项；分析/AI/参数/后台可抢占。stopping等stop屏障、迟到结果丢弃、文档内容变化stale、纯读谱继续。保留原始cp/mate/bound和执方，无评分/终局不伪造0。结果仅内存，没有跨重启缓存/胜率算法。ADR-011。
+CandidateRun+engine_candidates.dart+CandidatePanel/Options：普通当前着在父局面计算、根在自身；有限每候选depth/time/nodes，逐次排除已发现合法首着，策略2..256，原始cp/mate/bound/无评分。候选不自动入谱，stop后核验快照再playVariation原子试走；当前/已存节点无多余dirty，旧分支/注释保留。单步导航/编辑过期；整谱纯读谱仍继续。batching统一整谱/候选与分析/AI互斥。ReviewCacheAccess共用IO/合法PV/允许集与2秒失败降级。停止失败代次拒绝试走；取消后late factory失败清掉旧opening future保证下一次重试。
 
-ReviewChart绘制当前选中线路、红方±10兵封顶图（真实数值在文字）、杀棋三角/上下界箭头/缺失断线，mate0只文字。点击/方向/Home/End/语义增减/滑块导航。初次语义相邻值及单点Slider越界已修，保留失败记录。
+正式main注入FileReviewCacheRepository，ApplicationSupport/chessnext-analysis-cache，schema/checksum/限额2048条32MiB/单条64KiB/串行暂存原子替换/坏缓存删除并重算。键完整历史+已验证引擎/NNUE/ABI+规则/算法/精确预算/资源/允许集；不含epoch/token/节点/游标/注释。详engine/REVIEW_CACHE及ENGINE_IDENTITY。新App/新引擎命中和独立Dart进程协议已验证；不是人工OS重启/断电。
 
 ## 最新验证
 
-根flutter test119/119（显式PIKAFISH_EXECUTABLE和NETWORK包含真实NNUE）、flutter analyze无问题。核心上一切片49/49与dart analyze，本次未改。macOS上一完整12/12，曲线目标单项1/1通过（整树NNUE、结果/曲线导航、取消）。所有本功能代码应提交，以git status为准。
+根flutter test135/135（显式官方NNUE环境）/flutter analyze通过；macOS完整14/14+最终候选单项1/1通过。核心未改沿用49/49及dart analyze。新增13候选应用/真引擎与3组件测试。旧注释导航测试因未滚到按钮先133通过1失败，修ensureVisible+hitTestable后134，最终补无bestmove原因135通过；失败如实记日志。所有本功能应提交，git status核对。无待等待验证命令。
 
-原生integration_test明确保持framework-resumed，只在测试文件；生产main无覆盖。真实OS焦点/最小化/人工视觉尚未验；Computer Use未授桌面权限，不绕过。Android/iOS/Windows/Linux未验证。普通flutter run旧会话22326以前存活，不自动杀用户窗口；测试会覆盖build内App入口，最终审查前普通flutter run重建。无仍需等待的验证命令。
+原生integration_test只在测试文件保持framework-resumed，生产无覆盖。真实OS焦点/最小化/人工视觉未验，Computer Use桌面权限未授不绕过；其他四平台未验，移动FFI未落地。普通flutter run旧会话22326曾存活，不自动关闭有可能未保存的窗口；测试覆盖build入口，最终审查前需普通flutter run重建。
 
 ## 下一条可执行
 
-引擎身份已经完成：Gateway.identity可空，name来自UCI；bundle签名后manifest，工作Isolate校验binary/NNUE并附ABI，见engine/ENGINE_IDENTITY。根104/104、analyze、macOS身份/NNUE单项1/1通过，上一完整12。crypto3.0.8由既有传递改直接依赖。M3-10会话缓存/跳过已完成：ReviewCacheRepository默认2048条LRU、review_cache_key.dart精确历史/身份/预算键，完成无bound才缓存、PV重验、缓存失败降级（ADR-012）。根112/112与analyze、macOS复盘/四局面复用/曲线/取消单项1/1。M3-11文件缓存已完成：正式main注入独立ApplicationSupport目录，schema/checksum/限额/原子替换/损坏重算，详engine/REVIEW_CACHE。根119/119、analyze和macOS完整13/13；独立Dart进程协议fixture通过，新App/引擎真实NNUE复用3局面。宿主Flutter测试进程未OS关开。接下来彻底候选/建议试走；cache key必须完整历史+规则+引擎/NNUE+预算/模式/版本，排除cursor/lineAnchor/注释。未取得评分/partial/失败不冒充完整命中，坏缓存可重算且不损棋谱。接口优先，UI不IO。之后彻底候选/分级/错题→文件格式/图片GIF→工作区/外观声音帮助→自建后端→五平台及完整历史规则。分解独立功能与提交。
+整谱多候选模式：先抽出单次有限搜索执行器（纯应用层、共享唯一EngineGateway，缓存/最终PV与bestmove匹配/允许集/无分、临时info订阅和取消清理），让现整谱与单步循环共同复用，避免将startCandidates嵌入startReview（会disable自己的队列）。执行器不拥有第二进程；调用者仍控制job/token/epoch/取消。相应回归通过后整谱配置增加最佳/多候选模式+候选上限，ReviewRun每节点存候选列表和主评分，局面进度与候选进度分开、范围/取消/缓存语义一致，算法mode入键。详planning/CANDIDATE_SLICE初始P和ADR-013。
 
-E12/E13源站证据已落盘：快速/彻底运行、整树4局面、范围/0队列/取消、同级切换/置顶/回退保持。试走在父局面新建并切同级分支；删除入口仅O未执行。缓存键、候选预算和准确率公式仍U，不能推断。IAB browser2 tab4已markHandoff，可失效，用同浏览器listTabs恢复。截图只研究、不作产品资源。
+然后胜率/准确率等级与错题→文件格式/图片GIF→棋谱库完善/最近阅读/工作区/外观声音帮助→自建后端部署→五平台及完整历史规则。每项再拆独立验收，不把本机模型称为网站同公式。
 
-环境Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。官方latest 2026-11-02复核仍2026-09-06，lock见docs/engine/pikafish.lock.json。工具/重跑命令见MACOS_RUN和COMMUNICATION_VALIDATION。
+E12/E13/E14源站证据落盘，IAB browser2 tab4已markHandoff（可失效，同浏览器listTabs恢复）。访客当前自制线路兵七进一/卒３进１/炮八平五；视图继承左右镜像，不用像素猜UCI！单步0秒/深度4/节点0/最多2成功，红方父局面建议兵七进一65%/炮二平五56%，未自动入谱。E13试走已验证在父局面新增同级。删除仅O未执行；可接受阈值/累计预算/评分公式仍U。截图只研究。
 
-最新提交见git log，M3-10完成后工作树应干净；所有验证命令已结束，无待等待进程。下一条文件缓存端口可直接实现lib/adapters/storage/FileReviewCacheRepository，注入App/Main，不复用棋谱目录。键和评分DTO已有，序列化需严格schema/尺寸/类型/合法PV/校验和，独立有界可再生缓存；冷启动跨App复用须真实macOS验证，不把本机同实例命中当重启。
-
-M3-11最新：文件缓存功能已通过并独立提交，见git log；所有验证命令已结束，工作树应干净。旧段落“下一条文件适配器”是M3-10当时交接，现已完成。下一条先源站审计彻底候选设置/单步分析/预算和可接受阈值（目前U），再设计候选计算与试走，不把MultiPV若干条伪称网站同筛选算法。可先交付清楚标示本机模型的有限候选排名与父局面试走，评分/准确率需保留算法来源和未知边界。
-
-E14候选研究已落盘：当前IAB tab4访客、自制线路兵七进一/卒３进１/炮八平五，已单步分析，设置0秒/深度4/节点0/最多2；截图/AX见REFERENCE_EVIDENCE E14。源站视图左右镜像，不能直接用像素坐标猜UCI！结果两红方候选兵七进一65%与炮二平五56%，确认在当前红着父局面。源站已有分支不因max2丢失；筛选/预算仍U。下一条实施方案详细写入planning/CANDIDATE_SLICE.md（P），先单步计算+原子父局面试走，再整谱彻底。当前没有未提交业务实现，只有E14研究与计划待本次docs提交。
+环境Flutter3.44.6/Dart3.12.2、macOS14.4 arm64/Xcode15.0；2026-11-02官方latest仍2026-09-06，lock见engine/pikafish.lock.json。.local不提交，crypto3.0.8由既有传递改直接依赖，无新增其他依赖。重跑命令见COMMUNICATION_VALIDATION/MACOS_RUN。

@@ -30,3 +30,5 @@ EngineGateway的可空EngineIdentity记录经文件校验的制品身份，name�
 review_cache_key.dart结合真实身份/历史/预算/规则版本生成缓存键；ReviewCacheRepository与CachedEngineScore提供异步端口，默认MemoryReviewCacheRepository为2048条LRU。候选PV合法性在复用前验证，只有完成、无bound的单路结果可命中。IO失败降级和取消见ADR-012，文件持久化下一切片。
 
 FileReviewCacheRepository由main注入ApplicationSupport/chessnext-analysis-cache，不与用户棋谱/草稿共目录；有界、schema/校验和、串行原子替换，可再生损坏项删除并明确降级。纯Dart跨进程探针与macOS新App/引擎实例验证边界见engine/REVIEW_CACHE。
+
+engine_candidates.dart/CandidateRun处理当前着法的父局面候选，EngineSessionController.batch统一分析/AI/整谱/候选互斥。ReviewCacheAccess抽出共用缓存IO和PV/允许集验证。BoardSession.playVariation原子创建/切换父局面同级着法，控制器等stop并检查完整快照后提交。表现位于CandidatePanel/OptionsDialog；原始cp/mate/bound，不冒充源站可接受筛选或胜率。详ADR-013。

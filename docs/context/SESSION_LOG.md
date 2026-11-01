@@ -193,3 +193,12 @@ ADR-014解释子查询缓存与集合完成条件；源站可接受阈值/准确
 
 ### E15/WDL调查 / 2026-11-02
 指南D与实际访客菜单/模式O差异记录E15，新增F33/B21待核。WDL官方check/三项字段已由原生CLI8行验证，总和1000、quit0，App尚未实现。临时TextIO+select探针uciok超时已纠正为二进制余行缓冲（不是Pikafish故障），最终tools/probe_wdl.py通过，原始带SHA协议入engine/validation。下一做WDL数据链路，独立业务门槛。
+
+### M3-15 WIP / 2026-11-02
+原生WDL/缓存/分析面板已写未提交。目标32（含实际NNUE）、根162/162与analyze通过；原生整套仍待结果。序列化optional wdl不应混入整数统计字段，初次静态复核时已纠正并由roundtrip/实际数据目标验证。Skills协议纯文档修改另行提交，初次validator缺yaml未执行，临时环境校验待取结果，不算成功。
+
+## 2026-11-02 / M3-15 / F02,F26,F32 → B14/B18 原生WDL
+
+WdlEstimate严格胜/和/负三整数总1000、视角反转/预期得分；EngineInfo可空、坏可选统计保留CP。EngineRequest.preferWdl向后默认false，App各搜索请求true偏好，UciEngine能力check/只变更/ready确认/不支持回退。缓存optional元数据和独立偏好键、CP旧格式兼容，支持WDL但缺请求数据不算完整命中；文件重开保留。分析面板显示模型胜和负，单独标和棋半分的预期得分，bound/mate不附普通概率文本。
+根flutter test162/162（显式官方NNUE）与flutter analyze无问题；macOS完整15/15通过，真实包内MultiPV及WDL展示、缓存/整谱等回归。新增5类型/解析/视角/缓存测试、3UCI选项/缺能力/ready超时测试、1真NNUE双先手、1文件重开和1组件视角/200%/bound测试；目标32/32通过。初轮1处lint修复；序列化wdl误混整数统计字段在静态复核纠正后roundtrip通过，未有最终失败。日志/tmp/chessnext-wdl-{unit,target,test,analyze,native}.log。核心未改沿用49。
+ADR-015。原生探针8行总1000/quit0另见协议归档；此功能只提供引擎模型数据，不声称网站胜率/准确率同公式或完整F32。下一预期损失/等级与错题；所有其他缺项继续。

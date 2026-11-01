@@ -39,3 +39,8 @@ CandidateCollector已共用单步/整谱，ReviewMode最佳/多候选，完整�
 官方指南2026-11-02重读出现标准（推荐）与题库声明，但当前实际UI此前只操作快速/彻底；这是D与V差异，待新增E15证据并续审题库/标准入口，不能只按文档标运行成功。https://xiangqiai.com/guide/ 与固定源码 https://raw.githubusercontent.com/official-pikafish/Pikafish/Pikafish-2026-09-06/src/uci.cpp 。当前IAB browser2 tab4仍markHandoff，访客自制棋谱。
 
 E15/WDL调查已完成，提交见git log。F33题库仅指南D、B21待核；当前访客实际模式只有快速/彻底，不能猜标准参数。IAB tab4现在模式选择器打开（快速505/彻底508/取消511是当次索引，必须fresh AX再用），已markHandoff。WDL实际CLI8行/总和1000/quit0，见engine/WDL_RESEARCH与validation/wdl-protocol-2026-11-02.txt、tools/probe_wdl.py；App还未启用/解析。最后样本black raw -36,8/896/96。下一按该文档实施类型/请求/选项/解析/缓存/视角展示，先端口与失败模型，逐增量测试commit。没有待等待验证命令。
+
+## M3-15最新（完成，提交见git log）
+原生WDL已贯通请求/选项/解析/缓存与分析面板，详ADR-015。端口preferWdl默认false，App请求true；check不支持回退，toggle等ready且只变更，不清TT。原始三项总1000，视角交换胜负；expectedScore=(wins+draws/2)/1000，UI分开展示。无WDL/坏统计不补0，bound/mate不附普通概率。独立WDL子键，旧CP缓存可读；声明能力却缺请求字段不能完整命中。
+根162/162（真NNUE）+analyze、macOS完整15/15通过，目标32/32；所有验证已结束。核心49未改。代码应已提交；另外AGENTS及onboarding/pikafish两个Skill纯协议更改尚待单独chore，不能混进WDL业务提交。Skill-creator已读，系统Python首缺yaml不算验证，临时venv PyYAML6.0.3后两个quick_validate都Skill is valid；无全局/产品依赖更改，临时环境已清理，日志/tmp/chessnext-skill-validation.log。下一先chore协议维护，再复盘预期损失/等级/错题及其它功能，不能最终停下。
+原生WDL数据不是网站准确率公式：下一可计算明确标示模型的预期得分损失（按走子方，raw半分千单位可用2*wins+draws整数避免阈值浮点），先before/after同预算/身份/无bound数据配对；不要凭cp造“准确率”。妙手/唯一守招和错失良机需多候选/杀棋语义另验。源站阈值2/5/10/20仅有UI证据，等号边界/聚合准确率仍未知，研究缺口保留。

@@ -53,12 +53,14 @@ class FakeEngine implements EngineGateway {
     int score = 10,
     String? bound,
     String pv = 'h2e2 b9c7',
+    WdlEstimate? wdl,
   }) => events.add(
     EngineInfo(
       token: token,
       depth: 8,
       multiPv: 1,
       score: score,
+      wdl: wdl,
       isMate: false,
       bound: bound,
       pv: pv.split(' ').map(Move.parse).toList(growable: false),

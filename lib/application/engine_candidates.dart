@@ -98,6 +98,7 @@ extension EngineCandidates on EngineSessionController {
               threads: _settings.threads,
               hashMb: _settings.hashMb,
               multiPv: 1,
+              preferWdl: true,
               searchMoves: allowed,
             ),
             onSearch: (_, _) {

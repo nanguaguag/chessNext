@@ -90,6 +90,14 @@ class AnalysisPanel extends StatelessWidget {
         : ''}${score > 0 ? '+' : ''}$score';
   }
 
+  Widget _wdl(EngineInfo info) {
+    final side = analysis.session.flipped ? Side.black : Side.red;
+    final estimate = analysis.wdlFor(info, side)!;
+    return Text(
+      '${side == Side.red ? '红方' : '黑方'}模型估计：胜 ${(estimate.wins / 10).toStringAsFixed(1)}% · 和 ${(estimate.draws / 10).toStringAsFixed(1)}% · 负 ${(estimate.losses / 10).toStringAsFixed(1)}%\n预期得分 ${(estimate.expectedScore * 100).toStringAsFixed(1)}%（和棋计半分）',
+    );
+  }
+
   @override
   Widget build(BuildContext context) => Card.outlined(
     child: Padding(
@@ -145,8 +153,15 @@ class AnalysisPanel extends StatelessWidget {
               initiallyExpanded: info.multiPv == 1,
               tilePadding: EdgeInsets.zero,
               title: Text('${info.multiPv}. ${_score(info)}'),
-              subtitle: Text(
-                '深度 ${info.depth} · ${((info.timeMs ?? 0) / 1000).toStringAsFixed(1)} 秒 · ${info.nps ?? 0} 节点/秒',
+              subtitle: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '深度 ${info.depth} · ${((info.timeMs ?? 0) / 1000).toStringAsFixed(1)} 秒 · ${info.nps ?? 0} 节点/秒',
+                  ),
+                  if (info.bound == null && !info.isMate && info.wdl != null)
+                    _wdl(info),
+                ],
               ),
               children: [
                 Align(

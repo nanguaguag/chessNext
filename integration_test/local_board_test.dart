@@ -226,6 +226,15 @@ void main() {
       reason:
           '${analysis.status}; ${analysis.error}; enabled=${analysis.enabled}; pv=${analysis.settings.multiPv}; lifecycle=${lifecycle.states}',
     );
+    for (
+      var i = 0;
+      i < 100 && find.textContaining('模型估计：').evaluate().isEmpty;
+      i++
+    ) {
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    expect(analysis.infos.every((i) => i.wdl != null), isTrue);
+    expect(find.textContaining('模型估计：'), findsWidgets);
     await tester.ensureVisible(find.text('停止分析'));
     await tester.tap(find.text('停止分析'));
     await tester.pumpAndSettle();

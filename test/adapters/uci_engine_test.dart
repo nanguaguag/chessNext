@@ -10,6 +10,7 @@ class FakeTransport implements EngineTransport {
   final output = StreamController<String>(sync: true);
   final commands = <String>[];
   bool respond = true;
+  bool offerWdl = false;
   bool autoStop = true;
   bool autoReady = true;
   bool closed = false;
@@ -21,6 +22,9 @@ class FakeTransport implements EngineTransport {
     if (!respond) return;
     if (command == 'uci') {
       output.add('id name Synthetic UCI 1.0');
+      if (offerWdl) {
+        output.add('option name UCI_ShowWDL type check default false');
+      }
       for (final option in [
         'Threads type spin default 1 min 1 max 8',
         'Hash type spin default 16 min 1 max 128',
@@ -386,5 +390,107 @@ void main() {
     transport.output.add('bestmove h2e2');
     await third.bestMove;
     expect(transport.commands.where((c) => c.startsWith('go ')).length, 3);
+  });
+  test(
+    'native WDL preference changes once and waits ready before starting',
+    () async {
+      final transport = FakeTransport()..offerWdl = true;
+      final engine = UciEngine(transport);
+      addTearDown(engine.dispose);
+      final seen = <EngineInfo>[];
+      final subscription = engine.info.listen(seen.add);
+      addTearDown(subscription.cancel);
+      final first = await engine.start(
+        EngineRequest(
+          token: 1,
+          root: Position.initial(),
+          depth: 3,
+          preferWdl: true,
+        ),
+      );
+      transport.output.add('info depth 3 score cp 10 wdl 200 700 100 pv h2e2');
+      transport.output.add('bestmove h2e2');
+      await first.bestMove;
+      await Future<void>.delayed(Duration.zero);
+      expect(seen.single.wdl!.toJson(), [200, 700, 100]);
+      final second = await engine.start(
+        EngineRequest(
+          token: 2,
+          root: Position.initial(),
+          depth: 3,
+          preferWdl: true,
+        ),
+      );
+      transport.output.add('bestmove h2e2');
+      await second.bestMove;
+      expect(
+        transport.commands
+            .where((c) => c == 'setoption name UCI_ShowWDL value true')
+            .length,
+        1,
+      );
+      transport.autoReady = false;
+      final pending = engine.start(
+        EngineRequest(token: 3, root: Position.initial(), depth: 3),
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(transport.commands.last, 'isready');
+      expect(
+        transport.commands,
+        contains('setoption name UCI_ShowWDL value false'),
+      );
+      expect(transport.commands.where((c) => c.startsWith('go ')).length, 2);
+      transport.output.add('readyok');
+      final third = await pending;
+      transport.output.add('bestmove h2e2');
+      await third.bestMove;
+    },
+  );
+  test(
+    'an engine without WDL continues normal search when statistics are preferred',
+    () async {
+      final transport = FakeTransport();
+      final engine = UciEngine(transport);
+      addTearDown(engine.dispose);
+      final search = await engine.start(
+        EngineRequest(
+          token: 1,
+          root: Position.initial(),
+          depth: 3,
+          preferWdl: true,
+        ),
+      );
+      transport.output.add('bestmove h2e2');
+      expect(await search.bestMove, Move.parse('h2e2'));
+      expect(
+        transport.commands.any(
+          (c) => c.startsWith('setoption name UCI_ShowWDL'),
+        ),
+        isFalse,
+      );
+    },
+  );
+  test('unacknowledged WDL settings fail before sending go', () async {
+    final transport = FakeTransport()..offerWdl = true;
+    final engine = UciEngine(
+      transport,
+      handshakeTimeout: const Duration(milliseconds: 30),
+    );
+    addTearDown(engine.dispose);
+    await engine.initialize();
+    transport.autoReady = false;
+    await expectLater(
+      engine.start(
+        EngineRequest(
+          token: 1,
+          root: Position.initial(),
+          depth: 3,
+          preferWdl: true,
+        ),
+      ),
+      throwsA(isA<TimeoutException>()),
+    );
+    expect(engine.phase, EngineLifecycle.failed);
+    expect(transport.commands.any((c) => c.startsWith('go ')), isFalse);
   });
 }

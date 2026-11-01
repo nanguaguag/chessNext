@@ -32,6 +32,7 @@ String reviewCacheKey(
             'threads': request.threads,
             'hashMb': request.hashMb,
             'multiPv': request.multiPv,
+            if (request.preferWdl) 'wdl': 'native-v1',
             'searchMoves': request.searchMoves
                 ?.map((m) => m.toString())
                 .toList(),

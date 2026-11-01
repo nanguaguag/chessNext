@@ -1,6 +1,8 @@
 import 'package:xiangqi_core/xiangqi_core.dart';
 import 'engine_identity.dart';
 export 'engine_identity.dart';
+import 'wdl_estimate.dart';
+export 'wdl_estimate.dart';
 
 enum EngineLifecycle {
   stopped,
@@ -44,6 +46,7 @@ class EngineRequest {
     int threads = 1,
     int hashMb = 16,
     int multiPv = 1,
+    bool preferWdl = false,
     Iterable<Move>? searchMoves,
   }) {
     final history = List<Move>.unmodifiable(moves);
@@ -63,6 +66,7 @@ class EngineRequest {
       threads: threads,
       hashMb: hashMb,
       multiPv: multiPv,
+      preferWdl: preferWdl,
       searchMoves: searchMoves,
     );
   }
@@ -76,6 +80,7 @@ class EngineRequest {
     int threads = 1,
     int hashMb = 16,
     int multiPv = 1,
+    bool preferWdl = false,
     Iterable<Move>? searchMoves,
   }) => EngineRequest._(
     token: token,
@@ -89,6 +94,7 @@ class EngineRequest {
     threads: threads,
     hashMb: hashMb,
     multiPv: multiPv,
+    preferWdl: preferWdl,
     searchMoves: searchMoves,
   );
   EngineRequest._({
@@ -103,6 +109,7 @@ class EngineRequest {
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
+    this.preferWdl = false,
     Iterable<Move>? searchMoves,
   }) : searchMoves = searchMoves == null
            ? null
@@ -134,6 +141,9 @@ class EngineRequest {
   final int threads;
   final int hashMb;
   final int multiPv;
+
+  /// Best effort; unsupported engines keep normal analysis without WDL.
+  final bool preferWdl;
   final List<Move>? searchMoves;
 }
 
@@ -149,6 +159,7 @@ class EngineInfo {
     this.nodes,
     this.nps,
     this.timeMs,
+    this.wdl,
   });
   final int token;
   final int depth;
@@ -162,6 +173,7 @@ class EngineInfo {
   final int? nodes;
   final int? nps;
   final int? timeMs;
+  final WdlEstimate? wdl;
 }
 
 class EngineSearch {

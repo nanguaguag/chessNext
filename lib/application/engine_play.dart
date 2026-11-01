@@ -121,6 +121,7 @@ extension EnginePlay on EngineSessionController {
           threads: _settings.threads,
           hashMb: _settings.hashMb,
           multiPv: 1,
+          preferWdl: true,
           searchMoves: excluded.isEmpty ? null : candidates,
         ),
       );

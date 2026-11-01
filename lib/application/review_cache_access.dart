@@ -25,6 +25,11 @@ class ReviewCacheAccess {
           .timeout(const Duration(seconds: 2));
       if (cached == null) return null;
       try {
+        if (request.preferWdl &&
+            options['UCI_ShowWDL']?.type == 'check' &&
+            cached.info.wdl == null) {
+          throw const FormatException('Cached score lacks requested WDL');
+        }
         if (cached.key != key) throw const FormatException('Wrong cache key');
         var position = request.position;
         for (final move in cached.info.pv) {
@@ -53,6 +58,11 @@ class ReviewCacheAccess {
         info.depth < 1 ||
         info.pv.isEmpty ||
         info.pv.length > 256) {
+      return;
+    }
+    if (request.preferWdl &&
+        options['UCI_ShowWDL']?.type == 'check' &&
+        info.wdl == null) {
       return;
     }
     try {

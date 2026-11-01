@@ -268,6 +268,7 @@ class EngineSessionController extends ChangeNotifier {
           threads: _settings.threads,
           hashMb: _settings.hashMb,
           multiPv: _settings.multiPv,
+          preferWdl: true,
         ),
       );
       if (_disposed || !_enabled || generation != _generation) return;
@@ -441,6 +442,9 @@ class EngineSessionController extends ChangeNotifier {
     session.deleteBranch(id);
     return true;
   }
+
+  WdlEstimate? wdlFor(EngineInfo info, Side viewSide) =>
+      session.position.turn == viewSide ? info.wdl : info.wdl?.flipped();
 
   int scoreFor(EngineInfo info, Side viewSide) =>
       session.position.turn == viewSide ? info.score : -info.score;

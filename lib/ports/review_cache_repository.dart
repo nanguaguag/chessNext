@@ -14,6 +14,7 @@ class CachedEngineScore {
         timeMs: info.timeMs,
         nodes: info.nodes,
         nps: info.nps,
+        wdl: info.wdl,
       ) {
     if (!RegExp(r'^[a-f0-9]{64}$').hasMatch(key) ||
         info.bound != null ||
@@ -42,6 +43,7 @@ class CachedEngineScore {
     'timeMs': info.timeMs,
     'nodes': info.nodes,
     'nps': info.nps,
+    if (info.wdl != null) 'wdl': info.wdl!.toJson(),
   };
   factory CachedEngineScore.fromJson(Map<String, dynamic> json) {
     if (json.keys.any(
@@ -54,6 +56,7 @@ class CachedEngineScore {
             'timeMs',
             'nodes',
             'nps',
+            'wdl',
           }.contains(name),
         ) ||
         json['key'] is! String ||
@@ -86,6 +89,7 @@ class CachedEngineScore {
           timeMs: json['timeMs'] as int?,
           nodes: json['nodes'] as int?,
           nps: json['nps'] as int?,
+          wdl: json['wdl'] == null ? null : WdlEstimate.fromJson(json['wdl']),
         ),
       );
     } on ArgumentError {

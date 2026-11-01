@@ -190,4 +190,25 @@ void main() {
     expect((await repository.load('b' * 64))!.info.score, 25);
     await expectLater(repository.remove('../outside'), throwsArgumentError);
   });
+  test('WDL survives an independent file-cache repository', () async {
+    final entry = CachedEngineScore(
+      key: 'a' * 64,
+      info: EngineInfo(
+        token: 10,
+        depth: 4,
+        multiPv: 1,
+        score: 50,
+        isMate: false,
+        pv: [Move.parse('h2e2')],
+        wdl: WdlEstimate(wins: 350, draws: 600, losses: 50),
+      ),
+    );
+    await repository.save(entry);
+    final reopened = FileReviewCacheRepository(() async => directory);
+    expect((await reopened.load(entry.key))!.info.wdl!.toJson(), [
+      350,
+      600,
+      50,
+    ]);
+  });
 }

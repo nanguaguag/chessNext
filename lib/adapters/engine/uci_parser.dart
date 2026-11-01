@@ -26,6 +26,28 @@ EngineInfo? parseUciInfo(String line, int token) {
   int? number(String key) => int.tryParse(
     RegExp('(?:^| )$key (\\d+)').firstMatch(line)?.group(1) ?? '',
   );
+  WdlEstimate? wdl;
+  final wdlMatch = RegExp(
+    r'\bwdl\s+(-?\d+)\s+(-?\d+)\s+(-?\d+)(?:\s|$)',
+  ).firstMatch(line);
+  if (wdlMatch != null) {
+    final values = [
+      for (var i = 1; i <= 3; i++) int.tryParse(wdlMatch.group(i)!),
+    ];
+    if (values.every((v) => v != null)) {
+      try {
+        wdl = WdlEstimate(
+          wins: values[0]!,
+          draws: values[1]!,
+          losses: values[2]!,
+        );
+      } on ArgumentError {
+        /* Malformed optional statistics do not erase valid CP. */
+      }
+    }
+  }
+  final scoreValue = int.tryParse(score.group(2)!);
+  if (scoreValue == null) return null;
   final pvText = RegExp(r'\bpv (.+)$').firstMatch(line)?.group(1);
   final pv = <Move>[];
   if (pvText != null) {
@@ -41,7 +63,8 @@ EngineInfo? parseUciInfo(String line, int token) {
     token: token,
     depth: number('depth') ?? 0,
     multiPv: number('multipv') ?? 1,
-    score: int.parse(score.group(2)!),
+    score: scoreValue,
+    wdl: wdl,
     isMate: score.group(1) == 'mate',
     bound: line.contains('lowerbound')
         ? 'lower'

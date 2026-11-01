@@ -93,4 +93,41 @@ void main() {
         ? 'Set PIKAFISH_EXECUTABLE for the official-engine test'
         : false,
   );
+  test(
+    'pinned NNUE supplies native WDL for both sides to move',
+    () async {
+      final transport = await ProcessEngineTransport.spawn(
+        executable!,
+        workingDirectory: File(executable).parent.path,
+      );
+      final engine = UciEngine(
+        transport,
+        networkPath: Platform.environment['PIKAFISH_NETWORK'],
+      );
+      addTearDown(engine.dispose);
+      final infos = <EngineInfo>[];
+      final subscription = engine.info.listen(infos.add);
+      addTearDown(subscription.cancel);
+      for (var token = 20; token < 22; token++) {
+        final search = await engine.start(
+          EngineRequest(
+            token: token,
+            root: Position.initial(),
+            moves: token == 20 ? const [] : [Move.parse('h2e2')],
+            depth: 4,
+            preferWdl: true,
+          ),
+        );
+        await search.bestMove.timeout(const Duration(seconds: 15));
+        await Future<void>.delayed(Duration.zero);
+        final current = infos.where((i) => i.token == token).toList();
+        expect(current, isNotEmpty);
+        expect(current.every((i) => i.wdl != null), isTrue);
+        for (final info in current) {
+          expect(info.wdl!.toJson().reduce((a, b) => a + b), 1000);
+        }
+      }
+    },
+    skip: executable == null ? 'Set PIKAFISH_EXECUTABLE for native WDL' : false,
+  );
 }

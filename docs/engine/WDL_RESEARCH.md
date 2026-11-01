@@ -9,3 +9,5 @@ V：`python3 tools/probe_wdl.py`先按pikafish.lock校验官方原始二进制/N
 建议下一增量：WdlEstimate严格三项/总量校验→EngineInfo可空wdl/解析→EngineRequest偏好输出标志（缺能力仍可普通分析）→UciEngine只在check选项可用时变更、ready屏障/同值不重设→缓存保留WDL并将实际请求偏好与选项纳入键，旧CP-only不伪造WDL→Material3原始胜和负展示与红黑视角。然后再做复盘损失/等级，算法版本清晰且不宣称网站同准确率公式。
 
 初版临时Python probe用TextIO缓冲配select，等待uciok超时；这是探针读取策略问题，已改二进制buffer/os.read保留余行，最终0.2秒内正常结束，不当作引擎故障或性能基准。工具协议超时15秒、清理自有子进程，不改上游引擎。
+
+M3-15续：App请求/解析/缓存/分析面板已按ADR-015接入，验证见TRACEABILITY。上文“App尚未解析”是原生探针阶段事实；本次仍未声称复刻网站准确率算法。

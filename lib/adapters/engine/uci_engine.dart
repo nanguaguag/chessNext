@@ -37,6 +37,7 @@ class UciEngine implements EngineGateway {
   final _events = StreamController<EngineInfo>.broadcast();
   final Map<String, EngineOption> _options = {};
   Map<String, int> _appliedSettings = {};
+  bool? _appliedWdl;
   (int, String)? _gameKey;
   late final StreamSubscription<String> _subscription;
   Future<void> _tail = Future.value();
@@ -152,6 +153,12 @@ class UciEngine implements EngineGateway {
       _send('setoption name EvalFile value $networkPath');
     }
     await _expect('isready', 'readyok');
+    final wdlDefault = _options['UCI_ShowWDL']?.defaultValue;
+    _appliedWdl = wdlDefault == 'true'
+        ? true
+        : wdlDefault == 'false'
+        ? false
+        : null;
     _phase = EngineLifecycle.ready;
   }
 
@@ -210,16 +217,25 @@ class UciEngine implements EngineGateway {
     final changed = settings.entries
         .where((entry) => _appliedSettings[entry.key] != entry.value)
         .toList();
+    final supportsWdl = _options['UCI_ShowWDL']?.type == 'check';
+    final desiredWdl = request.preferWdl && supportsWdl;
+    final wdlChanged = supportsWdl && _appliedWdl != desiredWdl;
     final gameKey = (request.gameId, request.root.toFen());
     final newGame = gameKey != _gameKey;
     for (final setting in changed) {
       _send('setoption name ${setting.key} value ${setting.value}');
     }
+    if (wdlChanged) {
+      _send(
+        'setoption name UCI_ShowWDL value ${desiredWdl ? 'true' : 'false'}',
+      );
+    }
     if (newGame) _send('ucinewgame');
-    if (newGame || changed.isNotEmpty) {
+    if (newGame || changed.isNotEmpty || wdlChanged) {
       await _expect('isready', 'readyok');
       // Only remember changes after the engine has acknowledged readiness.
       _appliedSettings = settings;
+      if (supportsWdl) _appliedWdl = desiredWdl;
       _gameKey = gameKey;
     }
     final moves = request.moves.map((m) => m.toString()).join(' ');

@@ -1,0 +1,138 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/c/034nmKTWYSb745Ug0GX29J/3".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/c/034nmKTWYSb745Ug0GX29J/3
+	1 container
+		2 container app
+			3 container
+				4 button 菜单
+					5 image
+					6 text 菜单
+				7 button 新局
+					8 image
+					9 text 新局
+				10 checkbox Description: 引擎执红, Value: 0
+					11 image
+					12 text 引擎执红
+				13 checkbox Description: 引擎执黑, Value: 0
+					14 image
+					15 text 引擎执黑
+				16 checkbox Description: 分析模式, Value: 0
+					17 image
+					18 text 分析模式
+				19 button 立即出招
+					20 image
+					21 text 立即出招
+				22 button 变招
+					23 image
+					24 text 变招
+				25 container 翻转
+					26 container
+						27 image
+						28 text 翻转
+				29 button 导入
+					30 image
+					31 text 导入
+				32 container 保存 / 分享
+					33 container
+						34 image
+						35 text 保存 / 分享
+				36 checkbox Description: 编辑, Value: 0
+					37 image
+					38 text 编辑
+				86 text 鸿雁惊寒副图2(《事林广记》第4局) · 分享的棋谱（只读） 保存到我的棋谱 《事林广记》 3/3 · 鸿雁惊寒副图2(《事林广记》第4局)
+				87 button ‹
+				88 button (disabled) ›
+				89 container displayArea
+					90 splitter Description: 调整左栏宽度, Value: 22
+					91 splitter Description: 调整棋盘宽度, Value: 65
+					92 text 开始
+					93 splitter Description: 调整上下分区, Value: 55
+					94 container
+						95 text 开始
+						96 button (disabled) 下一着 ›
+						97 text 选择棋谱中的着法，查看变着与注释
+						98 text entry area (settable) van-field-15-input
+					99 text 走几步棋后，这里会画出局势曲线
+					100 container
+						101 text 引擎
+						102 button 重置布局
+						103 button 引擎参数
+							104 image
+						105 button 开始分析
+							106 image
+							107 text 开始分析
+						108 text 也可以点工具栏的
+						109 image
+						110 text 按钮
+					111 splitter Description: 调整上下分区, Value: 55
+					112 container
+						113 text 云库
+						114 text 着法 红方 评分 1 炮八平五 1 2 炮二平五 1 3 兵七进一 1 4 兵三进一 1 5 炮八平四 1 6 炮二平六 1 7 马八进七 0 8 马二进三 0 9 炮八平六 0 10 炮二平四 0 11 炮八平九 0 12 炮二平一 0 13 相七进五 0 14 相三进五 0 15 马八进九 0 16 马二进一 0 17 炮八平七 0 18 炮二平三 0 19 兵九进一 0 20 兵一进一 0 21 炮八平三 0 22 炮二平七 0 23 仕六进五 -1 24 仕四进五 -1 25 炮八进二 -3 26 炮二进二 -3 27 炮八进四 -9 28 炮二进四 -9 29 炮八退一 -39 30 炮二退一 -39 31 相七进九 -95 32 相三进一 -95 33 炮八进一 -104 34 炮二进一 -104 35 车九进二 -142 36 车一进二 -142 37 炮八进三 -153 38 炮二进三 -153 39 车九进一 -194 40 车一进一 -194 41 兵五进一 -213 42 帅五进一 -227 43 炮八进七 -303 44 炮二进七 -303
+				115 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+				116 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+		117 container 按钮说明
+			118 container
+				119 text 按钮说明
+				120 container
+					121 text 1
+					122 image
+					123 text 菜单 棋谱库、最近阅读、错题本、设置都在这里
+				124 container
+					125 text 2
+					126 image
+					127 text 新局 清空当前棋谱，回到初始局面
+				128 container
+					129 text 3
+					130 image
+					131 text 引擎执红棋 引擎替红方走子
+				132 container
+					133 text 4
+					134 image
+					135 text 引擎执黑棋 引擎替黑方走子
+				136 container
+					137 text 5
+					138 image
+					139 text 分析 引擎持续给出当前局面的评分与推荐着法
+				140 container
+					141 text 6
+					142 image
+					143 text 立即出招 不等引擎想完，直接走它当前的最佳着法
+				144 container
+					145 text 7
+					146 image
+					147 text 变招 排除当前最佳着法，让引擎另想一步；和 AI 下棋时，AI 刚走的一步也能收回换一步
+				148 container
+					149 text 8
+					150 image
+					151 text 翻转 翻转棋盘或交换红黑视角
+				152 container
+					153 text 9
+					154 image
+					155 text 导入 粘贴着法、打开棋谱文件或拍照识别棋盘
+				156 container
+					157 text 10
+					158 image
+					159 text 保存 / 分享 保存到你的棋谱库，或分享、导出本局。右上角有橙点，说明还有修改没保存
+				160 container
+					161 text 11
+					162 image
+					163 text 编辑局面 自由摆子，摆好后从这个局面开始分析
+				164 container
+					165 text 12
+					166 image
+					167 text 上一步 / 下一步 沿当前分支前后翻一步
+				168 container
+					169 text 13
+					170 image
+					171 text 开头 / 末尾 跳到上一个或下一个有变着的局面，没有就到开头或末尾
+				172 container
+					173 text 14
+					174 image
+					175 text 分析工作区 下方同时显示引擎和云库，棋盘下方查看局势；拖动分隔条调整空间
+				176 container
+					177 text 15
+					178 image
+					179 text 着法与详情 点击着法，右侧常驻显示变着与注释；开启「在棋盘显示」回看本步变着
+				180 button 第一次使用？跟着做一遍新手引导 ›
+				181 button 知道了
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/c/034nmKTWYSb745Ug0GX29J/3

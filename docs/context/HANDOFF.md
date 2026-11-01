@@ -25,3 +25,5 @@ E16存题访客需登录V；E17最近阅读访客空态V，公开《事林广记
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0；2026-11-02官方latest仍Pikafish2026-09-06、commit4c17cee，NNUE/SHA见engine/pikafish.lock.json。.local不入Git。root真引擎门槛：PIKAFISH_EXECUTABLE="$PWD/.local/pikafish/Pikafish-MacOS-universal" PIKAFISH_NETWORK="$PWD/.local/pikafish/pikafish.nnue" flutter test --reporter expanded；再flutter analyze，原生flutter test integration_test/local_board_test.dart -d macos。FileReviewCache正式AppSupport注入；详engine/REVIEW_CACHE、ENGINE_IDENTITY/WDL_RESEARCH。
 
 macOS integration_test仅测试内保持framework-resumed，生产无覆盖；真实OS焦点/最小化/人工视觉未验，Computer Use桌面权限未授，不绕过。其它四平台/移动FFI未验。普通用户窗口PID38211/旧run22326曾在，不主动关；原生测试覆盖build入口，最终审查前重建普通main。Fake engine清理需pump_until通过runAsync推进真实zone的subscription.cancel，不能删生产await。
+
+E18研究独立提交见git log：按钮说明实际开关、引导首步重放/跳过已V；分支跳转只有文字O待操作。本轮后续F29先做独立可搜索离线帮助，不把帮助页当自动首次引导完成。当前F18提交5acdeda，根189/原生16+1，无验证命令运行。

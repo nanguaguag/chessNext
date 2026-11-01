@@ -77,6 +77,25 @@ void main() {
     await tester.pumpWidget(ChessNextApp(key: UniqueKey()));
     await tester.pumpAndSettle();
     expect(find.text('红方行棋'), findsOneWidget);
+    final beforeHelp = tester
+        .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+        .session
+        .tree;
+    await tester.tap(find.byTooltip('帮助与按钮说明'));
+    await tester.pumpAndSettle();
+    await enterNativeText(
+      tester,
+      find.byKey(const ValueKey('help-search')),
+      '最近阅读',
+    );
+    expect(find.text('保存、草稿与最近阅读'), findsOneWidget);
+    await tester.tap(find.text('关闭'));
+    await tester.pumpAndSettle();
+    expect(
+      tester.widget<XiangqiBoard>(find.byType(XiangqiBoard)).session.tree,
+      same(beforeHelp),
+    );
+
     await tester.tap(find.byKey(const ValueKey('square-h2')));
     await tester.pump();
     await tester.tap(find.byKey(const ValueKey('square-e2')));

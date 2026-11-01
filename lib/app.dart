@@ -1,3 +1,4 @@
+import 'features/help/offline_help_dialog.dart';
 import 'application/recent_reading_controller.dart';
 import 'ports/recent_reading_repository.dart';
 import 'features/library/recent_reading_dialog.dart';
@@ -406,6 +407,14 @@ class _BoardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('chessNext'),
         actions: [
+          IconButton(
+            tooltip: '帮助与按钮说明',
+            icon: const Icon(Icons.help_outline),
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (_) => const OfflineHelpDialog(),
+            ),
+          ),
           IconButton(
             tooltip: '应用设置',
             icon: const Icon(Icons.settings_outlined),

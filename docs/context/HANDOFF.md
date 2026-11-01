@@ -27,3 +27,8 @@ Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0；2026-11-02官方latest仍
 macOS integration_test仅测试内保持framework-resumed，生产无覆盖；真实OS焦点/最小化/人工视觉未验，Computer Use桌面权限未授，不绕过。其它四平台/移动FFI未验。普通用户窗口PID38211/旧run22326曾在，不主动关；原生测试覆盖build入口，最终审查前重建普通main。Fake engine清理需pump_until通过runAsync推进真实zone的subscription.cancel，不能删生产await。
 
 E18研究独立提交见git log：按钮说明实际开关、引导首步重放/跳过已V；分支跳转只有文字O待操作。本轮后续F29先做独立可搜索离线帮助，不把帮助页当自动首次引导完成。当前F18提交5acdeda，根189/原生16+1，无验证命令运行。
+
+## F29离线帮助完成 / M3-17
+features/help/offline_help_dialog.dart原创9主题/标题正文搜索/折叠/空态清空/只读可选文字，AppBar帮助与按钮说明入口。方案OFFLINE_HELP_SLICE，本片不含自动首次/手动分步引导，不标全F29。新增3组件：200%/搜索/开关不改文档、不触引擎和仓储；目标3/3、全根真NNUE192/192、analyze无问题、macOS首测试1/1（00:06）通过。日志/tmp/chessnext-help-{target,full,analyze,native}.log；无待等待验证命令。应已独立feat(help)中文commit，工作树核对。
+
+下一F29手动四步引导+首次提示标记：建议新增guideVersion可选schema1偏好（旧默认0），逐字段晚到合并与错误保护沿用，production main显式启用首次引导，测试宿主可关闭自动弹窗并单独验证启用模式；手动重放永远可用。四步只读/安全教学、前后/跳过/完成/版本记忆，不暗中开AI或改谱。先方案+接口/失败模型后实施，注意设置保存失败要提示且可重试；不把纯说明当网站交互完全一样。随后分支跳转/本地错题/格式与其余所有缺项继续，不能最终停下。

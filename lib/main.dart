@@ -1,3 +1,4 @@
+import 'adapters/storage/file_preferences_repository.dart';
 import 'adapters/storage/file_draft_repository.dart';
 import 'dart:io';
 import 'adapters/engine/bundled_engine.dart';
@@ -12,6 +13,9 @@ void main() {
     ChessNextApp(
       repository: FileGameRepository(getApplicationDocumentsDirectory),
       draftRepository: FileDraftRepository(getApplicationDocumentsDirectory),
+      preferencesRepository: FilePreferencesRepository(
+        getApplicationSupportDirectory,
+      ),
       engineFactory: openBundledEngine,
       deviceThreads: Platform.numberOfProcessors,
     ),

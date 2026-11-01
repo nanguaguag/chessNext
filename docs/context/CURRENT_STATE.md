@@ -18,14 +18,18 @@
 
 - 独立自动草稿：300ms去抖、串行快照、主文件/备份恢复、dirty副本恢复、初始化/失败/脏数据保护、后台flush与正常退出失败提示。损坏原件归档保留，见ADR-006；不承诺强杀/断电零丢失。
 
+- 本机偏好：主题、线程/Hash/MultiPV、AI用时，schema1独立存储/备份/坏文件保护/读写失败，初始化逐字段合并和硬件/握手能力钳制；不存AI角色。主题变更不重启引擎。桌面失焦但可见继续，隐藏停止；移动inactive停止。
+
 ## 验证和平台
 
-本功能根flutter test58/58（含官方NNUE live测试）、flutter analyze无问题；核心dart test46/46、dart analyze无问题；macOS原生7/7：棋盘、真实沙箱存储重开、NNUE多PV、AI/变招/悔棋、编辑、中文导入导出、实际Documents自动草稿重开恢复。4组perft与官方引擎一致。尚未验证Android/iOS/Windows/Linux，不能把macOS通过外推。
+本功能根flutter test67/67（含官方NNUE live测试）、flutter analyze无问题；核心dart test46/46、dart analyze无问题；macOS原生8/8：棋盘、真实沙箱存储重开、NNUE多PV、AI/变招/悔棋、编辑、中文导入导出、实际Documents自动草稿重开恢复、ApplicationSupport主题/参数重开恢复。4组perft与官方引擎一致。尚未验证Android/iOS/Windows/Linux，不能把macOS通过外推。
+
+本轮原生交互测试明确保持framework-resumed前提（只在integration_test内，普通main无覆盖），真实OS焦点/最小化/隐藏仍待平台QA；生产生命周期由独立组件测试。原生曾停滞一轮被INT中断、首次自建Binding冲突均未记通过，见SESSION_LOG。
 
 原生测试失焦后的enterText必须重新tap并pumpAndSettle后验证实际值；已修测试辅助函数。AI原生整套曾出现状态“分析已停止”无协议错误的偶发中止，单项及最终整套通过；增加生命周期trace与失焦取消组件回归，不静默删除失败记录。Computer Use桌面权限未授，窗口自动置前失败，Flutter原生交互测试通过，人工截图/视觉验收未做。
 
 ## 继续推进
 
-接下来设置持久化→整谱复盘/评分曲线/错题→文件格式/图片与GIF→工作区/外观/音效/帮助→自建后端→五平台与完整规则。各项应再拆成独立验收增量；B01深层审计持续进行。没有自造账号/云库/识图成功结果。
+接下来整谱复盘/评分曲线/错题→文件格式/图片与GIF→工作区/外观/音效/帮助→自建后端→五平台与完整规则。各项应再拆成独立验收增量；B01深层审计持续进行。没有自造账号/云库/识图成功结果。
 
 环境Flutter3.44.6/Dart3.12.2、macOS14.4 arm64/Xcode15.0。Pikafish官方latest于2026-11-02复核为2026-09-06，SHA/制品校验见engine/pikafish.lock.json。本机.local不提交制品。

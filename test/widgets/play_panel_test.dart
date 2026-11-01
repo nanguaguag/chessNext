@@ -1,3 +1,5 @@
+import 'package:chess_next/features/analysis/analysis_panel.dart';
+import 'package:flutter/foundation.dart' as foundation;
 import 'package:chess_next/app.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/chess_next.dart';
@@ -38,7 +40,7 @@ void main() {
     },
   );
   testWidgets(
-    'losing application focus cancels AI without applying a late result',
+    'mobile inactive state cancels AI without applying a late result',
     (tester) async {
       tester.view.physicalSize = const Size(1120, 1400);
       tester.view.devicePixelRatio = 1;
@@ -67,5 +69,44 @@ void main() {
       expect(session.moves.length, 1);
       expect(session.inputLocked, isFalse);
     },
+  );
+  testWidgets(
+    'desktop focus loss keeps analysis running, while hiding cancels it',
+    (tester) async {
+      addTearDown(
+        () => tester.binding.handleAppLifecycleStateChanged(
+          AppLifecycleState.resumed,
+        ),
+      );
+      tester.view.physicalSize = const Size(1120, 1400);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      final engine = FakeEngine();
+      await tester.pumpWidget(ChessNextApp(engineFactory: () async => engine));
+      await tester.ensureVisible(find.text('开始分析'));
+      await tester.tap(find.text('开始分析'));
+      await tester.pumpAndSettle();
+      final requests = engine.requests.length;
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      await tester.pumpAndSettle();
+      expect(find.text('停止分析'), findsOneWidget);
+      expect(engine.requests.length, requests);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+      expect(
+        tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis
+            .enabled,
+        isFalse,
+      );
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+      tester.binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+      await tester.pumpAndSettle();
+      expect(find.text('分析已停止'), findsOneWidget);
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+    },
+    variant: TargetPlatformVariant({foundation.TargetPlatform.macOS}),
   );
 }

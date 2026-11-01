@@ -46,14 +46,8 @@ extension EnginePlay on EngineSessionController {
     await _syncPlay(++_generation);
   }
 
-  Future<void> setThinkTime(int milliseconds) async {
-    if (milliseconds < 50 || milliseconds > 600000) {
-      throw ArgumentError('Think time must be 50ms to 600s');
-    }
-    _thinkTimeMs = milliseconds;
-    _notify();
-    if (playing) await _syncPlay(++_generation);
-  }
+  Future<void> setThinkTime(int milliseconds) =>
+      configureSession(_settings, milliseconds);
 
   Future<void> _stopPlay(int generation) async {
     try {

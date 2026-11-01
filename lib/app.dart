@@ -1,3 +1,8 @@
+import 'package:flutter/foundation.dart' as foundation;
+import 'application/app_preferences.dart';
+import 'application/preferences_controller.dart';
+import 'ports/preferences_repository.dart';
+import 'features/settings/preferences_dialog.dart';
 import 'dart:ui' show AppExitResponse;
 import 'dart:async';
 import 'application/draft_controller.dart';
@@ -24,10 +29,12 @@ class ChessNextApp extends StatefulWidget {
     super.key,
     this.repository,
     this.draftRepository,
+    this.preferencesRepository,
     this.clipboard,
     this.engineFactory,
     this.deviceThreads = 1,
   });
+  final PreferencesRepository? preferencesRepository;
   final DraftRepository? draftRepository;
   final TextClipboard? clipboard;
   final EngineFactory? engineFactory;
@@ -42,6 +49,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   final session = BoardSession();
   late final LibraryController library;
   late final DraftController? drafts;
+  late final PreferencesController preferences;
   late final EngineSessionController analysis;
   @override
   void initState() {
@@ -60,13 +68,31 @@ class _ChessNextAppState extends State<ChessNextApp>
         ? null
         : DraftController(session, library, widget.draftRepository!);
     if (drafts != null) unawaited(drafts!.initialize());
+    preferences = PreferencesController(
+      analysis,
+      widget.preferencesRepository ?? MemoryPreferencesRepository(),
+    );
+    preferences.addListener(_preferencesChanged);
+    unawaited(preferences.initialize());
+  }
+
+  void _preferencesChanged() {
+    if (mounted) setState(() {});
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state != AppLifecycleState.resumed) {
-      unawaited(analysis.disable());
+      final desktop = {
+        foundation.TargetPlatform.macOS,
+        foundation.TargetPlatform.windows,
+        foundation.TargetPlatform.linux,
+      }.contains(foundation.defaultTargetPlatform);
+      if (!desktop || state != AppLifecycleState.inactive) {
+        unawaited(analysis.disable());
+      }
       if (drafts != null) unawaited(drafts!.flush());
+      unawaited(preferences.flush());
     }
   }
 
@@ -74,6 +100,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   Future<AppExitResponse> didRequestAppExit() async {
     await analysis.disable();
     await drafts?.flush();
+    await preferences.flush();
     if (!mounted) return AppExitResponse.exit;
     if (session.dirty &&
         session.hasContent &&
@@ -105,10 +132,17 @@ class _ChessNextAppState extends State<ChessNextApp>
   }
 
   final navigatorKey = GlobalKey<NavigatorState>();
-  ThemeMode mode = ThemeMode.system;
+  ThemeMode get mode => switch (preferences.value.theme) {
+    ThemePreference.system => ThemeMode.system,
+    ThemePreference.light => ThemeMode.light,
+    ThemePreference.dark => ThemeMode.dark,
+  };
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
+    preferences.removeListener(_preferencesChanged);
+    unawaited(preferences.flush());
+    preferences.dispose();
     analysis.dispose();
     if (drafts != null) {
       unawaited(drafts!.flush());
@@ -135,12 +169,15 @@ class _ChessNextAppState extends State<ChessNextApp>
     themeMode: mode,
     home: _BoardPage(
       drafts: drafts,
+      preferences: preferences,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       session: session,
       library: library,
       analysis: analysis,
-      toggleTheme: () => setState(
-        () => mode = mode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,
+      toggleTheme: () => unawaited(
+        preferences.setTheme(
+          mode == ThemeMode.dark ? ThemePreference.light : ThemePreference.dark,
+        ),
       ),
     ),
   );
@@ -154,7 +191,9 @@ class _BoardPage extends StatelessWidget {
     required this.library,
     required this.analysis,
     this.drafts,
+    required this.preferences,
   });
+  final PreferencesController preferences;
   final DraftController? drafts;
   final TextClipboard clipboard;
   final BoardSession session;
@@ -341,6 +380,14 @@ class _BoardPage extends StatelessWidget {
       appBar: AppBar(
         title: const Text('chessNext'),
         actions: [
+          IconButton(
+            tooltip: '应用设置',
+            icon: const Icon(Icons.settings_outlined),
+            onPressed: () => showDialog<void>(
+              context: context,
+              builder: (_) => PreferencesDialog(preferences: preferences),
+            ),
+          ),
           IconButton(
             onPressed: toggleTheme,
             tooltip: '切换明暗主题',
@@ -625,6 +672,27 @@ class _BoardPage extends StatelessWidget {
           );
           final sidePanel = Column(
             children: [
+              if (preferences.error != null)
+                Card.outlined(
+                  child: Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          preferences.error!,
+                          style: TextStyle(
+                            color: Theme.of(context).colorScheme.error,
+                          ),
+                        ),
+                        TextButton(
+                          onPressed: () => preferences.flush(force: true),
+                          child: const Text('重试保存设置'),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               if (drafts != null)
                 DraftStatusBar(
                   drafts: drafts!,

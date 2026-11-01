@@ -1,3 +1,7 @@
+import 'package:flutter/services.dart';
+import 'package:chess_next/features/analysis/analysis_panel.dart';
+import 'package:chess_next/adapters/storage/file_preferences_repository.dart';
+import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/adapters/storage/file_draft_repository.dart';
 import 'package:chess_next/features/drafts/draft_status_bar.dart';
 import 'package:chess_next/features/editor/editor_page.dart';
@@ -35,7 +39,30 @@ Future<void> enterNativeText(
 }
 
 void main() {
-  IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
+  // This native fixture controls framework visibility. Physical window focus
+  // and minimization remain platform QA tasks; production has no override.
+  final nativeStates = <String>[];
+  void resumeFixture() {
+    if (binding.lifecycleState == AppLifecycleState.paused) {
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.hidden);
+    }
+    if (binding.lifecycleState == AppLifecycleState.hidden) {
+      binding.handleAppLifecycleStateChanged(AppLifecycleState.inactive);
+    }
+    binding.handleAppLifecycleStateChanged(AppLifecycleState.resumed);
+  }
+
+  SystemChannels.lifecycle.setMessageHandler((message) async {
+    nativeStates.add(message ?? '<null>');
+    resumeFixture();
+    return null;
+  });
+  resumeFixture();
+  tearDownAll(() {
+    SystemChannels.lifecycle.setMessageHandler(null);
+    debugPrint('Native lifecycle fixture observed: $nativeStates');
+  });
   testWidgets('macOS local board supports a full interactive move cycle', (
     tester,
   ) async {
@@ -143,6 +170,9 @@ void main() {
   testWidgets('bundled Pikafish analyzes offline, switches MultiPV and stops', (
     tester,
   ) async {
+    final lifecycle = LifecycleTrace();
+    WidgetsBinding.instance.addObserver(lifecycle);
+    addTearDown(() => WidgetsBinding.instance.removeObserver(lifecycle));
     await tester.pumpWidget(
       ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
     );
@@ -178,7 +208,15 @@ void main() {
     ) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(find.byKey(const ValueKey('pv-2')), findsOneWidget);
+    final analysis = tester
+        .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+        .analysis;
+    expect(
+      find.byKey(const ValueKey('pv-2')),
+      findsOneWidget,
+      reason:
+          '${analysis.status}; ${analysis.error}; enabled=${analysis.enabled}; pv=${analysis.settings.multiPv}; lifecycle=${lifecycle.states}',
+    );
     await tester.ensureVisible(find.text('停止分析'));
     await tester.tap(find.text('停止分析'));
     await tester.pumpAndSettle();
@@ -386,6 +424,93 @@ void main() {
           (await FileGameRepository(() async => temp).list()).games,
           isEmpty,
         );
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await temp.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native settings survive a new app instance and restore resources without AI roles',
+    (tester) async {
+      final support = await getApplicationSupportDirectory();
+      final temp = await support.createTemp('.chessnext-settings-integration-');
+      try {
+        final repository = FilePreferencesRepository(() async => temp);
+        await tester.pumpWidget(
+          ChessNextApp(
+            key: UniqueKey(),
+            preferencesRepository: repository,
+            deviceThreads: 4,
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byTooltip('应用设置'));
+        await tester.pumpAndSettle();
+        await tester.tap(find.byType(DropdownButtonFormField<ThemePreference>));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('深色').last);
+        await tester.pumpAndSettle();
+        await enterNativeText(
+          tester,
+          find.widgetWithText(TextFormField, '分析线程'),
+          '2',
+        );
+        await enterNativeText(
+          tester,
+          find.widgetWithText(TextFormField, '分析内存（MB）'),
+          '64',
+        );
+        await enterNativeText(
+          tester,
+          find.widgetWithText(TextFormField, '多路变化数'),
+          '3',
+        );
+        await enterNativeText(
+          tester,
+          find.widgetWithText(TextFormField, 'AI每步用时（秒）'),
+          '3',
+        );
+        await tester.ensureVisible(find.widgetWithText(FilledButton, '应用设置'));
+        await tester.tap(find.widgetWithText(FilledButton, '应用设置'));
+        for (
+          var i = 0;
+          i < 50 &&
+              find.widgetWithText(FilledButton, '应用设置').evaluate().isNotEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await repository.load())!.value.theme, ThemePreference.dark);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ChessNextApp(
+            key: UniqueKey(),
+            preferencesRepository: FilePreferencesRepository(() async => temp),
+            deviceThreads: 4,
+          ),
+        );
+        for (
+          var i = 0;
+          i < 50 &&
+              tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode !=
+                  ThemeMode.dark;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
+          ThemeMode.dark,
+        );
+        final engine = tester.widget<PlayPanel>(find.byType(PlayPanel)).engine;
+        expect(engine.settings.threads, 2);
+        expect(engine.settings.hashMb, 64);
+        expect(engine.settings.multiPv, 3);
+        expect(engine.thinkTimeMs, 3000);
+        expect(engine.aiSides, isEmpty);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();

@@ -20,3 +20,5 @@ GameTree是文档唯一棋谱真值；Position缓存不可变。文字导入先�
 中文记谱由领域ChineseNotation负责，基于执方/源局面生成，不受UI棋盘旋转影响。中文解析通过合法候选的格式唯一匹配，拒绝歧义；界面显示可变，稳定UCI字段及GameTree schema保持不变。
 
 自动草稿由DraftController/DraftRepository负责，FileDraftRepository只写chessnext-drafts；显式库仍只写chessnext-records。恢复创建未保存副本。正常退出/后台在composition root协调flush，失败选择在Material对话框呈现。设计边界和未验证持久性见ADR-006。
+
+偏好设置由无Flutter的AppPreferences值对象、PreferencesController及独立PreferencesRepository组成；ApplicationSupport文件适配器与棋谱/草稿隔离。EngineSessionController.configureSession一次更新资源与AI用时，主题变动不触发搜索。实际能力限制在握手后再验证；生命周期策略见ADR-008。

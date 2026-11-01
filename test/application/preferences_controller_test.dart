@@ -1,0 +1,171 @@
+import 'dart:async';
+import 'package:chess_next/application/app_preferences.dart';
+import 'package:chess_next/application/board_session.dart';
+import 'package:chess_next/application/engine_session_controller.dart';
+import 'package:chess_next/application/preferences_controller.dart';
+import 'package:chess_next/ports/preferences_repository.dart';
+import 'package:flutter_test/flutter_test.dart';
+import '../support/fake_engine.dart';
+
+class ControlledPreferences extends MemoryPreferencesRepository {
+  Completer<void>? readGate, writeGate;
+  bool failRead = false, failWrite = false;
+  final writes = <AppPreferences>[];
+  @override
+  Future<LoadedPreferences?> load() async {
+    await readGate?.future;
+    if (failRead) throw StateError('broken');
+    return super.load();
+  }
+
+  @override
+  Future<void> save(AppPreferences next) async {
+    writes.add(next);
+    if (writes.length == 1) await writeGate?.future;
+    if (failWrite) throw StateError('full');
+    await super.save(next);
+  }
+}
+
+void main() {
+  late BoardSession session;
+  late FakeEngine fake;
+  late EngineSessionController engine;
+  late ControlledPreferences repository;
+  late PreferencesController preferences;
+  setUp(() {
+    session = BoardSession();
+    fake = FakeEngine();
+    engine = EngineSessionController(
+      session,
+      () async => fake,
+      deviceThreads: 4,
+    );
+    repository = ControlledPreferences();
+    preferences = PreferencesController(engine, repository);
+  });
+  tearDown(() {
+    preferences.dispose();
+    engine.dispose();
+    session.dispose();
+  });
+  test(
+    'codec rejects future schemas and invalid numbers instead of silently accepting them',
+    () {
+      final value = AppPreferences(
+        theme: ThemePreference.dark,
+        threads: 4,
+        hashMb: 128,
+        multiPv: 5,
+        thinkTimeMs: 3000,
+      );
+      expect(AppPreferences.fromJson(value.toJson()), value);
+      for (final entry in {
+        'schema': 2,
+        'theme': 'unknown',
+        'threads': 0,
+        'multiPv': 257,
+        'thinkTimeMs': 49,
+        'hashMb': 1.5,
+      }.entries) {
+        expect(
+          () => AppPreferences.fromJson({
+            ...value.toJson(),
+            entry.key: entry.value,
+          }),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+  test(
+    'late reads merge only unedited fields and preserve newly chosen theme and time',
+    () async {
+      repository.value = AppPreferences(
+        theme: ThemePreference.dark,
+        threads: 2,
+        hashMb: 128,
+        multiPv: 3,
+      );
+      repository.readGate = Completer<void>();
+      final reading = preferences.initialize();
+      final choosing = preferences.setTheme(ThemePreference.light);
+      await engine.setThinkTime(3000);
+      var finished = false;
+      final exiting = preferences.flush().then((_) => finished = true);
+      await Future<void>.delayed(Duration.zero);
+      expect(finished, isFalse);
+      repository.readGate!.complete();
+      await reading;
+      await choosing;
+      await exiting;
+      await preferences.flush();
+      expect(preferences.value.theme, ThemePreference.light);
+      expect(preferences.value.thinkTimeMs, 3000);
+      expect(preferences.value.hashMb, 128);
+      expect(engine.settings.multiPv, 3);
+      expect(repository.value, preferences.value);
+      expect(engine.aiSides, isEmpty);
+      expect(fake.requests, isEmpty);
+    },
+  );
+  test(
+    'hardware and engine capability limits clamp persisted resources before searching',
+    () async {
+      repository.value = AppPreferences(threads: 999, multiPv: 8, hashMb: 512);
+      await preferences.initialize();
+      await preferences.flush();
+      expect(engine.settings.threads, 4);
+      expect(engine.settings.multiPv, 8);
+      await engine.enable();
+      await preferences.flush();
+      expect(engine.settings.multiPv, 5);
+      expect(fake.requests.single.multiPv, 5);
+      expect(repository.value!.multiPv, 5);
+      final requests = fake.requests.length;
+      await preferences.setTheme(ThemePreference.dark);
+      expect(
+        fake.requests.length,
+        requests,
+        reason: 'changing only theme must not restart a search',
+      );
+    },
+  );
+  test(
+    'serial writes preserve the latest theme and existing-panel parameter changes',
+    () async {
+      await preferences.initialize();
+      repository.writeGate = Completer<void>();
+      final first = preferences.setTheme(ThemePreference.dark);
+      await engine.configure(
+        const AnalysisSettings(threads: 2, hashMb: 64, multiPv: 3),
+      );
+      final last = preferences.setTheme(ThemePreference.light);
+      repository.writeGate!.complete();
+      await first;
+      await last;
+      expect(repository.writes.first.theme, ThemePreference.dark);
+      expect(repository.value!.theme, ThemePreference.light);
+      expect(repository.value!.hashMb, 64);
+      expect(repository.value!.multiPv, 3);
+    },
+  );
+  test(
+    'failed reads stay untouched until a user applies settings; failed writes can retry',
+    () async {
+      repository.failRead = true;
+      await preferences.initialize();
+      await preferences.flush();
+      expect(repository.writes, isEmpty);
+      expect(preferences.error, contains('读取失败'));
+      repository.failWrite = true;
+      await preferences.setTheme(ThemePreference.dark);
+      expect(preferences.value.theme, ThemePreference.dark);
+      expect(preferences.error, contains('保存失败'));
+      repository.failWrite = false;
+      await preferences.flush(force: true);
+      expect(preferences.error, isNull);
+      expect(repository.value!.theme, ThemePreference.dark);
+    },
+  );
+}

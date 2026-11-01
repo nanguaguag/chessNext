@@ -44,10 +44,15 @@ class EngineSessionController extends ChangeNotifier {
   Map<String, EngineOption> get options => _engine?.options ?? const {};
   int get maxThreads => math.max(
     1,
-    math.min(deviceThreads, options['Threads']?.maximum ?? deviceThreads),
+    math.min(
+      1024,
+      math.min(deviceThreads, options['Threads']?.maximum ?? deviceThreads),
+    ),
   );
-  int get maxHash => math.min(1024, options['Hash']?.maximum ?? 1024);
-  int get maxPv => options['MultiPV']?.maximum ?? 1;
+  int get maxHash =>
+      math.max(1, math.min(1024, options['Hash']?.maximum ?? 1024));
+  int get maxPv =>
+      math.max(1, math.min(256, options['MultiPV']?.maximum ?? 256));
   AnalysisSettings _settings = const AnalysisSettings();
   AnalysisSettings get settings => _settings;
   bool _enabled = false;
@@ -140,6 +145,12 @@ class EngineSessionController extends ChangeNotifier {
     if (_engine == null) {
       _engine = engine;
       _subscription = engine.info.listen(_onInfo);
+      _settings = AnalysisSettings(
+        threads: _settings.threads.clamp(1, maxThreads),
+        hashMb: _settings.hashMb.clamp(1, maxHash),
+        multiPv: _settings.multiPv.clamp(1, maxPv),
+      );
+      _notify();
     }
     return engine;
   }
@@ -258,8 +269,14 @@ class EngineSessionController extends ChangeNotifier {
     }
   }
 
-  Future<void> configure(AnalysisSettings value) async {
-    if (value.threads < 1 ||
+  Future<void> configure(AnalysisSettings value) =>
+      configureSession(value, _thinkTimeMs);
+
+  /// Applies settings and play budget together, then restarts at most one search.
+  Future<void> configureSession(AnalysisSettings value, int thinkTimeMs) async {
+    if (thinkTimeMs < 50 ||
+        thinkTimeMs > 600000 ||
+        value.threads < 1 ||
         value.threads > maxThreads ||
         value.hashMb < 1 ||
         value.hashMb > maxHash ||
@@ -268,6 +285,7 @@ class EngineSessionController extends ChangeNotifier {
       throw ArgumentError('Unsupported settings');
     }
     _settings = value;
+    _thinkTimeMs = thinkTimeMs;
     _clear();
     _notify();
     if (_enabled) {

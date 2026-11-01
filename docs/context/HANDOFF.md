@@ -8,10 +8,18 @@
 
 自动草稿DraftRepository/Controller与FileDraftRepository已实现。独立chessnext-drafts目录复用版本化快照，300ms去抖、串行队列、备份、损坏原件归档、恢复为新dirty副本；不覆盖显式棋谱库，不恢复AI角色。后台/正常退出flush，失败可取消退出；退出回调在Widget测试中验证，真实OS强制关闭/断电未测。ADR-006记录边界。
 
-下一条可执行工作：设置持久化。定义版本化AppPreferences（主题、引擎线程/Hash/MultiPV、AI用时、后续显示/声音配置），独立PreferencesRepository；初始化失败使用安全默认但保留坏文件并提示，保存失败/竞态/非法参数校验先于UI。不得持久化AI角色并在恢复后自动走棋。硬件变化要钳制资源参数。之后整谱复盘和评分曲线、导入文件等功能。
+下一条可执行工作：续审F32整谱分析/复盘，再拆可取消的单引擎队列→评分曲线→复盘结果持久化/错题等功能增量。先使用IAB可操作工具审计实际入口/默认值/范围/取消/结果阈值；记录E12，不能凭指南推断运行成功。复盘必须与AI/当前局面分析共享EngineSessionController单引擎所有权，AI/分析优先，旧epoch/文档变化不写错节点；评分统一红方视角，未经校准不标准确率。
 
 模块实际映射见architecture/IMPLEMENTED_MODULES.md。UCI生命周期/搜索generation/positionRevision保留；UI不访问进程/文件/网络。中文显示基于父局面和执方，领域不依赖Flutter，存储schema1仍是UCI。
 
 重跑bash tools/check.sh；CHECK_MACOS_INTEGRATION=1额外原生窗口测试。普通flutter run -d macos可运行。没有引擎环境的根test会skip live测试，不能记全通过。单独核心cd packages/xiangqi_core && dart test && dart analyze，不在Flutter根直接dart test。
 
 普通用户旧窗口不要自动关闭；测试创建的App由Flutter测试工具收尾，没有本功能仍需等待的后台命令。IAB tab只作研究证据，不依赖它恢复代码任务；截图不作产品资产。新的测试启动可能使用build内测试入口，最终审查前需flutter run重建普通入口。
+
+## M3-04最新
+
+设置增量提交见git log：AppPreferences/schema1、PreferencesController/Repository、ApplicationSupport文件适配器、Material3设置、逐字段加载合并、保存失败与备份、Engine.configureSession和能力钳制。现有参数面板更改会保存，主题不重启搜索，不保存AI角色。根67/67和flutter analyze通过；纯核心仍上轮46未改。
+
+macOS8/8通过，integration_test/local_board_test.dart使用现有binding和SystemChannels.lifecycle保持framework-resumed交互前提；仅测试文件内生效，普通main不覆盖。真实OS焦点/最小化/隐藏不在该原生fixture验收范围；生产策略由独立TargetPlatformVariant组件测试，详ADR-008。原生初轮7/8后一次停滞被INT中断，尝试自定义Binding与工具预建binding冲突，已移除；最终8/8通过，原始事件采样[]，不声称旧停滞根因全关闭。没有更改OS权限或SDK。
+
+完成本功能提交后工作树应干净。测试App/helper由Flutter工具收尾，没有仍需等待的验证命令。下一项F32先审计；不要把原生fixture成功算人工视觉验收。

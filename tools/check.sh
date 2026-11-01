@@ -14,3 +14,7 @@ flutter analyze
   PIKAFISH_DIR="$PWD/../../../.local/pikafish" flutter test
   flutter analyze
 )
+# Native UI checks are opt-in because they build and launch a desktop window.
+if [[ "${CHECK_MACOS_INTEGRATION:-0}" == "1" ]]; then
+  flutter test integration_test/local_board_test.dart -d macos
+fi

@@ -1,18 +1,22 @@
 # 当前状态
 
-日期：2026-11-01，Asia/Shanghai。当前M2-03：B15已实现规则核心、静态局面校验和将死/困毙判定；历史裁决和完整M2尚未完成。
+日期：2026-11-01，Asia/Shanghai。M2-04：已实现可用flutter run -d macos启动的Material3离线双人棋盘；整体产品和M2尚未完成。
 
-用户授权按计划实施离线业务；账号和在线服务延期；许可事项暂不处理、不阻挡本地开发。每功能必须flutter test、flutter analyze通过后使用中文Conventional Commits独立提交。
+用户要求离线优先，登录后/在线服务延期；许可暂不处理，不阻挡本地开发。每功能执行flutter test、flutter analyze通过后中文Conventional Commit。规则在纯Dart包，UI仅通过BoardSession访问会话，不直接接引擎或存储。
 
-## 产物与验证
+## 已实现
 
-- 技术基座：b3b423a。根Flutter包提供应用边界与契约测试；纯Dart规则位于packages/xiangqi_core。tools/check.sh统一验证根Flutter、规则包、引擎spike。M0文档/证据/Skills已归档。
-- 通信：research/spikes/flutter_engine_probe，官方Pikafish2026-09-06及NNUE在.local（忽略目录），hash见engine/pikafish.lock.json。本轮重跑真实引擎2/2与macOS沙箱App成功（NNUE/3轮stop/quit）；4组perft逐分支一致。
-- M2-02：9b515d2，validateForPlay返回静态局面错误类型、方色及坐标，20个纯Dart/5个根Flutter测试通过。
-- M2-03：boardOutcome区分进行中、将死、困毙，后两者均由非行棋方获胜；无效编辑局面拒绝裁决。最新根flutter test7/7、纯Dart26/26、引擎2/2，三处analyze均通过。该功能独立提交，哈希以git log为准。
+- 基线b3b423a；局面校验9b515d2；将死/困毙6e7fd77；本轮macOS棋盘功能独立提交，哈希见git log。
+- 主应用lib/main.dart、lib/app.dart；BoardSession内存走子历史；棋盘绘制、语义、点击/键盘选子落子、提示、单步悔棋、翻转、新局确认、着法记录、主题和终局提示。
+- macos平台工程，1120×850初始窗口/520×640最小窗口。Debug稳定签名identifier dev.chessnext.app，Sandbox开启。Podfile与Pods配置引用补齐，解决加入集成测试后的构建问题。
+- Pikafish仍在research/spikes/flutter_engine_probe验证；主界面尚无AI分析/AI对弈。
 
-## 下一步与边界
+## 本轮验证
 
-下一切片B16棋树/分支/注释和会话游标，随后棋盘UI。需要历史的长将长捉、重复、自然限着尚未实现，boardOutcome不能替代完整GameResult。静态局面验证不证明历史可达性。没有业务棋盘UI/持久化；B14生产引擎适配器和移动FFI、Windows/Linux、性能/热测仍待做。本机macOS基座复验通过不等于全平台验证。
+根flutter test11/11、flutter analyze无问题；规则26/26及analyze通过；引擎2/2及analyze通过；macOS原生integration_test1/1通过。flutter run -d macos实际启动成功，且从测试入口重建回普通入口后再次启动成功。未授予Computer Use桌面权限，无法截图/人工点击验收；系统自动置前返回失败，但进程和Flutter连接成功，原生测试完成。证据与命令见planning/MACOS_RUN.md。
 
-环境Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。无后台进程。所有本轮成果通过检查后提交，用git status确认工作树、git log确认提交。
+## 下一步/限制
+
+B16棋树/分支/注释、棋谱保存恢复；随后B14生产引擎端口和主UI分析集成。为满足本次macOS运行请求，先交付线性内存会话和UI，不冒充完整B16。关闭App不保留当前棋局，界面已提示。历史长将长捉/重复/自然限着仍未实现；Android/iOS/其他桌面、性能热测、正式签名公证未验收。
+
+曾尝试detach，但终端会话结束后App也退出；已重新启动flutter run，保留活跃开发会话供用户运行。用户可自行关闭。用git status确认提交后工作树；不要关闭用户后续自行开始的对局。环境Flutter3.44.6/Dart3.12.2、macOS14.4 arm64/Xcode15.0。

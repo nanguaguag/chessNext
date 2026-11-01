@@ -1,11 +1,13 @@
-# 会话交接 / M2-03
+# 会话交接 / M2-04
 
-先读AGENTS/README/CURRENT_STATE/DECISIONS，再查看git status和git log。用户要求每功能独立中文Conventional Commit，必须先跑flutter test、flutter analyze；许可暂不处理，不阻挡离线开发。
+读取AGENTS、README、CURRENT_STATE、DECISIONS，再看git status/git log。用户要求每功能先flutter test/flutter analyze，通过后单独中文Conventional Commit；许可暂不处理；在线/账号延期。
 
-基线b3b423a已归档技术研究/引擎/规则与根Flutter测试入口；局面校验9b515d2已提交；本轮将死/困毙功能另行提交，实际哈希见git log。根目录是Flutter包边界，尚无主App界面；核心规则是packages/xiangqi_core纯Dart包。
+当前已实现macOS主App：根目录flutter pub get、flutter run -d macos。不是引擎诊断界面，当前为本地双人棋盘，无AI分析/持久化。可走棋、悔棋、翻转、新局确认、主题/键盘/终局提示；关闭后不保留，界面明确提示。BoardSession线性内存历史不是完整棋树。
 
-验证命令：根目录bash tools/check.sh，包含根flutter test/analyze、规则dart test/analyze、真实引擎spike flutter test/analyze。最新7/26/2测试通过，分析均无问题。引擎测试需.local制品（python3 tools/setup_pikafish.py）；本轮也重跑macOS沙箱App和4组perft成功。源码/证据及已知平台边界见docs/engine/COMMUNICATION_VALIDATION.md。
+本轮flutter test11/11、flutter analyze无问题；bash tools/check.sh额外验证规则26/26、引擎2/2及各自analyze；flutter test integration_test/local_board_test.dart -d macos原生测试1/1。可用CHECK_MACOS_INTEGRATION=1 bash tools/check.sh全套验证。原生测试构建App后需再flutter run -d macos回到正常入口。
 
-API：Position.fromFen仅结构校验；validateForPlay静态语义检查；boardOutcome拒绝无效局面，返回ongoing/checkmate/stalemate及winner（困毙判负）。历史可达性、重复、长将长捉、自然限着、认输/超时不在当前接口范围，后续会话层处理。
+macOS构建修复：加入SDK官方Podfile及xcconfig的Pods引用。默认adhoc签名cdhash随重建变化，曾在沙箱初始化挂起；Debug设为稳定dev.chessnext.app要求，Sandbox仍开启，未删除旧容器/改系统权限，Release签名单独处理。详见planning/MACOS_RUN.md。Computer Use未授权，截图/人工点击未验收；用Flutter原生测试验证交互，自动置前失败不影响启动或测试。
 
-接着做B16：不可变棋树、稳定ID、主线/分支、注释、游标和会话撤销，再接M3棋盘UI。B14移动桥接未做；不要把桌面spike当生产调度器。每新增功能→针对性测试→根Flutter两门槛→独立提交→同步状态。无后台进程；工作树应干净，以git status复查。
+普通App已重新用flutter run启动并保留开发会话。尝试detach后该环境终端关闭会导致App退出，因此未再detach。不要自动终止用户对局。其他诊断进程已收尾；/tmp诊断日志不提交，不记录临时VM服务凭证。
+
+下一步B16稳定ID棋树/分支注释/游标/保存恢复，再B14生产引擎/分析UI。尚未实现移动FFI/Windows/Linux/完整历史裁决。基线b3b423a、校验9b515d2、终局6e7fd77已提交，本轮UI提交见git log。

@@ -1,0 +1,5 @@
+#include "../../Flutter/Flutter-Debug.xcconfig"
+#include "Warnings.xcconfig"
+
+// Local debug builds keep the same identity across rebuilds; release signing is separate.
+OTHER_CODE_SIGN_FLAGS = $(inherited) --identifier dev.chessnext.app --requirements "=designated => identifier \"dev.chessnext.app\""

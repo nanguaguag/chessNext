@@ -10,6 +10,8 @@ dependencies:
   xiangqi_core:
     path: packages/xiangqi_core
 dev_dependencies:
+  integration_test:
+    sdk: flutter
   flutter_test:
     sdk: flutter
   flutter_lints: ^6.0.0

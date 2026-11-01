@@ -6,3 +6,5 @@ build/
 .flutter-plugins-dependencies
 coverage/
 __pycache__/
+.idea/
+*.iml

@@ -1,4 +1,4 @@
-/// Application-facing domain API. The Material app shell follows separately.
+/// Application-facing domain API, separate from the Material app shell.
 library;
 
 export 'package:xiangqi_core/xiangqi_core.dart';

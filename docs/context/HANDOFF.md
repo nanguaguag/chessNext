@@ -23,3 +23,5 @@
 macOS8/8通过，integration_test/local_board_test.dart使用现有binding和SystemChannels.lifecycle保持framework-resumed交互前提；仅测试文件内生效，普通main不覆盖。真实OS焦点/最小化/隐藏不在该原生fixture验收范围；生产策略由独立TargetPlatformVariant组件测试，详ADR-008。原生初轮7/8后一次停滞被INT中断，尝试自定义Binding与工具预建binding冲突，已移除；最终8/8通过，原始事件采样[]，不声称旧停滞根因全关闭。没有更改OS权限或SDK。
 
 完成本功能提交后工作树应干净。测试App/helper由Flutter工具收尾，没有仍需等待的验证命令。下一项F32先审计；不要把原生fixture成功算人工视觉验收。
+
+E12研究追加：docs/research/review-*-2026-11-02*记录快速执行、配置、0队列及取消终态，REFERENCES见REFERENCE_EVIDENCE E12。下一条先扩展EngineRequest/UCiEngine支持depth+movetime+nodes并测试组合先到界限，不能先写完整复盘。再单独优化相同资源与同文档Hash复用（官方源码已确认重复setoption/ucinewgame会重分配/清除），然后队列。当前只有E12研究文档/截图待提交，业务代码已在678a811全部提交。

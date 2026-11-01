@@ -1,0 +1,13 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 125-127, 129-130
++					132 text 正在取消分析...
++					133 text 第 0 / 0 个局面
++						134 text 当前候选：马二进三
++						135 text 深度 21
+~					131 button (disabled) 正在取消...
+~					43 button 分析结果
++						136 image
++						137 text 分析结果
++	138 text 棋谱分析已取消
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

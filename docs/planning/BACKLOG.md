@@ -103,3 +103,7 @@ macOS构建从.local校验制品hash、复制资源并签名继承沙箱helper�
 AppPreferences/schema1与PreferencesRepository，ApplicationSupport独立文件、备份/损坏原件保留、读取失败默认值/明确重试；主题/线程/Hash/MultiPV/AI用时持久化，旧参数面板更改同样保存。初始化逐字段合并并发编辑，串行最新值写入，退出flush等待初始化，不恢复AI角色。握手后按设备/引擎能力钳制；主题改变不重启搜索。Material3统一设置对话框含200%窄窗/NaN校验。
 ADR-007/008记录设置及桌面生命周期：桌面inactive仍可见不取消，hidden取消，移动inactive取消。增加相应回归和原生事件trace，后台持久化照常。
 根flutter test67/67（官方引擎环境）与flutter analyze通过；macOS原生8/8通过，交互fixture保持框架resumed，真实OS焦点/最小化不在其验收范围。初轮测试发现dispose期间flush通知已defunct根元素，修正为先移除根监听再flush；补正扩展导入和测试生命周期hidden→inactive→resumed序列，保留失败事实。未新增依赖。语言、字号持久化、资源预设、外观声音等仍未实现，不标设置全量对齐。
+
+## E12复盘审计与B18前置细化
+
+快速两步谱3局面完成、取消与跳过0队列已V；彻底/分支/公式未知。B18拆为：组合depth+time+nodes限额（同先到上限结束）→会话/相同资源复用→可取消/续算单引擎队列（当前所在线含后续/整树范围）→红视角曲线/定位→结果缓存持久化/错题与等级。缓存key含完整历史和引擎/NNUE/预算，未经校准不标准确率。每个切片独立测试/提交，不一次生成整套复盘。

@@ -40,3 +40,19 @@ E10续：清空后点击灰色红帅棋子盒再点e1，没有新增第二帅；
 ## E11 / 2026-11-02 文字导入（V）
 
 https://xiangqiai.com/#/，访客桌面。导入对话框粘贴自制标准初始FEN + `moves h2e2 b9c7`，导入显示“FEN局面·2步”，此前测试局面未保存，选择不保存后出现“导入成功”，棋谱列有炮二平五/马２进３。[AX](text-import-2026-11-02-ax.txt)、[截图](screenshots/text-import-2026-11-02.png)。该次不验证URL、中文、复杂分支格式或非法输入处理；没有上传用户棋谱、登录或调用私有API。
+
+## E12 / 2026-11-02 整谱复盘续审
+
+URL https://xiangqiai.com/#/，IAB访客桌面，E11自制两步谱h2e2/b9c7，当前游标为开始。资源加载遮罩消失后操作，不注册、不写入账号。截图仅研究，不进产品资源。
+
+- O：棋谱分析先选快速（最佳着法）或彻底（所有可接受着法）。本次首次打开配置显示每局面2.0秒、深度16、节点0万、线程1、当前着法列表、跳过已分析开启、3个局面；未清空站点存储，不把采样值当永久默认。见[配置AX](review-options-2026-11-02-ax.txt)、[截图](screenshots/review-options-2026-11-02.png)、[模式](review-modes-2026-11-02-ax.txt)。
+- V：快速开始出现1/3进度、当前着法马２进３（先处理叶局面的观察）、候选/深度和取消按钮；随后完成为分析结果，红100.0%/黑88.8%和平均损失等，仅单次输出、不是算法复刻依据。[运行](review-running-2026-11-02-ax.txt)、[结果](review-result-2026-11-02-ax.txt)、[截图](screenshots/review-result-2026-11-02.png)。
+- O：标记说明包含妙手、绝佳、最佳、优秀、好着、不精确、错误、败着、错失良机、更快杀法；界面声明胜率损失2/5/10/20%分界。未验证算法或分类正确性。[说明](review-legend-2026-11-02-ax.txt)、[截图](screenshots/review-legend-2026-11-02.png)。
+- V：重新分析时跳过开关初值变为关；开启后待处理数量由3变0。0局面仍可点开始，提示没有需要分析的局面，随后关闭配置返回棋盘。[跳过](review-skip-2026-11-02-ax.txt)、[空队列](review-empty-2026-11-02-ax.txt)。AX过渡曾滞后，后续full状态确认配置已关闭，旧索引因此不可复用。
+- V：再开重算，将时间改5秒、深度通过只读步进按钮降为0（截图已看见0），跳过关闭。运行1/3时点取消，先显示正在取消/禁用按钮及已取消提示；随后运行面板消失，分析结果入口仍保留。[取消](review-cancelled-2026-11-02-ax.txt)、[停止](review-stopped-2026-11-02-ax.txt)、[取消参数](screenshots/review-cancel-options-2026-11-02.png)。不能由此推断旧结果覆盖/丢弃的全部规则。
+
+U：彻底模式实际执行、所有分支范围、参数极值/全0、缓存键与跨重启、准确率和胜率换算公式、妙手/唯一着判断仍须补证。运行进度与最终图形/等级应分开验证，不能从图标推断逻辑。
+
+## 2026-11-02 原生批量搜索前核查（D）
+
+固定tag2026-09-06官方[uci.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/uci.cpp)解析可同时接收depth/movetime/nodes，searchmoves必须放最后；ucinewgame清空搜索状态。[ucioption.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/ucioption.cpp)即使同值仍执行变更回调，[engine.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/engine.cpp)线程/Hash回调会调整资源，[tt.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/tt.cpp)重分配Hash并清空。当前适配器每次搜索都发送三项setoption和ucinewgame，批量分析前应分别补组合限额、会话/资源复用；实际性能改进幅度需测量，不凭源码宣称提速百分比。

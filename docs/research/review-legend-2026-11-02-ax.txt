@@ -1,0 +1,6 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++	85 container
++		86 container
++			87 text 标记说明 妙手 弃子等不易发现的好棋，走完局面依然不差 绝佳 只有这一步能守住局面，其他走法都差很多 最佳 引擎认为最好的一步 优秀 和最佳几乎一样好，胜率损失不到 2% 好着 胜率损失 2%～5% 不精确 胜率损失 5%～10% 错误 胜率损失 10%～20% 败着 胜率损失 20% 以上 错失良机 对方刚走坏，这一步没抓住机会；或本来有杀，走完杀没了 慢 更快杀法 仍然能杀，但有更快的杀法
+The focused UI element is 76 button 标记说明

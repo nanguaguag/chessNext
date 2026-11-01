@@ -1,0 +1,6 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++	125 container
++		126 text 
++		127 text 没有需要分析的局面
+The focused UI element is 115 button 开始分析

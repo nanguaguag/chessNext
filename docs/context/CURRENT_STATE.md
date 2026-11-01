@@ -28,3 +28,8 @@ M2-05：纯Dart GameTree提供不可变分支、稳定节点ID、注释、主线
 
 fd295fa分支/注释已提交。现新增GameRepository与FileGameRepository、版本化棋树编解码、本地保存/按名搜索/打开、备份恢复与脏状态保护。main注入平台Documents存储；测试默认内存适配器不触及用户文件。晚到保存、读取中导航、销毁期间IO均有测试。根flutter test23/23、flutter analyze无问题；核心32/32与analyze通过；macOS原生集成2/2（真实沙箱Documents临时子目录保存及新App实例恢复）通过。
 待做：自动草稿/崩溃恢复、重命名/删除/分类/导入导出、AI主界面和其余全站能力。保存需显式点击；未保存修改关闭仍会丢失，UI有明确提示。当前本地库与网站账号库并非同一服务。技术方案见ADR-005。
+
+## M3-01最新状态
+
+9e408b2已提交本地保存/恢复。新增正式EngineGateway/UciEngine/ProcessEngineTransport：握手能力、类型化option/info/cp/mate/bound/MultiPV、停止bestmove屏障、请求token、搜索参数/局面校验、超时和EOF失败、进程清理。正式适配器在根测试运行官方NNUE（深度8、多PV、5轮停止），不是只运行诊断spike。带PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK环境的根flutter test29/29与flutter analyze通过；无环境时真实引擎测试明确skip。tools/check.sh现为本机官方制品设置环境。主UI尚未连接新端口。
+用户已选择在线部分自建可替换后端并提供部署方案，后续不可将其永久排除；不依赖网站账号服务，也不能伪造云库/识图结果。

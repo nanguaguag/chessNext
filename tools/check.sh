@@ -2,7 +2,7 @@
 # Run from any directory; fail before committing if any gate fails.
 set -euo pipefail
 cd "$(dirname "$0")/.."
-flutter test
+PIKAFISH_EXECUTABLE="${PIKAFISH_EXECUTABLE:-$PWD/.local/pikafish/Pikafish-MacOS-universal}" PIKAFISH_NETWORK="${PIKAFISH_NETWORK:-$PWD/.local/pikafish/pikafish.nnue}" flutter test
 flutter analyze
 (
   cd packages/xiangqi_core

@@ -1,0 +1,56 @@
+Browser tab: 1, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container
+		2 container app
+			3 container
+				4 button 菜单
+					5 image
+				6 button 新局
+					7 image
+				8 checkbox Description: 引擎执红, Value: 0
+					9 image
+				10 checkbox Description: 引擎执黑, Value: 0
+					11 image
+				12 checkbox Description: 分析模式, Value: 1
+					13 image
+				14 button 立即出招
+					15 image
+				16 button 变招
+					17 image
+				18 container 翻转
+				19 button 导入
+					20 image
+				21 container 保存 / 分享
+				22 checkbox Description: 编辑, Value: 0
+					23 image
+				24 container displayArea
+					25 container
+						26 image
+						27 image
+						28 image
+						29 image
+						30 text 走几步棋后，这里会画出局势曲线
+					31 splitter Description: 调整棋盘宽度, Value: 67
+					32 text 开始
+					33 splitter Description: 调整上下分区, Value: 30
+					34 container
+						35 text 开始
+						36 button (disabled) 下一着 ›
+						37 text 选择棋谱中的着法，查看变着与注释
+						38 text entry area (settable) van-field-8-input
+					39 splitter Description: 调整上下分区, Value: 55
+					40 container
+						41 button 引擎
+						42 button 云库
+						43 button 重置布局
+					44 container
+						45 button 引擎参数
+							46 image
+						50 text 红分 10 D24 2.9s 2871K 兵七进一 卒７进１ 炮二平三 象３进５ 马二进一 马８进７ 车一平二 车９平８ 车二进四 炮８平９ 车二平四 马７进８ 炮三退一 马２进４ 相七进五 卒９进１ 马八进七 车１平３ 仕六进五 卒７进１ 车四平三 马４进６ 马七进六 炮２进３ 车九平六 士４进５ 车三进二 红分 11 D23 2.5s 2836K 兵七进一 卒７进１ 炮二平三 象３进５ 马二进一 马８进７ 车一平二 车９平８ 车二进四 炮８平９ 车二进五 马７退８ 炮八平五 士４进５ 车九进一 炮２平３ 马八进七 马２进４ 相七进九 马８进７ 兵三进一 卒７进１ 车九平六 车１平４ 红分 9 D22 2.3s 2831K 兵七进一 卒７进１ 炮二平三 象３进５ 马二进一 马８进７ 车一平二 车９平８ 车二进四 马２进４ 相七进五 炮８平９ 车二平四 马７进８ 炮三退一 车８进１ 马八进六 炮２平１ 车九平八 车１平２ 车四平六 马８进９ 红分 11 D21 1.5s 2659K 炮八平五 马２进３ 马八进七 车１平２ 车九平八 卒３进１ 兵三进一 象７进５ 马二进三 炮２进４ 炮二平一 马８进６ 车一平二 卒７进１ 兵三进一 车９平７ 马三进四 车７进４ 炮一进四 炮２平５ 炮五进四 马６进５ 马四进五 车７平５ 马五进七 红分 10 D20 1.4s 2626K 炮八平五 马２进３ 马八进七 车１平２ 车九平八 卒３进１ 兵三进一 炮２进４ 炮二进二 炮８平７ 马二进一 马８进９ 红分 10 D19 0.8s 2366K 炮八平五 马２进３ 兵七进一 车１平２ 马八进七 炮２平１ 马二进三 卒７进１ 炮二进四 马８进７ 炮二平三 车９平８ 车一平二 车２进４ 车九平八 车２进５ 马七退八 炮８进４ 马八进七 象３进５ 马七进六 红分 13 D18 0.6s 2196K 兵七进一 炮８平５ 马二进三 马８进７ 兵三进一 马２进１ 车一平二 炮２平３ 炮八平五 卒３进１ 炮五平七 车９平８ 兵七进一 炮３进５ 马八进七 车８进４ 马七进六 红分 14 D17 0.5s 2023K 兵七进一 炮８平５ 马二进三 马８进７ 兵三进一 车９平８ 车一平二 车８进４ 马八进七 马２进１ 相七进五 炮２平４ 炮二平一 车８进５ 马三退二 车１平２ 车九平八 红分 16 D16 0.4s 1636K 炮二平五 马８进７ 兵三进一 车９平８ 马二进三 炮８平９ 马八进七 卒３进１ 炮八进四 马２进３ 炮八平七 车１平２ 车九平八 车８进４ 车一平二 车８进５ 马三退二 象７进５ 马二进三 红分 13 D15 0.3s 1546K 炮二平五 马８进７ 兵三进一 车９平８ 马二进三 炮８平９ 马八进七 卒３进１ 炮八进四 马２进３ 炮八平七 象３进５ 车九平八 车１平２ 车八进六 炮２平１ 车八进三 马３退２ 车一进一 车８进４ 红分 16 D14 0.2s 802K 炮八平五 马２进３ 兵七进一 车１平２ 马八进七 炮２平１ 马二进一 车２进４ 车九平八 车２进５ 马七退八 象７进５ 马八进七 红分 17 D9 0.1s 398K 兵七进一 卒７进１ 炮二平五 马８进７ 马二进三 车９平８ 马八进七 象３进５ 炮八平九 马２进４ 红分 8 D1 0.0s 44K 炮八平五
+				48 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+				49 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+		51 container
+			52 text 8 / 27
+			53 text 车９平８
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

@@ -1,0 +1,38 @@
+Browser tab: 1, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container app
+		2 container
+			24 button 取消
+			25 heading 编辑局面, Value: 1
+				26 text 编辑局面
+			27 button 完成
+			23 container displayArea
+				28 container
+					29 image boardDisplay
+					30 谁先走
+						31 radio button 红先, Value: 1
+						32 radio button 黑先, Value: 0
+				33 container 编辑局面
+					34 image
+					35 text 怎么摆：
+					36 text 点棋子盒里的子，再点棋盘放上去 点棋盘上的子，再点棋子盒拿走
+					37 button 初始局面
+						38 image
+						39 text 初始局面
+					40 button 清空
+						41 image
+						42 text 清空
+					43 button 旋转棋盘
+						44 image
+						45 text 旋转棋盘
+					46 button 左右翻转
+						47 image
+						48 text 左右翻转
+					49 button 红黑互换
+						50 image
+						51 text 红黑互换
+					52 button 识图
+						53 image
+						54 text 识图
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

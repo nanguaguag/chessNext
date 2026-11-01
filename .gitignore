@@ -1,0 +1,8 @@
+.local/
+.DS_Store
+.dart_tool/
+.packages
+build/
+.flutter-plugins-dependencies
+coverage/
+__pycache__/

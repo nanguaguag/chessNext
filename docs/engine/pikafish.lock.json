@@ -1,0 +1,18 @@
+{
+  "verified_date": "2026-11-01",
+  "release": "Pikafish-2026-09-06",
+  "commit": "4c17cee11f888ae1d48a9494f2e2239f019f0a1f",
+  "source": "https://github.com/official-pikafish/Pikafish/tree/4c17cee11f888ae1d48a9494f2e2239f019f0a1f",
+  "archive_url": "https://github.com/official-pikafish/Pikafish/releases/download/Pikafish-2026-09-06/Pikafish.2026-09-06.7z",
+  "archive_sha256": "41952bbfe2520faceb5902c69e6ab4845cc999841d2b49a95cc1be7867a25e5b",
+  "macos_binary_sha256": "3a11f9034ef723bb4068e4cf88a79a12d99507474ba118fa916ec2cecd4f4abe",
+  "network_sha256": "7d13d73569a9b571ba0eb20cf1596247bc2a42738967e61afef6482b231e900e",
+  "network_bytes": 50706378,
+  "network_license": "No commercial use without permission; see archived NNUE-License.md",
+  "hash_provenance": "Locally measured from official release download; no upstream signature verified",
+  "local_location": ".local/pikafish (gitignored)",
+  "flutter": "3.44.6 stable",
+  "dart": "3.12.2",
+  "os": "macOS 14.4 arm64",
+  "xcode": "15.0"
+}

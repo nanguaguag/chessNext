@@ -1,0 +1,97 @@
+Browser tab: 1, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container
+		2 container app
+			3 container
+				4 button 菜单
+					5 image
+				6 button 新局
+					7 image
+				8 checkbox Description: 引擎执红, Value: 0
+					9 image
+				10 checkbox Description: 引擎执黑, Value: 0
+					11 image
+				12 checkbox Description: 分析模式, Value: 0
+					13 image
+				14 button 立即出招
+					15 image
+				16 button 变招
+					17 image
+				18 container 翻转
+				19 button 导入
+					20 image
+				21 container 保存 / 分享
+				22 checkbox Description: 编辑, Value: 0
+					23 image
+				24 container displayArea
+					25 container
+						26 image
+						27 image
+						28 image
+						29 image
+						30 text 走几步棋后，这里会画出局势曲线
+					31 splitter Description: 调整棋盘宽度, Value: 67
+					32 text 开始
+					33 splitter Description: 调整上下分区, Value: 30
+					34 container
+						35 text 开始
+						36 button (disabled) 下一着 ›
+						37 text 选择棋谱中的着法，查看变着与注释
+						38 text entry area (settable) van-field-2-input
+					39 splitter Description: 调整上下分区, Value: 55
+					40 container
+						41 button 引擎
+						42 button 云库
+						43 button 重置布局
+					44 container
+						45 button 引擎参数
+							46 image
+						47 button 开始分析
+							48 image
+							49 text 开始分析
+						50 text 也可以点工具栏的
+						51 image
+						52 text 按钮
+				53 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+				54 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+		55 button
+		56 container
+			57 text 分享 / 导出
+			58 text 
+		59 text 分享给棋友
+		60 container
+			61 image
+			62 text 局面链接
+		63 container
+			64 image
+			65 text 棋谱链接
+		66 container
+			67 image
+			68 text 动态图
+		69 container
+			70 image
+			71 text 导出图片
+		72 text 复制 / 导出
+		73 container
+			74 image
+			75 text FEN
+		76 container
+			77 image
+			78 text FEN + 着法
+		79 container
+			80 image
+			81 text 文字棋谱
+		82 container
+			83 image
+			84 text 东萍棋谱
+		85 container
+			86 image
+			87 text XQF 文件
+		88 container
+			89 image
+			90 text CBR 文件
+		91 container
+			92 image
+			93 text PGN 文件
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

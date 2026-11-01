@@ -1,0 +1,31 @@
+Browser tab: 1, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/records?tab=official".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/records?tab=official
+	1 container app
+		2 container
+			3 text 
+			4 text 棋谱库
+			5 tab group
+				6 tab (selectable, settable, boolean) 我的棋谱, Value: 0, ID: van-tabs-9-0
+				7 tab (selected, settable, boolean) 官方精选, Value: 1, ID: van-tabs-9-1
+			8 container Description: 官方精选, ID: van-tab-11
+				9 image
+				10 text 赛事
+				11 text 70 章节
+				12 text 166340 局
+				13 image
+				14 text 棋手
+				15 text 541 章节
+				16 text 125165 局
+				17 image
+				18 text 开局
+				19 text 5 章节
+				20 text 163952 局
+				21 image
+				22 text 古谱
+				23 text 25 章节
+				24 text 2618 局
+				25 image
+				26 text 排局
+				27 text 1 章节
+
+The focused UI element is 7 tab (selected, settable, boolean) 官方精选, Value: 1, ID: van-tabs-9-1

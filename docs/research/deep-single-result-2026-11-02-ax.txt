@@ -1,0 +1,99 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container app
+		2 container
+			3 button 菜单
+				4 image
+				5 text 菜单
+			6 button 新局
+				7 image
+				8 text 新局
+			9 checkbox Description: 引擎执红, Value: 0
+				10 image
+				11 text 引擎执红
+			12 checkbox Description: 引擎执黑, Value: 0
+				13 image
+				14 text 引擎执黑
+			15 checkbox Description: 分析模式, Value: 0
+				16 image
+				17 text 分析模式
+			18 button 立即出招
+				19 image
+				20 text 立即出招
+			21 button 变招
+				22 image
+				23 text 变招
+			24 container 翻转
+				25 container
+					26 image
+					27 text 翻转
+			28 button 导入
+				29 image
+				30 text 导入
+			31 container 保存 / 分享
+				32 container
+					33 image
+					34 text 保存 / 分享
+			35 checkbox Description: 编辑, Value: 0
+				36 image
+				37 text 编辑
+			38 container displayArea
+				39 splitter Description: 调整左栏宽度, Value: 22
+				40 splitter Description: 调整棋盘宽度, Value: 70
+				41 container
+					42 text 开始 1. 兵七进一
+					271 container 另有 2 条已保存的变化
+						272 text 2变
+					383 text 卒３进１ 2. 炮八平五
+					43 button 棋谱分析
+						346 image
+						384 text 棋谱分析
+				46 splitter Description: 调整上下分区, Value: 55
+				348 container
+					349 text 着法
+					350 button  存题, Help: 存为题
+						351 text 
+						352 text 存题
+					353 button 上一着
+						354 text 
+					355 button (disabled) 下一着
+						356 text 
+					385 text 炮八平五
+					358 button 添加注释
+						359 image
+						360 text 添加注释
+					361 text 本步变着
+					362 switch 棋盘箭头, Value: 0
+					386 container
+						387 text 1 炮八平五
+						388 button (disabled) 置顶
+							389 image
+						390 button 删除这步及后续
+							391 image
+					392 text 引擎建议
+					393 container
+						394 text 2
+						395 text 兵七进一 65%
+						396 button 试走
+					397 container
+						398 text 3 炮二平五 56%
+						399 button 试走
+				55 container
+					56 text 引擎
+					57 button 重置布局
+					58 button 引擎参数
+						59 image
+					60 button 开始分析
+						61 image
+						62 text 开始分析
+					63 text 也可以点工具栏的
+					64 image
+					65 text 按钮
+				66 splitter Description: 调整上下分区, Value: 55
+				67 container
+					68 text 云库
+					69 text 着法 红方 评分 1 马８进７ 3 2 象３进５ 82 3 士６进５ 158 4 炮８平５ 162 5 象７进５ 164 6 士４进５ 165 7 炮２平５ 181 8 炮８平９ 187 9 炮８进１ 217 10 车１进２ 222 11 卒３进１ 256 12 车９进２ 273 13 车１进１ 274 14 象７进９ 275 15 马２进１ 276 16 车９进１ 277 17 炮８进２ 291 18 炮８进３ 304 19 炮８平３ 319 20 卒７进１ 325 21 卒９进１ 332 22 炮８进４ 340 23 卒１进１ 344 24 炮２进４ 348 25 象３进１ 349 26 炮８平７ 353 27 炮２平４ 359 28 炮８退１ 368 29 炮２进１ 373 30 炮２退１ 375 31 马８进９ 377 32 炮８平６ 379 33 马２进３ 390 34 炮２平３ 410 35 炮８进７ 416 36 炮２平１ 420 37 炮２进３ 428 38 炮２平６ 430 39 炮８平４ 435 40 将５进１ 485 41 炮２平７ 499 42 炮２进６ 546 43 炮２进２ 563 44 卒５进１ 705 45 炮２进５ 705
+			70 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+			71 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

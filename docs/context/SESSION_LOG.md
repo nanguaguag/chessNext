@@ -157,3 +157,6 @@ FileReviewCacheRepository正式main注入ApplicationSupport/chessnext-analysis-c
 根flutter test119/119（显式官方NNUE）、flutter analyze无问题；macOS完整13/13通过。新增真实ApplicationSupport下新App/Controller/Repository/Engine实例复用3个NNUE局面，损坏一条后继续真实重算且棋谱节点保持；这是新应用对象和新引擎进程，宿主Flutter测试进程未退出。独立Dart进程write/read协议探针PID49478/49527通过，fixture仅验证存储协议，原始结果engine/validation/cache-process-2026-11-02.jsonl。未做人工OS关开/断电。
 新增7文件缓存测试覆盖重开、checksum/UTF8/schema/key/partial/数字/PV、容量/LRU、串行/写入障碍、暂存、路径/符号链接。首次测试漏EngineInfo导入、原生漏dart:io导致编译失败，修复后全量门槛重跑通过，不记初轮为通过。日志/tmp/chessnext-file-cache-{unit,test,analyze,native,process}.log。核心未改沿用49/49与dart analyze。无新依赖。
 详engine/REVIEW_CACHE与ADR-012续记。下一条F32彻底候选/建议试走，需补证可接受阈值和候选预算；胜率/准确率算法仍未知，不自造同公式声明。
+
+### E14 / 2026-11-02候选续审
+源站最多候选5减至2禁用，0秒/深度4/节点0/当前2局面运行完成；新自制线路追加中文卒３进１/炮八平五，单步父局面候选执行成功。既有视图左右镜像，日志只记录可见中文与实际结果，不凭屏幕坐标写FEN。详情REFERENCE_EVIDENCE E14；下一实现方案CANDIDATE_SLICE为P非业务完成。未再执行源站试走/删除/登录。

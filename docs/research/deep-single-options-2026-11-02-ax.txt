@@ -1,0 +1,35 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
++				395 container
++					396 button
++					397 text 彻底分析设置
++					398 container
++						399 text 每步时限(秒) 设为 0 表示不限制
++						400 container
++							401 button (disabled)
++							402 stepper (settable, integer) Value: 0, Details: 0.0
++							403 button
++					404 container
++						405 text 深度上限 设为 0 表示不限制
++						406 container
++							407 button
++							408 stepper <redacted>
++							409 button
++					410 container
++						411 text 节点上限(万) 设为 0 表示不限制
++						412 container
++							413 button (disabled)
++							414 stepper <redacted>
++							415 button
++					416 container
++						417 text 最多着法数
++						418 container
++							419 button (disabled)
++							420 stepper <redacted>
++							421 button
++					422 button 完成
++					423 image
++					424 image
++					425 image
++					426 image
+The focused UI element is 427 container

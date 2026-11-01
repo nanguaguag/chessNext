@@ -1,0 +1,16 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 382, 387-391, 393-398
+~					383 text 卒３进１ 2. 炮八平五
+~					385 text 炮八平五
+~					386 text 1 炮八平五
++					387 button (disabled) 置顶
++						388 image
++					389 button 删除这步及后续
++						390 image
++					391 image
+~					392 text 彻底分析可行着法
++					393 button 彻底分析设置
++						394 image
+~					69 text 着法 红方 评分 1 马８进７ 3 2 象３进５ 82 3 士６进５ 158 4 炮８平５ 162 5 象７进５ 164 6 士４进５ 165 7 炮２平５ 181 8 炮８平９ 187 9 炮８进１ 217 10 车１进２ 222 11 卒３进１ 256 12 车９进２ 273 13 车１进１ 274 14 象７进９ 275 15 马２进１ 276 16 车９进１ 277 17 炮８进２ 291 18 炮８进３ 304 19 炮８平３ 319 20 卒７进１ 325 21 卒９进１ 332 22 炮８进４ 340 23 卒１进１ 344 24 炮２进４ 348 25 象３进１ 349 26 炮８平７ 353 27 炮２平４ 359 28 炮８退１ 368 29 炮２进１ 373 30 炮２退１ 375 31 马８进９ 377 32 炮８平６ 379 33 马２进３ 390 34 炮２平３ 410 35 炮８进７ 416 36 炮２平１ 420 37 炮２进３ 428 38 炮２平６ 430 39 炮８平４ 435 40 将５进１ 485 41 炮２平７ 499 42 炮２进６ 546 43 炮２进２ 563 44 卒５进１ 705 45 炮２进５ 705
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

@@ -1,0 +1,11 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~							298 button (disabled)
+~							299 stepper (settable, integer) Value: 0, Details: 0.0
+~							304 button
+~							316 button (disabled)
+~						326 text 仅当前着法列表
+~						327 switch 0
+~						330 switch 0
+~						333 text 2 个局面
+The focused UI element is 330 switch 0

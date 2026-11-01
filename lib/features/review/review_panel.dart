@@ -56,7 +56,7 @@ class ReviewPanel extends StatelessWidget {
           missing == 0 ? '分析完成' : '分析结束，$missing个局面未取得评分',
         ReviewPhase.failed => run!.error ?? '分析失败',
         ReviewPhase.stale => '棋谱已变化，本次结果已过期',
-        null => '离线逐局面计算，结果保留在本次会话',
+        null => '离线逐局面计算，支持复用已有分析',
       };
       final ids =
           run?.nodeIds.where((id) => run.results.containsKey(id)).toList() ??

@@ -1,0 +1,2 @@
+{"phase":"write","result":"pass","pid":49478,"fixture":"storage-only"}
+{"phase":"read","result":"pass","pid":49527,"fixture":"storage-only"}

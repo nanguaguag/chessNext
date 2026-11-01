@@ -1,4 +1,5 @@
 import 'engine_gateway.dart';
+import 'package:xiangqi_core/xiangqi_core.dart';
 
 /// Only completed, exact single-PV engine scores qualify for reuse.
 class CachedEngineScore {
@@ -20,12 +21,77 @@ class CachedEngineScore {
         info.depth < 1 ||
         info.depth > EngineRequest.maxDepth ||
         info.pv.isEmpty ||
-        info.pv.length > 256) {
+        info.pv.length > 256 ||
+        info.score.abs() > 1000000000 ||
+        [
+          info.timeMs,
+          info.nodes,
+          info.nps,
+        ].any((n) => n != null && (n < 0 || n > EngineRequest.maxNodeLimit))) {
       throw ArgumentError('Invalid reusable engine score');
     }
   }
   final String key;
   final EngineInfo info;
+  Map<String, Object?> toJson() => {
+    'key': key,
+    'depth': info.depth,
+    'score': info.score,
+    'mate': info.isMate,
+    'pv': info.pv.map((m) => m.toString()).toList(),
+    'timeMs': info.timeMs,
+    'nodes': info.nodes,
+    'nps': info.nps,
+  };
+  factory CachedEngineScore.fromJson(Map<String, dynamic> json) {
+    if (json.keys.any(
+          (name) => !{
+            'key',
+            'depth',
+            'score',
+            'mate',
+            'pv',
+            'timeMs',
+            'nodes',
+            'nps',
+          }.contains(name),
+        ) ||
+        json['key'] is! String ||
+        json['depth'] is! int ||
+        json['score'] is! int ||
+        json['mate'] is! bool ||
+        json['pv'] is! List ||
+        (json['pv'] as List).any((m) => m is! String) ||
+        [
+          'timeMs',
+          'nodes',
+          'nps',
+        ].any((name) => json[name] != null && json[name] is! int)) {
+      throw const FormatException('Invalid cached score');
+    }
+    final pv = json['pv'] as List;
+    if (pv.isEmpty || pv.length > 256) {
+      throw const FormatException('Invalid cached PV size');
+    }
+    try {
+      return CachedEngineScore(
+        key: json['key'] as String,
+        info: EngineInfo(
+          token: 0,
+          depth: json['depth'] as int,
+          multiPv: 1,
+          score: json['score'] as int,
+          isMate: json['mate'] as bool,
+          pv: pv.map((m) => Move.parse(m as String)).toList(),
+          timeMs: json['timeMs'] as int?,
+          nodes: json['nodes'] as int?,
+          nps: json['nps'] as int?,
+        ),
+      );
+    } on ArgumentError {
+      throw const FormatException('Invalid cached score values');
+    }
+  }
 }
 
 abstract interface class ReviewCacheRepository {

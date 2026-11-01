@@ -1,3 +1,4 @@
+import 'adapters/storage/file_review_cache_repository.dart';
 import 'adapters/storage/file_preferences_repository.dart';
 import 'adapters/storage/file_draft_repository.dart';
 import 'dart:io';
@@ -17,6 +18,7 @@ void main() {
         getApplicationSupportDirectory,
       ),
       engineFactory: openBundledEngine,
+      reviewCache: FileReviewCacheRepository(getApplicationSupportDirectory),
       deviceThreads: Platform.numberOfProcessors,
     ),
   );

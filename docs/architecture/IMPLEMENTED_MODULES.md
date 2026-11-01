@@ -28,3 +28,5 @@ GameTree是文档唯一棋谱真值；Position缓存不可变。文字导入先�
 EngineGateway的可空EngineIdentity记录经文件校验的制品身份，name来自实际UCI握手。verifyEngineBundle在工作Isolate校验manifest/可执行文件/NNUE，bundle脚本区分源二进制与签名后hash。详engine/ENGINE_IDENTITY。任意CLI无身份时仍可运行，后续缓存不得猜测。
 
 review_cache_key.dart结合真实身份/历史/预算/规则版本生成缓存键；ReviewCacheRepository与CachedEngineScore提供异步端口，默认MemoryReviewCacheRepository为2048条LRU。候选PV合法性在复用前验证，只有完成、无bound的单路结果可命中。IO失败降级和取消见ADR-012，文件持久化下一切片。
+
+FileReviewCacheRepository由main注入ApplicationSupport/chessnext-analysis-cache，不与用户棋谱/草稿共目录；有界、schema/校验和、串行原子替换，可再生损坏项删除并明确降级。纯Dart跨进程探针与macOS新App/引擎实例验证边界见engine/REVIEW_CACHE。

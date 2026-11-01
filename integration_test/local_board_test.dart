@@ -1,3 +1,5 @@
+import 'dart:io';
+import 'package:chess_next/adapters/storage/file_review_cache_repository.dart';
 import 'package:chess_next/application/review_models.dart';
 import 'package:chess_next/ports/engine_gateway.dart';
 import 'package:flutter/services.dart';
@@ -736,6 +738,82 @@ void main() {
       expect(engine.enabled, isFalse);
       expect(engine.aiSides, isEmpty);
       expect(session.tree.cursorId, 'n1');
+    },
+  );
+  testWidgets(
+    'native analysis cache survives new app, repository and engine instances',
+    (tester) async {
+      final support = await getApplicationSupportDirectory();
+      final temp = await support.createTemp('.chessnext-analysis-integration-');
+      try {
+        Future<EngineSessionController> open(GameTree? tree) async {
+          await tester.pumpWidget(
+            ChessNextApp(
+              key: UniqueKey(),
+              engineFactory: openBundledEngine,
+              reviewCache: FileReviewCacheRepository(() async => temp),
+            ),
+          );
+          await tester.pumpAndSettle();
+          final session = tester
+              .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+              .session;
+          if (tree != null) session.replaceTree(tree);
+          return tester.widget<PlayPanel>(find.byType(PlayPanel)).engine;
+        }
+
+        var engine = await open(null);
+        engine.session.playMove(Move.parse('h2e2'));
+        engine.session.playMove(Move.parse('b9c7'));
+        final tree = engine.session.tree;
+        await engine.startReview(
+          limits: ReviewLimits(depth: 4, moveTimeMs: null),
+        );
+        await tester.pumpAndSettle();
+        expect(engine.review!.cachedCount, 0);
+        expect(
+          engine.review!.results.values.every((r) => r.info != null),
+          isTrue,
+        );
+        final fingerprint = engine.engineIdentity!.cacheIdentity;
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        engine = await open(tree);
+        await engine.startReview(
+          limits: ReviewLimits(depth: 4, moveTimeMs: null),
+        );
+        await tester.pumpAndSettle();
+        expect(engine.engineIdentity!.cacheIdentity, fingerprint);
+        expect(engine.review!.phase, ReviewPhase.completed);
+        expect(engine.review!.cachedCount, 3);
+        expect(
+          engine.review!.results.values.every((r) => r.info!.token == 0),
+          isTrue,
+        );
+        final files = await Directory(
+          '${temp.path}/chessnext-analysis-cache',
+        ).list().toList();
+        final damaged = files.whereType<File>().first;
+        await damaged.writeAsString('broken-cache');
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        engine = await open(tree);
+        await engine.startReview(
+          limits: ReviewLimits(depth: 4, moveTimeMs: null),
+        );
+        await tester.pumpAndSettle();
+        expect(engine.review!.phase, ReviewPhase.completed);
+        expect(engine.review!.cacheNotice, '缓存读取失败，本次重新计算');
+        expect(
+          engine.review!.results.values.every((r) => r.info != null),
+          isTrue,
+        );
+        expect(engine.session.tree.nodeCount, 3);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await temp.delete(recursive: true);
+      }
     },
   );
 }

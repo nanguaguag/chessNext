@@ -1,3 +1,4 @@
+import 'ports/review_cache_repository.dart';
 import 'features/review/review_panel.dart';
 import 'features/records/move_list.dart';
 import 'features/records/variation_panel.dart';
@@ -35,12 +36,14 @@ class ChessNextApp extends StatefulWidget {
     this.preferencesRepository,
     this.clipboard,
     this.engineFactory,
+    this.reviewCache,
     this.deviceThreads = 1,
   });
   final PreferencesRepository? preferencesRepository;
   final DraftRepository? draftRepository;
   final TextClipboard? clipboard;
   final EngineFactory? engineFactory;
+  final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
   final GameRepository? repository;
   @override
@@ -62,6 +65,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       session,
       widget.engineFactory,
       deviceThreads: widget.deviceThreads,
+      reviewCache: widget.reviewCache,
     );
     library = LibraryController(
       session,

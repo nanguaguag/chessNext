@@ -1,3 +1,6 @@
+import 'adapters/platform/flutter_text_clipboard.dart';
+import 'ports/text_clipboard.dart';
+import 'features/transfer/text_transfer_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'application/board_session.dart';
@@ -15,9 +18,11 @@ class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
     super.key,
     this.repository,
+    this.clipboard,
     this.engineFactory,
     this.deviceThreads = 1,
   });
+  final TextClipboard? clipboard;
   final EngineFactory? engineFactory;
   final int deviceThreads;
   final GameRepository? repository;
@@ -74,6 +79,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     ),
     themeMode: mode,
     home: _BoardPage(
+      clipboard: widget.clipboard ?? FlutterTextClipboard(),
       session: session,
       library: library,
       analysis: analysis,
@@ -87,10 +93,12 @@ class _ChessNextAppState extends State<ChessNextApp>
 class _BoardPage extends StatelessWidget {
   const _BoardPage({
     required this.session,
+    required this.clipboard,
     required this.toggleTheme,
     required this.library,
     required this.analysis,
   });
+  final TextClipboard clipboard;
   final BoardSession session;
   final VoidCallback toggleTheme;
   final LibraryController library;
@@ -196,6 +204,47 @@ class _BoardPage extends StatelessWidget {
     if (context.mounted && result != null && result.toFen() != before) {
       library.startPosition(result);
     }
+  }
+
+  Future<void> _import(BuildContext context) async {
+    await analysis.disable();
+    if (!context.mounted) return;
+    final epoch = session.epoch;
+    final revision = session.revision;
+    final tree = await showDialog<GameTree>(
+      context: context,
+      builder: (_) => ImportTextDialog(clipboard: clipboard),
+    );
+    if (tree == null || !context.mounted) return;
+    if (session.epoch != epoch || session.revision != revision) return;
+    if (session.dirty && session.hasContent) {
+      final choice = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('导入前保留当前棋谱？'),
+          content: const Text('导入成功后将替换当前棋谱。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'replace'),
+              child: const Text('替换'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, 'save'),
+              child: const Text('先保存'),
+            ),
+          ],
+        ),
+      );
+      if (choice == null || !context.mounted) return;
+      if (choice == 'save' && (!await _save(context) || !context.mounted)) {
+        return;
+      }
+    }
+    library.importTree(tree);
   }
 
   @override
@@ -311,6 +360,22 @@ class _BoardPage extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
+                      OutlinedButton.icon(
+                        onPressed: library.busy ? null : () => _import(context),
+                        icon: const Icon(Icons.input),
+                        label: const Text('导入文字'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () => showDialog<void>(
+                          context: context,
+                          builder: (_) => ExportTextDialog(
+                            tree: session.tree,
+                            clipboard: clipboard,
+                          ),
+                        ),
+                        icon: const Icon(Icons.ios_share),
+                        label: const Text('导出文字'),
+                      ),
                       OutlinedButton.icon(
                         onPressed: library.busy ? null : () => _edit(context),
                         icon: const Icon(Icons.edit_outlined),

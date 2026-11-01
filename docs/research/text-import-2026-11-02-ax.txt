@@ -1,0 +1,22 @@
+Browser tab: 2, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 76, 83, 129, 131-132, 136-137
++				136 container
++					137 text 开始 1. 炮二平五 马２进３
++					138 button 棋谱分析
++						139 image
++						140 text 棋谱分析
+~					80 button 下一着 ›
++				141 container
++					142 button 分析整盘棋
++					143 text 画出局势曲线，找出妙手和错着
+~					98 text 着法 红方 评分 1 炮八平五 1 2 炮二平五 1 3 兵七进一 1 4 兵三进一 1 5 炮八平四 1 6 炮二平六 1 7 马八进七 0 8 马二进三 0 9 炮八平六 0 10 炮二平四 0 11 炮八平九 0 12 炮二平一 0 13 相七进五 0 14 相三进五 0 15 马八进九 0 16 马二进一 0 17 炮八平七 0 18 炮二平三 0 19 兵九进一 0 20 兵一进一 0 21 炮八平三 0 22 炮二平七 0 23 仕六进五 -1 24 仕四进五 -1 25 炮八进二 -3 26 炮二进二 -3 27 炮八进四 -9 28 炮二进四 -9 29 炮八退一 -39 30 炮二退一 -39 31 相七进九 -95 32 相三进一 -95 33 炮八进一 -104 34 炮二进一 -104 35 车九进二 -142 36 车一进二 -142 37 炮八进三 -153 38 炮二进三 -153 39 车九进一 -194 40 车一进一 -194 41 兵五进一 -213 42 帅五进一 -227 43 炮八进七 -303 44 炮二进七 -303
+~			133 button
+~			134 button
+~			124 text entry area (settable) 文字棋谱、FEN 或棋谱链接
++			144 button 从剪贴板粘贴
+~			126 button (disabled) 导入
++	145 container
++		146 text 
++		147 text 导入成功
+The focused UI element is 134 button

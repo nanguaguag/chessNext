@@ -91,10 +91,13 @@ class LibraryController extends ChangeNotifier {
     title = game.title;
     if (game.recovered) error = '主文件异常，已从备份恢复，请核对棋谱后保存';
   });
-  void startPosition(Position position) {
-    session.replaceTree(GameTree(initial: position), saved: false);
+  void startPosition(Position position) =>
+      importTree(GameTree(initial: position), title: '局面分析');
+
+  void importTree(GameTree tree, {String title = '导入棋谱'}) {
+    session.replaceTree(tree, saved: false);
     currentId = null;
-    title = '局面分析';
+    this.title = title;
     _notify();
   }
 

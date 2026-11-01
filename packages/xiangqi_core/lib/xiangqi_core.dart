@@ -6,3 +6,4 @@ export 'src/validation.dart';
 export 'src/outcome.dart';
 export 'src/game_tree.dart';
 export 'src/setup_draft.dart';
+export 'src/text_record.dart';

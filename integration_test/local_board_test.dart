@@ -16,7 +16,7 @@ void main() {
   testWidgets('macOS local board supports a full interactive move cycle', (
     tester,
   ) async {
-    await tester.pumpWidget(const ChessNextApp());
+    await tester.pumpWidget(ChessNextApp(key: UniqueKey()));
     await tester.pumpAndSettle();
     expect(find.text('红方行棋'), findsOneWidget);
     await tester.tap(find.byKey(const ValueKey('square-h2')));
@@ -58,7 +58,10 @@ void main() {
       final temp = await documents.createTemp('.chessnext-integration-');
       try {
         await tester.pumpWidget(
-          ChessNextApp(repository: FileGameRepository(() async => temp)),
+          ChessNextApp(
+            key: UniqueKey(),
+            repository: FileGameRepository(() async => temp),
+          ),
         );
         await tester.pumpAndSettle();
         await tester.tap(find.byKey(const ValueKey('square-h2')));
@@ -82,7 +85,10 @@ void main() {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
         await tester.pumpWidget(
-          ChessNextApp(repository: FileGameRepository(() async => temp)),
+          ChessNextApp(
+            key: UniqueKey(),
+            repository: FileGameRepository(() async => temp),
+          ),
         );
         await tester.pumpAndSettle();
         await tester.tap(find.text('棋谱库'));
@@ -113,7 +119,9 @@ void main() {
   testWidgets('bundled Pikafish analyzes offline, switches MultiPV and stops', (
     tester,
   ) async {
-    await tester.pumpWidget(ChessNextApp(engineFactory: openBundledEngine));
+    await tester.pumpWidget(
+      ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
+    );
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('开始分析'));
     await tester.tap(find.text('开始分析'));
@@ -153,7 +161,9 @@ void main() {
   testWidgets('bundled AI replies, changes its move and undoes both plies', (
     tester,
   ) async {
-    await tester.pumpWidget(ChessNextApp(engineFactory: openBundledEngine));
+    await tester.pumpWidget(
+      ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
+    );
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('引擎执黑'));
     await tester.tap(find.text('引擎执黑'));
@@ -177,7 +187,13 @@ void main() {
     ) {
       await tester.pump(const Duration(milliseconds: 100));
     }
-    expect(session.moves.length, 2);
+    final playState = tester.widget<PlayPanel>(find.byType(PlayPanel)).engine;
+    expect(
+      session.moves.length,
+      2,
+      reason:
+          '${playState.status}; ${playState.error}; playing=${playState.playing}; thinking=${playState.thinking}',
+    );
     expect(session.moves.last, isNot(old));
     expect(session.tree.node('n1').children.length, 2);
     await tester.ensureVisible(find.text('悔棋'));
@@ -197,7 +213,7 @@ void main() {
   testWidgets(
     'native editor rejects facing generals and applies a valid chosen turn',
     (tester) async {
-      await tester.pumpWidget(const ChessNextApp());
+      await tester.pumpWidget(ChessNextApp(key: UniqueKey()));
       await tester.pumpAndSettle();
       final session = tester
           .widget<XiangqiBoard>(find.byType(XiangqiBoard))
@@ -223,6 +239,60 @@ void main() {
       expect(session.position.turn, Side.black);
       expect(session.position.validateForPlay().isValid, isTrue);
       expect(session.dirty, isTrue);
+    },
+  );
+  testWidgets(
+    'native text transfer rejects illegal moves and roundtrips a path',
+    (tester) async {
+      await tester.pumpWidget(ChessNextApp(key: UniqueKey()));
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      await tester.ensureVisible(find.text('导入文字'));
+      await tester.tap(find.text('导入文字'));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('import-text')),
+        'startpos moves a0a9',
+      );
+      await tester.pump();
+      await tester.tap(find.text('导入'));
+      await tester.pumpAndSettle();
+      expect(find.textContaining('第1步不合法'), findsOneWidget);
+      expect(session.hasMoves, isFalse);
+      await tester.tap(find.byKey(const ValueKey('import-text')));
+      await tester.pumpAndSettle();
+      await tester.enterText(
+        find.byKey(const ValueKey('import-text')),
+        'position startpos moves h2e2 b9c7',
+      );
+      await tester.pumpAndSettle();
+      expect(
+        tester
+            .widget<TextField>(find.byKey(const ValueKey('import-text')))
+            .controller!
+            .text,
+        'position startpos moves h2e2 b9c7',
+      );
+      await tester.tap(find.text('导入'));
+      await tester.pumpAndSettle();
+      expect(find.byKey(const ValueKey('import-text')), findsNothing);
+      expect(session.moves.length, 2);
+      await tester.ensureVisible(find.text('导出文字'));
+      await tester.tap(find.text('导出文字'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('FEN + 着法'));
+      await tester.pump();
+      final exported = tester
+          .widget<SelectableText>(find.byKey(const ValueKey('export-text')))
+          .data!;
+      expect(
+        TextRecord.parse(exported).current.position.toFen(),
+        session.position.toFen(),
+      );
+      await tester.tap(find.text('关闭'));
+      await tester.pumpAndSettle();
     },
   );
 }

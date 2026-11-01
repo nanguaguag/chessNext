@@ -8,6 +8,7 @@ import 'board_session.dart';
 import 'review_models.dart';
 import 'candidate_models.dart';
 import 'review_cache_access.dart';
+import 'finite_search_executor.dart';
 import '../ports/review_cache_repository.dart';
 
 part 'engine_play.dart';
@@ -44,13 +45,8 @@ class EngineSessionController extends ChangeNotifier {
   final ReviewCacheRepository reviewCache;
   CandidateRun? _candidates;
   int _candidateJob = 0;
-  int? _candidateToken;
-  EngineInfo? _candidateInfo;
-  Set<Move> _candidateAllowed = {};
   ReviewRun? _review;
   int _reviewJob = 0;
-  int? _reviewToken;
-  EngineInfo? _reviewInfo;
   EngineGateway? _engine;
   Future<EngineGateway>? _opening;
   StreamSubscription<EngineInfo>? _subscription;
@@ -190,8 +186,6 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   void _onInfo(EngineInfo info) {
-    _onReviewInfo(info);
-    _onCandidateInfo(info);
     if (_disposed ||
         !_enabled ||
         info.token != _generation ||
@@ -302,11 +296,9 @@ class EngineSessionController extends ChangeNotifier {
     if (stoppingCandidates) {
       _candidates = _candidates!.copy(phase: ReviewPhase.stopping);
     }
-    _candidateToken = null;
     final stoppingReview = _review?.active ?? false;
     final reviewJob = ++_reviewJob;
     if (stoppingReview) _review = _review!.copy(phase: ReviewPhase.stopping);
-    _reviewToken = null;
     _aiSides.clear();
     _thinking = false;
     _playSearch = null;

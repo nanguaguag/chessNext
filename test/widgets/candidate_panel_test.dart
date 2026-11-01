@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../support/fake_engine.dart';
+import '../support/pump_until.dart';
 
 void main() {
   late BoardSession session;
@@ -61,12 +62,13 @@ void main() {
       await tester.pumpAndSettle();
       fake.emit(fake.requests.last.token, pv: 'b9c7');
       fake.results.last.complete(Move.parse('b9c7'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 10));
+      await pumpUntil(tester, () => fake.requests.length == 2);
       fake.emit(fake.requests.last.token, pv: 'h9g7');
       fake.results.last.complete(Move.parse('h9g7'));
-      await tester.pump();
-      await tester.pump(const Duration(milliseconds: 10));
+      await pumpUntil(
+        tester,
+        () => engine.candidates!.phase == ReviewPhase.completed,
+      );
       expect(engine.candidates!.phase, ReviewPhase.completed);
       expect(
         tester
@@ -94,14 +96,15 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('取消'));
     await tester.pumpAndSettle();
-    final job = engine.startCandidates(
-      limits: ReviewLimits(depth: 3),
-      maximum: 2,
-    );
+    var completed = false;
+    final job = engine
+        .startCandidates(limits: ReviewLimits(depth: 3), maximum: 2)
+        .whenComplete(() => completed = true);
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('停止候选分析'));
     await tester.tap(find.text('停止候选分析'));
     await tester.pumpAndSettle();
+    await pumpUntil(tester, () => completed);
     await job;
     expect(find.text('已取消，保留已完成候选'), findsOneWidget);
     expect(tester.takeException(), isNull);

@@ -7,6 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../support/fake_engine.dart';
+import '../support/pump_until.dart';
 
 void main() {
   late BoardSession session;
@@ -62,12 +63,13 @@ void main() {
     expect(fake.requests.single.moves.length, 1);
     fake.emit(fake.requests.last.token, score: 30, pv: 'b9c7');
     fake.results.last.complete(Move.parse('b9c7'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 10));
+    await pumpUntil(tester, () => fake.requests.length == 2);
     expect(find.text('1/2 个局面'), findsOneWidget);
     fake.results.last.complete(Move.parse('h2e2'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 10));
+    await pumpUntil(
+      tester,
+      () => engine.review!.phase == ReviewPhase.completed,
+    );
     expect(find.text('分析结束，1个局面未取得评分'), findsOneWidget);
     final row = find.byKey(const ValueKey('review-n1'));
     await tester.ensureVisible(row);
@@ -92,11 +94,15 @@ void main() {
     await tester.tap(find.text('取消'));
     await tester.pumpAndSettle();
     expect(fake.requests, isEmpty);
-    final job = engine.startReview(limits: ReviewLimits(depth: 3));
+    var completed = false;
+    final job = engine
+        .startReview(limits: ReviewLimits(depth: 3))
+        .whenComplete(() => completed = true);
     await tester.pumpAndSettle();
     await tester.ensureVisible(find.text('取消整谱分析'));
     await tester.tap(find.text('取消整谱分析'));
     await tester.pumpAndSettle();
+    await pumpUntil(tester, () => completed);
     await job;
     expect(find.text('已取消，保留已完成的局面'), findsOneWidget);
     expect(tester.takeException(), isNull);

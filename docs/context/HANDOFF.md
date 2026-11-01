@@ -27,3 +27,8 @@ CandidateRun+engine_candidates.dart+CandidatePanel/Options：普通当前着在�
 E12/E13/E14源站证据落盘，IAB browser2 tab4已markHandoff（可失效，同浏览器listTabs恢复）。访客当前自制线路兵七进一/卒３进１/炮八平五；视图继承左右镜像，不用像素猜UCI！单步0秒/深度4/节点0/最多2成功，红方父局面建议兵七进一65%/炮二平五56%，未自动入谱。E13试走已验证在父局面新增同级。删除仅O未执行；可接受阈值/累计预算/评分公式仍U。截图只研究。
 
 环境Flutter3.44.6/Dart3.12.2、macOS14.4 arm64/Xcode15.0；2026-11-02官方latest仍2026-09-06，lock见engine/pikafish.lock.json。.local不提交，crypto3.0.8由既有传递改直接依赖，无新增其他依赖。重跑命令见COMMUNICATION_VALIDATION/MACOS_RUN。
+
+## M3-13最新（完成，提交见git log）
+FiniteSearchExecutor已统一单次有限请求、最终bestmove/PV/完整合法性、缓存与取消/流错误finally清理；两套后台info捕获已移除，仍唯一EngineGateway。坏PV缓存有remove，只删派生缓存。根142/142+analyze、macOS完整14/14通过；6执行器+文件套8目标及6组件目标通过。核心未改49。最后所有验证命令已结束，无待等待进程，工作树提交后应干净。
+Fake Widget异步清理经历首轮2失败/停滞并INT自有进程52684、有限pump4失败；TRACE定位subscription.cancel Future在真实zone，pumpUntil需要runAsync推进真实异步+模拟帧。TRACE完全移除；最终全量142与analyze通过。别删除生产finally await来迎合Fake时钟。旧段135为上一切片，当前142。
+下一条按planning/THOROUGH_REVIEW_SLICE.md实施整谱多候选模式，方案仍P；不要调用startCandidates嵌startReview（会停掉自己）。抽CandidateCollector纯应用服务共用FiniteSearchExecutor，再扩ReviewRun模式/候选集合与partial、局面/搜索缓存双计数、配置与详情/进度。完成完整门槛再独立feat(review)中文commit；随后胜率/错题等所有功能继续，不能最终停下审查。

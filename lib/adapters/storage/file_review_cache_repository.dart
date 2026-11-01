@@ -176,4 +176,17 @@ class FileReviewCacheRepository implements ReviewCacheRepository {
       await staging.delete(recursive: true);
     }
   });
+  @override
+  Future<void> remove(String key) => _serial(() async {
+    _validateKey(key);
+    final folder = await _folder();
+    final file = File('${folder.path}/$key.json');
+    final type = await FileSystemEntity.type(file.path, followLinks: false);
+    if (type == FileSystemEntityType.file) {
+      await file.delete();
+    } else if (type != FileSystemEntityType.notFound) {
+      throw const FormatException('Cache entry must be a regular file');
+    }
+    _forget(key);
+  });
 }

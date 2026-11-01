@@ -15,3 +15,5 @@ BoardSession.playVariation先在不可变树上构造parent→move，再一次�
 UI在features/review/CandidatePanel和独立State配置对话框，支持NaN/全0/数量校验、取消、有界结果列表、200%字号和未保存棋谱保留。未把原始网站截图/资源用于产品。
 
 验证命令、数量、失败修正及平台前提见TRACEABILITY/SESSION_LOG。真实OS窗口焦点/断电及其他平台仍待验，不把framework-resumed原生测试当人工视觉验收。
+
+M3-13前置续：FiniteSearchExecutor抽取单次搜索契约，整谱和单步共享最终PV与bestmove匹配/合法性、缓存及临时监听清理；为后续整谱候选模式复用，不新增引擎进程。合法格式但PV不适用于目标局面的缓存经remove失效，避免重复读取毒化条目。

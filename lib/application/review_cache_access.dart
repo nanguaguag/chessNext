@@ -24,14 +24,19 @@ class ReviewCacheAccess {
           .load(key)
           .timeout(const Duration(seconds: 2));
       if (cached == null) return null;
-      if (cached.key != key) throw const FormatException('Wrong cache key');
-      var position = request.position;
-      for (final move in cached.info.pv) {
-        position = position.play(move);
-      }
-      if (request.searchMoves != null &&
-          !request.searchMoves!.contains(cached.info.pv.first)) {
-        throw const FormatException('Cached move outside allowed set');
+      try {
+        if (cached.key != key) throw const FormatException('Wrong cache key');
+        var position = request.position;
+        for (final move in cached.info.pv) {
+          position = position.play(move);
+        }
+        if (request.searchMoves != null &&
+            !request.searchMoves!.contains(cached.info.pv.first)) {
+          throw const FormatException('Cached move outside allowed set');
+        }
+      } catch (_) {
+        await repository.remove(key).timeout(const Duration(seconds: 2));
+        rethrow;
       }
       return cached.info;
     } catch (_) {

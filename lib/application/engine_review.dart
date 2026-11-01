@@ -67,7 +67,6 @@ extension EngineReview on EngineSessionController {
         if (!_reviewValid(job)) return;
         final node = tree.node(id);
         _review = _review!.copy(currentNodeId: id);
-        _reviewInfo = null;
         _notify();
         if (!_reviewValid(job)) return;
         ReviewedPosition result;
@@ -90,21 +89,15 @@ extension EngineReview on EngineSessionController {
             hashMb: _settings.hashMb,
             multiPv: 1,
           );
-          final cached = skipExisting ? await cache.read(request) : null;
-          if (!_reviewValid(job)) return;
-          EngineInfo? info;
-          if (cached != null) {
-            info = cached;
+          final outcome = await FiniteSearchExecutor(engine, cache).execute(
+            request,
+            isCurrent: () => _reviewValid(job),
+            skipExisting: skipExisting,
+          );
+          if (!_reviewValid(job) || outcome == null) return;
+          final info = outcome.info;
+          if (outcome.cached) {
             _review = _review!.copy(cachedCount: _review!.cachedCount + 1);
-          } else {
-            _reviewToken = token;
-            final search = await engine.start(request);
-            if (!_reviewValid(job)) return;
-            await search.bestMove;
-            // Broadcast info and bestmove have separate futures; drain that turn.
-            await Future<void>.delayed(Duration.zero);
-            if (!_reviewValid(job)) return;
-            info = _reviewInfo;
           }
           result = ReviewedPosition(
             nodeId: id,
@@ -114,13 +107,8 @@ extension EngineReview on EngineSessionController {
                 : ReviewScoreStatus.scored,
             info: info,
           );
-          if (cached == null) {
-            await cache.write(request, info);
-            if (!_reviewValid(job)) return;
-          }
           _review = _review!.copy(cacheNotice: cache.notice);
         }
-        _reviewToken = null;
         _review = _review!.copy(results: {..._review!.results, id: result});
         _notify();
       }
@@ -130,7 +118,6 @@ extension EngineReview on EngineSessionController {
       _notify();
     } catch (e) {
       if (!_reviewValid(job)) return;
-      _reviewToken = null;
       _review = _review!.copy(
         phase: ReviewPhase.failed,
         error: '整谱分析失败，可调整参数后重试',
@@ -155,28 +142,12 @@ extension EngineReview on EngineSessionController {
     }
     // Invalidate synchronously before any stop/bestmove can deliver late data.
     _reviewJob++;
-    _reviewToken = null;
     _review = value.copy(phase: ReviewPhase.stale);
     if (value.active) {
       unawaited(disable());
     } else {
       _notify();
     }
-  }
-
-  void _onReviewInfo(EngineInfo info) {
-    if (_disposed ||
-        _review?.phase != ReviewPhase.running ||
-        info.token != _reviewToken ||
-        info.multiPv != 1 ||
-        _review?.currentNodeId == null) {
-      return;
-    }
-    final node = _review!.tree.node(_review!.currentNodeId!);
-    if (info.pv.isEmpty || !node.position.legalMoves.contains(info.pv.first)) {
-      return;
-    }
-    _reviewInfo = info;
   }
 
   Future<void> cancelReview() => disable();

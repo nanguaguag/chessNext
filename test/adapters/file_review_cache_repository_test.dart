@@ -181,4 +181,13 @@ void main() {
       expect(await obstacle.readAsString(), 'keep');
     },
   );
+  test('invalidating a key removes only that disposable score', () async {
+    await repository.save(sample('a'));
+    await repository.save(sample('b'));
+    await repository.remove('a' * 64);
+    await repository.remove('a' * 64);
+    expect(await repository.load('a' * 64), isNull);
+    expect((await repository.load('b' * 64))!.info.score, 25);
+    await expectLater(repository.remove('../outside'), throwsArgumentError);
+  });
 }

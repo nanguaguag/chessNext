@@ -22,11 +22,13 @@
 
 - 单步父局面候选与原子试走：逐次排除不同合法首着、每候选有限预算、缓存复用；根分析自身下一着，普通着法分析其父局面。导航/编辑过期、取消/抢占/停止失败保护，不自动写棋谱；点击试走才创建/切换同级，保留原分支。源站可接受筛选/胜率公式仍未知。
 
+FiniteSearchExecutor已统一整谱/单步的最终着法/PV与缓存校验及临时监听收尾，仍单引擎；非法PV缓存可移除重算，不触用户棋谱。
+
 实际边界与ADR-005至013见architecture/IMPLEMENTED_MODULES及DECISIONS。
 
 ## 最新验证
 
-本切片根flutter test135/135（显式官方NNUE环境）、flutter analyze无问题；macOS完整14/14和最终候选单项1/1通过，含真实NNUE在新App/引擎实例复用与坏缓存重算；另有独立Dart进程协议验证。宿主Flutter测试进程未关开，人工OS应用重启/断电仍未验。核心上次49/49及dart analyze，本切片未改。4组perft曾与官方一致。
+本切片根flutter test142/142（显式官方NNUE环境）、flutter analyze无问题；macOS完整14/14和最终候选单项1/1通过，含真实NNUE在新App/引擎实例复用与坏缓存重算；另有独立Dart进程协议验证。宿主Flutter测试进程未关开，人工OS应用重启/断电仍未验。核心上次49/49及dart analyze，本切片未改。4组perft曾与官方一致。
 
 integration_test仅在测试文件保持framework-resumed；生产无覆盖。真实OS焦点/最小化/隐藏/人工视觉未验；Computer Use桌面权限未授，不绕过。其他Android/iOS/Windows/Linux尚未验证，移动FFI未实现。曾失败/中断/跳过的命令见SESSION_LOG，不隐去后改通过。
 

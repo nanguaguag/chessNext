@@ -97,6 +97,7 @@ class CachedEngineScore {
 abstract interface class ReviewCacheRepository {
   Future<CachedEngineScore?> load(String key);
   Future<void> save(CachedEngineScore score);
+  Future<void> remove(String key);
 }
 
 /// Bounded LRU; no document, node ID, cursor or UI state is stored in an entry.
@@ -114,6 +115,11 @@ class MemoryReviewCacheRepository implements ReviewCacheRepository {
     final entry = _entries.remove(key);
     if (entry != null) _entries[key] = entry;
     return entry;
+  }
+
+  @override
+  Future<void> remove(String key) async {
+    _entries.remove(key);
   }
 
   @override

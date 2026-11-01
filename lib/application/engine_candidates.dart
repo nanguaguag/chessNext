@@ -97,42 +97,24 @@ extension EngineCandidates on EngineSessionController {
           multiPv: 1,
           searchMoves: _candidates!.results.isEmpty ? null : remaining,
         );
-        _candidateInfo = null;
-        final cached = skipExisting ? await cache.read(request) : null;
-        if (!_candidateValid(job)) return;
-        Move? move;
-        EngineInfo? info;
-        if (cached != null) {
-          move = cached.pv.first;
-          info = cached;
+        final outcome = await FiniteSearchExecutor(engine, cache).execute(
+          request,
+          isCurrent: () => _candidateValid(job),
+          skipExisting: skipExisting,
+        );
+        if (!_candidateValid(job) || outcome == null) return;
+        final move = outcome.move;
+        final info = outcome.info;
+        if (outcome.cached) {
           _candidates = _candidates!.copy(
             cachedCount: _candidates!.cachedCount + 1,
           );
-        } else {
-          _candidateToken = token;
-          _candidateAllowed = remaining.toSet();
-          final search = await engine.start(request);
-          if (!_candidateValid(job)) return;
-          move = await search.bestMove;
-          await Future<void>.delayed(Duration.zero);
-          if (!_candidateValid(job)) return;
-          if (move != null && !remaining.contains(move)) {
-            throw StateError('Illegal or duplicate candidate');
-          }
-          info = _candidateInfo?.pv.firstOrNull == move ? _candidateInfo : null;
         }
-        _candidateToken = null;
         if (move == null) {
           _candidates = _candidates!.copy(notice: '引擎未返回更多可评估着法');
           break;
         }
-        if (!remaining.remove(move)) {
-          throw StateError('Duplicate cached candidate');
-        }
-        if (cached == null) {
-          await cache.write(request, info);
-          if (!_candidateValid(job)) return;
-        }
+        if (!remaining.remove(move)) throw StateError('Duplicate candidate');
         _candidates = _candidates!.copy(
           results: [..._candidates!.results, CandidateEvaluation(move, info)],
           notice: cache.notice,
@@ -148,25 +130,12 @@ extension EngineCandidates on EngineSessionController {
       _notify();
     } catch (e) {
       if (!_candidateValid(job)) return;
-      _candidateToken = null;
       _candidates = _candidates!.copy(
         phase: ReviewPhase.failed,
         error: '候选分析失败，可重试',
       );
       _failed(e, _generation);
     }
-  }
-
-  void _onCandidateInfo(EngineInfo info) {
-    if (_disposed ||
-        _candidates?.phase != ReviewPhase.running ||
-        info.token != _candidateToken ||
-        info.multiPv != 1 ||
-        info.pv.isEmpty ||
-        !_candidateAllowed.contains(info.pv.first)) {
-      return;
-    }
-    _candidateInfo = info;
   }
 
   void _candidatesChanged() {
@@ -177,7 +146,6 @@ extension EngineCandidates on EngineSessionController {
       return;
     }
     _candidateJob++;
-    _candidateToken = null;
     _candidates = run.copy(phase: ReviewPhase.stale);
     if (run.active) {
       unawaited(disable());

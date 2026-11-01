@@ -19,3 +19,5 @@ F32/B18，ADR-012。默认跳过已分析，关闭开关强制重新计算；仅
 - macOS集成用真实ApplicationSupport临时子目录、包内NNUE及全新App/Controller/Repository/Engine实例验证落盘命中，再破坏一条验证降级重算。此为新应用对象与新引擎进程，宿主Flutter测试进程不退出；不把它称作人工OS关闭重启或断电验收。
 
 实际通过数量与命令、失败修复记录以TRACEABILITY/SESSION_LOG为准。缓存能力不代表彻底候选、胜率、准确率/分类和错题已实现。
+
+后续执行器切片增加应用层非法PV/不匹配允许集的remove：文件schema/checksum有效也不意味着能用于当前目标，移除仅对应可再生缓存key。最终info必须匹配bestmove且完整变化合法，才可作为有评分结果写入缓存。

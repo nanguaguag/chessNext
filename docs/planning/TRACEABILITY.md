@@ -232,3 +232,11 @@ RecordTextExchange/ImportedRecord纯应用接口，静态Isolate.run真实领域
 
 macOS旧文字传输相关单项1/1（00:05）通过；新PGN真实worker/注入剪贴板端口/实际文件全树保存+新App恢复进行中，结果后补。不会触系统剪贴板，不将该端口注入称系统clipboard验收。其它平台/OS人工视觉仍未验；系统文件选择/拖放与多方言不在此片完成范围。ADR-020/PGN_EXCHANGE_SLICE。
 M4-01c原生最终：新PGN单项1/1（00:11）通过：真实worker导入标签/评注，建立另一根分支并选中中途节点；PGN只复制所选两步，而完整本地存谱保留5节点/未来评注/未知资料，新App文件适配器重开仍完整。复制为注入MemoryClipboard端口，未触系统剪贴板。旧文字单项1/1（00:05）已过；最终root/analyze和两原生命令exit0确认，无待等待验证。
+
+## 2026-11-02 / M4-01d / F07,F12 → B19 只读文字棋谱文件导入
+
+RecordFilePicker端口、官方file_selector1.1.0适配器，stat/实际字节/字符双限与严格UTF8、绝对读取期限及订阅清理、路径隔离/名称清理；PGN真实worker与资料/评注、Material3预览确认/取消/重试/200%字号/路由退场和共享文档保护。生产main已注入；Debug/Release为user-selected.read-only并保留sandbox。ADR-021、RECORD_FILE_IMPORT_SLICE与依赖登记可追溯。
+
+11适配器+7组件目标18/18、显式官方NNUE环境根flutter test256/256与flutter analyze无问题均exit0。macOS原生新文件单项1/1 exit0（实际UTF8文件流、工作Isolate、预览不改谱/确认、资料评注保存、源字节不变），plugin/Pod注册编译通过，codesign实际Debug包含sandbox和user-selected.read-only。系统chooser为注入，不宣称NSOpenPanel实际选文件已验；Release实际构建签名、其它平台、GBK/二进制/拖放/多局仍未验/未做。核心未变沿用65/65。
+
+初widget编译失败因测试误用LibrarySnapshot.single及session.navigateTo，改为games.single/navigate；第二次6过1失败因WXF测试缺Game首标签，修夹具后目标18全过。初analyze两项冗余import清理，最终全量通过。日志/tmp/chessnext-file-import-{adapter,widget,widget-final,target,full,analyze-initial,analyze,native}.log；没有待等待验证命令。

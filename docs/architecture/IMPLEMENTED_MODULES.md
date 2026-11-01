@@ -54,3 +54,5 @@ M4-01a：packages/xiangqi_core/lib/src/pgn_record.dart纯Dart有限单局PGN cod
 M4-01b：core GameMetadata与PGN共用有界验证；BoardSession并列文档资料/修订，MetadataEditor快照应用；RecordMetadataDialog只字段编辑/未知只读保留。SavedGame可选metadata、FileGame/Draft转传，Draft key和恢复带资料；dirty覆盖保护不再依赖实际hasContent，命名空草稿可恢复。ADR-019。引擎普通分析/AI保持，复盘按既有内容修订策略过期。
 
 M4-01c：application/record_text_exchange.dart无Flutter/IO的格式协调+静态Isolate.run，ImportedRecord携tree/metadata/source；ImportTextDialog TextImporter注入与PopScope/代次/route收尾；App导入确认/保存后复验并原子入库会话，导出开窗快照。ExportTextDialog五格式/PGN评注选项/不可无损错误禁复制。ADR-020；系统文件入口仍后续。
+
+M4-01d：ports/record_file_picker.dart返回有界UTF8文字，FileSelectorRecordPicker独占插件/流/路径；ImportFileDialog预览确认、错误重试/退场代次，App共用文字导入保护；main注入，macOS只读用户选择权限且保留sandbox。ADR-021/RECORD_FILE_IMPORT_SLICE；系统面板人工选择与其它平台未验。

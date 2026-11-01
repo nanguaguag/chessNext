@@ -1,3 +1,5 @@
+import 'features/transfer/import_file_dialog.dart';
+import 'ports/record_file_picker.dart';
 import 'application/record_text_exchange.dart';
 import 'features/metadata/record_metadata_dialog.dart';
 import 'features/help/onboarding_dialog.dart';
@@ -44,6 +46,7 @@ class ChessNextApp extends StatefulWidget {
     this.draftRepository,
     this.preferencesRepository,
     this.clipboard,
+    this.filePicker,
     this.engineFactory,
     this.reviewCache,
     this.deviceThreads = 1,
@@ -52,6 +55,7 @@ class ChessNextApp extends StatefulWidget {
   final PreferencesRepository? preferencesRepository;
   final DraftRepository? draftRepository;
   final TextClipboard? clipboard;
+  final RecordFilePicker? filePicker;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
@@ -247,6 +251,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       drafts: drafts,
       preferences: preferences,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
+      filePicker: widget.filePicker,
       session: session,
       library: library,
       readings: readings,
@@ -265,6 +270,7 @@ class _BoardPage extends StatelessWidget {
   const _BoardPage({
     required this.session,
     required this.clipboard,
+    this.filePicker,
     required this.toggleTheme,
     required this.showGuide,
     required this.library,
@@ -276,6 +282,7 @@ class _BoardPage extends StatelessWidget {
   final PreferencesController preferences;
   final DraftController? drafts;
   final TextClipboard clipboard;
+  final RecordFilePicker? filePicker;
   final BoardSession session;
   final VoidCallback toggleTheme;
   final Future<void> Function() showGuide;
@@ -405,7 +412,7 @@ class _BoardPage extends StatelessWidget {
     }
   }
 
-  Future<void> _import(BuildContext context) async {
+  Future<void> _import(BuildContext context, {bool fromFile = false}) async {
     await analysis.disable();
     if (!context.mounted) return;
     final epoch = session.epoch;
@@ -420,7 +427,9 @@ class _BoardPage extends StatelessWidget {
     ).showSnackBar(const SnackBar(content: Text('导入期间棋谱已变化，请重新导入。')));
     final imported = await showDialog<ImportedRecord>(
       context: context,
-      builder: (_) => ImportTextDialog(clipboard: clipboard),
+      builder: (_) => fromFile
+          ? ImportFileDialog(picker: filePicker!)
+          : ImportTextDialog(clipboard: clipboard),
     );
     if (imported == null || !context.mounted) return;
     if (!current()) {
@@ -650,6 +659,14 @@ class _BoardPage extends StatelessWidget {
                         icon: const Icon(Icons.input),
                         label: const Text('导入文字'),
                       ),
+                      if (filePicker != null)
+                        OutlinedButton.icon(
+                          onPressed: library.busy
+                              ? null
+                              : () => _import(context, fromFile: true),
+                          icon: const Icon(Icons.file_open_outlined),
+                          label: const Text('导入文件'),
+                        ),
                       OutlinedButton.icon(
                         onPressed: () => _export(context),
                         icon: const Icon(Icons.ios_share),

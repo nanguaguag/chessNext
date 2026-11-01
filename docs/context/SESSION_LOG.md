@@ -236,3 +236,9 @@ M4-01b提交门槛：根真NNUE226/226、flutter analyze无问题；核心65/65�
 2026-11-02 M4-01c：RecordTextExchange真实Isolate传输初5/5；接typed导入/资料/评注、取消代次/route保护、App确认后复验、快照导出/五格式及评注选择。初UI analyze5项大括号已限定dart fix，旧3组件更新worker等待/Dropdown选择，目标执行中，尚无全量/新原生，不计完成。
 M4-01c中间：目标15/15通过；全根首真NNUE238/238。flutter analyze余1项use_build_context_synchronously（自定义active getter已含mounted但flow不识别），Navigator前补显式mounted后全根/analyze复验。原生新PGN已写，未跑，不计完成。取消PopScope/代次/active+alive区分防晚结果关其它窗口与控件永久busy。
 M4-01c最终：根真NNUE238/238、flutter analyze无问题，旧文字原生1/1（00:05）、新PGN原生1/1（00:11）通过且exit0确认。真实worker+实际完整文件保存/新App恢复，剪贴板端口注入不触系统；尚无系统filepicker。没有核心变更，沿用65/65。当前无待等待验证，准备独立中文feat(notation)提交。
+
+### 2026-11-02 / M4-01d 文件导入
+
+按持续授权实现只读单UTF8文字棋谱文件导入，方案先RECORD_FILE_IMPORT_SLICE，ADR-021；pub add file_selector:1.1.0成功，lock/平台注册/Pod嵌入真实更新，依赖hash已登记。系统文件面板未通过OS自动化操作，没有绕过桌面权限。
+
+实际命令flutter test test/adapters/record_file_picker_test.dart首11/11；widget首编译失败测试接口名错，修后6过1因夹具缺PGN Game首标签导致错误文本不符，补Game后合并目标18/18。初flutter analyze两冗余import删除，最终无问题。显式PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK根flutter test256/256 exit0（68069）、flutter analyze exit0（69041）；macOS native file import目标1/1 exit0（74082），实际文件读取+worker+保存及原文件字节校验，chooser注入。codesign -d --entitlements核实实际Debug只读/sandbox；Release仅配置，未构建验。核心未改不重复，其他原生19未重跑。日志/tmp/chessnext-file-import-*.log，全部验证会话已结束。下一独立写文件出口先做技术验证，不扩大当前读取授权。

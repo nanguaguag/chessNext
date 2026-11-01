@@ -1,3 +1,4 @@
+import 'adapters/platform/file_selector_record_picker.dart';
 import 'adapters/storage/file_recent_reading_repository.dart';
 import 'adapters/storage/file_review_cache_repository.dart';
 import 'adapters/storage/file_preferences_repository.dart';
@@ -14,6 +15,7 @@ void main() {
   runApp(
     ChessNextApp(
       showFirstRunGuide: true,
+      filePicker: FileSelectorRecordPicker(),
       recentReadingRepository: FileRecentReadingRepository(
         getApplicationSupportDirectory,
       ),

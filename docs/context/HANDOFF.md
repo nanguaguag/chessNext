@@ -35,3 +35,9 @@ Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest仍
 integration_test只在测试内保持framework-resumed，生产无覆盖；raw生命周期[]不当真实OS焦点/隐藏/最小化/人工视觉。其它四平台/移动FFI未验，不能说已支持。普通用户窗口PID38211/旧run22326曾在，不主动关；测试覆盖build入口，最终审查前需要普通main重建，别热重启丢用户未保存内容。Fake Widget真实异步用pump_until/runAsync，不能删生产await来迎合假时钟。
 
 IAB browser2 tab4本轮自制普通方向炮八平五/马２进３/炮二进二选中支线末端，E19导航/E20 PGN导出已V并markHandoff；压缩先cua.rewriteDocumentation再fresh AX。E20原下载/样本hash在manifest；截图只研究，不作App资源。参考准确率/妙手公式/题库版本与其它未知仍在FEATURE_GAPS/BACKLOG，原生WDL/损失报告不冒充网站同算法。
+
+## 最新完成 M4-01d
+
+只读UTF8单文件导入已经实现并独立提交（见git log）。端口RecordFilePicker/typed失败；适配器FileSelectorRecordPicker独占XFile/IO，256000字节/64000字符、严格UTF8、读取预算5秒与订阅取消/名称清理；ImportFileDialog预览/确认/取消退场代次，App._import(fromFile:true)共享快照/dirty/先保存保护。main已注入官方file_selector1.1.0，锁定传递版本与LICENSE/archive摘要见legal登记。macOS Debug/Release user-selected.read-only+sandbox，Pod嵌入生成变更真实保留。
+
+目标18/18，根256/256显式官方NNUE和analyze均exit0；native文件目标1/1真实IO+worker+保存及源不变通过，实际Debug签名含只读/sandbox。系统chooser注入，不当NSOpenPanel实际选择验证；Release实际构建/其它平台未验。核心未变65沿用。初测试接口误用和WXF夹具首标签失败、analyze冗余import已记SESSION_LOG/TRACEABILITY。无待等待会话；日志/tmp/chessnext-file-import-*.log。普通旧用户窗口不要关。下一外部文字文件导出先验证sandbox/替换失败模型，写服务独立于只读端口；此段覆盖前文“下一导入”的旧建议。

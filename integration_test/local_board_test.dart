@@ -1,3 +1,5 @@
+import 'package:chess_next/adapters/platform/file_selector_record_picker.dart';
+import 'package:file_selector/file_selector.dart';
 import '../test/support/memory_clipboard.dart';
 import 'package:chess_next/features/help/onboarding_dialog.dart';
 import 'package:chess_next/adapters/storage/file_recent_reading_repository.dart';
@@ -1387,4 +1389,75 @@ void main() {
       await directory.delete(recursive: true);
     }
   });
+  testWidgets(
+    'native file import reads UTF8 and preserves source plus saved metadata',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-file-import-');
+      final source = File('${directory.path}/自制.pgn');
+      const text =
+          '[Game "Chinese Chess"]\n[Format "ICCS"]\n[Event "原生文件赛事"]\n[Custom "保留"]\n{根注} 1. H2-E2 {炮注} *';
+      await source.writeAsString(text);
+      final bytes = await source.readAsBytes();
+      var choices = 0;
+      final picker = FileSelectorRecordPicker(
+        chooser: (types) async {
+          choices++;
+          expect(types.single.extensions, ['pgn', 'fen', 'txt']);
+          return XFile(source.path);
+        },
+      );
+      final games = FileGameRepository(() async => directory);
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(key: UniqueKey(), repository: games, filePicker: picker),
+        );
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final before = session.tree;
+        await tap(find.text('导入文件'));
+        await tester.tap(find.text('选择文件'));
+        for (
+          var i = 0;
+          i < 100 && find.textContaining('PGN · 1着').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(find.textContaining('PGN · 1着'), findsOneWidget);
+        expect(session.tree, same(before));
+        await tap(find.text('导入'));
+        expect(choices, 1);
+        expect(session.tree.nodeCount, 2);
+        expect(session.metadata.tags['Event'], '原生文件赛事');
+        expect(session.tree.root.comment, '根注');
+        expect(session.tree.current.comment, '炮注');
+        await tap(find.text('保存棋谱'));
+        await enterNativeText(tester, find.byType(TextField).last, '原生文件导入验证');
+        await tap(find.widgetWithText(FilledButton, '保存'));
+        for (var i = 0; i < 50 && session.dirty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(session.dirty, isFalse);
+        final saved = (await games.list()).games.single;
+        expect(saved.metadata.tags['Custom'], '保留');
+        expect(saved.tree.current.comment, '炮注');
+        expect(await source.readAsBytes(), bytes);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }

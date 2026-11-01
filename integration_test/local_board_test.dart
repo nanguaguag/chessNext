@@ -687,6 +687,13 @@ void main() {
       expect(session.revision, revision);
       await tapVisible(find.byKey(const ValueKey('review-n1')));
       expect(session.tree.cursorId, 'n1');
+      await tapVisible(find.byKey(const ValueKey('review-chart')));
+      await tester.sendKeyEvent(LogicalKeyboardKey.end);
+      await tester.pumpAndSettle();
+      expect(session.tree.cursorId, 'n2');
+      await tester.sendKeyEvent(LogicalKeyboardKey.arrowLeft);
+      await tester.pumpAndSettle();
+      expect(session.tree.cursorId, 'n1');
       final job = engine.startReview(
         limits: ReviewLimits(depth: 255, moveTimeMs: 100000),
       );

@@ -5,6 +5,7 @@ import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/engine_session_controller.dart';
 import '../../application/review_models.dart';
 import 'review_options_dialog.dart';
+import 'review_chart.dart';
 
 class ReviewPanel extends StatelessWidget {
   const ReviewPanel({super.key, required this.engine});
@@ -100,6 +101,16 @@ class ReviewPanel extends StatelessWidget {
                   child: const Text('分析整盘棋'),
                 ),
               if (ids.isNotEmpty) ...[
+                if (canNavigate)
+                  ListenableBuilder(
+                    listenable: engine.session,
+                    builder: (context, _) => ReviewChart(
+                      line: engine.session.tree.currentLine,
+                      results: run.results,
+                      cursorId: engine.session.tree.cursorId,
+                      onNavigate: engine.navigateToNode,
+                    ),
+                  ),
                 const Text('红方视角 · 杀棋/上下界分别保留；无评分不计作0'),
                 SizedBox(
                   height: math.min(240, ids.length * extent),

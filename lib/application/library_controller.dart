@@ -14,7 +14,8 @@ class LibraryController extends ChangeNotifier {
   String? currentId;
   int? _documentEpoch;
   int? get documentEpoch => _documentEpoch;
-  String title = '未命名棋谱';
+  static const untitled = '未命名棋谱';
+  String title = untitled;
   LibrarySnapshot snapshot = const LibrarySnapshot([]);
   bool _disposed = false;
   void _notify() {
@@ -63,6 +64,7 @@ class LibraryController extends ChangeNotifier {
       id: id,
       title: name.trim(),
       tree: session.tree,
+      metadata: session.metadata,
       modifiedAt: DateTime.now(),
     );
     await repository.save(game);
@@ -94,7 +96,7 @@ class LibraryController extends ChangeNotifier {
       throw StateError('阅读标记与棋谱不匹配');
     }
     final restored = reading?.restore(game.tree);
-    session.replaceTree(restored?.tree ?? game.tree);
+    session.replaceTree(restored?.tree ?? game.tree, metadata: game.metadata);
     if (restored?.matched == false) {
       error = '原阅读位置已变化，已打开棋谱保存时的位置。未保存的分支请从自动草稿恢复。';
     }
@@ -108,8 +110,12 @@ class LibraryController extends ChangeNotifier {
   void startPosition(Position position) =>
       importTree(GameTree(initial: position), title: '局面分析');
 
-  void importTree(GameTree tree, {String title = '导入棋谱'}) {
-    session.replaceTree(tree, saved: false);
+  void importTree(
+    GameTree tree, {
+    String title = '导入棋谱',
+    GameMetadata metadata = GameMetadata.empty,
+  }) {
+    session.replaceTree(tree, saved: false, metadata: metadata);
     currentId = null;
     _documentEpoch = null;
     this.title = title;
@@ -120,7 +126,7 @@ class LibraryController extends ChangeNotifier {
     session.newGame();
     currentId = null;
     _documentEpoch = null;
-    title = '未命名棋谱';
+    title = untitled;
     _notify();
   }
 }

@@ -213,3 +213,13 @@ ReadingNavigation纯应用目标：严格祖先/所选currentLine最近分支点
 核心新增12测试：格式/侧/计数/根/标签转义与Unicode/注释/范围/声明结果、30余非法输入和各项限额/上界1999着、邻接转义与64标签；核心完整dart test61/61、dart analyze无问题。根E20原始151字节互操作新增1测试，全根显式官方NNUEflutter test210/210、flutter analyze无问题。核心首全套60+1失败为测试未指定Chinese而默认ICCS输出、Format标签断言不一致，改显式格式后61；未放宽严格元数据Map比较。
 
 本片只格式层，无App入口或资料持久化，不能标F08/F12完成或UI支持PGN。无App/引擎/原生修改，macOS不空跑；下一资料模型/文档存储，再接文字与文件接口。PGN_CODEC_SLICE/PGN_RESEARCH/E20及源码测试可追溯，未复制第三方parser/例谱。
+
+## 2026-11-02 / M4-01b / F10,F12 → B16,B19 棋谱资料及本机保留
+
+GameMetadata纯Dart不可变有界/内容相等/JSON，未知字段保留，PGN复用校验；BoardSession原子tree+metadata，metadata-only内容dirty/不改位置，Library/SavedGame可选资料/旧schema兼容；FileGameRepository坏资料走备份且保留原件，FileDraftRepository转传、Draft key加入metadata、纯资料及命名空草稿恢复。覆盖保护以dirty为准，清掉最后字段仍提示。资料结果仅声明，不强制规则终局；普通分析/AI不重启，批处理沿原revision规则过期。
+
+Material3资料表单/六常用字段和记录结果、只提交改动、未知/派生字段只读查看、取消/noop/旧epoch和内容保护、200%字号。8应用+4文件+4组件=16新增根测试，根真NNUE完整226/226与flutter analyze通过；核心新增4，完整65/65，dart analyze无问题（首测试空List推断1警告已补Object?）。目标存储初10/10、UI首15/15，再新增编辑器纠错后完整门槛。
+
+macOS完整18项首轮17通过1失败，新资料用例库条目与草稿同名文本匹配歧义；修ListTile限定/等待行时漏声明又一次构建失败，补后资料单项1/1（00:09）通过。生产源未因测试修订改变；原生覆盖包括完整保存资料/新App打开原保存/恢复独立metadata-only草稿/原谱保持不变，不虚构最后一条命令18/18。raw生命周期[]，不当人工OS焦点；其它平台未验。日志SESSION_LOG。
+
+ADR-019/RECORD_METADATA_SLICE；仍未接PGN交换UI和文件端口，不能标F08/F12全完成。没有新增依赖或第三方资产。

@@ -229,3 +229,7 @@ E20调查完成：参考真实导出Agent自制PGN151字节，download事件确�
 2026-11-02 M4-01a：纯DartPgnRecord/PgnCodec和有限profile计划，11核心+1根E20互操作测试已写；目标执行中/tmp/chessnext-pgn-{target,reference}.log，未完成全量门槛/未提交。App无PGN入口不能标可用。原始规范/样本独立登记ec69d78。
 M4-01a初目标核心11/11与根E20互操作1/1通过；加输入侧标签预算和邻接转义/64标签上限第12测试后，核心全量60通过1失败：比较Chinese元数据却用默认ICCS输出，差异正是Format字段；改测试明确指定Chinese导出（保留严格全Map比较）。同轮根真NNUE210/210、flutter analyze与core dart analyze通过。核心最终全套重跑中，不将60+1失败写通过。
 M4-01a最终门槛：核心dart test61/61、dart analyze无问题；根显式NNUEflutter test210/210、flutter analyze无问题。无待等待验证命令，无UI/原生改动不空跑macOS。只codec，下一GameMetadata/保存草稿前置，再PGN交换界面，不误称App支持PGN。所有新增实现原创，未引依赖。
+2026-11-02 M4-01b开始：GameMetadata/会话/显式保存及独立草稿转传、可选schema字段/元数据only dirty。初flutter analyze无问题，4核心+6应用+4文件测试已写，根存储目标执行中/tmp/chessnext-metadata-storage-target.log，尚无UI/全量/原生门槛，不计完成。
+M4-01b中间：存储首10/10、表单加入后目标15/15，再补Editor限额纠错；根真NNUE226/226、flutter analyze无问题，核心65/65；核心analyze首1条测试空List类型推断警告，补Object?后无问题。覆盖保护以dirty判断修复清空最后资料未提示，已命名空草稿可恢复。macOS完整18执行中/tmp/chessnext-metadata-native.log，无完成声明。
+M4-01b原生首完整18项：17通过1失败，新增用例库打开时find.text同名匹配草稿标题和库条目导致Too many elements。改限定ListTile并等该行；首次替换漏savedRow声明导致单项原生构建编译失败，补声明后重验。均不是通过，不隐去；生产源未改。原生修后日志/tmp/chessnext-metadata-native-final.log，flutter analyze复验中。
+M4-01b提交门槛：根真NNUE226/226、flutter analyze无问题；核心65/65、最终dart analyze无问题。原生完整首18项17通过1失败/测试定位修订一次漏变量编译失败已如实记，最终资料单项1/1（00:09）通过，源未改，覆盖18用例但非最后一条18/18。无待等待验证命令。下一PGN文字交换（非filepicker），模型与草稿资料已经可用。

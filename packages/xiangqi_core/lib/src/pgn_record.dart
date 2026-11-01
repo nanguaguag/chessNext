@@ -1,3 +1,4 @@
+import 'game_metadata.dart';
 import 'chinese_notation.dart';
 import 'game_tree.dart';
 import 'position.dart';
@@ -24,14 +25,7 @@ final _tagName = RegExp(r'^[A-Za-z][A-Za-z0-9_]{0,63}$');
 final _controls = RegExp(r'[\x00-\x1f\x7f]');
 
 void _validateTags(Map<String, String> tags) {
-  if (tags.length > PgnCodec.maxTags) throw ArgumentError('PGN标签超过64个');
-  for (final entry in tags.entries) {
-    if (!_tagName.hasMatch(entry.key) ||
-        entry.value.length > PgnCodec.maxTagValue ||
-        _controls.hasMatch(entry.value)) {
-      throw ArgumentError('PGN标签格式无效：${entry.key}');
-    }
-  }
+  GameMetadata(tags);
 }
 
 Position _pgnPosition(String fen) {
@@ -82,7 +76,9 @@ class PgnRecord {
 }
 
 abstract final class PgnCodec {
-  static const maxLength = 64000, maxTags = 64, maxTagValue = 4096;
+  static const maxLength = 64000,
+      maxTags = GameMetadata.maxTags,
+      maxTagValue = GameMetadata.maxValueLength;
   static const maxPlies = 1999, maxComment = 10000;
 
   static PgnRecord parse(String text) {

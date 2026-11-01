@@ -59,3 +59,12 @@ packages/xiangqi_core/lib/src/pgn_record.dart+export：PgnRecord规范化四基�
 SavedGame新增可选GameMetadata默认empty（可const empty），FileGameRepository schema1可选metadata字段/旧文件无字段默认empty/坏metadata转FormatException走有效备份/损坏原件保护；同包FileDraftRepository.save必须转传metadata，DraftController的_DraftKey加入metadata，恢复importTree也传它，避免只改资料不自动保存或恢复丢标签。LibraryController.save捕获metadata，同epoch晚编辑仍dirty；open/recover/importTree一次带metadata。最近阅读身份仍根/路径，不复制内容。
 再加Material3棋谱资料编辑入口与200%字号/错误/旧文档确认保护，测试未知标签/metadata-only dirty与草稿/新实例保存恢复/坏文件备份/延迟保存/分析不重启。根test+analyze、核心新增对应测试+analyze、相关macOS保存/草稿验证后独立中文commit。之后M4-01c接PGN文字交换和文件端口，明确导出路径/评注/未支持特性。别直接让PGN标签被GameTree导入丢掉或把codec当全功能。
 当前基线f7d2bb9分支导航，ec69d78研究，PGN提交见git log；IAB tab4自制谱alt末端已markHandoff，下载原文件与SHA见前段及E20manifest。用户持续推进全站/每功能门槛后提交的约束不变，未全部对齐不能最终停下。
+
+## M4-01b最新：棋谱资料完成（提交见git log）
+GameMetadata有界不可变/内容相等/JSON，PGN复用；BoardSession并列metadata与内容修订，SavedGame可选field/旧文件默认empty，FileGameRepository坏资料转FormatException走备份并保留原件；FileDraftRepository转传、Draft key加入metadata、恢复带资料。Library.save/open/import转传。MetadataEditor epoch+revision保护（导航不失效），Material3表单只提交已改字段/未知只读查看/结果声明不裁决/noop不dirty。清空最后字段仍dirty，覆盖保护统一dirty判断；命名空草稿可恢复。普通分析/AI不重启，整谱/候选仍按内容revision过期。
+
+RECORD_METADATA_SLICE/ADR-019，8应用+4文件+4组件=16新增根测试，全根真NNUE226/226、flutter analyze通过；核心4新增全65/65+dart analyze（首测试空List推断警告补Object?后过）。macOS完整18首轮17通过1失败（新资料用例草稿/库同名定位），修测试漏savedRow声明又一次构建失败，补后资料单项1/1（00:09）通过；生产源未变，不把末命令说成18/18。覆盖保存/新App原谱打开/独立metadata-only草稿恢复/原谱不变。日志/tmp/chessnext-metadata-{target,root-full,analyze,core-full,core-analyze,native,native-final}.log；无待等待验证命令，应独立feat(records)中文提交。
+
+下一M4-01c PGN文字交换（不是文件picker）：application/record_text_exchange.dart定义ImportedRecord(tree,metadata,sourceFormat)和TextExportFormat；文本以[开头自动走PgnCodec，否则TextRecord，PGN标签用GameMetadata全部保留。建议把解析放顶层/静态Isolate.run worker，只捕获String、返回纯Domain DTO/错误字符串，避免闭包捕获WidgetState；加实际worker传输与取消/旧回调测试。ImportTextDialog返回typed DTO，App保留现有epoch/revision/dirty/stop保护并library.importTree(...metadata)；旧格式metadata.empty新文档。
+导出捕获打开时tree+metadata快照，保留旧3格式并加PGN ICCS/中文；用可适应200%字号的格式选择器，PGN评注checkbox默认true，花括号不能无损写时明确错误+禁复制，用户可显式省略。输出PGN派生Game/FEN/Format按当前根和所选格式重算，结果按记录保留，不裁决。非PGN格式明确资料/注释/分支损失；PGN也仅所选路径，不含未来/其它支线。不要由格式层已完成推断App文件导入可用。
+先写PGN_EXCHANGE_SLICE/接口失败模型，再实现和测试；旧ImportDialog测试若typed result变化要更新语义断言，worker真实异步用pump_until/runAsync等待，不删生产await。之后文件端口/格式扩展、错题/训练、布局外观声音、自建后端部署、五平台等持续推进；未全部对齐不能最终停下。

@@ -9,11 +9,14 @@ class BoardSession extends ChangeNotifier {
   }
   GameTree _tree;
   GameTree get tree => _tree;
+  GameMetadata _metadata = GameMetadata.empty;
+  GameMetadata get metadata => _metadata;
   Position get position => tree.current.position;
   List<Move> get moves =>
       List.unmodifiable(tree.path.skip(1).map((node) => node.move!));
   bool get hasMoves => tree.nodeCount > 1;
   bool get hasContent =>
+      !metadata.isEmpty ||
       hasMoves ||
       tree.root.comment.isNotEmpty ||
       tree.root.position.toFen() != Position.initialFen;
@@ -30,9 +33,14 @@ class BoardSession extends ChangeNotifier {
     notifyListeners();
   }
 
-  void replaceTree(GameTree value, {bool saved = true}) {
+  void replaceTree(
+    GameTree value, {
+    bool saved = true,
+    GameMetadata metadata = GameMetadata.empty,
+  }) {
     _inputLocked = false;
     _tree = value;
+    _metadata = metadata;
     _revision++;
     _savedRevision = saved ? _revision : -1;
     _epoch++;
@@ -179,6 +187,13 @@ class BoardSession extends ChangeNotifier {
   void first() => navigate(tree.root.id);
   void last() => navigate(tree.currentLine.last.id);
 
+  void updateMetadata(GameMetadata value) {
+    if (value == metadata) return;
+    _metadata = value;
+    _revision++;
+    notifyListeners();
+  }
+
   void annotate(String comment) {
     if (comment == tree.current.comment) return;
     _tree = tree.annotate(comment);
@@ -213,6 +228,7 @@ class BoardSession extends ChangeNotifier {
   void newGame() {
     _inputLocked = false;
     _tree = GameTree();
+    _metadata = GameMetadata.empty;
     _revision++;
     _savedRevision = _revision;
     _epoch++;

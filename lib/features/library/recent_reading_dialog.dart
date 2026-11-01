@@ -12,7 +12,7 @@ class RecentReadingDialog extends StatelessWidget {
     final epoch = session.epoch;
     final revision = session.revision;
     final positionRevision = session.positionRevision;
-    if (session.dirty && session.hasContent) {
+    if (session.dirty) {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(

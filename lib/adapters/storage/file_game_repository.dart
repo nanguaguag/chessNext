@@ -46,6 +46,9 @@ class FileGameRepository implements GameRepository {
       modifiedAt: DateTime.parse(data['modifiedAt'] as String),
       tree: GameTree.fromJson(data['tree'] as Map<String, dynamic>),
       recovered: recovered,
+      metadata: data.containsKey('metadata')
+          ? GameMetadata.fromJson(data['metadata'])
+          : GameMetadata.empty,
     );
   }
 
@@ -106,6 +109,7 @@ class FileGameRepository implements GameRepository {
         'title': game.title,
         'modifiedAt': game.modifiedAt.toUtc().toIso8601String(),
         'tree': game.tree.toJson(),
+        if (!game.metadata.isEmpty) 'metadata': game.metadata.toJson(),
       }),
     );
     if (data.length > maxBytes || game.tree.nodeCount > 2000) {

@@ -6,7 +6,7 @@ import '../ports/game_repository.dart';
 import 'board_session.dart';
 import 'library_controller.dart';
 
-typedef _DraftKey = (GameTree, String);
+typedef _DraftKey = (GameTree, String, GameMetadata);
 
 class DraftController extends ChangeNotifier {
   DraftController(
@@ -35,7 +35,7 @@ class DraftController extends ChangeNotifier {
   (SavedGame, _DraftKey)? _queued;
   _DraftKey? _observed;
   _DraftKey? _persisted;
-  _DraftKey get _key => (session.tree, library.title);
+  _DraftKey get _key => (session.tree, library.title, session.metadata);
   void _notify() {
     if (!_disposed) notifyListeners();
   }
@@ -51,7 +51,9 @@ class DraftController extends ChangeNotifier {
       if (_disposed) return;
       final hasContent =
           draft != null &&
-          (draft.tree.nodeCount > 1 ||
+          (draft.title != LibraryController.untitled ||
+              !draft.metadata.isEmpty ||
+              draft.tree.nodeCount > 1 ||
               draft.tree.root.comment.isNotEmpty ||
               draft.tree.root.position.toFen() != Position.initialFen);
       pending = hasContent ? draft : null;
@@ -63,7 +65,7 @@ class DraftController extends ChangeNotifier {
       loading = false;
       if (!_disposed) {
         _notify();
-        if (_ready && session.hasContent) _changed();
+        if (_ready && (session.hasContent || session.dirty)) _changed();
       }
     }
   }
@@ -80,11 +82,14 @@ class DraftController extends ChangeNotifier {
   /// Recovery always creates a new dirty copy; it never binds the saved record ID.
   bool restore({bool replaceCurrent = false}) {
     final draft = pending;
-    if (draft == null ||
-        (session.dirty && session.hasContent && !replaceCurrent)) {
+    if (draft == null || (session.dirty && !replaceCurrent)) {
       return false;
     }
-    library.importTree(draft.tree, title: draft.title);
+    library.importTree(
+      draft.tree,
+      title: draft.title,
+      metadata: draft.metadata,
+    );
     pending = null;
     _ready = true;
     _observed = _key;
@@ -117,6 +122,7 @@ class DraftController extends ChangeNotifier {
         id: 'active',
         title: library.title,
         tree: session.tree,
+        metadata: session.metadata,
         modifiedAt: DateTime.now(),
       ),
       key,

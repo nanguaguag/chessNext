@@ -63,8 +63,7 @@ class _LibraryDialogState extends State<LibraryDialog> {
                             trailing: const Icon(Icons.chevron_right),
                             enabled: !library.busy,
                             onTap: () async {
-                              if (library.session.dirty &&
-                                  library.session.hasContent) {
+                              if (library.session.dirty) {
                                 final confirmed = await showDialog<bool>(
                                   context: context,
                                   builder: (context) => AlertDialog(

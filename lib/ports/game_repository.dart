@@ -7,10 +7,12 @@ class SavedGame {
     required this.tree,
     required this.modifiedAt,
     this.recovered = false,
+    this.metadata = GameMetadata.empty,
   });
   final String id;
   final String title;
   final GameTree tree;
+  final GameMetadata metadata;
   final DateTime modifiedAt;
   final bool recovered;
 }

@@ -23,6 +23,7 @@ class FileDraftRepository implements DraftRepository {
       id: 'active',
       title: draft.title,
       tree: draft.tree,
+      metadata: draft.metadata,
       modifiedAt: draft.modifiedAt,
     ),
   );

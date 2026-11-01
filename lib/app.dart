@@ -1,3 +1,4 @@
+import 'features/metadata/record_metadata_dialog.dart';
 import 'features/help/onboarding_dialog.dart';
 import 'features/help/offline_help_dialog.dart';
 import 'application/recent_reading_controller.dart';
@@ -174,7 +175,6 @@ class _ChessNextAppState extends State<ChessNextApp>
     await readings.flush();
     if (!mounted) return AppExitResponse.exit;
     if (session.dirty &&
-        session.hasContent &&
         (drafts == null || drafts!.error != null || !drafts!.canSave)) {
       final dialogContext = navigatorKey.currentContext;
       if (dialogContext == null || !dialogContext.mounted) {
@@ -302,12 +302,12 @@ class _BoardPage extends StatelessWidget {
   }
 
   Future<void> _newGame(BuildContext context) async {
-    if (session.dirty && session.hasContent) {
+    if (session.dirty) {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
           title: const Text('开始新局？'),
-          content: const Text('当前对局仅保存在内存中，开始新局将清除着法。'),
+          content: const Text('开始新局会替换当前棋谱及资料，请先保存需要保留的修改。'),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
@@ -364,7 +364,7 @@ class _BoardPage extends StatelessWidget {
   Future<void> _edit(BuildContext context) async {
     await analysis.disable();
     if (!context.mounted) return;
-    if (session.dirty && session.hasContent) {
+    if (session.dirty) {
       final choice = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
@@ -415,7 +415,7 @@ class _BoardPage extends StatelessWidget {
     );
     if (tree == null || !context.mounted) return;
     if (session.epoch != epoch || session.revision != revision) return;
-    if (session.dirty && session.hasContent) {
+    if (session.dirty) {
       final choice = await showDialog<String>(
         context: context,
         builder: (context) => AlertDialog(
@@ -449,7 +449,7 @@ class _BoardPage extends StatelessWidget {
     await analysis.disable();
     if (!context.mounted || drafts?.pending == null) return;
     var replace = false;
-    if (session.dirty && session.hasContent) {
+    if (session.dirty) {
       replace =
           await showDialog<bool>(
             context: context,
@@ -628,6 +628,17 @@ class _BoardPage extends StatelessWidget {
                         onPressed: library.busy ? null : () => _edit(context),
                         icon: const Icon(Icons.edit_outlined),
                         label: const Text('编辑局面'),
+                      ),
+                      OutlinedButton.icon(
+                        icon: const Icon(Icons.description_outlined),
+                        label: const Text('棋谱资料'),
+                        onPressed: library.busy
+                            ? null
+                            : () => showDialog<void>(
+                                context: context,
+                                builder: (_) =>
+                                    RecordMetadataDialog(session: session),
+                              ),
                       ),
                       OutlinedButton.icon(
                         onPressed: library.busy ? null : () => _save(context),

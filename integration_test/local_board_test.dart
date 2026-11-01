@@ -1188,4 +1188,101 @@ void main() {
       }
     },
   );
+  testWidgets(
+    'native record metadata survives saves and independent draft recovery',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-metadata-');
+      final games = FileGameRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        repository: FileGameRepository(() async => directory),
+        draftRepository: FileDraftRepository(() async => directory),
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final drafts = tester
+            .widget<DraftStatusBar>(find.byType(DraftStatusBar))
+            .drafts;
+        for (var i = 0; i < 50 && drafts.loading; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(drafts.canSave, isTrue);
+        session.updateMetadata(GameMetadata({'Custom': '本机原始标签'}));
+        await tester.pumpAndSettle();
+        await tap(find.widgetWithText(OutlinedButton, '棋谱资料'));
+        for (final entry in {'Event': '原生自制比赛', 'Red': '保存的棋手'}.entries) {
+          final field = find.byKey(ValueKey('metadata-${entry.key}'));
+          await tester.ensureVisible(field);
+          await enterNativeText(tester, field, entry.value);
+        }
+        await tap(find.text('应用资料'));
+        expect(session.metadata.tags['Custom'], '本机原始标签');
+        expect(session.dirty, isTrue);
+        await tap(find.text('保存棋谱'));
+        await enterNativeText(
+          tester,
+          find.byKey(const ValueKey('record-name')),
+          '原生资料棋谱',
+        );
+        await tap(find.widgetWithText(FilledButton, '保存'));
+        for (var i = 0; i < 50 && session.dirty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(session.dirty, isFalse);
+        final stored = (await games.list()).games.single;
+        expect(stored.metadata.tags['Red'], '保存的棋手');
+        session.updateMetadata(session.metadata.copyWith({'Red': '草稿棋手'}));
+        await drafts.flush();
+        expect(
+          (await FileDraftRepository(
+            () async => directory,
+          ).load())!.metadata.tags['Red'],
+          '草稿棋手',
+        );
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        for (var i = 0; i < 50 && find.text('恢复草稿').evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        final restored = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        await tap(find.text('棋谱库'));
+        final savedRow = find.widgetWithText(ListTile, '原生资料棋谱');
+        for (var i = 0; i < 50 && savedRow.evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tap(savedRow);
+        expect(restored.metadata.tags['Red'], '保存的棋手');
+        await tap(find.text('恢复草稿'));
+        expect(restored.metadata.tags['Red'], '草稿棋手');
+        expect(restored.metadata.tags['Custom'], '本机原始标签');
+        expect(restored.dirty, isTrue);
+        expect((await games.load(stored.id)).metadata.tags['Red'], '保存的棋手');
+        await tester
+            .widget<DraftStatusBar>(find.byType(DraftStatusBar))
+            .drafts
+            .flush();
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }

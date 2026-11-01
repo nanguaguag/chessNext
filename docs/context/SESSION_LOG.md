@@ -210,3 +210,4 @@ ADR-015。原生探针8行总1000/quit0另见协议归档；此功能只提供�
 
 2026-11-02 M3-16：预期损失报告实现，ADR-016/TRACEABILITY。首目标编译失败（测试误用GameTree/WdlEstimate构造API）修复；后8通过2失败，定位n2夹具b2e2撞己炮被FiniteSearchExecutor正确拒绝，改合法b0c2后目标10/10。根真NNUE172/172；analyze余1个无效!删后无问题。macOS完整15/15（01:55），含新报告筛选/跳转不dirty；raw生命周期[]，不冒充人工OS焦点。核心未改49/49沿用。提交前最终根回归日志/tmp/chessnext-report-final.log，待命令结束确认；其它日志/tmp/chessnext-report-{target,full,analyze,native}.log。当前普通用户窗口PID38211仍在，不关闭。
 M3-16提交前最终根回归172/172通过，静态分析无问题及原生15结果不变；无待等待验证命令。下一研究证据分开提交，然后继续功能。
+2026-11-02 E16/E17浏览器实际审计：存题登录提示/最近阅读访客空态/公开只读页标题但着法未加载/返回历史仍空；证据登记REFERENCE_EVIDENCE，不标历史生成成功。研究资源仅docs，未入App资产，无产品代码更改，不重复业务测试。下一独立F18离线历史P。

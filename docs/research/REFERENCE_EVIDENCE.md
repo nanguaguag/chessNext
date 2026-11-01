@@ -89,3 +89,15 @@ D：[官方使用指南](https://xiangqiai.com/guide/)本次抓取声明标准�
 O/V：同日IAB访客菜单未观察到题库入口；打开棋谱分析方式选择器实际只列快速与彻底。[菜单AX](guide-menu-2026-11-02-ax.txt)、[截图](screenshots/guide-menu-2026-11-02.png)、[方式AX](guide-modes-2026-11-02-ax.txt)、[截图](screenshots/guide-modes-2026-11-02.png)。只验证控件可见，不代表文档中其他版本不存在该能力。未登录/注册/访问私有API，未开始新分析。
 
 U：版本、设备或账号造成的差异，以及题库运行/标准配置。F33保留为D待核，不能凭指南宣称已运行或删去需求。指南胜率/准确率数学公式仍未取得。
+
+## E16 / 2026-11-02 访客存题登录边界
+
+URL https://xiangqiai.com/#/，E14同一自制棋谱访客，无账号。点击当前着法详情“存题”，V弹出“需要登录 / 该功能需要登录后才能使用，现在去登录吗？”取消后返回原谱，未登录/上传/新增题。[AX](E16-save-puzzle-login-ax.txt)、[截图](screenshots/E16-save-puzzle-login.png)。存题执行/训练流程仍U；本地错题功能是项目离线优先设计，不假称已确认网站登录后流程。
+
+## E17 / 2026-11-02 访客最近阅读与公开入口
+
+V：菜单→最近阅读，URL https://xiangqiai.com/#/records/recent ，访客无需登录即可进入；加载后“还没有阅读记录”。[AX](E17-recent-empty-ax.txt)、[截图](screenshots/E17-recent-empty.png)。此前自制棋谱编辑未出现阅读记录，不能据此断定所有草稿永不记录。
+
+O/V：菜单→棋谱库→官方精选→古谱→事林广记→鸿雁惊寒副图2，公开只读标题及3/3章节导航出现（https://xiangqiai.com/#/c/034nmKTWYSb745Ug0GX29J/3），实际只显示开始、下一着禁用，没有观察到着法载入；不能把目录“6回合”当实际加载成功。[AX](E17-public-open-ax.txt)、[截图](screenshots/E17-public-open.png)。再菜单→最近阅读，仍显示空列表。[AX](E17-recent-after-open-ax.txt)、[截图](screenshots/E17-recent-after-open.png)。未获取私有API/复制棋谱数据/下载资源；自制棋谱原状态可能被公开页替换，但只是本轮研究自制材料。
+
+U：站点阅读记录生成、去重/上限、持久化/游标恢复、跨设备同步、公开棋谱着法加载未成功原因。只将入口及空态标V。项目后续离线最近阅读的已保存棋谱ID/游标/排序为P，须独立验收。

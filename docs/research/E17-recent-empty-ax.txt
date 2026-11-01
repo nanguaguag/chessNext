@@ -1,0 +1,10 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/records/recent".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/records/recent
+	1 container app
+		2 container
+			3 text 
+			4 text 最近阅读
+			5 image
+			6 text 还没有阅读记录
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/records/recent

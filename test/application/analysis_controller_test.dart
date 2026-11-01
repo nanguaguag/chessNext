@@ -82,4 +82,35 @@ void main() {
       expect(analysis.infos, isEmpty);
     },
   );
+  test(
+    'analysis and AI distinguish document epochs from search tokens',
+    () async {
+      final session = BoardSession();
+      final fake = FakeEngine();
+      final engine = EngineSessionController(session, () async => fake);
+      addTearDown(() {
+        engine.dispose();
+        session.dispose();
+      });
+      await engine.enable();
+      final initial = fake.requests.last.gameId;
+      session.playMove(Move.parse('h2e2'));
+      await Future<void>.delayed(const Duration(milliseconds: 180));
+      expect(fake.requests.last.gameId, initial);
+      session.newGame();
+      await Future<void>.delayed(const Duration(milliseconds: 180));
+      final next = fake.requests.last.gameId;
+      expect(next, session.epoch);
+      expect(next, isNot(initial));
+      await engine.setAiSide(Side.black, true);
+      session.playMove(Move.parse('h2e2'));
+      await Future<void>.delayed(const Duration(milliseconds: 180));
+      expect(fake.requests.last.gameId, next);
+      session.newGame();
+      session.playMove(Move.parse('h2e2'));
+      await Future<void>.delayed(const Duration(milliseconds: 180));
+      expect(fake.requests.last.gameId, session.epoch);
+      expect(fake.requests.last.gameId, isNot(next));
+    },
+  );
 }

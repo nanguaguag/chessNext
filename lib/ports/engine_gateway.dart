@@ -33,6 +33,7 @@ class EngineRequest {
 
   factory EngineRequest({
     required int token,
+    int gameId = 0,
     required Position root,
     Iterable<Move> moves = const [],
     int? depth,
@@ -50,6 +51,7 @@ class EngineRequest {
     }
     return EngineRequest._(
       token: token,
+      gameId: gameId,
       root: root,
       moves: history,
       position: position,
@@ -64,6 +66,7 @@ class EngineRequest {
   }
   factory EngineRequest.fromTree({
     required int token,
+    int gameId = 0,
     required GameTree tree,
     int? depth,
     int? moveTimeMs,
@@ -74,6 +77,7 @@ class EngineRequest {
     Iterable<Move>? searchMoves,
   }) => EngineRequest._(
     token: token,
+    gameId: gameId,
     root: tree.root.position,
     position: tree.current.position,
     moves: List.unmodifiable(tree.path.skip(1).map((n) => n.move!)),
@@ -87,6 +91,7 @@ class EngineRequest {
   );
   EngineRequest._({
     required this.token,
+    this.gameId = 0,
     required this.root,
     required this.moves,
     required this.position,
@@ -112,6 +117,9 @@ class EngineRequest {
     }
   }
   final int token;
+
+  /// Document epoch, independent of the per-search token. Changes request a cold game.
+  final int gameId;
   final Position root;
   final Position position;
   final List<Move> moves;

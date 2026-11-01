@@ -30,6 +30,8 @@ class UciEngine implements EngineGateway {
   final Duration stopTimeout;
   final _events = StreamController<EngineInfo>.broadcast();
   final Map<String, EngineOption> _options = {};
+  Map<String, int> _appliedSettings = {};
+  (int, String)? _gameKey;
   late final StreamSubscription<String> _subscription;
   Future<void> _tail = Future.value();
   EngineLifecycle _phase = EngineLifecycle.stopped;
@@ -191,11 +193,21 @@ class UciEngine implements EngineGateway {
       }
     }
     await _stop();
-    for (final setting in settings.entries) {
+    final changed = settings.entries
+        .where((entry) => _appliedSettings[entry.key] != entry.value)
+        .toList();
+    final gameKey = (request.gameId, request.root.toFen());
+    final newGame = gameKey != _gameKey;
+    for (final setting in changed) {
       _send('setoption name ${setting.key} value ${setting.value}');
     }
-    await _expect('isready', 'readyok');
-    _send('ucinewgame');
+    if (newGame) _send('ucinewgame');
+    if (newGame || changed.isNotEmpty) {
+      await _expect('isready', 'readyok');
+      // Only remember changes after the engine has acknowledged readiness.
+      _appliedSettings = settings;
+      _gameKey = gameKey;
+    }
     final moves = request.moves.map((m) => m.toString()).join(' ');
     _send(
       'position fen ${request.root.toFen()}${moves.isEmpty ? '' : ' moves $moves'}',

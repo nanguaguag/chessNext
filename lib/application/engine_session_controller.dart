@@ -203,6 +203,7 @@ class EngineSessionController extends ChangeNotifier {
       final search = await engine.start(
         EngineRequest.fromTree(
           token: generation,
+          gameId: session.epoch,
           tree: session.tree,
           threads: _settings.threads,
           hashMb: _settings.hashMb,

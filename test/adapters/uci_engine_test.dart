@@ -11,6 +11,7 @@ class FakeTransport implements EngineTransport {
   final commands = <String>[];
   bool respond = true;
   bool autoStop = true;
+  bool autoReady = true;
   bool closed = false;
   @override
   Stream<String> get lines => output.stream;
@@ -29,7 +30,7 @@ class FakeTransport implements EngineTransport {
       }
       output.add('uciok');
     }
-    if (command == 'isready') output.add('readyok');
+    if (command == 'isready' && autoReady) output.add('readyok');
     if (command == 'stop' && autoStop) {
       scheduleMicrotask(() => output.add('bestmove h2e2'));
     }
@@ -246,4 +247,128 @@ void main() {
       }
     },
   );
+  test(
+    'same document reuses resources and cache; changed options and game epochs are acknowledged',
+    () async {
+      final transport = FakeTransport();
+      final engine = UciEngine(transport);
+      addTearDown(engine.dispose);
+      Future<void> search(EngineRequest request, [String best = 'h2e2']) async {
+        final result = await engine.start(request);
+        transport.output.add('bestmove $best');
+        await result.bestMove;
+      }
+
+      final root = Position.initial();
+      await search(EngineRequest(token: 1, gameId: 7, root: root, depth: 1));
+      final firstCommands = transport.commands.length;
+      expect(
+        transport.commands.where((c) => c.startsWith('setoption')).length,
+        3,
+      );
+      expect(transport.commands.where((c) => c == 'ucinewgame').length, 1);
+      expect(
+        transport.commands.indexOf('ucinewgame'),
+        lessThan(transport.commands.lastIndexOf('isready')),
+      );
+      await search(
+        EngineRequest.fromTree(token: 2, gameId: 7, tree: GameTree(), depth: 2),
+      );
+      expect(
+        transport.commands
+            .skip(firstCommands)
+            .where(
+              (c) =>
+                  c.startsWith('setoption') ||
+                  c == 'ucinewgame' ||
+                  c == 'isready',
+            ),
+        isEmpty,
+      );
+      await search(
+        EngineRequest(
+          token: 3,
+          gameId: 7,
+          root: root,
+          hashMb: 32,
+          multiPv: 2,
+          depth: 1,
+        ),
+      );
+      expect(
+        transport.commands
+            .where((c) => c == 'setoption name Threads value 1')
+            .length,
+        1,
+      );
+      expect(
+        transport.commands
+            .where((c) => c == 'setoption name Hash value 32')
+            .length,
+        1,
+      );
+      expect(
+        transport.commands
+            .where((c) => c == 'setoption name MultiPV value 2')
+            .length,
+        1,
+      );
+      expect(transport.commands.where((c) => c == 'ucinewgame').length, 1);
+      await search(
+        EngineRequest(
+          token: 4,
+          gameId: 8,
+          root: root,
+          hashMb: 32,
+          multiPv: 2,
+          depth: 1,
+        ),
+      );
+      expect(transport.commands.where((c) => c == 'ucinewgame').length, 2);
+      final custom = SetupDraft.fromPosition(root).clear().toPosition();
+      await search(
+        EngineRequest(
+          token: 5,
+          gameId: 8,
+          root: custom,
+          hashMb: 32,
+          multiPv: 2,
+          depth: 1,
+        ),
+        'e0e1',
+      );
+      expect(transport.commands.where((c) => c == 'ucinewgame').length, 3);
+    },
+  );
+  test('changed cached resources wait for readyok before the next go', () async {
+    final transport = FakeTransport();
+    final engine = UciEngine(
+      transport,
+      handshakeTimeout: const Duration(seconds: 1),
+    );
+    addTearDown(engine.dispose);
+    final first = await engine.start(
+      EngineRequest(token: 1, root: Position.initial(), depth: 1),
+    );
+    transport.output.add('bestmove h2e2');
+    await first.bestMove;
+    transport.autoReady = false;
+    final pending = engine.start(
+      EngineRequest(token: 2, root: Position.initial(), hashMb: 32, depth: 1),
+    );
+    await Future<void>.delayed(Duration.zero);
+    expect(transport.commands.last, 'isready');
+    expect(transport.commands.where((c) => c.startsWith('go ')).length, 1);
+    transport.output.add('readyok');
+    final second = await pending;
+    transport.output.add('bestmove h2e2');
+    await second.bestMove;
+    // The acknowledged value can now be reused without another readiness wait.
+    final third = await engine.start(
+      EngineRequest(token: 3, root: Position.initial(), hashMb: 32, depth: 1),
+    );
+    transport.output.add('bestmove h2e2');
+    await third.bestMove;
+    expect(transport.commands.where((c) => c.startsWith('go ')).length, 3);
+  });
 }

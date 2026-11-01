@@ -1,0 +1,197 @@
+{
+  "date": "2026-11-01T18:05:40.574816Z",
+  "release": "Pikafish-2026-09-06",
+  "commit": "4c17cee11f888ae1d48a9494f2e2239f019f0a1f",
+  "binary_sha256": "3a11f9034ef723bb4068e4cf88a79a12d99507474ba118fa916ec2cecd4f4abe",
+  "network_sha256": "7d13d73569a9b571ba0eb20cf1596247bc2a42738967e61afef6482b231e900e",
+  "os": "Version 14.4 (Build 23E214)",
+  "logical_processors": 10,
+  "dart": "3.12.2 (stable) (Tue Jun 9 01:11:39 2026 -0700) on \"macos_arm64\"",
+  "settings": {
+    "threads": 1,
+    "hash_mb": 64,
+    "multipv": 1,
+    "depth": 10,
+    "samples_per_mode": 10,
+    "warmup_per_mode": 1
+  },
+  "note": "Alternating initial/two-ply positions, one process per mode. Warm cache benefit is workload-specific; this is not an Elo, general speedup, or <=5% adapter-overhead claim.",
+  "modes": [
+    {
+      "mode": "forced_resource_reset",
+      "samples": [
+        {
+          "history": "",
+          "wall_ms": 37.939,
+          "nodes": 10025,
+          "engine_ms": 11,
+          "depth": 10,
+          "bestmove": "b2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 41.993,
+          "nodes": 14196,
+          "engine_ms": 15,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 38.253,
+          "nodes": 10025,
+          "engine_ms": 10,
+          "depth": 10,
+          "bestmove": "b2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 50.531,
+          "nodes": 14196,
+          "engine_ms": 15,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 42.456,
+          "nodes": 10025,
+          "engine_ms": 11,
+          "depth": 10,
+          "bestmove": "b2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 44.953,
+          "nodes": 14196,
+          "engine_ms": 16,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 40.086,
+          "nodes": 10025,
+          "engine_ms": 11,
+          "depth": 10,
+          "bestmove": "b2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 41.236,
+          "nodes": 14196,
+          "engine_ms": 15,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 36.341,
+          "nodes": 10025,
+          "engine_ms": 10,
+          "depth": 10,
+          "bestmove": "b2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 40.806,
+          "nodes": 14196,
+          "engine_ms": 16,
+          "depth": 10,
+          "bestmove": "h0g2"
+        }
+      ],
+      "median_wall_ms": 41.021,
+      "measured_setoption_count": 30,
+      "measured_ucinewgame_count": 10
+    },
+    {
+      "mode": "same_game_reuse",
+      "samples": [
+        {
+          "history": "",
+          "wall_ms": 12.973,
+          "nodes": 11517,
+          "engine_ms": 13,
+          "depth": 10,
+          "bestmove": "b2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 4.507,
+          "nodes": 4803,
+          "engine_ms": 4,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 6.428,
+          "nodes": 6101,
+          "engine_ms": 6,
+          "depth": 10,
+          "bestmove": "h2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 4.564,
+          "nodes": 4753,
+          "engine_ms": 4,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 0.888,
+          "nodes": 793,
+          "engine_ms": 1,
+          "depth": 10,
+          "bestmove": "h2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 0.952,
+          "nodes": 682,
+          "engine_ms": 1,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 0.675,
+          "nodes": 768,
+          "engine_ms": 1,
+          "depth": 10,
+          "bestmove": "h2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 0.651,
+          "nodes": 644,
+          "engine_ms": 1,
+          "depth": 10,
+          "bestmove": "h0g2"
+        },
+        {
+          "history": "",
+          "wall_ms": 0.698,
+          "nodes": 805,
+          "engine_ms": 1,
+          "depth": 10,
+          "bestmove": "h2e2"
+        },
+        {
+          "history": "h2e2 b9c7",
+          "wall_ms": 0.624,
+          "nodes": 642,
+          "engine_ms": 1,
+          "depth": 10,
+          "bestmove": "h0g2"
+        }
+      ],
+      "median_wall_ms": 0.9199999999999999,
+      "measured_setoption_count": 0,
+      "measured_ucinewgame_count": 0
+    }
+  ]
+}

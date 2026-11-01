@@ -109,6 +109,7 @@ extension EnginePlay on EngineSessionController {
       final search = await engine.start(
         EngineRequest.fromTree(
           token: generation,
+          gameId: session.epoch,
           tree: session.tree,
           moveTimeMs: _thinkTimeMs,
           threads: _settings.threads,

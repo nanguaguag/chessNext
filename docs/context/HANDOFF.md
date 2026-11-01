@@ -31,3 +31,9 @@ E12研究追加：docs/research/review-*-2026-11-02*记录快速执行、配置�
 组合限额即将提交见git log。EngineRequest.nodeLimit可与depth/time并存，策略边界与0/null区别见COMMUNICATION_VALIDATION；go的searchmoves保持最后。根69/69、flutter analyze无问题，真实CLI和macOS包内NNUE验证先到上限结束；原生9/9。本轮fixture采样包含hidden/inactive，不当作OS真实生命周期验收。
 
 下一条：相同资源与同文档搜索复用。当前UciEngine每次start仍三项setoption + ucinewgame；固定官方源码证实同值也触发线程/Hash回调和清表。分别记录已应用资源及(gameId,rootFen)，同文档只发送改变的参数、新文档才ucinewgame，保留stop/bestmove和ready屏障。EngineSessionController分析/AI请求传session.epoch，新Engine默认冷状态。命令Fake与实际NNUE验证，基准若测只报条件和数值、不空称提速百分比；独立commit后才做整谱队列。
+
+## M3-06最新
+
+资源复用已完成并将提交，见git log。gameId与token分离、gameKey含根FEN、只发变化设置/新文档ucinewgame、ready与bestmove屏障。根72/72及analyze、原生9/9通过，微基准JSON和复现工具已加入，限定相关重复局面收益。当前普通flutter run会话22326已检查仍存活，不自动重启可能有未保存棋谱的窗口；其普通入口已运行，但磁盘.app后续被测试构建覆盖，最终审查前需普通入口重建。
+
+下一条实现F01/F13完整当前线路着法导航：GameTree当前线路=根至游标路径+此后主线，游标在开始也可见后续；新增可点击/选中与有界虚拟列表（避免2k着全量重绘）。保持撤回的历史可见，取消错误地把“悔棋后文字消失”当验收；新局才清历史。节点跳转使旧分析结果失效。核心、Widget、长谱及macOS验证后独立提交，再实现F32单引擎可取消队列。

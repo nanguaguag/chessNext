@@ -123,6 +123,11 @@ class AnalysisPanel extends StatelessWidget {
               ),
             ],
           ),
+          if (analysis.engineName != null)
+            Text(
+              analysis.engineName!,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           const SizedBox(height: 8),
           if (analysis.busy) const LinearProgressIndicator(),
           Semantics(

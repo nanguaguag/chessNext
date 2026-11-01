@@ -8,6 +8,7 @@ class UciEngine implements EngineGateway {
   UciEngine(
     this.transport, {
     this.networkPath,
+    this.identity,
     this.handshakeTimeout = const Duration(seconds: 10),
     this.stopTimeout = const Duration(seconds: 3),
   }) {
@@ -24,6 +25,11 @@ class UciEngine implements EngineGateway {
       },
     );
   }
+  @override
+  final EngineIdentity? identity;
+  String? _name;
+  @override
+  String? get name => _name;
   final EngineTransport transport;
   final String? networkPath;
   final Duration handshakeTimeout;
@@ -82,6 +88,14 @@ class UciEngine implements EngineGateway {
   }
 
   void _receive(String line) {
+    if (_phase == EngineLifecycle.starting && line.startsWith('id name ')) {
+      final name = line.substring(8).trim();
+      if (name.isNotEmpty &&
+          name.length <= 256 &&
+          !RegExp(r'[\x00-\x1f\x7f]').hasMatch(name)) {
+        _name = name;
+      }
+    }
     final option = parseUciOption(line);
     if (option != null) _options[option.name] = option;
     if (line == _expected && _waiting != null && !_waiting!.isCompleted) {

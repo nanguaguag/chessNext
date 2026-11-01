@@ -48,6 +48,8 @@ class EngineSessionController extends ChangeNotifier {
   List<EngineInfo> get infos => List.unmodifiable(
     _infos.values.toList()..sort((a, b) => a.multiPv.compareTo(b.multiPv)),
   );
+  String? get engineName => _engine?.name;
+  EngineIdentity? get engineIdentity => _engine?.identity;
   Map<String, EngineOption> get options => _engine?.options ?? const {};
   int get maxThreads => math.max(
     1,
@@ -254,7 +256,12 @@ class EngineSessionController extends ChangeNotifier {
     session.setInputLocked(false);
     _enabled = false;
     _busy = false;
-    _error = exception is StateError && exception.message == '本地分析引擎尚未安装'
+    _error =
+        exception is StateError &&
+            const {
+              '本地分析引擎尚未安装',
+              '本地引擎文件校验失败，请重新安装或构建',
+            }.contains(exception.message)
         ? exception.message
         : '本地引擎操作失败，请重新尝试';
     _status = '本地引擎不可用';

@@ -528,10 +528,23 @@ void main() {
     _,
   ) async {
     final engine = await openBundledEngine();
+    final identity = engine.identity!;
+    expect(identity.release, 'Pikafish-2026-09-06');
+    expect(identity.commit, '4c17cee11f888ae1d48a9494f2e2239f019f0a1f');
+    expect(
+      identity.sourceBinarySha256,
+      '3a11f9034ef723bb4068e4cf88a79a12d99507474ba118fa916ec2cecd4f4abe',
+    );
+    expect(
+      identity.networkSha256,
+      '7d13d73569a9b571ba0eb20cf1596247bc2a42738967e61afef6482b231e900e',
+    );
+    expect(identity.target, contains('macos'));
     final infos = <EngineInfo>[];
     final subscription = engine.info.listen(infos.add);
     try {
       await engine.initialize();
+      expect(engine.name, contains('Pikafish'));
       final root = Position.initial();
       final search = await engine.start(
         EngineRequest(

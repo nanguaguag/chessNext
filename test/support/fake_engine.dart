@@ -3,6 +3,10 @@ import 'package:chess_next/chess_next.dart';
 import 'package:chess_next/ports/engine_gateway.dart';
 
 class FakeEngine implements EngineGateway {
+  @override
+  EngineIdentity? get identity => null;
+  @override
+  String? get name => 'Test engine';
   final events = StreamController<EngineInfo>.broadcast();
   final requests = <EngineRequest>[];
   final results = <Completer<Move?>>[];

@@ -22,13 +22,13 @@
 
 ## 验证和平台
 
-本功能根flutter test97/97（含官方NNUE live测试）、flutter analyze无问题；核心dart test49/49、dart analyze无问题；macOS原生12/12：棋盘、真实沙箱存储重开、NNUE多PV、AI/变招/悔棋、编辑、中文导入导出、实际Documents自动草稿重开恢复、ApplicationSupport主题/参数重开恢复、包内引擎组合预算、读谱未来着/分支导航。4组perft与官方引擎一致。尚未验证Android/iOS/Windows/Linux，不能把macOS通过外推。
+本功能根flutter test104/104（含官方NNUE live测试）、flutter analyze无问题；核心dart test49/49、dart analyze无问题；macOS原生12/12：棋盘、真实沙箱存储重开、NNUE多PV、AI/变招/悔棋、编辑、中文导入导出、实际Documents自动草稿重开恢复、ApplicationSupport主题/参数重开恢复、包内引擎组合预算、读谱未来着/分支导航。4组perft与官方引擎一致。尚未验证Android/iOS/Windows/Linux，不能把macOS通过外推。
 
 本轮原生交互测试明确保持framework-resumed前提（只在integration_test内，普通main无覆盖），真实OS焦点/最小化/隐藏仍待平台QA；生产生命周期由独立组件测试。原生曾停滞一轮被INT中断、首次自建Binding冲突均未记通过，见SESSION_LOG。
 
 原生测试失焦后的enterText必须重新tap并pumpAndSettle后验证实际值；已修测试辅助函数。AI原生整套曾出现状态“分析已停止”无协议错误的偶发中止，单项及最终整套通过；增加生命周期trace与失焦取消组件回归，不静默删除失败记录。Computer Use桌面权限未授，窗口自动置前失败，Flutter原生交互测试通过，人工截图/视觉验收未做。
 
-组合depth/时间/节点预算已在EngineRequest/UciEngine和真实NNUE验证；原生9/9本轮原始事件确有hidden/inactive，fixture使交互前提明确。UI最佳着法整谱队列已实现，红视角曲线已实现，彻底候选/缓存仍待实现。同会话资源/Hash复用已通过命令/真实引擎/微基准验证，见RESOURCE_REUSE.md。完整当前线路可点击/虚拟着法列表已完成，保持变着且读谱暂停AI。E13已验证彻底模式/整树与同级操作。当前着同级/下一着面板、主线无操作与删除停止AI/版本保护已完成。单引擎可取消最佳着法整谱队列已实现；当前线路/整树、进度/跳转、抢占/过期及无评分处理见ADR-011。红视角曲线已实现（mate/bound/缺失分别保留、点击/键盘/滑块导航）；下一项身份元数据与复盘缓存/跳过，再彻底候选。
+组合depth/时间/节点预算已在EngineRequest/UciEngine和真实NNUE验证；原生9/9本轮原始事件确有hidden/inactive，fixture使交互前提明确。UI最佳着法整谱队列已实现，红视角曲线已实现，彻底候选/缓存仍待实现。同会话资源/Hash复用已通过命令/真实引擎/微基准验证，见RESOURCE_REUSE.md。完整当前线路可点击/虚拟着法列表已完成，保持变着且读谱暂停AI。E13已验证彻底模式/整树与同级操作。当前着同级/下一着面板、主线无操作与删除停止AI/版本保护已完成。单引擎可取消最佳着法整谱队列已实现；当前线路/整树、进度/跳转、抢占/过期及无评分处理见ADR-011。红视角曲线已实现（mate/bound/缺失分别保留、点击/键盘/滑块导航）；引擎身份与文件校验已完成，见engine/ENGINE_IDENTITY；下一项独立复盘缓存/跳过，再彻底候选。
 
 ## 继续推进
 

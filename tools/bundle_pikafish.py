@@ -41,6 +41,16 @@ def main():
         subprocess.run(['codesign', '--force', '--sign', '-', '--identifier', 'dev.chessnext.pikafish',
                         '--requirements', '=designated => identifier "dev.chessnext.pikafish"',
                         '--entitlements', str(path), str(destination / binary)], check=True)
+    identity = {
+        'schema': 1,
+        'release': manifest['release'],
+        'commit': manifest['commit'],
+        'sourceBinarySha256': manifest['macos_binary_sha256'],
+        'binarySha256': hashlib.sha256((destination / binary).read_bytes()).hexdigest(),
+        'networkSha256': manifest['network_sha256'],
+        'target': 'macos-universal',
+    }
+    (destination / 'identity.json').write_text(json.dumps(identity, sort_keys=True, indent=2) + '\n')
     print('Bundled verified local Pikafish and NNUE (development signing).')
 
 if __name__ == '__main__':

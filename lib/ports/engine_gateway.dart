@@ -1,4 +1,6 @@
 import 'package:xiangqi_core/xiangqi_core.dart';
+import 'engine_identity.dart';
+export 'engine_identity.dart';
 
 enum EngineLifecycle {
   stopped,
@@ -169,6 +171,8 @@ class EngineSearch {
 }
 
 abstract interface class EngineGateway {
+  EngineIdentity? get identity;
+  String? get name;
   Stream<EngineInfo> get info;
   EngineLifecycle get phase;
   Map<String, EngineOption> get options;

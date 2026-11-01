@@ -20,6 +20,7 @@ class FakeTransport implements EngineTransport {
     commands.add(command);
     if (!respond) return;
     if (command == 'uci') {
+      output.add('id name Synthetic UCI 1.0');
       for (final option in [
         'Threads type spin default 1 min 1 max 8',
         'Hash type spin default 16 min 1 max 128',
@@ -48,6 +49,21 @@ class FakeTransport implements EngineTransport {
 EngineRequest request(int token) =>
     EngineRequest(token: token, root: Position.initial());
 void main() {
+  test(
+    'engine name comes from handshake, not late search output or provenance guess',
+    () async {
+      final transport = FakeTransport();
+      final engine = UciEngine(transport);
+      addTearDown(engine.dispose);
+      expect(engine.name, isNull);
+      expect(engine.identity, isNull);
+      await engine.initialize();
+      expect(engine.name, 'Synthetic UCI 1.0');
+      transport.output.add('id name late replacement');
+      expect(engine.name, 'Synthetic UCI 1.0');
+    },
+  );
+
   test(
     'UCI parser preserves score kind, bounds, MultiPV and spaced option names',
     () {

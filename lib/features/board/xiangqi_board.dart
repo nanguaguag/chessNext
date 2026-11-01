@@ -17,22 +17,72 @@ String pieceName(Piece piece) => switch ((piece.side, piece.type)) {
   (Side.black, PieceType.pawn) => '卒',
 };
 
-class XiangqiBoard extends StatefulWidget {
+class XiangqiBoard extends StatelessWidget {
   const XiangqiBoard({
     super.key,
     required this.session,
     this.recommendation,
     this.reply,
   });
+  final BoardSession session;
   final Move? recommendation;
   final Move? reply;
-  final BoardSession session;
   @override
-  State<XiangqiBoard> createState() => _XiangqiBoardState();
+  Widget build(BuildContext context) => BoardSurface(
+    at: session.position.at,
+    selected: session.selected,
+    targets: session.targets,
+    flipped: session.flipped,
+    enabled: !session.inputLocked && !session.outcome.isTerminal,
+    onTap: session.tap,
+    onCancel: session.cancelSelection,
+    recommendation: recommendation,
+    reply: reply,
+  );
 }
 
-class _XiangqiBoardState extends State<XiangqiBoard> {
+class BoardDragData {
+  const BoardDragData(this.piece, {this.from});
+  final Piece piece;
+  final Square? from;
+}
+
+class BoardSurface extends StatefulWidget {
+  const BoardSurface({
+    super.key,
+    required this.at,
+    required this.onTap,
+    this.selected,
+    this.targets = const {},
+    this.flipped = false,
+    this.mirrored = false,
+    this.enabled = true,
+    this.onCancel,
+    this.onRemove,
+    this.onDrop,
+    this.recommendation,
+    this.reply,
+  });
+  final Piece? Function(Square) at;
+  final ValueChanged<Square> onTap;
+  final VoidCallback? onCancel;
+  final ValueChanged<Square>? onRemove;
+  final void Function(BoardDragData, Square)? onDrop;
+  final Square? selected;
+  final Set<Square> targets;
+  final bool flipped;
+  final bool mirrored;
+  final bool enabled;
+  final Move? recommendation;
+  final Move? reply;
+  @override
+  State<BoardSurface> createState() => _BoardSurfaceState();
+}
+
+class _BoardSurfaceState extends State<BoardSurface> {
   final boardFocus = FocusNode(debugLabel: 'xiangqi-board');
+  Square cursor = Square(4, 0);
+  bool hasFocus = false;
   @override
   void dispose() {
     boardFocus.dispose();
@@ -40,23 +90,22 @@ class _XiangqiBoardState extends State<XiangqiBoard> {
   }
 
   void _tap(Square square) {
+    if (!widget.enabled) return;
     boardFocus.requestFocus();
     setState(() => cursor = square);
-    widget.session.tap(square);
+    widget.onTap(square);
   }
 
-  Square cursor = Square(4, 0);
-  bool hasFocus = false;
   KeyEventResult _key(FocusNode node, KeyEvent event) {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) {
       return KeyEventResult.ignored;
     }
     final key = event.logicalKey;
     if (key == LogicalKeyboardKey.escape) {
-      widget.session.cancelSelection();
+      widget.onCancel?.call();
     } else if (key == LogicalKeyboardKey.enter ||
         key == LogicalKeyboardKey.space) {
-      widget.session.tap(cursor);
+      _tap(cursor);
     } else {
       var dx = 0;
       var dy = 0;
@@ -71,11 +120,11 @@ class _XiangqiBoardState extends State<XiangqiBoard> {
       } else {
         return KeyEventResult.ignored;
       }
-      final sign = widget.session.flipped ? -1 : 1;
       setState(
         () => cursor = Square(
-          (cursor.file + dx * sign).clamp(0, 8),
-          (cursor.rank + dy * sign).clamp(0, 9),
+          (cursor.file + dx * (widget.flipped != widget.mirrored ? -1 : 1))
+              .clamp(0, 8),
+          (cursor.rank + dy * (widget.flipped ? -1 : 1)).clamp(0, 9),
         ),
       );
     }
@@ -83,172 +132,210 @@ class _XiangqiBoardState extends State<XiangqiBoard> {
   }
 
   @override
-  Widget build(BuildContext context) {
-    final session = widget.session;
-    final targets = session.targets;
-    return Focus(
-      autofocus: true,
-      focusNode: boardFocus,
-      onKeyEvent: _key,
-      onFocusChange: (value) => setState(() => hasFocus = value),
-      child: AspectRatio(
-        aspectRatio: 9 / 10,
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final step = constraints.maxWidth / 9;
-            return DecoratedBox(
-              decoration: BoxDecoration(
-                color: const Color(0xfff1dfbf),
-                borderRadius: BorderRadius.circular(20),
-              ),
-              child: Stack(
-                children: [
-                  Positioned.fill(
-                    child: CustomPaint(
-                      painter: _BoardPainter(
-                        recommendation: widget.recommendation,
-                        reply: widget.reply,
-                        flipped: session.flipped,
-                      ),
+  Widget build(BuildContext context) => Focus(
+    autofocus: true,
+    focusNode: boardFocus,
+    onKeyEvent: _key,
+    onFocusChange: (value) => setState(() => hasFocus = value),
+    child: AspectRatio(
+      aspectRatio: 9 / 10,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final step = constraints.maxWidth / 9;
+          return DecoratedBox(
+            decoration: BoxDecoration(
+              color: const Color(0xfff1dfbf),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: CustomPaint(
+                    painter: _BoardPainter(
+                      recommendation: widget.recommendation,
+                      reply: widget.reply,
+                      flipped: widget.flipped,
+                      mirrored: widget.mirrored,
                     ),
                   ),
-                  for (var row = 0; row < 10; row++)
-                    for (var col = 0; col < 9; col++)
-                      _cell(
-                        context,
-                        Square(
-                          session.flipped ? 8 - col : col,
-                          session.flipped ? row : 9 - row,
-                        ),
-                        col,
-                        row,
-                        step,
-                        targets,
+                ),
+                for (var row = 0; row < 10; row++)
+                  for (var col = 0; col < 9; col++)
+                    _cell(
+                      Square(
+                        widget.flipped != widget.mirrored ? 8 - col : col,
+                        widget.flipped ? row : 9 - row,
                       ),
-                ],
-              ),
-            );
-          },
-        ),
+                      col,
+                      row,
+                      step,
+                    ),
+              ],
+            ),
+          );
+        },
       ),
-    );
-  }
-
-  Widget _cell(
-    BuildContext context,
-    Square square,
-    int col,
-    int row,
+    ),
+  );
+  Widget _face(
+    Piece? piece,
     double step,
-    Set<Square> targets,
-  ) {
-    final session = widget.session;
-    final piece = session.position.at(square);
-    final selected = session.selected == square;
-    final target = targets.contains(square);
+    bool selected,
+    bool target, {
+    bool focused = false,
+  }) => Container(
+    margin: EdgeInsets.all(step * .06),
+    decoration: BoxDecoration(
+      shape: BoxShape.circle,
+      color: selected
+          ? const Color(0xffc6d8b2)
+          : piece != null
+          ? const Color(0xfffff4da)
+          : null,
+      border: Border.all(
+        color: selected || focused
+            ? const Color(0xff3c624a)
+            : piece != null
+            ? const Color(0xffbda177)
+            : Colors.transparent,
+        width: selected ? 3 : 1.5,
+      ),
+      boxShadow: piece == null
+          ? null
+          : const [
+              BoxShadow(
+                color: Color(0x26000000),
+                blurRadius: 3,
+                offset: Offset(0, 2),
+              ),
+            ],
+    ),
+    child: piece == null
+        ? Center(
+            child: target
+                ? Container(
+                    width: 12,
+                    height: 12,
+                    decoration: const BoxDecoration(
+                      shape: BoxShape.circle,
+                      color: Color(0xff3c624a),
+                    ),
+                  )
+                : null,
+          )
+        : Stack(
+            alignment: Alignment.center,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(4),
+                child: FittedBox(
+                  child: Text(
+                    pieceName(piece),
+                    style: TextStyle(
+                      fontSize: 28,
+                      fontWeight: FontWeight.w600,
+                      color: piece.side == Side.red
+                          ? const Color(0xffa12f29)
+                          : const Color(0xff26362d),
+                    ),
+                  ),
+                ),
+              ),
+              if (target)
+                const Positioned(
+                  right: 0,
+                  top: 0,
+                  child: Icon(Icons.circle, size: 12, color: Color(0xff3c624a)),
+                ),
+            ],
+          ),
+  );
+  Widget _cell(Square square, int col, int row, double step) {
+    final piece = widget.at(square);
+    final selected = widget.selected == square;
+    final target = widget.targets.contains(square);
     final label =
         '${piece == null ? '空位' : '${piece.side == Side.red ? '红方' : '黑方'}${pieceName(piece)}'} $square${target ? ' 可落子' : ''}';
-    return Positioned(
-      left: col * step,
-      top: row * step,
-      width: step,
-      height: step,
-      child: Semantics(
-        label: label,
-        button: true,
-        enabled: !session.inputLocked && !session.outcome.isTerminal,
-        selected: selected,
-        onTap: () => _tap(square),
-        child: ExcludeSemantics(
-          child: ExcludeFocus(
+    Widget tile = Semantics(
+      label: label,
+      button: true,
+      enabled: widget.enabled,
+      selected: selected,
+      onTap: widget.enabled ? () => _tap(square) : null,
+      child: ExcludeSemantics(
+        child: ExcludeFocus(
+          child: GestureDetector(
+            onSecondaryTap: widget.onRemove == null
+                ? null
+                : () => widget.onRemove!(square),
             child: InkWell(
               key: ValueKey('square-$square'),
-              onTap: () => _tap(square),
+              onTap: widget.enabled ? () => _tap(square) : null,
               borderRadius: BorderRadius.circular(step / 2),
-              child: Container(
-                margin: EdgeInsets.all(step * .06),
-                decoration: BoxDecoration(
-                  shape: BoxShape.circle,
-                  color: selected
-                      ? const Color(0xffc6d8b2)
-                      : piece != null
-                      ? const Color(0xfffff4da)
-                      : null,
-                  border: Border.all(
-                    color: selected || (hasFocus && cursor == square)
-                        ? const Color(0xff3c624a)
-                        : piece != null
-                        ? const Color(0xffbda177)
-                        : Colors.transparent,
-                    width: selected ? 3 : 1.5,
-                  ),
-                  boxShadow: piece == null
-                      ? null
-                      : const [
-                          BoxShadow(
-                            color: Color(0x26000000),
-                            blurRadius: 3,
-                            offset: Offset(0, 2),
-                          ),
-                        ],
-                ),
-                child: piece == null
-                    ? Center(
-                        child: target
-                            ? Container(
-                                width: 12,
-                                height: 12,
-                                decoration: const BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: Color(0xff3c624a),
-                                ),
-                              )
-                            : null,
-                      )
-                    : Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.all(4),
-                            child: FittedBox(
-                              child: Text(
-                                pieceName(piece),
-                                style: TextStyle(
-                                  fontSize: 28,
-                                  fontWeight: FontWeight.w600,
-                                  color: piece.side == Side.red
-                                      ? const Color(0xffa12f29)
-                                      : const Color(0xff26362d),
-                                ),
-                              ),
-                            ),
-                          ),
-                          if (target)
-                            const Positioned(
-                              right: 0,
-                              top: 0,
-                              child: Icon(
-                                Icons.circle,
-                                size: 12,
-                                color: Color(0xff3c624a),
-                              ),
-                            ),
-                        ],
-                      ),
+              child: _face(
+                piece,
+                step,
+                selected,
+                target,
+                focused: hasFocus && cursor == square,
               ),
             ),
           ),
         ),
       ),
     );
+    if (widget.onDrop != null) {
+      if (piece != null) {
+        tile = Draggable<BoardDragData>(
+          data: BoardDragData(piece, from: square),
+          feedback: Material(
+            type: MaterialType.transparency,
+            child: SizedBox(
+              width: step,
+              height: step,
+              child: _face(piece, step, false, false),
+            ),
+          ),
+          childWhenDragging: Opacity(opacity: .3, child: tile),
+          onDragEnd: (details) {
+            if (!details.wasAccepted && mounted) widget.onRemove?.call(square);
+          },
+          child: tile,
+        );
+      }
+      final child = tile;
+      tile = DragTarget<BoardDragData>(
+        onWillAcceptWithDetails: (_) => widget.enabled,
+        onAcceptWithDetails: (details) => widget.onDrop!(details.data, square),
+        builder: (context, candidates, rejected) => DecoratedBox(
+          decoration: BoxDecoration(
+            color: candidates.isEmpty ? null : const Color(0x663c624a),
+          ),
+          child: child,
+        ),
+      );
+    }
+    return Positioned(
+      left: col * step,
+      top: row * step,
+      width: step,
+      height: step,
+      child: tile,
+    );
   }
 }
 
 class _BoardPainter extends CustomPainter {
-  _BoardPainter({this.recommendation, this.reply, this.flipped = false});
+  _BoardPainter({
+    this.recommendation,
+    this.reply,
+    this.flipped = false,
+    this.mirrored = false,
+  });
   final Move? recommendation;
   final Move? reply;
   final bool flipped;
+  final bool mirrored;
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -290,7 +377,7 @@ class _BoardPainter extends CustomPainter {
     );
     void arrow(Move move, Color color) {
       Offset location(Square square) => point(
-        (flipped ? 8 - square.file : square.file).toDouble(),
+        (flipped != mirrored ? 8 - square.file : square.file).toDouble(),
         (flipped ? square.rank : 9 - square.rank).toDouble(),
       );
       final from = location(move.from);
@@ -323,5 +410,6 @@ class _BoardPainter extends CustomPainter {
   bool shouldRepaint(covariant _BoardPainter oldDelegate) =>
       recommendation != oldDelegate.recommendation ||
       reply != oldDelegate.reply ||
-      flipped != oldDelegate.flipped;
+      flipped != oldDelegate.flipped ||
+      mirrored != oldDelegate.mirrored;
 }

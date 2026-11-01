@@ -2,6 +2,7 @@ import 'position.dart';
 
 /// Static setup errors; this does not prove historical reachability.
 enum PositionIssueCode {
+  missingGeneral,
   tooManyPieces,
   generalOutsidePalace,
   advisorOffPoint,

@@ -12,7 +12,10 @@ class BoardSession extends ChangeNotifier {
   List<Move> get moves =>
       List.unmodifiable(tree.path.skip(1).map((node) => node.move!));
   bool get hasMoves => tree.nodeCount > 1;
-  bool get hasContent => hasMoves || tree.root.comment.isNotEmpty;
+  bool get hasContent =>
+      hasMoves ||
+      tree.root.comment.isNotEmpty ||
+      tree.root.position.toFen() != Position.initialFen;
   int _revision = 0;
   int get revision => _revision;
   int _savedRevision = 0;
@@ -26,11 +29,11 @@ class BoardSession extends ChangeNotifier {
     notifyListeners();
   }
 
-  void replaceTree(GameTree value) {
+  void replaceTree(GameTree value, {bool saved = true}) {
     _inputLocked = false;
     _tree = value;
     _revision++;
-    _savedRevision = _revision;
+    _savedRevision = saved ? _revision : -1;
     _epoch++;
     _positionRevision++;
     _selected = null;

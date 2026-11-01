@@ -4,6 +4,8 @@ import 'application/board_session.dart';
 import 'application/engine_session_controller.dart';
 import 'features/analysis/analysis_panel.dart';
 import 'features/play/play_panel.dart';
+import 'features/editor/editor_page.dart';
+import 'package:xiangqi_core/xiangqi_core.dart';
 import 'application/library_controller.dart';
 import 'ports/game_repository.dart';
 import 'features/library/library_dialog.dart';
@@ -117,7 +119,7 @@ class _BoardPage extends StatelessWidget {
     library.newGame();
   }
 
-  Future<void> _save(BuildContext context) async {
+  Future<bool> _save(BuildContext context) async {
     var entered = library.title;
     final name = await showDialog<String>(
       context: context,
@@ -143,12 +145,56 @@ class _BoardPage extends StatelessWidget {
         ],
       ),
     );
-    if (name == null) return;
+    if (name == null) return false;
     final saved = await library.save(name);
     if (context.mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(saved ? '棋谱已保存到本地' : library.error ?? '保存失败')),
       );
+    }
+    return saved;
+  }
+
+  Future<void> _edit(BuildContext context) async {
+    await analysis.disable();
+    if (!context.mounted) return;
+    if (session.dirty && session.hasContent) {
+      final choice = await showDialog<String>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('编辑前保留当前棋谱？'),
+          content: const Text('完成编辑后会以新局面替换当前棋谱，取消编辑则保留原棋谱。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(context, 'continue'),
+              child: const Text('继续编辑'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, 'save'),
+              child: const Text('先保存'),
+            ),
+          ],
+        ),
+      );
+      if (choice == null || !context.mounted) return;
+      if (choice == 'save' && (!await _save(context) || !context.mounted)) {
+        return;
+      }
+    }
+    if (!context.mounted) return;
+    final before = session.position.toFen();
+    final result = await Navigator.push<Position>(
+      context,
+      MaterialPageRoute(
+        builder: (context) => EditorPage(initial: session.position),
+      ),
+    );
+    if (context.mounted && result != null && result.toFen() != before) {
+      library.startPosition(result);
     }
   }
 
@@ -265,6 +311,11 @@ class _BoardPage extends StatelessWidget {
                     spacing: 8,
                     runSpacing: 8,
                     children: [
+                      OutlinedButton.icon(
+                        onPressed: library.busy ? null : () => _edit(context),
+                        icon: const Icon(Icons.edit_outlined),
+                        label: const Text('编辑局面'),
+                      ),
                       OutlinedButton.icon(
                         onPressed: library.busy ? null : () => _save(context),
                         icon: const Icon(Icons.save_outlined),

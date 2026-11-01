@@ -1,3 +1,5 @@
+import 'package:chess_next/features/editor/editor_page.dart';
+import 'package:chess_next/chess_next.dart';
 import 'package:chess_next/features/play/play_panel.dart';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/adapters/engine/bundled_engine.dart';
@@ -192,4 +194,35 @@ void main() {
     expect(engine.aiSides, isEmpty);
     expect(session.inputLocked, isFalse);
   });
+  testWidgets(
+    'native editor rejects facing generals and applies a valid chosen turn',
+    (tester) async {
+      await tester.pumpWidget(const ChessNextApp());
+      await tester.pumpAndSettle();
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      final before = session.tree.toJson();
+      await tester.ensureVisible(find.text('编辑局面'));
+      await tester.tap(find.text('编辑局面'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('清空'));
+      await tester.pump();
+      await tester.tap(find.byKey(const ValueKey('square-d9')));
+      await tester.tap(find.byKey(const ValueKey('square-e9')));
+      await tester.pump();
+      await tester.tap(find.text('完成'));
+      await tester.pumpAndSettle();
+      expect(find.byType(EditorPage), findsOneWidget);
+      expect(session.tree.toJson(), before);
+      await tester.tap(find.text('清空'));
+      await tester.tap(find.text('黑先'));
+      await tester.tap(find.text('完成'));
+      await tester.pumpAndSettle();
+      expect(find.byType(EditorPage), findsNothing);
+      expect(session.position.turn, Side.black);
+      expect(session.position.validateForPlay().isValid, isTrue);
+      expect(session.dirty, isTrue);
+    },
+  );
 }

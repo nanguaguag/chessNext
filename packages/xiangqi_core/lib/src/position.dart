@@ -1,77 +1,8 @@
-enum Side {
-  red,
-  black;
+import 'board_types.dart';
+import 'fen_codec.dart';
+export 'board_types.dart';
 
-  Side get opponent => this == red ? black : red;
-}
-
-enum PieceType { general, advisor, elephant, horse, rook, cannon, pawn }
-
-final class Piece {
-  const Piece(this.side, this.type);
-  final Side side;
-  final PieceType type;
-  String get fen {
-    final letter = switch (type) {
-      PieceType.general => 'k',
-      PieceType.advisor => 'a',
-      PieceType.elephant => 'b',
-      PieceType.horse => 'n',
-      PieceType.rook => 'r',
-      PieceType.cannon => 'c',
-      PieceType.pawn => 'p',
-    };
-    return side == Side.red ? letter.toUpperCase() : letter;
-  }
-}
-
-/// UCI coordinates: a0 is red's left corner; a9 is black's right corner.
-final class Square {
-  factory Square(int file, int rank) {
-    if (file < 0 || file > 8 || rank < 0 || rank > 9) {
-      throw RangeError('Square outside 9×10 board: $file,$rank');
-    }
-    return Square._(file, rank);
-  }
-  const Square._(this.file, this.rank);
-  factory Square.parse(String value) {
-    if (!RegExp(r'^[a-i][0-9]$').hasMatch(value)) {
-      throw FormatException('Invalid UCI square', value);
-    }
-    return Square(value.codeUnitAt(0) - 97, int.parse(value[1]));
-  }
-  final int file;
-  final int rank;
-  int get index => rank * 9 + file;
-  @override
-  String toString() => '${String.fromCharCode(97 + file)}$rank';
-  @override
-  bool operator ==(Object other) => other is Square && index == other.index;
-  @override
-  int get hashCode => index;
-}
-
-final class Move {
-  const Move(this.from, this.to);
-  factory Move.parse(String value) {
-    if (value.length != 4) throw FormatException('Invalid UCI move', value);
-    return Move(
-      Square.parse(value.substring(0, 2)),
-      Square.parse(value.substring(2)),
-    );
-  }
-  final Square from;
-  final Square to;
-  @override
-  String toString() => '$from$to';
-  @override
-  bool operator ==(Object other) =>
-      other is Move && from == other.from && to == other.to;
-  @override
-  int get hashCode => Object.hash(from, to);
-}
-
-/// Immutable position. Parsing validates structure, not historical reachability.
+/// Immutable legal-play board. Structural parsing does not prove reachability.
 final class Position {
   Position._(List<Piece?> board, this.turn, this.halfmove, this.fullmove)
     : _board = List.unmodifiable(board);
@@ -79,94 +10,23 @@ final class Position {
       'rnbakabnr/9/1c5c1/p1p1p1p1p/9/9/P1P1P1P1P/1C5C1/9/RNBAKABNR w - - 0 1';
   factory Position.initial() => Position.fromFen(initialFen);
   factory Position.fromFen(String fen) {
-    final fields = fen.trim().split(RegExp(r'\s+'));
-    if (fields.length != 2 && fields.length != 6) {
-      throw FormatException('Expected 2 or 6 FEN fields', fen);
-    }
-    if (!['w', 'b'].contains(fields[1]) ||
-        (fields.length == 6 && (fields[2] != '-' || fields[3] != '-'))) {
-      throw FormatException('Invalid side or unsupported FEN rights', fen);
-    }
-    final half = fields.length == 6 ? int.tryParse(fields[4]) : 0;
-    final full = fields.length == 6 ? int.tryParse(fields[5]) : 1;
-    if (half == null || half < 0 || full == null || full < 1) {
-      throw FormatException('Invalid FEN counters', fen);
-    }
-    final rows = fields[0].split('/');
-    if (rows.length != 10) throw FormatException('Expected ten ranks', fen);
-    final board = List<Piece?>.filled(90, null);
-    const types = {
-      'k': PieceType.general,
-      'a': PieceType.advisor,
-      'b': PieceType.elephant,
-      'e': PieceType.elephant,
-      'n': PieceType.horse,
-      'h': PieceType.horse,
-      'r': PieceType.rook,
-      'c': PieceType.cannon,
-      'p': PieceType.pawn,
-    };
-    for (var row = 0; row < 10; row++) {
-      var file = 0;
-      for (final char in rows[row].split('')) {
-        final empty = int.tryParse(char);
-        if (empty != null) {
-          if (empty < 1 || empty > 9)
-            throw FormatException('Invalid empty run', fen);
-          file += empty;
-        } else {
-          final type = types[char.toLowerCase()];
-          if (type == null || file >= 9)
-            throw FormatException('Invalid piece/rank', fen);
-          board[(9 - row) * 9 + file++] = Piece(
-            char == char.toUpperCase() ? Side.red : Side.black,
-            type,
-          );
-        }
-        if (file > 9) throw FormatException('Rank overflow', fen);
-      }
-      if (file != 9) throw FormatException('Rank underflow', fen);
-    }
+    final data = FenData.parse(fen);
     for (final side in Side.values) {
-      if (board
+      if (data.board
               .where((p) => p?.side == side && p?.type == PieceType.general)
               .length !=
           1) {
         throw FormatException('Exactly one general required per side', fen);
       }
     }
-    return Position._(
-      board,
-      fields[1] == 'w' ? Side.red : Side.black,
-      half,
-      full,
-    );
+    return Position._(data.board, data.turn, data.halfmove, data.fullmove);
   }
   final List<Piece?> _board;
   final Side turn;
   final int halfmove;
   final int fullmove;
   Piece? at(Square square) => _board[square.index];
-  String toFen() {
-    final rows = <String>[];
-    for (var rank = 9; rank >= 0; rank--) {
-      var row = '';
-      var empty = 0;
-      for (var file = 0; file < 9; file++) {
-        final piece = at(Square(file, rank));
-        if (piece == null) {
-          empty++;
-        } else {
-          if (empty > 0) row += '$empty';
-          empty = 0;
-          row += piece.fen;
-        }
-      }
-      if (empty > 0) row += '$empty';
-      rows.add(row);
-    }
-    return '${rows.join('/')} ${turn == Side.red ? 'w' : 'b'} - - $halfmove $fullmove';
-  }
+  String toFen() => FenData(_board, turn, halfmove, fullmove).encode();
 
   static bool _palace(Square s, Side side) =>
       s.file >= 3 &&

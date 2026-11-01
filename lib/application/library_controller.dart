@@ -1,3 +1,4 @@
+import 'package:xiangqi_core/xiangqi_core.dart';
 import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../ports/game_repository.dart';
@@ -90,6 +91,13 @@ class LibraryController extends ChangeNotifier {
     title = game.title;
     if (game.recovered) error = '主文件异常，已从备份恢复，请核对棋谱后保存';
   });
+  void startPosition(Position position) {
+    session.replaceTree(GameTree(initial: position), saved: false);
+    currentId = null;
+    title = '局面分析';
+    _notify();
+  }
+
   void newGame() {
     session.newGame();
     currentId = null;

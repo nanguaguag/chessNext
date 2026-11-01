@@ -42,5 +42,7 @@ E15/WDL调查已完成，提交见git log。F33题库仅指南D、B21待核；�
 
 ## M3-15最新（完成，提交见git log）
 原生WDL已贯通请求/选项/解析/缓存与分析面板，详ADR-015。端口preferWdl默认false，App请求true；check不支持回退，toggle等ready且只变更，不清TT。原始三项总1000，视角交换胜负；expectedScore=(wins+draws/2)/1000，UI分开展示。无WDL/坏统计不补0，bound/mate不附普通概率。独立WDL子键，旧CP缓存可读；声明能力却缺请求字段不能完整命中。
-根162/162（真NNUE）+analyze、macOS完整15/15通过，目标32/32；所有验证已结束。核心49未改。代码应已提交；另外AGENTS及onboarding/pikafish两个Skill纯协议更改尚待单独chore，不能混进WDL业务提交。Skill-creator已读，系统Python首缺yaml不算验证，临时venv PyYAML6.0.3后两个quick_validate都Skill is valid；无全局/产品依赖更改，临时环境已清理，日志/tmp/chessnext-skill-validation.log。下一先chore协议维护，再复盘预期损失/等级/错题及其它功能，不能最终停下。
+根162/162（真NNUE）+analyze、macOS完整15/15通过，目标32/32；所有验证已结束。核心49未改。代码应已提交；AGENTS及onboarding/pikafish两个Skill的纯协议更改已在独立chore同步，提交见git log。Skill-creator已读，系统Python首缺yaml不算验证，临时venv PyYAML6.0.3后两个quick_validate都Skill is valid；无全局/产品依赖更改，临时环境已清理，日志/tmp/chessnext-skill-validation.log。下一继续复盘预期损失/等级/错题及其它功能，不能最终停下。
 原生WDL数据不是网站准确率公式：下一可计算明确标示模型的预期得分损失（按走子方，raw半分千单位可用2*wins+draws整数避免阈值浮点），先before/after同预算/身份/无bound数据配对；不要凭cp造“准确率”。妙手/唯一守招和错失良机需多候选/杀棋语义另验。源站阈值2/5/10/20仅有UI证据，等号边界/聚合准确率仍未知，研究缺口保留。
+
+协议维护补记：AGENTS现明确初始调查限制已按用户授权扩展，离线优先与后续自建后端是顺序不是删范围；onboarding/pikafish Skills移除硬编码仅研究/spike措辞，保留实际状态核验与质量门槛。两个quick_validate在临时PyYAML6.0.3环境通过，证据context/validation/skills-2026-11-02.json。未改产品依赖或全局Python，纯文档维护不重复跑业务测试。业务最近ddbcc9b，根162/原生15不变；提交后工作树应干净。

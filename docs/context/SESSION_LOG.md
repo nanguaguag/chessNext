@@ -202,3 +202,6 @@ ADR-014解释子查询缓存与集合完成条件；源站可接受阈值/准确
 WdlEstimate严格胜/和/负三整数总1000、视角反转/预期得分；EngineInfo可空、坏可选统计保留CP。EngineRequest.preferWdl向后默认false，App各搜索请求true偏好，UciEngine能力check/只变更/ready确认/不支持回退。缓存optional元数据和独立偏好键、CP旧格式兼容，支持WDL但缺请求数据不算完整命中；文件重开保留。分析面板显示模型胜和负，单独标和棋半分的预期得分，bound/mate不附普通概率文本。
 根flutter test162/162（显式官方NNUE）与flutter analyze无问题；macOS完整15/15通过，真实包内MultiPV及WDL展示、缓存/整谱等回归。新增5类型/解析/视角/缓存测试、3UCI选项/缺能力/ready超时测试、1真NNUE双先手、1文件重开和1组件视角/200%/bound测试；目标32/32通过。初轮1处lint修复；序列化wdl误混整数统计字段在静态复核纠正后roundtrip通过，未有最终失败。日志/tmp/chessnext-wdl-{unit,target,test,analyze,native}.log。核心未改沿用49。
 ADR-015。原生探针8行总1000/quit0另见协议归档；此功能只提供引擎模型数据，不声称网站胜率/准确率同公式或完整F32。下一预期损失/等级与错题；所有其他缺项继续。
+
+### 2026-11-02 Agent协议维护
+按skill-creator做窄范围更新：AGENTS同步既有持续实现/自建后端授权，project-onboarding与pikafish-engine去掉硬编码研究阶段，不扩大外部操作权限。首quick_validate系统Python缺yaml未成功；临时venv从官方PyPI装PyYAML6.0.3后两个Skill均通过，环境清理且产品依赖不变，记录context/validation/skills-2026-11-02.json。只改协议/文档，不宣称新业务功能；业务门槛沿最新WDL根162/原生15。

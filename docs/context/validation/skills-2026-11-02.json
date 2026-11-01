@@ -1,0 +1,14 @@
+[
+  {
+    "skill": "project-onboarding",
+    "validator": "Skill is valid!",
+    "PyYAML": "6.0.3",
+    "environment": "temporary virtualenv"
+  },
+  {
+    "skill": "pikafish-engine",
+    "validator": "Skill is valid!",
+    "PyYAML": "6.0.3",
+    "environment": "temporary virtualenv"
+  }
+]

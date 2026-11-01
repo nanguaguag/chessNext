@@ -1,15 +1,11 @@
-# 会话交接 / M2-02
+# 会话交接 / M2-03
 
-先读AGENTS、README、CURRENT_STATE、DECISIONS，git status确认实际状态；基线提交b3b423a，每功能通过flutter test和flutter analyze后中文规范提交。用户已授权按计划实现离线业务，旧的“只调查/只诊断”限制不再适用；登录后功能延期；许可事项暂不处理、不阻挡本地开发。
+先读AGENTS/README/CURRENT_STATE/DECISIONS，再查看git status和git log。用户要求每功能独立中文Conventional Commit，必须先跑flutter test、flutter analyze；许可暂不处理，不阻挡离线开发。
 
-本轮B15首切片完成：packages/xiangqi_core（无Flutter/IO），入口lib/xiangqi_core.dart。先读该包README，了解UCI坐标、FEN格式、语义校验与历史裁决边界。不要将legalMoves作为完整对局裁决，不将可解析FEN直接当作适合native搜索的合法局面。
+基线b3b423a已归档技术研究/引擎/规则与根Flutter测试入口；局面校验9b515d2已提交；本轮将死/困毙功能另行提交，实际哈希见git log。根目录是Flutter包边界，尚无主App界面；核心规则是packages/xiangqi_core纯Dart包。
 
-重跑：packages/xiangqi_core目录执行 dart pub get、dart analyze、dart test；根目录 python3 tools/verify_xiangqi_perft.py（需要.local中官方制品）。11测试通过，4组perft逐分支与Pikafish一致，证据docs/engine/evidence/xiangqi-perft.json。
+验证命令：根目录bash tools/check.sh，包含根flutter test/analyze、规则dart test/analyze、真实引擎spike flutter test/analyze。最新7/26/2测试通过，分析均无问题。引擎测试需.local制品（python3 tools/setup_pikafish.py）；本轮也重跑macOS沙箱App和4组perft成功。源码/证据及已知平台边界见docs/engine/COMMUNICATION_VALIDATION.md。
 
-下一切片：B15局面语义校验、终局与历史裁决接口→B16棋树/会话，再棋盘UI。B14生产引擎端口和移动C ABI仍待做。不要照搬诊断适配器作为生产实现。
+API：Position.fromFen仅结构校验；validateForPlay静态语义检查；boardOutcome拒绝无效局面，返回ongoing/checkmate/stalemate及winner（困毙判负）。历史可达性、重复、长将长捉、自然限着、认输/超时不在当前接口范围，后续会话层处理。
 
-已有通信重跑：根目录 python3 tools/setup_pikafish.py 校验/获取固定版本；python3 tools/run_macos_probe.py 做应用内helper继承sandbox签名验证。日志及manifest见docs/engine/COMMUNICATION_VALIDATION.md。Flutter test与macOS App已跑通；外部helper被Sandbox拒绝，应用内签名成功，不关闭Sandbox。
-
-本轮未做：完整业务UI/持久化、完整终局/重复裁决、移动FFI、Windows/Linux、正式签名、公证、性能热测。无后台进程，已有基线提交和功能提交；以git log查看实际哈希。Skills官方校验器此前缺PyYAML，尚未补跑，Ruby YAML替代校验曾通过。
-
-M2-02已新增validateForPlay，详见纯Dart包README。根flutter test5/5、dart test20/20、引擎2/2，三处analyze通过；下一步B15将死/困毙终局与历史裁决接口，再B16棋树。用bash tools/check.sh执行全部门槛，测试前确保.local制品齐全。
+接着做B16：不可变棋树、稳定ID、主线/分支、注释、游标和会话撤销，再接M3棋盘UI。B14移动桥接未做；不要把桌面spike当生产调度器。每新增功能→针对性测试→根Flutter两门槛→独立提交→同步状态。无后台进程；工作树应干净，以git status复查。

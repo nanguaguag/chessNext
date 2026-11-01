@@ -92,4 +92,32 @@ void main() {
     await tester.pump();
     expect(find.text('中炮注释'), findsOneWidget);
   });
+  testWidgets(
+    'save and open restore the current document without discarding it',
+    (tester) async {
+      tester.view.physicalSize = const Size(1120, 1200);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(const ChessNextApp());
+      await tester.tap(find.byKey(const ValueKey('square-h2')));
+      await tester.tap(find.byKey(const ValueKey('square-e2')));
+      await tester.pump();
+      await tester.tap(find.text('保存棋谱'));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const ValueKey('record-name')), '我的中炮');
+      await tester.tap(find.widgetWithText(FilledButton, '保存'));
+      await tester.pumpAndSettle();
+      expect(find.text('已保存到本地 · 我的中炮'), findsOneWidget);
+      await tester.tap(find.text('新局'));
+      await tester.pumpAndSettle();
+      expect(find.text('1. h2e2'), findsNothing);
+      await tester.tap(find.text('棋谱库'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('我的中炮'));
+      await tester.pumpAndSettle();
+      expect(find.text('1. h2e2'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    },
+  );
 }

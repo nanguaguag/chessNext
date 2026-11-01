@@ -1,3 +1,5 @@
+import 'package:path_provider/path_provider.dart';
+import 'package:chess_next/adapters/storage/file_game_repository.dart';
 import 'package:chess_next/app.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -43,4 +45,63 @@ void main() {
     await tester.pumpAndSettle();
     expect(tester.takeException(), isNull);
   });
+  testWidgets(
+    'macOS sandbox saves records and a fresh app instance reopens them',
+    (tester) async {
+      final documents = await getApplicationDocumentsDirectory();
+      final temp = await documents.createTemp('.chessnext-integration-');
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(repository: FileGameRepository(() async => temp)),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('square-h2')));
+        await tester.tap(find.byKey(const ValueKey('square-e2')));
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('保存棋谱'));
+        await tester.pumpAndSettle();
+        await tester.enterText(
+          find.byKey(const ValueKey('record-name')),
+          '原生磁盘恢复测试',
+        );
+        await tester.tap(find.widgetWithText(FilledButton, '保存'));
+        for (
+          var i = 0;
+          i < 50 && find.text('已保存到本地 · 原生磁盘恢复测试').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(find.text('已保存到本地 · 原生磁盘恢复测试'), findsOneWidget);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ChessNextApp(repository: FileGameRepository(() async => temp)),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.text('棋谱库'));
+        for (
+          var i = 0;
+          i < 50 && find.text('原生磁盘恢复测试').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tester.tap(find.text('原生磁盘恢复测试'));
+        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 50 && find.text('1. h2e2').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(find.text('1. h2e2'), findsOneWidget);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await temp.delete(recursive: true);
+      }
+    },
+  );
 }

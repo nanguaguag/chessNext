@@ -7,6 +7,7 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  path_provider: ^2.1.6
   xiangqi_core:
     path: packages/xiangqi_core
 dev_dependencies:

@@ -15,6 +15,29 @@ class BoardSession extends ChangeNotifier {
   bool get hasContent => hasMoves || tree.root.comment.isNotEmpty;
   int _revision = 0;
   int get revision => _revision;
+  int _savedRevision = 0;
+  int _epoch = 0;
+  int get epoch => _epoch;
+  int _positionRevision = 0;
+  int get positionRevision => _positionRevision;
+  bool get dirty => revision != _savedRevision;
+  void markSaved(int revision) {
+    _savedRevision = revision;
+    notifyListeners();
+  }
+
+  void replaceTree(GameTree value) {
+    _tree = value;
+    _revision++;
+    _savedRevision = _revision;
+    _epoch++;
+    _positionRevision++;
+    _selected = null;
+    _notice = null;
+    _refresh();
+    notifyListeners();
+  }
+
   Square? _selected;
   Square? get selected => _selected;
   bool _flipped = false;
@@ -52,6 +75,7 @@ class BoardSession extends ChangeNotifier {
       if (_legal.contains(move)) {
         final before = tree.nodeCount;
         _tree = tree.play(move);
+        _positionRevision++;
         if (tree.nodeCount != before) _revision++;
         _selected = null;
         _refresh();
@@ -69,7 +93,9 @@ class BoardSession extends ChangeNotifier {
   }
 
   void navigate(String id) {
-    _tree = tree.goTo(id);
+    final next = tree.goTo(id);
+    if (next.cursorId != tree.cursorId) _positionRevision++;
+    _tree = next;
     _selected = null;
     _notice = null;
     _refresh();
@@ -107,7 +133,9 @@ class BoardSession extends ChangeNotifier {
   }
 
   void deleteBranch(String id) {
+    final oldCursor = tree.cursorId;
     _tree = tree.deleteBranch(id);
+    if (oldCursor != tree.cursorId) _positionRevision++;
     _revision++;
     _selected = null;
     _notice = null;
@@ -123,6 +151,9 @@ class BoardSession extends ChangeNotifier {
   void newGame() {
     _tree = GameTree();
     _revision++;
+    _savedRevision = _revision;
+    _epoch++;
+    _positionRevision++;
     _selected = null;
     _notice = null;
     _refresh();

@@ -15,3 +15,7 @@ macOS构建修复：加入SDK官方Podfile及xcconfig的Pods引用。默认adhoc
 ## M2-05接续
 
 GameTree分支/注释/导航已实现，根13测试和core30测试及分析通过。后退现在移动游标，保留子树；新局需检查hasContent而非canUndo。下一步磁盘保存与恢复（包括分支/注释/游标），再引擎主UI。用户要求持续推进至全站对齐，不提前将对标视为完成。
+
+## M2-06接续
+
+本地保存/搜索/打开与备份恢复已实现，核心32、根23、原生2测试及分析通过。注入path_provider Documents目录，不使用shell HOME猜测沙箱路径；现有用户App不要自动终止。GameRepository隔离IO，FileGameRepository目前逐文档JSON（schema1、4MiB/2000节点），SQLite候选仍未选。目录结构/并发语义见ADR-005。下一个增量为FEN/文字导入导出及自动草稿，再生产引擎分析；每功能先测试分析再commit。

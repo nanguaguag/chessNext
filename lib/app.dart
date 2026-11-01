@@ -1,19 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'application/board_session.dart';
+import 'application/library_controller.dart';
+import 'ports/game_repository.dart';
+import 'features/library/library_dialog.dart';
 import 'features/board/xiangqi_board.dart';
 
 class ChessNextApp extends StatefulWidget {
-  const ChessNextApp({super.key});
+  const ChessNextApp({super.key, this.repository});
+  final GameRepository? repository;
   @override
   State<ChessNextApp> createState() => _ChessNextAppState();
 }
 
 class _ChessNextAppState extends State<ChessNextApp> {
   final session = BoardSession();
+  late final LibraryController library;
+  @override
+  void initState() {
+    super.initState();
+    library = LibraryController(
+      session,
+      widget.repository ?? MemoryGameRepository(),
+    );
+  }
+
   ThemeMode mode = ThemeMode.system;
   @override
   void dispose() {
+    library.dispose();
     session.dispose();
     super.dispose();
   }
@@ -33,6 +48,7 @@ class _ChessNextAppState extends State<ChessNextApp> {
     themeMode: mode,
     home: _BoardPage(
       session: session,
+      library: library,
       toggleTheme: () => setState(
         () => mode = mode == ThemeMode.dark ? ThemeMode.light : ThemeMode.dark,
       ),
@@ -41,11 +57,16 @@ class _ChessNextAppState extends State<ChessNextApp> {
 }
 
 class _BoardPage extends StatelessWidget {
-  const _BoardPage({required this.session, required this.toggleTheme});
+  const _BoardPage({
+    required this.session,
+    required this.toggleTheme,
+    required this.library,
+  });
   final BoardSession session;
   final VoidCallback toggleTheme;
+  final LibraryController library;
   Future<void> _newGame(BuildContext context) async {
-    if (session.hasContent) {
+    if (session.dirty && session.hasContent) {
       final confirmed = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
@@ -65,12 +86,47 @@ class _BoardPage extends StatelessWidget {
       );
       if (confirmed != true) return;
     }
-    session.newGame();
+    library.newGame();
+  }
+
+  Future<void> _save(BuildContext context) async {
+    var entered = library.title;
+    final name = await showDialog<String>(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: const Text('保存到本地棋谱库'),
+        content: TextFormField(
+          key: const ValueKey('record-name'),
+          initialValue: entered,
+          autofocus: true,
+          maxLength: 120,
+          onChanged: (value) => entered = value,
+          decoration: const InputDecoration(labelText: '棋谱名称'),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: const Text('取消'),
+          ),
+          FilledButton(
+            onPressed: () => Navigator.pop(context, entered),
+            child: const Text('保存'),
+          ),
+        ],
+      ),
+    );
+    if (name == null) return;
+    final saved = await library.save(name);
+    if (context.mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(saved ? '棋谱已保存到本地' : library.error ?? '保存失败')),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: session,
+    listenable: Listenable.merge([session, library]),
     builder: (context, _) => Scaffold(
       appBar: AppBar(
         title: const Text('chessNext'),
@@ -168,6 +224,37 @@ class _BoardPage extends StatelessWidget {
                       ),
                     ],
                   ),
+                  const SizedBox(height: 12),
+                  Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: [
+                      OutlinedButton.icon(
+                        onPressed: library.busy ? null : () => _save(context),
+                        icon: const Icon(Icons.save_outlined),
+                        label: const Text('保存棋谱'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: library.busy
+                            ? null
+                            : () => showDialog<void>(
+                                context: context,
+                                builder: (context) =>
+                                    LibraryDialog(library: library),
+                              ),
+                        icon: const Icon(Icons.folder_open),
+                        label: const Text('棋谱库'),
+                      ),
+                    ],
+                  ),
+                  if (library.busy) const LinearProgressIndicator(),
+                  if (library.error != null)
+                    Text(
+                      library.error!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
                   const Padding(
                     padding: EdgeInsets.symmetric(vertical: 20),
                     child: Divider(),
@@ -269,7 +356,11 @@ class _BoardPage extends StatelessWidget {
                     ),
                   const SizedBox(height: 24),
                   Text(
-                    '当前棋谱仅在内存中，关闭应用后不会保留。',
+                    session.dirty
+                        ? '有未保存的修改，请保存后再关闭应用。'
+                        : library.currentId == null
+                        ? '保存到本地棋谱库，可在下次打开时继续。'
+                        : '已保存到本地 · ${library.title}',
                     style: Theme.of(context).textTheme.bodySmall,
                   ),
                 ],

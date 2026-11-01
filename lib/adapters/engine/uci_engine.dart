@@ -206,11 +206,12 @@ class UciEngine implements EngineGateway {
     _result = result;
     _token = request.token;
     _phase = EngineLifecycle.searching;
-    final limit = request.depth != null
-        ? 'depth ${request.depth}'
-        : request.moveTimeMs != null
-        ? 'movetime ${request.moveTimeMs}'
-        : 'infinite';
+    final limits = [
+      if (request.depth != null) 'depth ${request.depth}',
+      if (request.moveTimeMs != null) 'movetime ${request.moveTimeMs}',
+      if (request.nodeLimit != null) 'nodes ${request.nodeLimit}',
+    ];
+    final limit = limits.isEmpty ? 'infinite' : limits.join(' ');
     final candidates = request.searchMoves == null
         ? ''
         : ' searchmoves ${request.searchMoves!.join(' ')}';

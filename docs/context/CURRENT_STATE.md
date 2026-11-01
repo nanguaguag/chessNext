@@ -22,11 +22,13 @@
 
 ## 验证和平台
 
-本功能根flutter test67/67（含官方NNUE live测试）、flutter analyze无问题；核心dart test46/46、dart analyze无问题；macOS原生8/8：棋盘、真实沙箱存储重开、NNUE多PV、AI/变招/悔棋、编辑、中文导入导出、实际Documents自动草稿重开恢复、ApplicationSupport主题/参数重开恢复。4组perft与官方引擎一致。尚未验证Android/iOS/Windows/Linux，不能把macOS通过外推。
+本功能根flutter test69/69（含官方NNUE live测试）、flutter analyze无问题；核心dart test46/46、dart analyze无问题；macOS原生9/9：棋盘、真实沙箱存储重开、NNUE多PV、AI/变招/悔棋、编辑、中文导入导出、实际Documents自动草稿重开恢复、ApplicationSupport主题/参数重开恢复、包内引擎组合预算。4组perft与官方引擎一致。尚未验证Android/iOS/Windows/Linux，不能把macOS通过外推。
 
 本轮原生交互测试明确保持framework-resumed前提（只在integration_test内，普通main无覆盖），真实OS焦点/最小化/隐藏仍待平台QA；生产生命周期由独立组件测试。原生曾停滞一轮被INT中断、首次自建Binding冲突均未记通过，见SESSION_LOG。
 
 原生测试失焦后的enterText必须重新tap并pumpAndSettle后验证实际值；已修测试辅助函数。AI原生整套曾出现状态“分析已停止”无协议错误的偶发中止，单项及最终整套通过；增加生命周期trace与失焦取消组件回归，不静默删除失败记录。Computer Use桌面权限未授，窗口自动置前失败，Flutter原生交互测试通过，人工截图/视觉验收未做。
+
+组合depth/时间/节点预算已在EngineRequest/UciEngine和真实NNUE验证；原生9/9本轮原始事件确有hidden/inactive，fixture使交互前提明确。UI复盘尚未实现。下一项先优化同会话资源/Hash复用，再整谱队列与曲线。
 
 ## 继续推进
 

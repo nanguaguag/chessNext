@@ -176,4 +176,74 @@ void main() {
       throwsArgumentError,
     );
   });
+  test(
+    'combined depth, time and node limits precede the final searchmoves clause',
+    () async {
+      final transport = FakeTransport();
+      final engine = UciEngine(transport);
+      addTearDown(engine.dispose);
+      final search = await engine.start(
+        EngineRequest.fromTree(
+          token: 17,
+          tree: GameTree(),
+          depth: 16,
+          moveTimeMs: 2000,
+          nodeLimit: 50000,
+          searchMoves: [Move.parse('h2e2')],
+        ),
+      );
+      expect(
+        transport.commands.last,
+        'go depth 16 movetime 2000 nodes 50000 searchmoves h2e2',
+      );
+      transport.output.add('bestmove h2e2');
+      await search.bestMove;
+      final nodesOnly = await engine.start(
+        EngineRequest(token: 18, root: Position.initial(), nodeLimit: 1000),
+      );
+      expect(transport.commands.last, 'go nodes 1000');
+      transport.output.add('bestmove h2e2');
+      await nodesOnly.bestMove;
+    },
+  );
+  test(
+    'both request factories reject invalid budgets and retain a fully unrestricted mode',
+    () {
+      final makers = <EngineRequest Function(int?, int?, int?)>[
+        (depth, time, nodes) => EngineRequest(
+          token: 1,
+          root: Position.initial(),
+          depth: depth,
+          moveTimeMs: time,
+          nodeLimit: nodes,
+        ),
+        (depth, time, nodes) => EngineRequest.fromTree(
+          token: 1,
+          tree: GameTree(),
+          depth: depth,
+          moveTimeMs: time,
+          nodeLimit: nodes,
+        ),
+      ];
+      for (final make in makers) {
+        for (final limits in [
+          (0, null, null),
+          (-1, null, null),
+          (256, null, null),
+          (null, 0, null),
+          (null, EngineRequest.maxMoveTimeMs + 1, null),
+          (null, null, 0),
+          (null, null, -1),
+          (null, null, EngineRequest.maxNodeLimit + 1),
+        ]) {
+          expect(
+            () => make(limits.$1, limits.$2, limits.$3),
+            throwsArgumentError,
+          );
+        }
+        expect(make(null, null, null).nodeLimit, isNull);
+        expect(make(16, 2000, 10000).nodeLimit, 10000);
+      }
+    },
+  );
 }

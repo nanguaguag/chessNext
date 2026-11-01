@@ -25,3 +25,9 @@ macOS8/8通过，integration_test/local_board_test.dart使用现有binding和Sys
 完成本功能提交后工作树应干净。测试App/helper由Flutter工具收尾，没有仍需等待的验证命令。下一项F32先审计；不要把原生fixture成功算人工视觉验收。
 
 E12研究追加：docs/research/review-*-2026-11-02*记录快速执行、配置、0队列及取消终态，REFERENCES见REFERENCE_EVIDENCE E12。下一条先扩展EngineRequest/UCiEngine支持depth+movetime+nodes并测试组合先到界限，不能先写完整复盘。再单独优化相同资源与同文档Hash复用（官方源码已确认重复setoption/ucinewgame会重分配/清除），然后队列。当前只有E12研究文档/截图待提交，业务代码已在678a811全部提交。
+
+## M3-05最新
+
+组合限额即将提交见git log。EngineRequest.nodeLimit可与depth/time并存，策略边界与0/null区别见COMMUNICATION_VALIDATION；go的searchmoves保持最后。根69/69、flutter analyze无问题，真实CLI和macOS包内NNUE验证先到上限结束；原生9/9。本轮fixture采样包含hidden/inactive，不当作OS真实生命周期验收。
+
+下一条：相同资源与同文档搜索复用。当前UciEngine每次start仍三项setoption + ucinewgame；固定官方源码证实同值也触发线程/Hash回调和清表。分别记录已应用资源及(gameId,rootFen)，同文档只发送改变的参数、新文档才ucinewgame，保留stop/bestmove和ready屏障。EngineSessionController分析/AI请求传session.epoch，新Engine默认冷状态。命令Fake与实际NNUE验证，基准若测只报条件和数值、不空称提速百分比；独立commit后才做整谱队列。

@@ -34,3 +34,8 @@ Android/iOS C ABI、Windows/Linux、发行签名、非法局面、故障重启�
 发行包独立NNUE许可禁止未经允许商用，见 legal/LICENSING；发行前必须解决。文档先前将权重许可列未知，本轮取得原文后收紧结论，不把权重声称为GPL。
 
 沙箱内引擎报告共享内存不可用，回退到Local memory后正常工作；性能和RSS仍需单独测量。helper签名在构建副本进行，原始.local制品hash保持不变。
+
+## 2026-11-02 / M3-05 / F32前置 → B14/B18 组合搜索预算
+
+EngineRequest两个工厂均支持depth + moveTimeMs + nodeLimit并存，全部null才无限搜索；UciEngine按组合输出go，searchmoves仍最后。0不是端口无限值，UI后续把0明确映射null。应用策略上限为255深度/24小时/2^53-1节点，非引擎最大有效能力声明；非法值在发送前拒绝。
+验证：带官方NNUE环境根flutter test69/69、flutter analyze通过。真实CLI分别用松弛的另两项预算验证深度、时间、节点限额生效；节点按引擎周期检查，可超出精确值，测试不声称硬实时。macOS原生9/9通过，新增应用包内签名helper/NNUE组合预算提前在节点界限结束。原生仍用framework-resumed交互fixture，此轮记录真实宿主hidden/inactive事件，未计作OS生命周期视觉验收。未更改UI或核心规则；整谱队列/曲线仍下一切片。

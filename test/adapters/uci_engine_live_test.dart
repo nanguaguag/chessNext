@@ -42,6 +42,43 @@ void main() {
         await restricted.bestMove.timeout(const Duration(seconds: 10)),
         Move.parse('h2e2'),
       );
+
+      // Each case leaves two loose bounds and one terminating bound.
+      final limits = [
+        (token: 10, depth: 2, time: 10000, nodes: 1000000000),
+        (token: 11, depth: 100, time: 200, nodes: 1000000000),
+        (token: 12, depth: 100, time: 10000, nodes: 2000),
+      ];
+      for (final limit in limits) {
+        final search = await engine.start(
+          EngineRequest(
+            token: limit.token,
+            root: root,
+            depth: limit.depth,
+            moveTimeMs: limit.time,
+            nodeLimit: limit.nodes,
+          ),
+        );
+        final move = await search.bestMove.timeout(const Duration(seconds: 10));
+        expect(root.legalMoves, contains(move));
+        await Future<void>.delayed(Duration.zero);
+        final infos = seen.where((info) => info.token == limit.token).toList();
+        expect(infos, isNotEmpty);
+        final last = infos.last;
+        if (limit.token == 10) expect(last.depth, lessThanOrEqualTo(2));
+        if (limit.token == 11) {
+          expect(last.depth, lessThan(100));
+          expect(last.timeMs, lessThan(5000));
+        }
+        if (limit.token == 12) {
+          expect(last.depth, lessThan(100));
+          expect(
+            last.nodes,
+            lessThan(50000),
+            reason: 'node polling may overshoot the exact requested bound',
+          );
+        }
+      }
       for (var token = 2; token <= 6; token++) {
         final current = await engine.start(
           EngineRequest(token: token, root: root),

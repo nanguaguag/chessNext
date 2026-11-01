@@ -26,12 +26,18 @@ class EngineOption {
 }
 
 class EngineRequest {
+  // App policy bounds, not claims about the engine's maximum useful depth.
+  static const maxDepth = 255;
+  static const maxMoveTimeMs = 24 * 60 * 60 * 1000;
+  static const maxNodeLimit = 9007199254740991; // exact on Dart VM and web
+
   factory EngineRequest({
     required int token,
     required Position root,
     Iterable<Move> moves = const [],
     int? depth,
     int? moveTimeMs,
+    int? nodeLimit,
     int threads = 1,
     int hashMb = 16,
     int multiPv = 1,
@@ -49,6 +55,7 @@ class EngineRequest {
       position: position,
       depth: depth,
       moveTimeMs: moveTimeMs,
+      nodeLimit: nodeLimit,
       threads: threads,
       hashMb: hashMb,
       multiPv: multiPv,
@@ -60,6 +67,7 @@ class EngineRequest {
     required GameTree tree,
     int? depth,
     int? moveTimeMs,
+    int? nodeLimit,
     int threads = 1,
     int hashMb = 16,
     int multiPv = 1,
@@ -71,6 +79,7 @@ class EngineRequest {
     moves: List.unmodifiable(tree.path.skip(1).map((n) => n.move!)),
     depth: depth,
     moveTimeMs: moveTimeMs,
+    nodeLimit: nodeLimit,
     threads: threads,
     hashMb: hashMb,
     multiPv: multiPv,
@@ -83,6 +92,7 @@ class EngineRequest {
     required this.position,
     this.depth,
     this.moveTimeMs,
+    this.nodeLimit,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
@@ -90,9 +100,10 @@ class EngineRequest {
   }) : searchMoves = searchMoves == null
            ? null
            : List.unmodifiable(searchMoves.toSet()) {
-    if ((depth != null && depth! < 1) ||
-        (moveTimeMs != null && moveTimeMs! < 1) ||
-        (depth != null && moveTimeMs != null) ||
+    if ((depth != null && (depth! < 1 || depth! > maxDepth)) ||
+        (moveTimeMs != null &&
+            (moveTimeMs! < 1 || moveTimeMs! > maxMoveTimeMs)) ||
+        (nodeLimit != null && (nodeLimit! < 1 || nodeLimit! > maxNodeLimit)) ||
         threads < 1 ||
         hashMb < 1 ||
         multiPv < 1 ||
@@ -106,6 +117,10 @@ class EngineRequest {
   final List<Move> moves;
   final int? depth;
   final int? moveTimeMs;
+
+  /// Limits may be combined; the engine stops when the first applicable bound is reached.
+  /// A null bound is unrestricted. With all three null the search is infinite.
+  final int? nodeLimit;
   final int threads;
   final int hashMb;
   final int multiPv;

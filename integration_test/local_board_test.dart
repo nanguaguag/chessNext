@@ -1,3 +1,4 @@
+import 'package:chess_next/ports/engine_gateway.dart';
 import 'package:flutter/services.dart';
 import 'package:chess_next/features/analysis/analysis_panel.dart';
 import 'package:chess_next/adapters/storage/file_preferences_repository.dart';
@@ -518,4 +519,33 @@ void main() {
       }
     },
   );
+  testWidgets('bundled NNUE stops a combined search at the node budget', (
+    _,
+  ) async {
+    final engine = await openBundledEngine();
+    final infos = <EngineInfo>[];
+    final subscription = engine.info.listen(infos.add);
+    try {
+      await engine.initialize();
+      final root = Position.initial();
+      final search = await engine.start(
+        EngineRequest(
+          token: 901,
+          root: root,
+          depth: 100,
+          moveTimeMs: 10000,
+          nodeLimit: 2000,
+        ),
+      );
+      final move = await search.bestMove.timeout(const Duration(seconds: 10));
+      expect(root.legalMoves, contains(move));
+      await Future<void>.delayed(Duration.zero);
+      expect(infos, isNotEmpty);
+      expect(infos.last.depth, lessThan(100));
+      expect(infos.last.nodes, lessThan(50000));
+    } finally {
+      await subscription.cancel();
+      await engine.dispose();
+    }
+  });
 }

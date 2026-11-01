@@ -103,3 +103,8 @@ ADR-007/008记录设置及桌面生命周期：桌面inactive仍可见不取消�
 M3-04追加验证记录：根67/67与flutter analyze通过，含200%设置表单/NaN和桌面inactive/hidden回归。原生第一次7/8（PV2未出现），后续整套停在AI阶段等待绘制，向该轮Flutter test自有runner发送INT中断，未记通过，测试App/helper随工具收尾。integration_test现通过SystemChannels.lifecycle保持框架resumed作为受控交互前提，记录宿主原始状态；普通main无覆盖。原生OS焦点、可见性、最小化不在这组fixture验收范围，生产策略单独组件测试。初次自建Binding与工具预建Binding冲突，随后用现有binding通道fixture，未更改SDK。最终macOS原生8/8通过（受控framework-resumed前提，原始事件采样为空）；没有据此认定所有旧停滞的具体根因已证实或关闭。
 
 2026-11-02 E12：完成访客自制两步谱快速整谱运行、结果/说明、跳过空队列和取消终态调查，原始AX及截图存research。正式flutter run -d macos从lib/main构建并连接Syncing files，自动置前仍返回1；该轮会话22326是否仍活跃以进程/工具为准，后续原生测试会重建测试入口，最终交付前再次普通入口构建。技术源码核查确认可组合limits及重复资源重设/清Hash风险；下一切片组合限额，随后资源复用，再复盘队列。没有实现复盘业务。
+
+## 2026-11-02 / M3-05 / F32前置 → B14/B18 组合搜索预算
+
+EngineRequest两个工厂均支持depth + moveTimeMs + nodeLimit并存，全部null才无限搜索；UciEngine按组合输出go，searchmoves仍最后。0不是端口无限值，UI后续把0明确映射null。应用策略上限为255深度/24小时/2^53-1节点，非引擎最大有效能力声明；非法值在发送前拒绝。
+验证：带官方NNUE环境根flutter test69/69、flutter analyze通过。真实CLI分别用松弛的另两项预算验证深度、时间、节点限额生效；节点按引擎周期检查，可超出精确值，测试不声称硬实时。macOS原生9/9通过，新增应用包内签名helper/NNUE组合预算提前在节点界限结束。原生仍用framework-resumed交互fixture，此轮记录真实宿主hidden/inactive事件，未计作OS生命周期视觉验收。未更改UI或核心规则；整谱队列/曲线仍下一切片。

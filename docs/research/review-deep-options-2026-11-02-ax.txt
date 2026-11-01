@@ -1,0 +1,49 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 216-219, 221-252, 292
++					303 container
++						304 button 分析模式 选出所有可接受着法 彻底分析 
++							305 text 分析模式
++							306 text 选出所有可接受着法
++							307 text 彻底分析
++							308 text 
++						309 text 每步时限(秒)
++						310 text 设为 0 表示不限制
++						311 container
++							312 button
++							313 stepper (settable, integer) Value: 5, Details: 5.0
++							314 button
++						315 text 深度上限
++						316 text 设为 0 表示不限制
++						317 container
++							318 button (disabled)
++							319 stepper <redacted>
++							320 button
++						321 text 节点上限(万)
++						322 text 设为 0 表示不限制
++						323 container
++							324 button (disabled)
++							325 stepper <redacted>
++							326 button
++						327 text 最多着法数
++						328 text 含最佳，收够即停
++						329 container
++							330 button
++							331 stepper <redacted>
++							332 button
++						333 text 线程数
++						334 text 仅在本次分析生效
++						335 container
++							336 button (disabled)
++							337 stepper <redacted>
++							338 button
++						339 text 分析范围
++						340 text 所有变着
++						341 switch 1
++						342 text 跳过已分析局面
++						343 text 跳过已计算过的局面
++						344 switch 1
++						345 text 分析局面数
++						346 text 按当前设置实时计算
++						347 text 4 个局面
+The focused UI element is 348 container

@@ -1,0 +1,149 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container app
+		2 container
+			3 button 菜单
+				4 image
+				5 text 菜单
+			6 button 新局
+				7 image
+				8 text 新局
+			9 checkbox Description: 引擎执红, Value: 0
+				10 image
+				11 text 引擎执红
+			12 checkbox Description: 引擎执黑, Value: 0
+				13 image
+				14 text 引擎执黑
+			15 checkbox Description: 分析模式, Value: 0
+				16 image
+				17 text 分析模式
+			18 button 立即出招
+				19 image
+				20 text 立即出招
+			21 button 变招
+				22 image
+				23 text 变招
+			24 container 翻转
+				25 container
+					26 image
+					27 text 翻转
+			28 button 导入
+				29 image
+				30 text 导入
+			31 container 保存 / 分享
+				32 container
+					33 image
+					34 text 保存 / 分享
+			35 checkbox Description: 编辑, Value: 0
+				36 image
+				37 text 编辑
+			38 container displayArea
+				39 splitter Description: 调整左栏宽度, Value: 22
+				213 container
+					214 button
+					215 text 棋谱分析
+					216 button 分析模式 选出最佳着法 快速分析 
+						217 text 分析模式
+						218 text 选出最佳着法
+						219 text 快速分析
+						220 text 
+					221 container
+						222 text 每步时限(秒) 设为 0 表示不限制
+						223 container
+							224 button
+							225 stepper (settable, integer) Value: 5, Details: 5.0
+							226 button
+					227 container
+						228 text 深度上限 设为 0 表示不限制
+						229 container
+							230 button (disabled)
+							231 stepper <redacted>
+							232 button
+					233 container
+						234 text 节点上限(万) 设为 0 表示不限制
+						235 container
+							236 button (disabled)
+							237 stepper <redacted>
+							238 button
+					239 container
+						240 text 线程数 仅在本次分析生效
+						241 container
+							242 button (disabled)
+							243 stepper <redacted>
+							244 button
+					245 container
+						246 text 分析范围 仅当前着法列表
+						247 switch 0
+					248 container
+						249 text 跳过已分析局面 跳过已计算过的局面
+						250 switch 0
+					251 container
+						252 text 分析局面数 按当前设置实时计算 3 个局面
+					253 button 取消
+					254 button 开始分析
+					255 image
+					256 image
+					257 image
+					258 image
+				40 splitter Description: 调整棋盘宽度, Value: 70
+				41 container
+					42 text 开始 1. 炮二平五
+					209 container 另有 1 条已保存的变化
+						210 text 1变
+					211 text 马２进３
+					43 button 分析结果
+						136 image
+						212 text 分析结果
+				46 splitter Description: 调整上下分区, Value: 55
+				259 container
+					260 text 着法
+					261 button  存题, Help: 存为题
+						262 text 
+						263 text 存题
+					264 button 上一着
+						265 text 
+					266 button 下一着
+						267 text 
+					268 text 炮二平五 胜率 51.8% → 51.8%
+					269 button 添加注释
+						270 image
+						271 text 添加注释
+					272 text 本步变着
+					273 switch 棋盘箭头, Value: 0
+					274 container
+						275 text 1
+						276 text 炮二平五 52%
+						277 button (disabled) 置顶
+							278 image
+						279 button 删除这步及后续
+							280 image
+					281 container
+						282 text 2 炮八平五
+						283 button 置顶
+							284 image
+						285 button 删除这步及后续
+							286 image
+					287 container
+						288 image
+						289 text 彻底分析可行着法
+						290 button 彻底分析设置
+							291 image
+				55 container
+					56 text 引擎
+					57 button 重置布局
+					58 button 引擎参数
+						59 image
+					60 button 开始分析
+						61 image
+						62 text 开始分析
+					63 text 也可以点工具栏的
+					64 image
+					65 text 按钮
+				66 splitter Description: 调整上下分区, Value: 55
+				67 container
+					68 text 云库
+					69 text 着法 红方 评分 1 马８进７ 0 2 马２进３ 1 3 象３进５ 32 4 炮２平５ 33 5 士４进５ 77 6 炮８平５ 78 7 象７进５ 102 8 士６进５ 136 9 炮２进１ 180 10 炮８进１ 184 11 卒３进１ 507 12 车９进１ 602 13 炮８进２ 609 14 炮２进２ 609 15 卒７进１ 615 16 车９进２ 635 17 炮２平１ 647 18 车１进１ 647 19 炮８平９ 647 20 卒１进１ 649 21 车１进２ 650 22 马２进１ 661 23 马８进９ 671 24 炮８进３ 685 25 卒９进１ 686 26 炮２进７ 703 27 炮２进３ 707 28 炮２平４ 723 29 炮８平４ 727 30 炮２平７ 736 31 炮８进４ 736 32 炮８平６ 738 33 象３进１ 746 34 象７进９ 751 35 炮８退１ 754 36 炮２平６ 759 37 炮８平３ 765 38 炮２平３ 770 39 炮８平７ 770 40 炮２退１ 774 41 炮２进４ 790 42 炮８进５ 793 43 炮８进６ 848 44 将５进１ 861 45 卒５进１ 1161
+			70 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+			71 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+
+The focused UI element is 292 container

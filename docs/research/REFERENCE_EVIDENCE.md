@@ -56,3 +56,15 @@ U：彻底模式实际执行、所有分支范围、参数极值/全0、缓存�
 ## 2026-11-02 原生批量搜索前核查（D）
 
 固定tag2026-09-06官方[uci.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/uci.cpp)解析可同时接收depth/movetime/nodes，searchmoves必须放最后；ucinewgame清空搜索状态。[ucioption.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/ucioption.cpp)即使同值仍执行变更回调，[engine.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/engine.cpp)线程/Hash回调会调整资源，[tt.cpp](https://github.com/official-pikafish/Pikafish/blob/Pikafish-2026-09-06/src/tt.cpp)重分配Hash并清空。当前适配器每次搜索都发送三项setoption和ucinewgame，批量分析前应分别补组合限额、会话/资源复用；实际性能改进幅度需测量，不凭源码宣称提速百分比。
+
+## E13 / 2026-11-02 变着与彻底复盘（访客桌面）
+
+URL https://xiangqiai.com/#/，IAB；沿用E11自制两步谱及E12浏览器存储，非清洁默认状态。增加b2e2（炮八平五）构成四局面棋树；无账号、私有API或用户棋谱。
+
+- V：从炮八平五回到开始，着法列表仍显示该线路；下一着直接回到炮八平五。点击同级炮二平五切换，显示其后马２进３。见[回退AX](branch-back-2026-11-02-ax.txt)、[截图](screenshots/branch-back-2026-11-02.png)、[切换](branch-select-2026-11-02-ax.txt)。
+- V：本步变着列出当前节点同级着法。置顶炮八平五后列表顺序和禁用按钮改变，当前炮二平五线路保持；随后置顶炮二平五还原。删除入口仅O，未执行。见[提升AX](branch-promote-2026-11-02-ax.txt)、[截图](screenshots/branch-promote-2026-11-02.png)。
+- V：当前线路范围计3局面（含游标之后）；所有变着计4。该次改变用时后开启跳过仍4，不能推断缓存键。见[线路](review-line-scope-2026-11-02-ax.txt)、[整树](review-tree-scope-2026-11-02-ax.txt)、[跳过](review-tree-skip-2026-11-02-ax.txt)。
+- O/V：彻底配置多出最多着法数5，声明含最佳、收够即停；本次5秒/深度0/节点0/线程1、整树范围运行，从叶局面1/4和第1候选到完成。结果红98.3%/黑94.3%仅单次观测。见[配置](review-deep-options-2026-11-02-ax.txt)、[运行](review-deep-running-2026-11-02-ax.txt)、[终态](review-deep-progress-2026-11-02-ax.txt)、[结果截图](screenshots/review-deep-result-2026-11-02.png)。
+- O/V：完成后本步变着已有两炮，另列引擎建议兵七进一/兵三进一/马八进七，未自动入谱。当前炮二平五时点击红方建议兵七进一的试走，列表变为开始→兵七进一，已保存变化由1增2、本步变着新增兵七进一；即在父局面新增并切换同级分支，并非黑方当前局面追加。见[分析后详情](review-deep-moves-2026-11-02-ax.txt)、[试走AX](branch-engine-trial-2026-11-02-ax.txt)、[截图](screenshots/branch-engine-trial-2026-11-02.png)。
+
+U：候选预算按局面还是每候选、可接受着法筛选、评分/准确率公式、缓存跨重启及取消结果覆盖策略、删除交互。E12取消后再看摘要数值曾变化，不能声称取消保证结果回滚。截图仅用于研究。

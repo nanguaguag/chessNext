@@ -1,0 +1,13 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+Removed element IDs: 137-139, 173-175, 184-185
+~					42 text 开始 1. 炮二平五
++					209 container 另有 1 条已保存的变化
++						210 text 1变
++					211 text 马２进３
+~					43 button 分析结果
++						212 text 分析结果
+~					183 button 下一着
++						213 text 
++					214 text 炮二平五 胜率 51.8% → 51.8%
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

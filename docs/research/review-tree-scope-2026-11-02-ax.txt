@@ -1,0 +1,6 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+The following is a diff from the previous accessibility tree with ~ and + representing changed and added elements, respectively. Removed elements are summarized by ID range.
+~						246 text 分析范围 所有变着
+~						247 switch 1
+~						252 text 分析局面数 按当前设置实时计算 4 个局面
+The focused UI element is 247 switch 1

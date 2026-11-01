@@ -1,3 +1,8 @@
+import 'dart:ui' show AppExitResponse;
+import 'dart:async';
+import 'application/draft_controller.dart';
+import 'ports/draft_repository.dart';
+import 'features/drafts/draft_status_bar.dart';
 import 'adapters/platform/flutter_text_clipboard.dart';
 import 'ports/text_clipboard.dart';
 import 'features/transfer/text_transfer_dialog.dart';
@@ -18,10 +23,12 @@ class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
     super.key,
     this.repository,
+    this.draftRepository,
     this.clipboard,
     this.engineFactory,
     this.deviceThreads = 1,
   });
+  final DraftRepository? draftRepository;
   final TextClipboard? clipboard;
   final EngineFactory? engineFactory;
   final int deviceThreads;
@@ -34,6 +41,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     with WidgetsBindingObserver {
   final session = BoardSession();
   late final LibraryController library;
+  late final DraftController? drafts;
   late final EngineSessionController analysis;
   @override
   void initState() {
@@ -48,18 +56,64 @@ class _ChessNextAppState extends State<ChessNextApp>
       session,
       widget.repository ?? MemoryGameRepository(),
     );
+    drafts = widget.draftRepository == null
+        ? null
+        : DraftController(session, library, widget.draftRepository!);
+    if (drafts != null) unawaited(drafts!.initialize());
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    if (state != AppLifecycleState.resumed) analysis.disable();
+    if (state != AppLifecycleState.resumed) {
+      unawaited(analysis.disable());
+      if (drafts != null) unawaited(drafts!.flush());
+    }
   }
 
+  @override
+  Future<AppExitResponse> didRequestAppExit() async {
+    await analysis.disable();
+    await drafts?.flush();
+    if (!mounted) return AppExitResponse.exit;
+    if (session.dirty &&
+        session.hasContent &&
+        (drafts == null || drafts!.error != null || !drafts!.canSave)) {
+      final dialogContext = navigatorKey.currentContext;
+      if (dialogContext == null || !dialogContext.mounted) {
+        return AppExitResponse.cancel;
+      }
+      final exit = await showDialog<bool>(
+        context: dialogContext,
+        builder: (context) => AlertDialog(
+          title: const Text('当前修改尚未安全保存'),
+          content: const Text('自动草稿未能保存当前修改。返回后可重试或手动保存棋谱；继续退出可能丢失修改。'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('返回应用'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('仍然退出'),
+            ),
+          ],
+        ),
+      );
+      return exit == true ? AppExitResponse.exit : AppExitResponse.cancel;
+    }
+    return AppExitResponse.exit;
+  }
+
+  final navigatorKey = GlobalKey<NavigatorState>();
   ThemeMode mode = ThemeMode.system;
   @override
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     analysis.dispose();
+    if (drafts != null) {
+      unawaited(drafts!.flush());
+      drafts!.dispose();
+    }
     library.dispose();
     session.dispose();
     super.dispose();
@@ -67,6 +121,7 @@ class _ChessNextAppState extends State<ChessNextApp>
 
   @override
   Widget build(BuildContext context) => MaterialApp(
+    navigatorKey: navigatorKey,
     title: 'chessNext',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
@@ -79,6 +134,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     ),
     themeMode: mode,
     home: _BoardPage(
+      drafts: drafts,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       session: session,
       library: library,
@@ -97,7 +153,9 @@ class _BoardPage extends StatelessWidget {
     required this.toggleTheme,
     required this.library,
     required this.analysis,
+    this.drafts,
   });
+  final DraftController? drafts;
   final TextClipboard clipboard;
   final BoardSession session;
   final VoidCallback toggleTheme;
@@ -247,9 +305,38 @@ class _BoardPage extends StatelessWidget {
     library.importTree(tree);
   }
 
+  Future<void> _restoreDraft(BuildContext context) async {
+    await analysis.disable();
+    if (!context.mounted || drafts?.pending == null) return;
+    var replace = false;
+    if (session.dirty && session.hasContent) {
+      replace =
+          await showDialog<bool>(
+            context: context,
+            builder: (context) => AlertDialog(
+              title: const Text('用草稿替换当前棋谱？'),
+              content: const Text('当前棋谱有未保存的修改。取消后可先保存当前棋谱，再恢复草稿。'),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context, false),
+                  child: const Text('取消'),
+                ),
+                FilledButton(
+                  onPressed: () => Navigator.pop(context, true),
+                  child: const Text('恢复'),
+                ),
+              ],
+            ),
+          ) ??
+          false;
+      if (!replace) return;
+    }
+    if (context.mounted) drafts?.restore(replaceCurrent: replace);
+  }
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([session, library, analysis]),
+    listenable: Listenable.merge([session, library, analysis, ?drafts]),
     builder: (context, _) => Scaffold(
       appBar: AppBar(
         title: const Text('chessNext'),
@@ -526,7 +613,7 @@ class _BoardPage extends StatelessWidget {
                   const SizedBox(height: 24),
                   Text(
                     session.dirty
-                        ? '有未保存的修改，请保存后再关闭应用。'
+                        ? '有未保存到棋谱库的修改。'
                         : library.currentId == null
                         ? '保存到本地棋谱库，可在下次打开时继续。'
                         : '已保存到本地 · ${library.title}',
@@ -538,6 +625,11 @@ class _BoardPage extends StatelessWidget {
           );
           final sidePanel = Column(
             children: [
+              if (drafts != null)
+                DraftStatusBar(
+                  drafts: drafts!,
+                  onRestore: () => _restoreDraft(context),
+                ),
               panel,
               const SizedBox(height: 12),
               PlayPanel(engine: analysis),

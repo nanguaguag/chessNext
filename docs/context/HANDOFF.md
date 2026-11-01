@@ -4,9 +4,11 @@
 
 用户要求持续业务实现，一功能一中文Conventional Commit，先flutter test/flutter analyze，所有可确认功能对齐后再停给审查。在线选自建可替换后端+部署方案，许可暂缓。不得将计划/接口/单平台通过当完整对标。
 
-最近提交a7a9bc2局面编辑、cb5eb93FEN/UCI交换；中文纵线增量本次提交见git log。当前待提交文件只应属于中文格式/列表及相关测试文档，以git status为准。根50、核心46、原生6测试及两套静态分析通过；原生经历输入焦点失败已修测试helper，AI偶发停止保留trace和记录。
+最近提交a7a9bc2局面编辑、cb5eb93FEN/UCI、636e993中文纵线；自动草稿增量本次提交见git log。完成提交后工作树应干净，以git status为准。根58、核心上一切片46、原生7测试及静态分析通过。输入焦点辅助函数和生命周期trace保留；AI原生曾偶发停止，最终完整复跑通过，历史失败见SESSION_LOG/KNOWN_ISSUES。
 
-下一条可执行工作：自动草稿与恢复。设计独立DraftRepository，不覆盖用户显式棋谱；300ms去抖、串行写入不可变快照、备份恢复、初始化恢复提示、忽略/取消/脏状态保护、失败重试与生命周期flush。主App注入磁盘适配器，测试显式内存/临时Documents。恢复应创建未保存副本以保护原文档；不恢复AI自动落子。先写接口/失败模型/验收，再最小实现。
+自动草稿DraftRepository/Controller与FileDraftRepository已实现。独立chessnext-drafts目录复用版本化快照，300ms去抖、串行队列、备份、损坏原件归档、恢复为新dirty副本；不覆盖显式棋谱库，不恢复AI角色。后台/正常退出flush，失败可取消退出；退出回调在Widget测试中验证，真实OS强制关闭/断电未测。ADR-006记录边界。
+
+下一条可执行工作：设置持久化。定义版本化AppPreferences（主题、引擎线程/Hash/MultiPV、AI用时、后续显示/声音配置），独立PreferencesRepository；初始化失败使用安全默认但保留坏文件并提示，保存失败/竞态/非法参数校验先于UI。不得持久化AI角色并在恢复后自动走棋。硬件变化要钳制资源参数。之后整谱复盘和评分曲线、导入文件等功能。
 
 模块实际映射见architecture/IMPLEMENTED_MODULES.md。UCI生命周期/搜索generation/positionRevision保留；UI不访问进程/文件/网络。中文显示基于父局面和执方，领域不依赖Flutter，存储schema1仍是UCI。
 

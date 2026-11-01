@@ -18,3 +18,5 @@ GameTree是文档唯一棋谱真值；Position缓存不可变。文字导入先�
 后续扩展：ReviewCoordinator作为可抢占后台任务复用EngineGateway；Auth/Sync/Book/Recognition均提供独立DTO与失败模型，可替换自建后端，部署方案纳入B10；UI不跨端口请求网络。设置/自动草稿应独立于显式棋谱仓库，避免把用户保存文档当临时缓存覆盖。
 
 中文记谱由领域ChineseNotation负责，基于执方/源局面生成，不受UI棋盘旋转影响。中文解析通过合法候选的格式唯一匹配，拒绝歧义；界面显示可变，稳定UCI字段及GameTree schema保持不变。
+
+自动草稿由DraftController/DraftRepository负责，FileDraftRepository只写chessnext-drafts；显式库仍只写chessnext-records。恢复创建未保存副本。正常退出/后台在composition root协调flush，失败选择在Material对话框呈现。设计边界和未验证持久性见ADR-006。

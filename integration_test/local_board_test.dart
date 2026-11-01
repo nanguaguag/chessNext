@@ -1,3 +1,5 @@
+import 'package:chess_next/adapters/storage/file_draft_repository.dart';
+import 'package:chess_next/features/drafts/draft_status_bar.dart';
 import 'package:chess_next/features/editor/editor_page.dart';
 import 'package:chess_next/chess_next.dart';
 import 'package:chess_next/features/play/play_panel.dart';
@@ -324,6 +326,71 @@ void main() {
       );
       await tester.tap(find.text('关闭'));
       await tester.pumpAndSettle();
+    },
+  );
+  testWidgets(
+    'native autosave restores a fresh working copy without modifying the saved library',
+    (tester) async {
+      final documents = await getApplicationDocumentsDirectory();
+      final temp = await documents.createTemp('.chessnext-draft-integration-');
+      try {
+        final repository = FileDraftRepository(() async => temp);
+        await tester.pumpWidget(
+          ChessNextApp(
+            key: UniqueKey(),
+            draftRepository: repository,
+            repository: FileGameRepository(() async => temp),
+          ),
+        );
+        await tester.pumpAndSettle();
+        await tester.tap(find.byKey(const ValueKey('square-h2')));
+        await tester.tap(find.byKey(const ValueKey('square-e2')));
+        await tester.pumpAndSettle();
+        await tester.ensureVisible(
+          find.widgetWithText(TextFormField, '当前局面注释'),
+        );
+        await enterNativeText(
+          tester,
+          find.widgetWithText(TextFormField, '当前局面注释'),
+          '自动恢复验证',
+        );
+        await tester.pump(const Duration(milliseconds: 350));
+        final controller = tester
+            .widget<DraftStatusBar>(find.byType(DraftStatusBar))
+            .drafts;
+        await controller.flush();
+        expect(controller.error, isNull);
+        expect((await repository.load())!.tree.current.comment, '自动恢复验证');
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(
+          ChessNextApp(
+            key: UniqueKey(),
+            draftRepository: FileDraftRepository(() async => temp),
+            repository: FileGameRepository(() async => temp),
+          ),
+        );
+        for (var i = 0; i < 50 && find.text('恢复草稿').evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tester.ensureVisible(find.text('恢复草稿'));
+        await tester.tap(find.text('恢复草稿'));
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(session.moves.single.toString(), 'h2e2');
+        expect(session.tree.current.comment, '自动恢复验证');
+        expect(session.dirty, isTrue);
+        expect(
+          (await FileGameRepository(() async => temp).list()).games,
+          isEmpty,
+        );
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await temp.delete(recursive: true);
+      }
     },
   );
 }

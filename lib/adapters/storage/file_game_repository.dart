@@ -5,12 +5,17 @@ import '../../ports/game_repository.dart';
 
 /// Versioned per-document snapshots. Same-directory rename commits atomically on macOS.
 class FileGameRepository implements GameRepository {
-  FileGameRepository(this._directory);
+  FileGameRepository(this._directory, {this.folderName = 'chessnext-records'}) {
+    if (!RegExp(r'^[a-zA-Z0-9_-]{1,80}$').hasMatch(folderName)) {
+      throw ArgumentError('Invalid snapshot folder');
+    }
+  }
+  final String folderName;
   final Future<Directory> Function() _directory;
   static const maxBytes = 4 * 1024 * 1024;
   Future<Directory> _folder() async {
     final base = await _directory();
-    return Directory('${base.path}/chessnext-records').create(recursive: true);
+    return Directory('${base.path}/$folderName').create(recursive: true);
   }
 
   void _validateId(String id) {
@@ -117,7 +122,9 @@ class FileGameRepository implements GameRepository {
           await _read(target, game.id);
           await target.copy('${folder.path}/${game.id}.bak');
         } on FormatException {
-          /* Preserve a known-good backup if primary was corrupt. */
+          // Keep the corrupt original as evidence without replacing a good backup.
+          final archive = await folder.createTemp('.damaged-${game.id}-');
+          await target.copy('${archive.path}/original.json');
         }
       }
       await pending.rename(target.path);

@@ -1,3 +1,4 @@
+import 'adapters/storage/file_draft_repository.dart';
 import 'dart:io';
 import 'adapters/engine/bundled_engine.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +11,7 @@ void main() {
   runApp(
     ChessNextApp(
       repository: FileGameRepository(getApplicationDocumentsDirectory),
+      draftRepository: FileDraftRepository(getApplicationDocumentsDirectory),
       engineFactory: openBundledEngine,
       deviceThreads: Platform.numberOfProcessors,
     ),

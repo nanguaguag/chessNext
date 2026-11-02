@@ -185,3 +185,9 @@ https://xiangqiai.com/#/settings/analysis 与/#/，访客IAB，E19自制三着�
 https://xiangqiai.com/#/settings/board 与/#/，访客IAB，E19自制炮二进二末端，分析/AI关。初旋转光圈选中；选方框后返回棋盘，炮所在终点出现白色四角方框，原起点仍为小圆环（V，[方框](screenshots/E28-last-move-box.png)）。截图右下小棋盘为鼠标停PV上出现的预览，仅O，不把它归因于落子设置。回设置仍方框选中（V，[回访AX](E28-last-move-box-revisit.txt)）。再选旋转光圈恢复原终点光圈（V，[恢复](screenshots/E28-last-move-halo-restored.png)），完整棋树/选中着不变，所有分析/AI仍关。
 
 旋转动画持续时长/系统减少动画/翻转/编辑器/重载记忆仍U；项目采用有限一次旋转并尊重减少动画为P，不能说同原站时序。图片为JPEG字节但保留原截图文件名.png，清单已按实际签名修正mime与尺寸（此前误按PNG字节偏移读JPEG导致错误尺寸，SHA不变）。
+
+## E29 / 2026-11-02 选子抬起与选择框
+
+https://xiangqiai.com/#/settings/board 与/#/，访客IAB，E19同一自制谱，黑方行棋，分析/AI关。初始抬起已选（E28设置AX）。点击截图1280×720上c7黑马中心(476,210)，马呈略上移与增强阴影，绿合法落点出现（V，[抬起](screenshots/E29-selection-lift.png)）。再次点同一子取消，不落子；菜单设置选选择框，AX radio1（V，[设置](E29-selection-box-settings.txt)），返回点同一马，出现绿四角框/合法落点，马无抬起阴影效果（V，[选择框](screenshots/E29-selection-box.png)）。不据截图推断具体位移/阴影/命中算法。
+
+再点同子取消、回设置仍选择框选中（V，[回访](E29-selection-box-revisit.txt)）。改回抬起并返回，未选子/原三着支线未变/分析0（V，[恢复](screenshots/E29-selection-restored.png)）。未新增着法或复制产品资源。翻转/编辑器/极大极小棋子/减少动画/跨重载未验，项目保持交点命中及编辑器共用为P。来源摘要见DISPLAY_EVIDENCE_MANIFEST。

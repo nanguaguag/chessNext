@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -349,6 +349,45 @@
       "path": "screenshots/E28-last-move-halo-restored.png",
       "bytes": 138018,
       "sha256": "812f11b4fff313e6f93de0cacda124302e58b371297cbef7452b747ec0d18837",
+      "height": 720,
+      "width": 1280,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E29",
+      "path": "E29-selection-box-settings.txt",
+      "bytes": 1527,
+      "sha256": "9f11dec4daa19639d6fcc92388346ba1301ef66ede1a1445a2125fcebd4c5d0b"
+    },
+    {
+      "id": "E29",
+      "path": "E29-selection-box-revisit.txt",
+      "bytes": 1549,
+      "sha256": "89acf5d781045d2918f6a7f8ed35541a221b906692d75d544fb8c7c72f5d7f3e"
+    },
+    {
+      "id": "E29",
+      "path": "screenshots/E29-selection-box.png",
+      "bytes": 129593,
+      "sha256": "277363eb504a607eae0155815bac585e39fef18eda4670c6c1292f8936d40791",
+      "height": 720,
+      "width": 1280,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E29",
+      "path": "screenshots/E29-selection-restored.png",
+      "bytes": 129510,
+      "sha256": "bb76910ea143120a46b1eac7081026bc65208ea26369ea022d0787952a46a7b1",
+      "height": 720,
+      "width": 1280,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E29",
+      "path": "screenshots/E29-selection-lift.png",
+      "bytes": 129531,
+      "sha256": "5f851570d497c13f0effb6a84feb7f63e53360f198b0f330e580d9dbc1888190",
       "height": 720,
       "width": 1280,
       "mimeType": "image/jpeg"

@@ -320,3 +320,7 @@ E28光圈/方框终点与源环、页间记忆已V。AppPreferences.lastMoveMark
 新增应用2+组件4+实际像素1=7，含四方向源点终点/样式不同、无填充中心/200%与200%棋子/命中、根导航换谱编辑隔离、首落子及动画时序/减少动画、失败重试/新App/运行Fake requests和stops不变；加尺寸回归目标12/12（48659）。最终显式官方NNUE根flutter test338/338（78319，00:34）、flutter analyze无问题（82250）均exit0。macOS新用例1/1（59669，00:13）exit0，真实NNUEtoken/文件偏好/几何/保存树/导航翻转与新App恢复；当前28原生未全28，上片完整27已过。核心未改65沿用，真实OS减少动画设置/人工视觉与其它平台未验。
 
 初analyze1大括号info修复，首目标5过2失败：完成帧还有额外调度帧、相同错误文案存在三层route；增加额外帧/稳定时间并限定BoardDisplayDialog查找，未删生产保护。native测试首静态分析session.next不存在，改现有forward；最终全门槛通过。日志/tmp/chessnext-last-move-{analyze-initial,analyze,analyze-final,target,target-final,full,native}.log，无待等待进程。下一选子抬起/框样式，研究E29自制样本已恢复，未改谱。
+
+### 2026-11-02 / E29选子审计
+
+IAB同自制谱只选黑马c7并再点取消，抬起上移阴影/绿色选择框实际V；设置回访记忆V，恢复抬起及未选子，未落子/改谱/启动分析。截图与AX摘要可追溯；仅研究无业务变更，下一F21选子样式。

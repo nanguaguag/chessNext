@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../../application/board_appearance.dart';
 import 'package:flutter/material.dart';
 import '../../application/preferences_controller.dart';
 
@@ -17,6 +18,31 @@ class BoardDisplayDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              DropdownButtonFormField<LastMoveMarkerStyle>(
+                key: ValueKey(preferences.value.lastMoveMarker),
+                initialValue: preferences.value.lastMoveMarker,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: '落子标记'),
+                items: const [
+                  DropdownMenuItem(
+                    value: LastMoveMarkerStyle.halo,
+                    child: Text('旋转光圈'),
+                  ),
+                  DropdownMenuItem(
+                    value: LastMoveMarkerStyle.box,
+                    child: Text('方框'),
+                  ),
+                ],
+                onChanged: preferences.loading
+                    ? null
+                    : (style) {
+                        if (style != null) {
+                          unawaited(preferences.setLastMoveMarker(style));
+                        }
+                      },
+              ),
+              const Text('标出最后一步的起点与终点。光圈在换步时旋转一周；系统减少动画时静止。'),
+              const SizedBox(height: 12),
               Text('棋子大小：${preferences.value.pieceSizePercent}%'),
               Semantics(
                 label: '棋子大小',

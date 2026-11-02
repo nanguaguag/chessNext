@@ -1,3 +1,4 @@
+import 'last_move_markers.dart';
 import '../../application/current_move_arrows.dart';
 import 'variation_arrows_painter.dart';
 import 'board_arrows_painter.dart';
@@ -36,6 +37,8 @@ class XiangqiBoard extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BoardSurface(
     at: session.position.at,
+    lastMove: session.tree.current.move,
+    lastMoveIdentity: (session.epoch, session.tree.cursorId),
     selected: session.selected,
     targets: session.targets,
     flipped: session.flipped,
@@ -62,6 +65,9 @@ class BoardSurface extends StatefulWidget {
     required this.at,
     required this.onTap,
     this.selected,
+    this.lastMove,
+    this.lastMoveIdentity,
+    this.lastMoveMarkerStyle,
     this.targets = const {},
     this.flipped = false,
     this.mirrored = false,
@@ -88,6 +94,9 @@ class BoardSurface extends StatefulWidget {
   final ValueChanged<Square>? onRemove;
   final void Function(BoardDragData, Square)? onDrop;
   final Square? selected;
+  final Move? lastMove;
+  final Object? lastMoveIdentity;
+  final LastMoveMarkerStyle? lastMoveMarkerStyle;
   final Set<Square> targets;
   final bool flipped;
   final bool mirrored;
@@ -107,6 +116,15 @@ class _BoardSurfaceState extends State<BoardSurface> {
   final boardFocus = FocusNode(debugLabel: 'xiangqi-board');
   Square cursor = Square(4, 0);
   bool hasFocus = false;
+  bool animateMarkerOnMount = false;
+  @override
+  void didUpdateWidget(covariant BoardSurface oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    animateMarkerOnMount =
+        widget.lastMove != oldWidget.lastMove ||
+        widget.lastMoveIdentity != oldWidget.lastMoveIdentity;
+  }
+
   @override
   void dispose() {
     boardFocus.dispose();
@@ -236,6 +254,19 @@ class _BoardSurfaceState extends State<BoardSurface> {
                         row,
                         step,
                       ),
+                  if (widget.lastMove != null)
+                    Positioned.fill(
+                      child: LastMoveMarkers(
+                        animateOnMount: animateMarkerOnMount,
+                        move: widget.lastMove!,
+                        identity: widget.lastMoveIdentity ?? widget.lastMove!,
+                        style:
+                            widget.lastMoveMarkerStyle ??
+                            BoardDisplayScope.lastMoveMarkerOf(context),
+                        flipped: widget.flipped,
+                        mirrored: widget.mirrored,
+                      ),
+                    ),
                 ],
               ),
             );

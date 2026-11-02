@@ -296,3 +296,11 @@ E26显隐/空间回收/随旋转方向/停止保留为V，原比例公式未知�
 新增模型5+组件5+真实像素1=11，覆盖两执方/缺失/边界/杀棋/终局/旧字段/晚到/失败重试、停止同位置保留/导航失效、搜索请求不变/翻转/200%/键盘/几何。显式官方NNUE根flutter test331/331（99436）与flutter analyze无问题（55541）exit0；完整macOS27/27（96958，04:53）exit0，含真实NNUEWDL/同令牌/条空间+28/停止翻转/文件偏好新App及完整旧功能回归。fixture raw[]，不等同真实OS生命周期/人工视觉；其它平台未验。核心未改65沿用。
 
 初analyze8项info（3大括号/5插值花括号），限定dart fix两规则修复，最终0问题，运行测试无失败。日志/tmp/chessnext-evaluation-bar-{model,target,full,analyze-initial,analyze,native-full}.log，全部验证进程收尾。下一F21落子与选择样式实测，F26其它标记/B22仍未完成。
+
+## 2026-11-02 / M3-25 / F21 → B08,B20 最后一步落子标记
+
+E28光圈/方框终点与源环、页间记忆已V。AppPreferences.lastMoveMarker可选halo旧默认/box，严格解析/逐字段合并/串行持久化；BoardDisplayDialog即时Dropdown，Scope只读参数。XiangqiBoard传当前move及(epoch,cursorId)，独立LastMoveMarkers只读叠加/IgnorePointer/语义，共用Square几何，根/编辑器无旧标记。600ms单周旋转后静止/系统减少动画中断/初始静止/首落子animateOnMount，方向及评注不重启，卸载dispose。时序为项目P，非原站完全同动画。ADR-029/LAST_MOVE_MARKER_SLICE。
+
+新增应用2+组件4+实际像素1=7，含四方向源点终点/样式不同、无填充中心/200%与200%棋子/命中、根导航换谱编辑隔离、首落子及动画时序/减少动画、失败重试/新App/运行Fake requests和stops不变；加尺寸回归目标12/12（48659）。最终显式官方NNUE根flutter test338/338（78319，00:34）、flutter analyze无问题（82250）均exit0。macOS新用例1/1（59669，00:13）exit0，真实NNUEtoken/文件偏好/几何/保存树/导航翻转与新App恢复；当前28原生未全28，上片完整27已过。核心未改65沿用，真实OS减少动画设置/人工视觉与其它平台未验。
+
+初analyze1大括号info修复，首目标5过2失败：完成帧还有额外调度帧、相同错误文案存在三层route；增加额外帧/稳定时间并限定BoardDisplayDialog查找，未删生产保护。native测试首静态分析session.next不存在，改现有forward；最终全门槛通过。日志/tmp/chessnext-last-move-{analyze-initial,analyze,analyze-final,target,target-final,full,native}.log，无待等待进程。下一选子抬起/框样式，研究E29自制样本已恢复，未改谱。

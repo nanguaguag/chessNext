@@ -82,6 +82,9 @@ class PreferencesController extends ChangeNotifier {
         final stored = loaded.value;
         value = _bounded(
           stored.copyWith(
+            lastMoveMarker: _edited.contains('lastMoveMarker')
+                ? previous.lastMoveMarker
+                : null,
             showEvaluationBar: _edited.contains('showEvaluationBar')
                 ? previous.showEvaluationBar
                 : null,
@@ -160,6 +163,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(showVariationArrows: visible));
   Future<void> setEvaluationBar(bool visible) =>
       apply(value.copyWith(showEvaluationBar: visible));
+  Future<void> setLastMoveMarker(LastMoveMarkerStyle style) =>
+      apply(value.copyWith(lastMoveMarker: style));
   Future<void> setArrowHead(ArrowHeadStyle style) =>
       apply(value.copyWith(arrowHead: style));
   Future<void> retryPersistence() =>
@@ -174,6 +179,9 @@ class PreferencesController extends ChangeNotifier {
   }
 
   void _recordEdits(AppPreferences next) {
+    if (next.lastMoveMarker != value.lastMoveMarker) {
+      _edited.add('lastMoveMarker');
+    }
     if (next.showEvaluationBar != value.showEvaluationBar) {
       _edited.add('showEvaluationBar');
     }

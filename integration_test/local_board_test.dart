@@ -1,3 +1,4 @@
+import 'package:chess_next/features/board/last_move_markers.dart';
 import 'package:chess_next/application/board_evaluation.dart';
 import 'package:chess_next/features/analysis/evaluation_board.dart';
 import '../test/support/branched_record.dart';
@@ -2235,6 +2236,127 @@ void main() {
           await tester.pump(const Duration(milliseconds: 100));
         }
         expect(find.byKey(const ValueKey('evaluation-strip')), findsNothing);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native last move markers persist styles and preserve NNUE plus saved game',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-last-move-');
+      final repository = FilePreferencesRepository(() async => directory);
+      final games = FileGameRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        repository: FileGameRepository(() async => directory),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+        engineFactory: openBundledEngine,
+      );
+      Future<void> tap(Finder finder) async {
+        await tester.ensureVisible(finder);
+        await tester.pumpAndSettle();
+        await tester.tap(finder);
+        await tester.pumpAndSettle();
+      }
+
+      LastMoveMarkersPainter marker() =>
+          tester
+                  .widget<CustomPaint>(
+                    find.byKey(const ValueKey('last-move-markers')),
+                  )
+                  .painter!
+              as LastMoveMarkersPainter;
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        expect(find.byType(LastMoveMarkers), findsNothing);
+        await tap(find.byKey(const ValueKey('square-h2')));
+        await tap(find.byKey(const ValueKey('square-e2')));
+        expect(marker().move, Move.parse('h2e2'));
+        expect(marker().phase, 1);
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final tree = session.tree,
+            revision = session.revision,
+            positionRevision = session.positionRevision;
+        final targetRect = tester.getRect(
+          find.byKey(const ValueKey('square-e2')),
+        );
+        await games.save(
+          SavedGame(
+            id: 'marker-game',
+            title: '落子标记验证',
+            tree: tree,
+            modifiedAt: DateTime.now(),
+          ),
+        );
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        for (var i = 0; i < 100 && engine.infos.isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.infos, isNotEmpty);
+        final token = engine.infos.first.token;
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('棋盘显示'));
+        await tap(find.byType(DropdownButtonFormField<LastMoveMarkerStyle>));
+        await tap(find.text('方框').last);
+        for (
+          var i = 0;
+          i < 50 &&
+              (await repository.load())?.value.lastMoveMarker !=
+                  LastMoveMarkerStyle.box;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          (await repository.load())!.value.lastMoveMarker,
+          LastMoveMarkerStyle.box,
+        );
+        expect(marker().style, LastMoveMarkerStyle.box);
+        expect(engine.infos.every((info) => info.token == token), isTrue);
+        expect(engine.enabled, isTrue);
+        expect(
+          tester.getRect(find.byKey(const ValueKey('square-e2'))),
+          targetRect,
+        );
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.positionRevision, positionRevision);
+        expect((await games.load('marker-game')).tree.toJson(), tree.toJson());
+        await tap(find.text('关闭'));
+        await tap(find.text('取消'));
+        await engine.disable();
+        await tap(find.text('翻转'));
+        expect(marker().flipped, isTrue);
+        expect(marker().move, Move.parse('h2e2'));
+        session.first();
+        await tester.pumpAndSettle();
+        expect(find.byType(LastMoveMarkers), findsNothing);
+        session.forward();
+        await tester.pumpAndSettle();
+        expect(marker().move, Move.parse('h2e2'));
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.text('棋谱库'));
+        final row = find.widgetWithText(ListTile, '落子标记验证');
+        for (var i = 0; i < 50 && row.evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tap(row);
+        expect(marker().style, LastMoveMarkerStyle.box);
+        expect(marker().move, Move.parse('h2e2'));
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

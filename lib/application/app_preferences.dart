@@ -24,6 +24,7 @@ final class AppPreferences {
     this.showVariationArrows = true,
     this.showEvaluationBar = true,
     this.arrowHead = ArrowHeadStyle.standard,
+    this.lastMoveMarker = LastMoveMarkerStyle.halo,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
@@ -54,6 +55,7 @@ final class AppPreferences {
   final bool showVariationArrows;
   final bool showEvaluationBar;
   final ArrowHeadStyle arrowHead;
+  final LastMoveMarkerStyle lastMoveMarker;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
@@ -65,6 +67,7 @@ final class AppPreferences {
     bool? showVariationArrows,
     bool? showEvaluationBar,
     ArrowHeadStyle? arrowHead,
+    LastMoveMarkerStyle? lastMoveMarker,
     int? threads,
     int? hashMb,
     int? multiPv,
@@ -79,6 +82,7 @@ final class AppPreferences {
     showVariationArrows: showVariationArrows ?? this.showVariationArrows,
     showEvaluationBar: showEvaluationBar ?? this.showEvaluationBar,
     arrowHead: arrowHead ?? this.arrowHead,
+    lastMoveMarker: lastMoveMarker ?? this.lastMoveMarker,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
@@ -87,6 +91,8 @@ final class AppPreferences {
   );
   Map<String, Object> toJson() => {
     'schema': 1,
+    if (lastMoveMarker != LastMoveMarkerStyle.halo)
+      'lastMoveMarker': lastMoveMarker.name,
     'theme': theme.name,
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
@@ -103,6 +109,8 @@ final class AppPreferences {
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
+        (json.containsKey('lastMoveMarker') &&
+            json['lastMoveMarker'] is! String) ||
         (json.containsKey('showEvaluationBar') &&
             json['showEvaluationBar'] is! bool) ||
         (json.containsKey('showVariationArrows') &&
@@ -127,6 +135,9 @@ final class AppPreferences {
     }
     try {
       return AppPreferences(
+        lastMoveMarker: LastMoveMarkerStyle.values.byName(
+          json['lastMoveMarker'] as String? ?? 'halo',
+        ),
         showEvaluationBar: json['showEvaluationBar'] as bool? ?? true,
         showVariationArrows: json['showVariationArrows'] as bool? ?? true,
         showAnalysisArrows: json['showAnalysisArrows'] as bool? ?? true,
@@ -152,6 +163,7 @@ final class AppPreferences {
   @override
   bool operator ==(Object other) =>
       other is AppPreferences &&
+      lastMoveMarker == other.lastMoveMarker &&
       showEvaluationBar == other.showEvaluationBar &&
       showVariationArrows == other.showVariationArrows &&
       showAnalysisArrows == other.showAnalysisArrows &&
@@ -167,6 +179,7 @@ final class AppPreferences {
       guideVersion == other.guideVersion;
   @override
   int get hashCode => Object.hash(
+    lastMoveMarker,
     showEvaluationBar,
     showVariationArrows,
     showAnalysisArrows,

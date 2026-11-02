@@ -813,8 +813,8 @@
     {
       "id": "E35",
       "path": "E35-operation-notes.txt",
-      "bytes": 2512,
-      "sha256": "64f68a77f542ff3a1da4fd839683cf658e8a65480ecb30e9ead57cd1094e39b1",
+      "bytes": 2959,
+      "sha256": "00744ff220358b9b8c01a3d53eec206d64bcb5f2f55c307b56f02b359cd86b6b",
       "mimeType": "text/plain"
     },
     {
@@ -861,8 +861,8 @@
     {
       "id": "E35",
       "path": "samples/E35-manifest.json",
-      "bytes": 775,
-      "sha256": "e76e22480831398b660aabba374f022245747adcacc46ef90c0bd3689914a014",
+      "bytes": 1196,
+      "sha256": "d02560b6f8c7e1c96c73a47eff3c6319b0451cd00fc3105afb912d05719d2fbf",
       "mimeType": "application/json"
     },
     {
@@ -870,6 +870,15 @@
       "path": "samples/E35-self-line.gif",
       "bytes": 450836,
       "sha256": "5033db8416dd986d2f76fff13c03c5441354059644e8c9a81523e8da05ba8033",
+      "width": 500,
+      "height": 600,
+      "mimeType": "image/gif"
+    },
+    {
+      "id": "E35",
+      "path": "samples/E35-distinct-delays.gif",
+      "bytes": 453483,
+      "sha256": "20d751548c6e3886c1c64e749c5f290559388e06b49a8d3e489895e794d23eb8",
       "width": 500,
       "height": 600,
       "mimeType": "image/gif"

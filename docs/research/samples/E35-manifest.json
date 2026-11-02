@@ -15,8 +15,21 @@
       "frames": 6,
       "frameDelayCentiseconds": [20, 20, 20, 20, 20, 20],
       "durationSeconds": 1.2
+    },
+    {
+      "path": "E35-distinct-delays.gif",
+      "bytes": 453483,
+      "sha256": "20d751548c6e3886c1c64e749c5f290559388e06b49a8d3e489895e794d23eb8",
+      "width": 500,
+      "height": 600,
+      "mimeType": "image/gif",
+      "version": "GIF89a",
+      "frames": 6,
+      "frameDelayCentiseconds": [30, 20, 20, 20, 20, 40],
+      "durationSeconds": 1.5,
+      "title": ""
     }
   ],
-  "scope": "根局面加所选线路5着，含当前阅读点后两着未来，不含另一保存变化",
+  "scope": "根局面加所选线路5着，含当前阅读点后两着未来，不含另一保存变化；首尾停留替代对应帧步时",
   "rights": "棋步与标题自制；GIF含参考站点外观资源只研究留存，绝不作为产品资源"
 }

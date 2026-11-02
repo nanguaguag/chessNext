@@ -1,0 +1,35 @@
+{
+  "id": "E34",
+  "date": "2026-11-02 Asia/Shanghai",
+  "source": "https://xiangqiai.com/#/",
+  "method": "自制局面→公开导出图片→下载PNG及公开剪贴板image/png；镜像后再次下载",
+  "samples": [
+    {
+      "path": "E34-mirrored-export.png",
+      "bytes": 1201979,
+      "sha256": "e08c63dac2ed06975e918d40886c40c2cc94bdf80ffe07d86c7d17eedd6660a9",
+      "width": 1000,
+      "height": 1100,
+      "mimeType": "image/png"
+    },
+    {
+      "path": "E34-self-position-copy.png",
+      "bytes": 1205692,
+      "sha256": "93caad6c24f6d54e686a12c1b36bae6927407a677da5e3fa1e3f90b89396a1f4",
+      "width": 1000,
+      "height": 1100,
+      "mimeType": "image/png"
+    },
+    {
+      "path": "E34-self-position-export.png",
+      "bytes": 1205692,
+      "sha256": "93caad6c24f6d54e686a12c1b36bae6927407a677da5e3fa1e3f90b89396a1f4",
+      "width": 1000,
+      "height": 1100,
+      "mimeType": "image/png"
+    }
+  ],
+  "copyMatchesSaved": true,
+  "scope": "当前显示方向的局面棋盘含已有标记，不含应用侧栏和局势条；当前三着非所选未来末端",
+  "rights": "棋步自制，PNG含参考站点外观资源只研究留存，绝不作为产品图形资源"
+}

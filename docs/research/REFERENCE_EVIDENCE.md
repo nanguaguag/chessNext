@@ -231,3 +231,13 @@ https://xiangqiai.com/#/，访客IAB，E19自制谱/E31两未来/E32分析结果
 **补充F12已确认差距：** PGN在当前读到三着时仍导出整条所选线路五着（含炮２平１/马八进七两未来）；E20当时样本在末端，不能将其“根到当前路径”推广为原站所有情况。当前项目PGN仅根到当前为已注明损失的实现，后续B19补整条所选线路，不混为RAV/全树支持。
 
 FEN复制菜单显示成功toast，但tab clipboard读取为空，未获得直接当前FEN；旧关闭索引因弹层已自动退出失败，fresh AX确认，未借系统剪贴板绕过。翻转菜单Escape初未关闭，点击菜单触发器收起；PV Escape AX有瞬时滞后，以后续截图/fresh AX确认。失败留[操作记录](E33-operation-notes.txt)，不计作成功证据。研究截图与自制PGN不进产品资源，DISPLAY_EVIDENCE_MANIFEST.json含全部SHA/实际MIME和尺寸。
+
+## E34 / 2026-11-02 当前局面PNG保存、复制与镜像
+
+https://xiangqiai.com/#/，访客IAB，沿E33自制谱与已恢复正常方向，当前三着炮二进二，AI/分析0、着法标记开。保存/分享→分享/导出→导出图片，底部仅见保存图片/复制图片两个动作（O，[选项](screenshots/E34-image-export-initial.png)/[AX](E34-options.txt)）。保存图片实际触发download，得到有效PNG 1000×1100（V，实际sips核实，[下载样本](samples/E34-self-position-export.png)）。导出只含当前局面棋盘，保留数字坐标、末步源环/光圈和好着角徽；不含工具栏/侧栏/PV、局势条或阅读点后未来局面（V，直接查看文件）。未观察到额外分辨率/范围表单，不推广成固定尺寸策略。
+
+复制图片显示图片已复制，同时公开tab clipboard返回真实image/png/base64；已解码保存并view_image确认同一局面（V，[复制样本](samples/E34-self-position-copy.png)/[反馈及MIME元数据](E34-copy-result.txt)）。本次正常保存和复制均1205692字节且SHA一致；仅本样本结论，不推缓存/所有动画时刻算法。只处理该次image/png，未读取其它类型内容。
+
+主盘左右镜像后再次保存，PNG仍1000×1100，炮h4/源环/坐标/角徽随主盘左右交换（V，[镜像样本](samples/E34-mirrored-export.png)）。最终恢复正常方向，原阅读点/两未来/另一分支和评级保留，AI分析0、无弹窗队列（V，[恢复](screenshots/E34-restored.png)/[AX](E34-restored.txt)），markHandoff。原始下载文件与来源见[样本清单](samples/E34-manifest.json)/[操作记录](E34-operation-notes.txt)。PNG含站点外观资源，只研究证据，**不作为产品资源**。
+
+剪贴板拒绝/保存取消、旋转组合、隐藏标记/极端尺寸/选子状态/活动AI与其它设备分辨率仍U；GIF仍另项。项目先原创棋盘PNG快照与原子文件导出，再独立复制端口/平台验证；不从下载成功推其它平台已支持。

@@ -436,3 +436,7 @@ ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默
 无测试失败；初analyze仅新增测试unused import warning移除，最终0。日志/tmp/chessnext-pgn-line-{target,analyze-initial,analyze-gate,full,native}.log，所有session已消费；git diff --check0，无新依赖资源。E33自制PGN夹具验证读取到3着默认导出5着，不读取站点内部状态或借用户棋谱。
 
 下一F11静态局面图片导出续审E34，先确认公开选项/生成结果/导出范围，再实现本机原创棋盘PNG与可替换文件端口；GIF/OCR/在线云库等继续，不能停称全部对齐。
+
+## 2026-11-02 / E34 / F11静态图片导出续审
+
+实际IAB公开面板仅保存/复制图片；download正常PNG+clipboard实际image/png已验证，二者1000×1100/1205692bytes/SHA一致，当前三着棋盘含坐标/末步/评级，不含侧栏与局势条或未来局面。镜像保存PNG跟随方向。已恢复正常方向和原reading/树/评估，AI分析0无弹窗队列，markHandoff。10新证据，101manifest全部真实SHA/bytes/sips尺寸过；rawPNG版权资源只证据不产品。不推固定分辨率或未测取消/拒绝/其它组合。无业务修改，不重复Flutter门槛；上一根404/analyze0/native相关1有效，core67沿用。下一M4-02原创PNG快照/文件导出，复制后片。

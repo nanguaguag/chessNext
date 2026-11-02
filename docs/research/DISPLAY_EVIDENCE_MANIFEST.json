@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路；E32复盘着法标记与图例；E33左右镜像/组合方向与预览/PGN未来线路",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路；E32复盘着法标记与图例；E33左右镜像/组合方向与预览/PGN未来线路；E34当前棋盘PNG保存/复制及镜像方向",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -729,6 +729,86 @@
       "bytes": 919,
       "sha256": "690f1373718c7f17b40fcbc0d50644ecbfc6d70d55d23329ac91387e7e6ced88",
       "mimeType": "application/json"
+    },
+    {
+      "id": "E34",
+      "path": "E34-copy-result.txt",
+      "bytes": 3932,
+      "sha256": "a66160d76e0719777c6ef1af2bf63aac67ba3d0e95de3ba55c0f8648d9c53e4f",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E34",
+      "path": "E34-operation-notes.txt",
+      "bytes": 1930,
+      "sha256": "9aaa0edacba95706a85012db2068f6e22c695fc355207f756a8b98d68f5d12a6",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E34",
+      "path": "E34-options.txt",
+      "bytes": 4514,
+      "sha256": "ba185778fec6ea2ba738c5507301fafd3536ae3fb01a6a144366a10702234b33",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E34",
+      "path": "E34-restored.txt",
+      "bytes": 3827,
+      "sha256": "f7c200937ca2ff384523439820ab9ad691343c5f8ee4dfffb3dc74f599364598",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E34",
+      "path": "screenshots/E34-image-export-initial.png",
+      "bytes": 67643,
+      "sha256": "50671ed0f4d8f689ba5f8013909aa88370141befbb5bb08d6653a3b123be9d31",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E34",
+      "path": "screenshots/E34-restored.png",
+      "bytes": 132455,
+      "sha256": "66e6dca04f4d144c9362a0332867c66982559a9ab40de81d7e4a3b76bb61c910",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E34",
+      "path": "samples/E34-manifest.json",
+      "bytes": 1209,
+      "sha256": "c3ba708c574cc2cdc6247b654b47f5d7a9d0912f49d931a835e7109cd5699eb5",
+      "mimeType": "application/json"
+    },
+    {
+      "id": "E34",
+      "path": "samples/E34-mirrored-export.png",
+      "bytes": 1201979,
+      "sha256": "e08c63dac2ed06975e918d40886c40c2cc94bdf80ffe07d86c7d17eedd6660a9",
+      "width": 1000,
+      "height": 1100,
+      "mimeType": "image/png"
+    },
+    {
+      "id": "E34",
+      "path": "samples/E34-self-position-copy.png",
+      "bytes": 1205692,
+      "sha256": "93caad6c24f6d54e686a12c1b36bae6927407a677da5e3fa1e3f90b89396a1f4",
+      "width": 1000,
+      "height": 1100,
+      "mimeType": "image/png"
+    },
+    {
+      "id": "E34",
+      "path": "samples/E34-self-position-export.png",
+      "bytes": 1205692,
+      "sha256": "93caad6c24f6d54e686a12c1b36bae6927407a677da5e3fa1e3f90b89396a1f4",
+      "width": 1000,
+      "height": 1100,
+      "mimeType": "image/png"
     }
   ]
 }

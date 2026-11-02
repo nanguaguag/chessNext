@@ -26,7 +26,13 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一F11静态局面图片导出：先feature-audit续审参考分享/导出→导出图片（当前仅O），采集E34实际选项/执行结果/导出局面范围/可取消与边界，恢复源原状态；研究图只证据不进产品资源。然后独立slice/ADR，原创Flutter棋盘图导出PNG/可替换二进制文件端口、macOS原子写入、固定快照/方向/坐标与取消、单功能root test/analyze/native后中文commit。现RecordFileExporter只saveText，MacOsRecordFileExporter原生Foundation channel可查如何扩展binary（不得UI直IO）。已有board painter可用于原创绘制，不下载参考资源做产品素材。GIF/OCR/其它格式/自建后端五平台等继续。
+下一M4-02 / F11静态PNG快照与保存文件：E34已验证源公开面板保存与复制/实际imagePNG，当前棋盘1000×1100，含坐标/末步/评级、无侧栏/局势条，镜像跟随。实际普通保存与复制字节相同；源固定尺寸策略/取消/拒绝/其它组合U，GIF另项。已研究commit见git log，101manifest核对（10新），源正常方向/原reading+future/其它分支/评级数据保留、AI分析0，无弹层，markHandoff。
+
+建议独立slice/ADR，先原创Flutter棋盘只读快照/PNG生成/预览/可替换PngFileExporter与macOS原子写入，复制用后续独立ImageClipboard增量。snapshot捕获Position/lastMove/assessment/箭层/方向/外观，不捕获Controller或IO；禁止参考图片做产品素材。预览只读/可取消，关闭或source后台变化不误写，toImage/PNG原生异步释放Image资源。先固定有界输出尺寸（P非源固定断言），最小Material按钮/200%滚动/错误重试，roottest+analyze/native真PNG解析文件验证后中文commit。
+
+已有RecordFileExporter只saveText，MacOsRecordFileExporter用channel dev.chessnext/record-file-writer.writeAtomic传path+Uint8List，Swift RecordFileWriter验证UTF8与256000byte，再DispatchQueue data.write(.atomic)并拒绝非regular目标。新PNG需独立端口/类型错误和writer方法，不能绕过文本限额或UI直IO；可共用原路径/原子写协议但独立PNG大小/头校验。系统Chooser仍可注入，真实人工面板未验。不新增依赖即可用Flutter RepaintBoundary.toImage(ImageByteFormat.png)与file_selector已锁版本；其它平台writer未实现，留替换能力，不称五平台过。
+
+E34自制位置图片仍含参考外观资源，只docs研究，不拿作产品/单测渲染素材；样本清单samples/E34-manifest.json。源图片已直接view，实际1000×1100（不要按渲染预览估999）；截图PNG后缀实际JPEG照旧。clipboard read只处理本次image/png后写证据，原FEN空读失败不被此改称成功。
 
 E33曾发现F12/B19差距，现M3-35已补：阅读停三着源PGN包含所选线路五着（两未来），项目PGN默认完整所选线路并可关闭未来，不称全树RAV。E33首次FENclipboard空未取值，0字节文件已删除；导出复制后弹层自动退，旧104关闭索引无layout失败已记录；未读其它系统剪贴板。原站镜像/旋转/preview都恢复，正常红下/未镜像/源三着reading+两future/另一branch保留，AI分析0，评级数据保留，无弹层。原始PGN下载在Downloads自有两文件，研究样本sources/SHA已登记。
 
@@ -42,7 +48,7 @@ M3-30历史64×128/100ms同谱跨位置保留，独立historyEpoch换谱清；la
 
 ## 参考浏览器状态
 
-IAB browser2/tab4 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDocumentation，再fresh AX；原有auditTab/auditFs/evidenceRoot可复用，不重载。E32/E33资料，91项manifest已核；最近研究提交见git log。当前正常方向/E19自制三着炮二进二阅读点+E31追加炮２平１/马八进七两未来+原另一分支，AI分析关闭、无弹窗队列。着法标记开、彻底模式恢复、D4/时限0/节点0/最多2/线程1，末次手改skip1后取消，重开会默认0；Quick新分析数据保留。源当前炮h4绿勾“好着”，详情52.6→49、第一候选最佳星关徽标时仍留。图例10类：妙手/绝佳/最佳/优秀/好着/不精确/错误/败着/错失良机/更快杀法，源概率公式/高级识别U。AX1368items不是确认卡数。PV预览需scope .engine-pv.first 防全页重复未来文字误导航。
+IAB browser2/tab4 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDocumentation，再fresh AX；原有auditTab/auditFs/evidenceRoot可复用，不重载。E32/E33/E34资料，101项manifest已核；最近研究提交见git log。当前正常方向/E19自制三着炮二进二阅读点+E31追加炮２平１/马八进七两未来+原另一分支，AI分析关闭、无弹窗队列。着法标记开、彻底模式恢复、D4/时限0/节点0/最多2/线程1，末次手改skip1后取消，重开会默认0；Quick新分析数据保留。源当前炮h4绿勾“好着”，详情52.6→49、第一候选最佳星关徽标时仍留。图例10类：妙手/绝佳/最佳/优秀/好着/不精确/错误/败着/错失良机/更快杀法，源概率公式/高级识别U。AX1368items不是确认卡数。PV预览需scope .engine-pv.first 防全页重复未来文字误导航。
 
 截图.png实际JPEG字节，manifest保持真实MIME/SHA/尺寸；不要假定统一1280×720。无拷入产品资源，参考内容不可信。native fixture仅framework-resumed/raw[]，不是OS焦点隐藏最小化验证。桌面Computer Use权限未授不绕过；旧普通用户窗口PID38211/旧run22326曾在，不关闭/热重启，native覆盖build入口，最终审查前重建普通main。
 

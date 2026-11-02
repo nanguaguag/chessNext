@@ -28,3 +28,5 @@
 crypto 3.0.8：[官方发布页](https://pub.dev/packages/crypto)，Dart项目作者，BSD-3-Clause；本次由原有传递依赖改为直接依赖，版本未变。包归档SHA256为e3626ae6270383c9e3a549f34c9e4cd26c09ae6a9adaab2bf4737a00340efdc4（pubspec.lock）。本机包LICENSE SHA256为ad6a71997da90924b2cfb1fb47ec46537f70faf469efe016168794ae45ed6888；用于制品与后续缓存摘要。SDK和其他依赖完整SBOM仍待发布阶段，不将此一项登记视为全部许可已处理。遵用户指示许可决策暂缓，不阻挡功能开发。
 
 file_selector1.1.0及实际解析的平台/传递依赖见[文件选择登记](FILE_SELECTOR_DEPENDENCIES.md)，包含归档与本机LICENSE摘要。官方平台能力表为文档证据；实际使用能力与未验项见RECORD_FILE_IMPORT_SLICE/TRACEABILITY。
+
+2026-11-02 E34研究PNG：Agent自制棋步，通过公开保存图片/复制图片得出；图片含参考站木纹/棋子外观，只在docs/research/samples留证据，不作为产品素材或引擎测试资源。产品PNG仅用项目原创Flutter绘制；SHA/来源见samples/E34-manifest.json，许可决定仍按用户要求暂缓。

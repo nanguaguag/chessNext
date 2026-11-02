@@ -1,3 +1,4 @@
+import 'package:chess_next/features/analysis/pv_preview_dialog.dart';
 import 'package:chess_next/features/analysis/pv_history_dialog.dart';
 import 'package:chess_next/features/board/last_move_markers.dart';
 import 'package:chess_next/application/board_evaluation.dart';
@@ -2562,6 +2563,105 @@ void main() {
         session.playMove(Move.parse('h2e2'));
         await tester.pumpAndSettle();
         expect(engine.history, isEmpty);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+      }
+    },
+  );
+  testWidgets(
+    'native PV preview uses a real worker and never changes the NNUE search or game',
+    (tester) async {
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(ChessNextApp(engineFactory: openBundledEngine));
+        await tester.pumpAndSettle();
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        for (
+          var i = 0;
+          i < 100 && !engine.history.any((e) => e.info.pv.length >= 3);
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.history.any((e) => e.info.pv.length >= 3), isTrue);
+        final tree = session.tree,
+            revision = session.revision,
+            positionRevision = session.positionRevision,
+            token = engine.infos.first.token;
+        await tap(find.byKey(const ValueKey('pv-history-open')));
+        final history = tester.widget<PvHistoryDialog>(
+          find.byType(PvHistoryDialog),
+        );
+        final entry = history.entries.firstWhere((e) => e.info.pv.length >= 3);
+        final button = find.byKey(ValueKey('pv-history-preview-${entry.id}'));
+        await tester.ensureVisible(button);
+        await tester.tap(button);
+        await tester.pump();
+        final progress = find.byKey(const ValueKey('pv-preview-progress'));
+        for (var i = 0; i < 100 && progress.evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(progress, findsOneWidget);
+        expect(
+          tester.widget<Text>(progress).data,
+          '1 / ${entry.info.pv.length}',
+        );
+        final board = tester.widget<BoardSurface>(
+          find.descendant(
+            of: find.byType(PvPreviewDialog),
+            matching: find.byType(BoardSurface),
+          ),
+        );
+        expect(board.enabled, isFalse);
+        expect(
+          board.at(entry.info.pv.first.to)?.fen,
+          entry.position
+              .play(entry.info.pv.first)
+              .at(entry.info.pv.first.to)
+              ?.fen,
+        );
+        await tap(find.byTooltip('回到原局面'));
+        expect(
+          tester.widget<Text>(progress).data,
+          '0 / ${entry.info.pv.length}',
+        );
+        await tester.tap(find.byTooltip('播放'));
+        await tester.pump(const Duration(milliseconds: 900));
+        expect(
+          tester.widget<Text>(progress).data,
+          isNot('0 / ${entry.info.pv.length}'),
+        );
+        await tester.tap(find.byTooltip('暂停'));
+        await tester.pumpAndSettle();
+        final paused = tester.widget<Text>(progress).data;
+        await tester.pump(const Duration(milliseconds: 900));
+        expect(tester.widget<Text>(progress).data, paused);
+        await tap(find.byTooltip('下一步'));
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.positionRevision, positionRevision);
+        expect(session.dirty, isFalse);
+        expect(engine.enabled, isTrue);
+        expect(engine.infos.every((info) => info.token == token), isTrue);
+        await tap(find.text('关闭预览'));
+        expect(find.byType(PvPreviewDialog), findsNothing);
+        expect(find.byType(PvHistoryDialog), findsOneWidget);
+        await tap(find.text('关闭'));
+        await tap(find.text('停止分析'));
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

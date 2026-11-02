@@ -76,3 +76,5 @@ M3-25：LastMoveMarkerStyle偏好值/Controller合并与Scope；XiangqiBoard传�
 M3-26：SelectionStyle纯枚举与可选偏好、Controller合并/Scope/棋盘显示Dropdown；BoardSurface只改变已选非空面容/固定交点SelectedPieceFramePainter，变换不改hit test，选子与拖放仍原会话/编辑器负责。ADR-030。
 
 M3-27：纯AnalysisHistory/PvHistoryEntry拥有有界原始采样、源Position/revisions和不可变PV；EngineSessionController复用100ms flush，普通分析采样/位置变清空；AnalysisPanel捕获快照后PvHistoryDialog虚拟列表只读显示，独立于复盘持久缓存，无新IO或引擎。ADR-031。
+
+M3-28：PvPreview纯worker准备有界合法Position/中文序列及错误DTO；PvPreviewDialog loader/route代次保护、独立readonly BoardSurface、自适应/虚拟步列表/有限Timer与生命周期；历史入口只读，不拥有会话或引擎。ADR-032。

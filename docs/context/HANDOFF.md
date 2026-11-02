@@ -8,9 +8,11 @@
 
 ## 最新检查点
 
-M3-27 PV历史已完成，独立中文commit见git log。显式官方NNUE根353/353（19885，00:36）与analyze0问题（10739）exit0；macOS新单项1/1（96003，00:12）exit0，当前native30未全30，上片完整27/27（96958）过，核心未改65沿用。无待等待会话。日志/tmp/chessnext-pv-history-*.log，初3lint与目标两测试范围/滚动问题已修，详情SESSION_LOG。
+M3-28只读PV预览完成，独立中文commit见git log。显式官方NNUE根361/361（48185，00:37）与analyze0（62423）exit0，macOS新项1/1（53828，00:11）exit0；现native31未全31，上片完整27/27过，核心未改65沿用。所有验证进程结束。初4lint info/首目标RawTooltip类型断言问题已修，日志/tmp/chessnext-pv-preview-*.log。
 
-ADR-031/PV_HISTORY_SLICE：AnalysisHistory/PvHistoryEntry纯64×128展示采样，深拷贝不可变PV/list、源Position/epoch/nodeId/revisions/rawinfo，去重同token/PV最新内容（time/nps-only忽略，WDL比较数值）。Controller普通分析100ms flush采样，位置变清空，停止/同位置重启保留，资料/旋转不清，清空只展示不改搜索/谱。Panel stable key pv-history-open，onPressed外捕获snapshot+方色；Dialog虚拟列表/可选择UCI/源执方归一score/bound/WDL/mate0不判胜/截断说明。原站清理预算U，此片只读列表不包含预览或AI/复盘流；rawPV未合法重放，下一worker必须严格校验，不能直接拿它落子。
+ADR-032/PV_PREVIEW_SLICE：纯PvPreview工作Isolate整体合法重放至多128步/中文记谱/不可变Position序列，非法后缀整体拒绝，typed DTO+中文error；source history被截断时明确前128，并不宣称已校验尾。历史预览按钮→Dialog loader/generation/mounted/route防退场迟到/重试，源评分与方向固定、readonly BoardSurface/ExcludeFocus与合并语义；虚拟列表随cursor/200%与自适应分栏上下。初1/0原局面/首尾上一下一/左右键点着，800ms播放/暂停/尾停/末尾再播从0；手动/失活/退场/非当前route停Timer。帮助已补，无写谱按钮。新增8+历史3目标11、根361和真实macOSWorker/NNUE同token/不改谱通过。
+
+M3-27 43ce8f7历史列表：AnalysisHistory/PvHistoryEntry64×128/100ms普通分析采样/深拷贝rawPV，source Position/epoch/nodeId/revisions，忽略仅time/nps变化；位置变清空、停止/同位置重启保留，清空不改搜索，打开前snapshot+方色，Dialog虚拟化/评分/WDL/bound。**E31已发现原站跨位置仍留历史，这一清空设计成为已知待补差距，不能关闭B22。** 原站精确上限仍U。
 
 M3-26 c5e7c04选子样式：SelectionStyle lift旧默认/frame，独立偏好/Controller合并/Scope/Dropdown；面容抬8%格距/阴影，transformHitTests=false且在pieceSize外；框固定交点，空位/拖动反馈无选择态。主盘编辑器共用，根345/native单1已过，ADR-030。
 
@@ -28,7 +30,9 @@ AppTextScaling系统保留原TextScaler非线性，手动100/115/130覆盖；Boa
 
 ## 下一可执行
 
-B22小棋盘只读预览与播放下一片，历史列表首片已交付。E30实际点击第一张历史的炮２平１打开预览1/33，下一步2/33，播放改暂停并实际推进，暂停13/33；点击首着1/33，上一步0/33且上一步/走到棋盘上禁用，Escape关闭后原三着谱未变。未点提交按钮，“走到棋盘上”具体写谱仍U，不能当已走通。E30证据已6ca843e提交，截图及AX在research/E30*；源页已恢复/分析0。F21素材、F26评级标记/B22应用前缀、布局、声音、错题训练、其它格式、后端、历史规则、五平台等继续。
+B22下一：E31研究整理/commit（raw E31*已在research未追踪），随后所选前缀原子应用/停止屏障/epoch+源局面保护，再补跨位置历史与stale按钮。E31实测2/33“走到棋盘上”仅追加炮２平１/马八进七，原有另一条变化保留；返回原三着点再开相同PV/选2并应用，没有可见重复，仅回已有末端。按钮应用后短暂禁用“局面已变化”随后关闭；历史1368在新位置及返回仍留。主棋谱现在比E19多两步后续，已回原炮二进二阅读位置，AI/分析0，默认样式。曾全局getByText炮２平１.first误命中新出现的着法树后续而导航1步，freshAX发现后回退，再限定已观察DOM .engine-pv.first正确打开历史；不能把该误导航算预览成功。未删除任何数据，保留自制后续。
+
+E30已6ca843e证据：预览步进/播放暂停/0边界/Escape，E31补应用与跨位置；原站跨文档/历史精确预算/来源绑定算法/正在分析和AI时的应用仍U。项目下一接口需要明确失败状态与不自动落子，不复制原站不安全行为。其它F21素材/F26评级标记、布局声音训练格式后端五平台和完整规则继续。
 
 IAB browser2/tab4 https://xiangqiai.com/#/，E19自制树正常方向、选中炮八平五/马２进３/炮二进二支线叶子，另一马八进七/马８进７主线仍在。E24分析已停止checkbox0但保留历史卡；E25恢复全局变着开/局部关/推荐开/标准/棋子100/系统字号。E25证据已commit，源站两层AND、父局面同级/单项/根/设置返回局部重置已V，编号1中央单次不导航，其它命中仍U。压缩后先cua.rewriteDocumentation再fresh AX；别重新载入。getAX在历史PV行会很长，可emit:false后截取操作段/过滤含“text 红分”的历史行，但文件注明截取/过滤。截图变更后保存并commentary嵌图；研究素材不进产品资源。
 

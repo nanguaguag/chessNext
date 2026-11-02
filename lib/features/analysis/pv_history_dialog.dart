@@ -1,3 +1,4 @@
+import 'pv_preview_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/analysis_history.dart';
@@ -62,6 +63,18 @@ class PvHistoryDialog extends StatelessWidget {
                           Text(
                             '本机WDL：胜${(wdl.wins / 10).toStringAsFixed(1)}% · 和${(wdl.draws / 10).toStringAsFixed(1)}% · 负${(wdl.losses / 10).toStringAsFixed(1)}%（模型估计）',
                           ),
+                        TextButton.icon(
+                          key: ValueKey('pv-history-preview-${entry.id}'),
+                          onPressed: () => showDialog<void>(
+                            context: context,
+                            builder: (_) => PvPreviewDialog(
+                              entry: entry,
+                              flipped: side == Side.black,
+                            ),
+                          ),
+                          icon: const Icon(Icons.preview_outlined),
+                          label: const Text('预览'),
+                        ),
                         SelectableText(
                           info.pv.map((move) => move.toString()).join(' '),
                         ),

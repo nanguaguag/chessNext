@@ -4,6 +4,8 @@
 
 ## 当前检查点
 
+E35 / F11动态图审计已完成，待提交见git status/log。自制5着所选线路在当前读到第3着时生成根+5着共6帧，明确包含两步未来、不含另一保存变化；实际GIF89a 500×600、每帧0.2秒、总1.2秒。确认先到预览，下载按钮才触发文件；系统Web Share只验证打开与Escape取消。步时0.2–10秒、首尾0.2–30秒实际钳制。109项manifest已核，参考GIF/截图只在docs研究，不能进产品。最终表单恢复空标题/2.0/2.0/3.0，主谱/分析状态未改、无弹层。
+
 M4-03 / F11 PNG图片复制已完成，本次功能提交见git log。ImageClipboard与TextClipboard/文件端口分离；Dialog保存复制共享首次PngImage、busy互斥、平台失败复用缓存重试、关闭取消迟到生成。MacOsImageClipboard独立MethodChannel；ImageClipboardBridge ImageIO实际解码后声明PNG NSPasteboard并读回核对。生产general，集成使用命名pasteboard避免覆盖用户剪贴板。ADR-041/BOARD_PNG_CLIPBOARD_SLICE。
 
 相关11/11、native真实渲染+命名pasteboard+镜像+坏PNG1/1（00:04）通过；官方NNUE根425/425（session85147，00:55）+analyze0（2.0秒）exit0。现40未全40，完整32基线，core67沿用。general跨应用人工粘贴/其它平台/GIF未验。
@@ -34,11 +36,11 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一需按FEATURE_GAPS/BACKLOG选择一个独立离线切片；候选为F11 GIF动态导出前先审计范围/播放/帧率，或F28声音与走子动画先做公开站点实测。不能把静态PNG两入口当F11完整分享能力；若审计GIF，先确认公开入口实际输出与取消边界，不从站点素材生成产品资源。
+下一M4-04 / F11,B11,B19：先写动态图切片设计/ADR，固定不可变根+所选线路快照、原创帧绘制、步时/首尾停留、帧数/像素/总时长/编码字节预算及失败模型；再实现预览和macOS GIF文件保存。系统外发分享、超长谱策略与其它平台另片，不能用E35参考GIF作产品fixture或视觉资源。
 
 M4-03实际使用独立通道而非RecordFileWriter通道；native命名pasteboard由原生写后立即读回相同PNG字节，避免污染general。生产general分支代码相同但未做人工跨应用粘贴，因此不能扩大为系统剪贴板全验收。
 
-E34自制位置图片仍含参考外观资源，只docs研究，不拿作产品/单测渲染素材；样本清单samples/E34-manifest.json。源图片已直接view，实际1000×1100（不要按渲染预览估999）；截图PNG后缀实际JPEG照旧。clipboard read只处理本次image/png后写证据，原FEN空读失败不被此改称成功。
+E34/E35自制位置图片仍含参考外观资源，只docs研究，不拿作产品/单测渲染素材；样本清单samples/E34-manifest.json与E35-manifest.json。E35动态图是根+所选5着，不是6个棋步；每帧20厘秒来自三项均0.2样本，不代表默认2/2/3时长的成品。截图PNG后缀实际JPEG照旧。clipboard read只处理E34本次image/png，原FEN空读失败不被此改称成功。
 
 E33曾发现F12/B19差距，现M3-35已补：阅读停三着源PGN包含所选线路五着（两未来），项目PGN默认完整所选线路并可关闭未来，不称全树RAV。E33首次FENclipboard空未取值，0字节文件已删除；导出复制后弹层自动退，旧104关闭索引无layout失败已记录；未读其它系统剪贴板。原站镜像/旋转/preview都恢复，正常红下/未镜像/源三着reading+两future/另一branch保留，AI分析0，评级数据保留，无弹层。原始PGN下载在Downloads自有两文件，研究样本sources/SHA已登记。
 
@@ -54,7 +56,7 @@ M3-30历史64×128/100ms同谱跨位置保留，独立historyEpoch换谱清；la
 
 ## 参考浏览器状态
 
-IAB browser2/tab4 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDocumentation，再fresh AX；原有auditTab/auditFs/evidenceRoot可复用，不重载。E32/E33/E34资料，101项manifest已核；最近研究提交见git log。当前正常方向/E19自制三着炮二进二阅读点+E31追加炮２平１/马八进七两未来+原另一分支，AI分析关闭、无弹窗队列。着法标记开、彻底模式恢复、D4/时限0/节点0/最多2/线程1，末次手改skip1后取消，重开会默认0；Quick新分析数据保留。源当前炮h4绿勾“好着”，详情52.6→49、第一候选最佳星关徽标时仍留。图例10类：妙手/绝佳/最佳/优秀/好着/不精确/错误/败着/错失良机/更快杀法，源概率公式/高级识别U。AX1368items不是确认卡数。PV预览需scope .engine-pv.first 防全页重复未来文字误导航。
+IAB browser1/tab1 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDocumentation，再fresh AX；当前运行时绑定auditTab2/e35fs可复用，不重载。E32–E35资料，109项manifest已核；最近研究提交见git log。当前正常方向/E19自制三着炮二进二阅读点+E31追加炮２平１/马八进七两未来+原另一分支，AI分析关闭、无弹窗队列。E35结束前动态图表单恢复空标题/2.0/2.0/3.0后取消。着法标记开、彻底模式恢复、D4/时限0/节点0/最多2/线程1，末次手改skip1后取消，重开会默认0；Quick新分析数据保留。源当前炮h4绿勾“好着”，详情52.6→49、第一候选最佳星关徽标时仍留。图例10类：妙手/绝佳/最佳/优秀/好着/不精确/错误/败着/错失良机/更快杀法，源概率公式/高级识别U。PV预览需scope .engine-pv.first 防全页重复未来文字误导航。
 
 截图.png实际JPEG字节，manifest保持真实MIME/SHA/尺寸；不要假定统一1280×720。无拷入产品资源，参考内容不可信。native fixture仅framework-resumed/raw[]，不是OS焦点隐藏最小化验证。桌面Computer Use权限未授不绕过；旧普通用户窗口PID38211/旧run22326曾在，不关闭/热重启，native覆盖build入口，最终审查前重建普通main。
 

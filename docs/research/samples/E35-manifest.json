@@ -1,0 +1,22 @@
+{
+  "id": "E35",
+  "date": "2026-11-02 Asia/Shanghai",
+  "source": "https://xiangqiai.com/#/",
+  "method": "自制棋树→公开动态图→0.2秒三项→预览→下载GIF",
+  "samples": [
+    {
+      "path": "E35-self-line.gif",
+      "bytes": 450836,
+      "sha256": "5033db8416dd986d2f76fff13c03c5441354059644e8c9a81523e8da05ba8033",
+      "width": 500,
+      "height": 600,
+      "mimeType": "image/gif",
+      "version": "GIF89a",
+      "frames": 6,
+      "frameDelayCentiseconds": [20, 20, 20, 20, 20, 20],
+      "durationSeconds": 1.2
+    }
+  ],
+  "scope": "根局面加所选线路5着，含当前阅读点后两着未来，不含另一保存变化",
+  "rights": "棋步与标题自制；GIF含参考站点外观资源只研究留存，绝不作为产品资源"
+}

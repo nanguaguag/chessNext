@@ -30,3 +30,5 @@ crypto 3.0.8：[官方发布页](https://pub.dev/packages/crypto)，Dart项目�
 file_selector1.1.0及实际解析的平台/传递依赖见[文件选择登记](FILE_SELECTOR_DEPENDENCIES.md)，包含归档与本机LICENSE摘要。官方平台能力表为文档证据；实际使用能力与未验项见RECORD_FILE_IMPORT_SLICE/TRACEABILITY。
 
 2026-11-02 E34研究PNG：Agent自制棋步，通过公开保存图片/复制图片得出；图片含参考站木纹/棋子外观，只在docs/research/samples留证据，不作为产品素材或引擎测试资源。产品PNG仅用项目原创Flutter绘制；SHA/来源见samples/E34-manifest.json，许可决定仍按用户要求暂缓。
+
+2026-11-02 E35研究GIF：Agent自制棋树/标题，通过公开动态图预览与下载取得；GIF及截图含参考站木纹、棋子和排版，只在docs/research留作功能范围证据，不作为产品素材、编码fixture或视觉基线。产品动态图必须由项目原创棋盘绘制，SHA/帧数据/来源见samples/E35-manifest.json；许可决定仍按用户要求暂缓。

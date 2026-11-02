@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路；E32复盘着法标记与图例；E33左右镜像/组合方向与预览/PGN未来线路；E34当前棋盘PNG保存/复制及镜像方向",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路；E32复盘着法标记与图例；E33左右镜像/组合方向与预览/PGN未来线路；E34当前棋盘PNG保存/复制及镜像方向；E35动态图设置/预览/GIF下载/分享取消与所选线路范围",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -809,6 +809,70 @@
       "width": 1000,
       "height": 1100,
       "mimeType": "image/png"
+    },
+    {
+      "id": "E35",
+      "path": "E35-operation-notes.txt",
+      "bytes": 2512,
+      "sha256": "64f68a77f542ff3a1da4fd839683cf658e8a65480ecb30e9ead57cd1094e39b1",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E35",
+      "path": "E35-options.txt",
+      "bytes": 591,
+      "sha256": "962544f56f756dbe7b4e2b8f5ca96ca58f2a36184d87fc849b5e926b9a823e1d",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E35",
+      "path": "E35-restored.txt",
+      "bytes": 532,
+      "sha256": "c46498e1c962c4be1b0e944899c65d45c319aaf7e1da60452e70ad6ab54fc813",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E35",
+      "path": "screenshots/E35-dynamic-options.png",
+      "bytes": 46472,
+      "sha256": "d54a6cf6b790a9e1953f20183a2af3e26364aad76ed0a35c41e4df5cb2f56085",
+      "width": 756,
+      "height": 863,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E35",
+      "path": "screenshots/E35-dynamic-preview.png",
+      "bytes": 102252,
+      "sha256": "511dcc01c385fbe76456fd547b05d4aef4e79264a32919a46d9dd239d5b47906",
+      "width": 756,
+      "height": 863,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E35",
+      "path": "screenshots/E35-restored.png",
+      "bytes": 82522,
+      "sha256": "32be1f61c88db0d37bea42e48d5d07818905feb8928c5e33ede16de19bd49927",
+      "width": 756,
+      "height": 863,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E35",
+      "path": "samples/E35-manifest.json",
+      "bytes": 775,
+      "sha256": "e76e22480831398b660aabba374f022245747adcacc46ef90c0bd3689914a014",
+      "mimeType": "application/json"
+    },
+    {
+      "id": "E35",
+      "path": "samples/E35-self-line.gif",
+      "bytes": 450836,
+      "sha256": "5033db8416dd986d2f76fff13c03c5441354059644e8c9a81523e8da05ba8033",
+      "width": 500,
+      "height": 600,
+      "mimeType": "image/gif"
     }
   ]
 }

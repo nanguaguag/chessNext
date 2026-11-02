@@ -3,6 +3,7 @@ import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/engine_session_controller.dart';
+import '../../application/board_session.dart';
 import '../../application/review_models.dart';
 import 'candidate_options_dialog.dart';
 
@@ -148,14 +149,20 @@ class CandidatePanel extends StatelessWidget {
                                   run.phase == ReviewPhase.stopping
                               ? null
                               : () async {
-                                  final applied = await engine.tryCandidate(
+                                  final result = await engine.applyCandidate(
                                     run,
                                     candidate.move,
                                   );
-                                  if (!applied && context.mounted) {
+                                  if (result != CandidateApplyResult.applied &&
+                                      context.mounted) {
                                     ScaffoldMessenger.of(context).showSnackBar(
-                                      const SnackBar(
-                                        content: Text('局面已变化或引擎未能停止，本次未试走。'),
+                                      SnackBar(
+                                        content: Text(
+                                          result ==
+                                                  CandidateApplyResult.capacity
+                                              ? BoardSession.capacityNotice
+                                              : '局面已变化或引擎未能停止，本次未试走。',
+                                        ),
                                       ),
                                     );
                                   }

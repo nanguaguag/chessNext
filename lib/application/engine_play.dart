@@ -149,6 +149,22 @@ extension EnginePlay on EngineSessionController {
             _applyingEngine = true;
             try {
               if (!session.playMove(move, fromEngine: true)) {
+                if (session.moveRejection == MoveRejection.capacity) {
+                  _aiSides.clear();
+                  _thinking = false;
+                  _busy = false;
+                  _playSearch = null;
+                  _restart?.cancel();
+                  _exclusions.clear();
+                  _lastAiNode = null;
+                  _enabled = false;
+                  _error = null;
+                  ++_generation;
+                  session.setInputLocked(false);
+                  _status = '棋谱容量已满，自动对弈已暂停';
+                  _notify();
+                  return;
+                }
                 throw StateError('Move could not be applied');
               }
               if (excluded.isNotEmpty) session.promote(session.tree.cursorId);

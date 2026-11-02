@@ -19,7 +19,7 @@ class RecentReading {
         title.trim().isEmpty ||
         title.length > 120 ||
         rootFen.length > 200 ||
-        this.path.length > 1999) {
+        this.path.length > GameTree.maxNodes - 1) {
       throw ArgumentError('Invalid reading metadata');
     }
     Position.fromFen(rootFen);
@@ -77,7 +77,7 @@ class RecentReading {
           raw['at'] is! String ||
           raw['rootFen'] is! String ||
           raw['path'] is! List ||
-          (raw['path'] as List).length > 1999) {
+          (raw['path'] as List).length > GameTree.maxNodes - 1) {
         throw const FormatException('Invalid reading entry');
       }
       final moves = (raw['path'] as List).map((m) {

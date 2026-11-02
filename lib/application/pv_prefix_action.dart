@@ -40,7 +40,7 @@ typedef PvPrefixPlanner =
 
 abstract final class PvPrefixPlan {
   // Same bound as the current GameTree serialization schema.
-  static const maxDocumentNodes = 2000;
+  static const maxDocumentNodes = GameTree.maxNodes;
   static Future<({GameTree? tree, PvApplyResult? error})> prepareInWorker(
     GameTree source,
     List<Move> moves,
@@ -64,6 +64,8 @@ abstract final class PvPrefixPlan {
           return (tree: null, error: PvApplyResult.capacity);
         }
       }
+    } on GameTreeCapacityException {
+      return (tree: null, error: PvApplyResult.capacity);
     } on ArgumentError {
       return (tree: null, error: PvApplyResult.invalid);
     }

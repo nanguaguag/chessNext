@@ -154,20 +154,32 @@ extension EngineCandidates on EngineSessionController {
     }
   }
 
-  Future<bool> tryCandidate(CandidateRun run, Move move) async {
+  Future<bool> tryCandidate(CandidateRun run, Move move) async =>
+      await applyCandidate(run, move) == CandidateApplyResult.applied;
+
+  Future<CandidateApplyResult> applyCandidate(
+    CandidateRun run,
+    Move move,
+  ) async {
     if (!identical(run, _candidates) ||
         !_candidateSnapshotValid(run) ||
         !run.results.any((r) => r.move == move)) {
-      return false;
+      return CandidateApplyResult.stale;
     }
     final stopping = disable();
     final generation = _generation;
     await stopping;
-    if (generation != _generation ||
-        _stopFailedGeneration == generation ||
-        !_candidateSnapshotValid(run)) {
-      return false;
+    if (_stopFailedGeneration == generation) {
+      return CandidateApplyResult.stopFailed;
     }
-    return session.playVariation(run.parentId, move);
+    if (generation != _generation || !_candidateSnapshotValid(run)) {
+      return CandidateApplyResult.stale;
+    }
+    if (session.playVariation(run.parentId, move)) {
+      return CandidateApplyResult.applied;
+    }
+    return session.moveRejection == MoveRejection.capacity
+        ? CandidateApplyResult.capacity
+        : CandidateApplyResult.stale;
   }
 }

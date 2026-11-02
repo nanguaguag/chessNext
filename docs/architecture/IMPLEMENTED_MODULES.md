@@ -86,3 +86,5 @@ M3-30：历史文档epoch独立于AI状态，位置只清latest、历史跨位�
 M3-31 / ADR-035：ReviewReport.assess纯单节点规则复用，EngineReview.currentMoveAssessment按run身份/节点缓存并校验文档，UI MoveGradeBadge只读角徽/交点语义，MoveGradeControls两个入口共用PreferencesController.showMoveGrades。UI无新增IO，评级版本不改。
 
 M3-32 / ADR-036：AppPreferences.reviewMode/PreferencesController为独立枚举偏好，复盘配置立即保存/取消保留；ReviewPanel根据已有评分结果传initialSkipExisting，Dialog只拥有本次预算和跳过意图，应用层cache身份/调度不改。
+
+M3-33 / ADR-037：纯GameTree.maxNodes与GameTreeCapacityException统一所有新增；BoardSession捕获为MoveRejection.capacity且事务不改文档。CandidateApplyResult经应用层区分容量与过期/stop失败，UI只呈现；AI容量清排程解锁并保留Gateway；PV worker映射原有capacity。

@@ -28,8 +28,14 @@ final class GameNode {
   );
 }
 
+/// The document can still be read, saved, pruned and replayed at this limit.
+final class GameTreeCapacityException extends StateError {
+  GameTreeCapacityException() : super('Game tree node capacity exceeded');
+}
+
 /// Immutable variation tree with stable document-local node IDs and a cursor.
 final class GameTree {
+  static const maxNodes = 2000;
   GameTree._(
     Map<String, GameNode> nodes,
     this.cursorId,
@@ -83,7 +89,7 @@ final class GameTree {
         throw const FormatException('Unsupported or incomplete game schema');
       }
       final rawNodes = json['nodes'] as List;
-      if (rawNodes.isEmpty || rawNodes.length > 2000)
+      if (rawNodes.isEmpty || rawNodes.length > maxNodes)
         throw const FormatException('Node limit exceeded');
       final raw = <String, Map<String, dynamic>>{};
       var maxId = 0;
@@ -219,6 +225,7 @@ final class GameTree {
       if (node(id).move == move) return goTo(id);
     }
     final next = current.position.play(move);
+    if (nodeCount >= maxNodes) throw GameTreeCapacityException();
     final id = 'n$_nextId';
     return GameTree._(
       {

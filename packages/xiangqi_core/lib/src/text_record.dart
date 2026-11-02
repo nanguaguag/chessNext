@@ -42,7 +42,8 @@ abstract final class TextRecord {
     final moves = moveText.trim().isEmpty
         ? <String>[]
         : moveText.trim().split(RegExp(r'\s+'));
-    if (moves.length > 1999) throw const FormatException('着法超过1999步限制');
+    if (moves.length > GameTree.maxNodes - 1)
+      throw const FormatException('着法超过${GameTree.maxNodes - 1}步限制');
     for (var i = 0; i < moves.length; i++) {
       try {
         final token = moves[i];

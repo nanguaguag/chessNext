@@ -366,3 +366,13 @@ ADR-036/REVIEW_CONFIGURATION_SLICE：reviewMode为严格可选枚举/独立晚�
 新增应用2/组件3共5，连既有复盘/多候选目标10/10（93046，00:04）exit0。显式官方NNUE根初390/390（91602，00:44）过，随后补帮助文案再次全量最终390/390（49975，00:42）exit0；最终flutter analyze无问题（15635，2.4秒）exit0。macOS真实NNUE完成后配置重开/取消不重算/模式文件新App恢复1/1（85476，00:11）exit0，现35未全35，最近完整32/32仍M3-29基线。core未改65/65+dart analyze沿用，OS/其它平台未验。
 
 初analyze1条curly info修加括号；首目标9过1失败是缓存复用fixture使用未验证身份FakeEngine，系统正确拒绝复用，改用已有VerifiedFake（不改生产缓存安全策略），最终10过。日志/tmp/chessnext-review-config-{analyze-initial,analyze-final,analyze-gate,target,target-final,full,full-final,native}.log，所有session已结束；无新依赖/资产，git diff --check0。下一K09统一新增入口2000节点容量与可恢复失败，继续其余全部对标缺项。
+
+## 2026-11-02 / M3-33 / F01,F03,F10,F13 → B16,B17,B19 / K09 统一节点容量
+
+ADR-037/DOCUMENT_CAPACITY_SLICE：GameTree.maxNodes=2000含根/复用已有优先/合法新增前类型化GameTreeCapacityException，fromJson/文字PGN/仓库/最近阅读/PV容量消息同源。Session手工/fromEngine/同级捕获MoveRejection.capacity，一次通知不改tree/metadata/epoch/revision/positionRevision/dirty/选子；满谱导航/评注/已有复用/保存可用，删除后ID递增继续。AI容量暂停执方/代次/排程并解锁，保留Gateway可直接分析，不走_failed销毁或循环重搜；CandidateApplyResult明确capacity/过期/stopFailed，旧bool兼容。PV整段原子容量边界回归。K09节点部分解决；独立4MiB编码限制仍K10代码审计待UI超限实测，不能称所有容量风险消除。
+
+新增core2、应用3、组件2共7（根新增5）；目标16/16（78961）过，core最终dart test67/67（90140，00:01）+dart analyze无问题（74714）exit0；显式官方NNUE根最终395/395（88333，00:46）+flutter analyze无问题（2394，2.4秒）exit0。macOS真实2000浅合法树/AI收到bestmove容量暂停后同一NNUE继续WDL分析/FileGameRepository保存新App恢复含评注元资料1/1（57594，00:11）exit0。初全量395（89831）/native1（39381）亦过，末补所有数量常量引用后最终再次全量/core/native确认。现36未全36，最近完整native32/32仍M3-29；真实OS/其它平台未验。
+
+首analyze2条curly info加括号；首目标9过2失败（fixture误假定n1有缺失合法子着、首候选searchMoves为空）；改合法浅树保留一root合法着未录入/首候选允许集合用legalMoves，但替换漏格式化后旧n1仍1失败；定位并改root后11过，新增组件连旧候选/PV目标最终16过。未弱化真实容量或造假树，无测试后门。日志/tmp/chessnext-capacity-{analyze-initial,analyze-fixed,analyze-gate,analyze-final,target,target-fixed,target-final,target-widgets,core,core-final,core-analyze,core-analyze-final,full,full-final,native,native-final}.log，所有session消费结束，git diff --check0。没有新增依赖资源。
+
+下一F05左右镜像视图续审（当前仅O，主盘未实现），然后单功能实现/测试/提交；K10后续，继续全站功能，不能结束全量审查。参考CUA本次仅fresh AX读取，状态未改并markHandoff，E33尚未采集。

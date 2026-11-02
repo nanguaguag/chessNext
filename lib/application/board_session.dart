@@ -4,6 +4,8 @@ import 'current_move_arrows.dart';
 import 'package:flutter/foundation.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 
+enum MoveRejection { capacity }
+
 /// In-memory document and cursor; persistence is provided through a separate port.
 class BoardSession extends ChangeNotifier {
   BoardSession({Position? initial}) : _tree = GameTree(initial: initial) {
@@ -69,6 +71,7 @@ class BoardSession extends ChangeNotifier {
     _positionRevision++;
     _selected = null;
     _notice = null;
+    _moveRejection = null;
     _refresh();
     notifyListeners();
   }
@@ -87,6 +90,16 @@ class BoardSession extends ChangeNotifier {
   Square? get selected => _selected;
   bool _flipped = false;
   bool get flipped => _flipped;
+  static const capacityNotice =
+      '棋谱已达${GameTree.maxNodes}个局面上限（含起始局面）。可保存或导出当前棋谱，删除不需要的分支后继续；已有着法仍可阅读和切换。';
+  MoveRejection? _moveRejection;
+  MoveRejection? get moveRejection => _moveRejection;
+  void _rejectCapacity() {
+    _moveRejection = MoveRejection.capacity;
+    _notice = capacityNotice;
+    notifyListeners();
+  }
+
   String? _notice;
   String? get notice => _notice;
   late List<Move> _legal;
@@ -114,6 +127,7 @@ class BoardSession extends ChangeNotifier {
   void tap(Square square) {
     if (_outcome.isTerminal || _inputLocked) return;
     _notice = null;
+    _moveRejection = null;
     if (square == _selected) {
       _selected = null;
     } else if (position.at(square)?.side == position.turn) {
@@ -131,17 +145,24 @@ class BoardSession extends ChangeNotifier {
   }
 
   bool playMove(Move move, {bool fromEngine = false}) {
+    _moveRejection = null;
     if (_outcome.isTerminal ||
         (_inputLocked && !fromEngine) ||
         !_legal.contains(move)) {
       return false;
     }
     final before = tree.nodeCount;
-    _tree = tree.play(move);
+    try {
+      _tree = tree.play(move);
+    } on GameTreeCapacityException {
+      _rejectCapacity();
+      return false;
+    }
     _positionRevision++;
     if (tree.nodeCount != before) _revision++;
     _selected = null;
     _notice = null;
+    _moveRejection = null;
     _refresh();
     notifyListeners();
     return true;
@@ -163,6 +184,7 @@ class BoardSession extends ChangeNotifier {
     if (target.nodeCount > source.nodeCount) _revision++;
     _positionRevision++;
     _selected = null;
+    _moveRejection = null;
     _notice = '已应用所选PV前缀';
     _refresh();
     notifyListeners();
@@ -171,18 +193,26 @@ class BoardSession extends ChangeNotifier {
 
   /// Creates or selects an alternative from its parent in one notification.
   bool playVariation(String parentId, Move move) {
+    _moveRejection = null;
     if (_inputLocked ||
         !tree.hasNode(parentId) ||
         !tree.node(parentId).position.legalMoves.contains(move)) {
       return false;
     }
-    final next = tree.goTo(parentId).play(move);
+    late final GameTree next;
+    try {
+      next = tree.goTo(parentId).play(move);
+    } on GameTreeCapacityException {
+      _rejectCapacity();
+      return false;
+    }
     if (next.cursorId == tree.cursorId) return true;
     if (next.nodeCount != tree.nodeCount) _revision++;
     _tree = next;
     _positionRevision++;
     _selected = null;
     _notice = null;
+    _moveRejection = null;
     _refresh();
     notifyListeners();
     return true;
@@ -191,6 +221,7 @@ class BoardSession extends ChangeNotifier {
   void cancelSelection() {
     _selected = null;
     _notice = null;
+    _moveRejection = null;
     notifyListeners();
   }
 
@@ -200,6 +231,7 @@ class BoardSession extends ChangeNotifier {
     _tree = next;
     _selected = null;
     _notice = null;
+    _moveRejection = null;
     _refresh();
     notifyListeners();
   }
@@ -261,6 +293,7 @@ class BoardSession extends ChangeNotifier {
     _revision++;
     _selected = null;
     _notice = null;
+    _moveRejection = null;
     _refresh();
     notifyListeners();
   }
@@ -280,6 +313,7 @@ class BoardSession extends ChangeNotifier {
     _positionRevision++;
     _selected = null;
     _notice = null;
+    _moveRejection = null;
     _refresh();
     notifyListeners();
   }

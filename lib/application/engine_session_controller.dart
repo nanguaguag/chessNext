@@ -21,6 +21,8 @@ part 'engine_candidates.dart';
 
 typedef EngineFactory = Future<EngineGateway> Function();
 
+enum CandidateApplyResult { applied, stale, stopFailed, capacity }
+
 class AnalysisSettings {
   const AnalysisSettings({
     this.threads = 1,

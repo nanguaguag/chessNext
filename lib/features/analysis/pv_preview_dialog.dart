@@ -182,7 +182,7 @@ class _PvPreviewDialogState extends State<PvPreviewDialog>
     PvApplyResult.stale => '来源局面或棋谱已变化，请重新打开预览',
     PvApplyResult.cancelled => '操作已取消，棋谱未改变',
     PvApplyResult.invalid => '所选PV路径无效，棋谱未改变',
-    PvApplyResult.capacity => '应用后超过2000节点限制，棋谱未改变',
+    PvApplyResult.capacity => '应用后超过${GameTree.maxNodes}节点限制，棋谱未改变',
     PvApplyResult.stopFailed => '停止引擎失败，棋谱未改变，请重试',
     PvApplyResult.failed => 'PV处理失败，棋谱未改变，请重试',
     PvApplyResult.busy => '正在处理所选PV，请稍候',

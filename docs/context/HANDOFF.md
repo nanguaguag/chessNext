@@ -4,6 +4,10 @@
 
 ## 当前检查点
 
+M3-33 / K09节点容量已修，提交见git log。GameTree.maxNodes/typed GameTreeCapacityException是纯core统一真值，play先已有复用/合法新增才拒绝，fromJson/PGN文字/仓库/最近阅读/PV同源；Session捕获MoveRejection.capacity不改树/元资料/epoch/两revision/dirty/选子只通知一次，删除腾空间ID递增。AI暂停执方/代次/排程/解锁，error空且保留同Gateway可直接分析；CandidateApplyResult四态和旧tryCandidate bool包装，UI明确容量失败，PV worker映射原子capacity。ADR-037/DOCUMENT_CAPACITY_SLICE。独立4MiB长评注存储限制K10尚无入口预预算，已代码审计记录，未跑超限UI。
+
+最终根395/395（88333，00:46）与analyze0（2394），core67/67（90140）+dart analyze0（74714），目标16/16（78961），native实际2000浅树/AI容量后同NNUE继续分析/FileGameRepository保存新App恢复元资料评注1/1（57594，00:11）均exit0。现36未全36，最近完整32基线。初fixture假定n1留空/首候选searchMoves非空失败，改root留一合法未录入+allowed回退合法集合，并修漏替换后全过；初analyze2curly info修。日志/tmp/chessnext-capacity-*.log，所有session已消费，无后台验证。最后补其它数量常量引用后已再次全量/core/native过。CUA本次仅读取现有tab状态且markHandoff，未改参考站；E33未正式采集。
+
 M3-32 / F32,B08,B09复盘配置已交付，提交见git log。AppPreferences.reviewMode可选枚举/严格类型/逐字段晚读合并与保存失败重试；ReviewOptionsDialog打开读mode，切换立即保存/取消保留（不启停任务）。ReviewPanel注入initialSkipExisting：无结果true，任何已有结果false；skip是单次任务意图，不更改应用API默认和cache完整身份策略。loading配置入口禁用、原epoch/revision保护仍在；其它预算/范围默认未记忆。ADR-036/REVIEW_CONFIGURATION_SLICE。
 
 新增2应用+3组件、连旧目标10/10（93046）；最终官方NNUE根390/390（49975，00:42）+analyze0（15635）exit0；native新配置/真实NNUE/文件新App恢复1/1（85476，00:11）过。现35未全35，完整32基线，core65沿用。初目标未验证Fake试缓存失败是安全策略正确，换VerifiedFake后过；初analyze1info括号修。日志/tmp/chessnext-review-config-*.log，所有session结束。此前根390首过后补帮助文本，已再全量390过。无新依赖资源。
@@ -14,7 +18,7 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一B16/B19 K09统一2000节点容量：当前GameTree.fromJson限制2000、PV worker/commit保护有，但手工BoardSession.playMove/playVariation/AI新落子可能创建不可恢复的超限文档。先读core GameTree、BoardSession、engine_play/candidates、pv_prefix_action及既有2000 fixture；设计统一限额与类型化可恢复失败，已有节点复用/读谱/删除腾空间必须仍可用，不把容量误报为引擎不可用。先slice/ADR，再单功能测试/平台/commit；不要将其视为源站有同样上限。
+下一F05主盘左右镜像视图：现主盘仅session.flipped，BoardSurface已有mirrored几何/坐标/90交点/箭头/最后步/徽标支持，Editor镜像是编辑局面操作，不混为主盘视图。先feature-audit skill+参考站翻转菜单，验证左右翻转与当前FEN/棋谱/导航关系，保存E33证据/原图manifest并恢复方向；不据入口推断行为。再scope小片实现、root全量/analyze/native、单独中文commit。PV预览当前仅捕获flipped，镜像来源传递需要一起考虑；K10字节预算可后续推进，不停止整体任务。
 
 尚缺B22 hover/站点跨文档与容量、K09统一2000节点门槛、F21素材、F28声音动画、布局/工作区/语言、错题/训练/题库、XQF/CBR/CBL/DhtmlXQ/WXF/RAV/多局/GBK/文件夹拖放、图像GIF/OCR、自建后端认证同步/云库/识图部署、完整重复/长将长捉规则、五平台引擎构建运行发行。离线优先是顺序，不是删除在线范围。
 

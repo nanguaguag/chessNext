@@ -1,3 +1,5 @@
+import '../packages/xiangqi_core/test/support/capacity_tree.dart';
+import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/features/review/review_options_dialog.dart';
 import 'package:chess_next/application/review_report.dart';
 import 'package:chess_next/features/board/move_grade_badge.dart';
@@ -3138,6 +3140,114 @@ void main() {
           ReviewMode.candidates,
         );
         await tap(inside(find.text('取消')));
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native full-capacity document stays recoverable and AI capacity preserves NNUE engine',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-capacity-');
+      var opens = 0;
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        repository: FileGameRepository(() async => directory),
+        engineFactory: () async {
+          opens++;
+          return openBundledEngine();
+        },
+      );
+      Future<void> tap(Finder f) async {
+        await tester.ensureVisible(f);
+        await tester.pumpAndSettle();
+        expect(f.hitTestable(), findsOneWidget);
+        await tester.tap(f);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final session = engine.session;
+        session.replaceTree(
+          capacityTree().annotate('满谱评注'),
+          metadata: GameMetadata({'Event': '容量原生自制'}),
+        );
+        await tester.pumpAndSettle();
+        final tree = session.tree;
+        final move = session.legalMoves.first;
+        await tap(find.byKey(ValueKey('square-${move.from}')));
+        await tap(find.byKey(ValueKey('square-${move.to}')));
+        expect(session.tree, same(tree));
+        expect(session.moveRejection, MoveRejection.capacity);
+        await engine.setThinkTime(50);
+        await engine.setAiSide(session.position.turn, true);
+        for (var i = 0; i < 150 && engine.playing; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.playing, isFalse);
+        expect(session.inputLocked, isFalse);
+        expect(engine.error, isNull);
+        expect(engine.status, '棋谱容量已满，自动对弈已暂停');
+        expect(session.tree, same(tree));
+        expect(session.dirty, isFalse);
+        final identity = engine.engineIdentity;
+        expect(identity, isNotNull);
+        await engine.enable();
+        for (
+          var i = 0;
+          i < 100 && engine.infos.every((x) => x.wdl == null);
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.infos.any((x) => x.wdl != null), isTrue);
+        expect(opens, 1);
+        expect(engine.engineIdentity, same(identity));
+        await engine.disable();
+        await tester.pumpAndSettle();
+        await tap(find.text('保存棋谱'));
+        await enterNativeText(
+          tester,
+          find.byKey(const ValueKey('record-name')),
+          '原生容量完整谱',
+        );
+        await tap(find.widgetWithText(FilledButton, '保存'));
+        for (
+          var i = 0;
+          i < 100 && find.text('已保存到本地 · 原生容量完整谱').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(find.text('已保存到本地 · 原生容量完整谱'), findsOneWidget);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.text('棋谱库'));
+        final row = find.widgetWithText(ListTile, '原生容量完整谱');
+        for (var i = 0; i < 100 && row.evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tap(row);
+        final restored = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(restored.tree.nodeCount, GameTree.maxNodes);
+        expect(restored.tree.cursorId, tree.cursorId);
+        expect(restored.tree.current.comment, '满谱评注');
+        expect(restored.metadata.tags['Event'], '容量原生自制');
+        expect(restored.dirty, isFalse);
+        expect(opens, 1);
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

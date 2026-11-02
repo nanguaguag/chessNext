@@ -79,7 +79,7 @@ abstract final class PgnCodec {
   static const maxLength = 64000,
       maxTags = GameMetadata.maxTags,
       maxTagValue = GameMetadata.maxValueLength;
-  static const maxPlies = 1999, maxComment = 10000;
+  static const maxPlies = GameTree.maxNodes - 1, maxComment = 10000;
 
   static PgnRecord parse(String text) {
     if (text.length > maxLength) throw const FormatException('PGN超过64000字符限制');
@@ -154,7 +154,7 @@ abstract final class PgnCodec {
         result = token;
         continue;
       }
-      if (plies >= maxPlies) reader.fail('PGN着法超过1999步');
+      if (plies >= maxPlies) reader.fail('PGN着法超过$maxPlies步');
       try {
         final move = format == 'iccs'
             ? _iccs(token)
@@ -204,7 +204,7 @@ abstract final class PgnCodec {
     final order = [..._preferredTags.where(tags.containsKey), ...extras];
     final nodes = record.tree.path;
     if (nodes.length > maxPlies + 1) {
-      throw const FormatException('PGN导出超过1999步限制');
+      throw const FormatException('PGN导出超过$maxPlies步限制');
     }
     final output = StringBuffer();
     void emit(String text) {

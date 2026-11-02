@@ -112,7 +112,7 @@ class FileGameRepository implements GameRepository {
         if (!game.metadata.isEmpty) 'metadata': game.metadata.toJson(),
       }),
     );
-    if (data.length > maxBytes || game.tree.nodeCount > 2000) {
+    if (data.length > maxBytes || game.tree.nodeCount > GameTree.maxNodes) {
       throw ArgumentError('棋谱超过当前存储限制');
     }
     final folder = await _folder();

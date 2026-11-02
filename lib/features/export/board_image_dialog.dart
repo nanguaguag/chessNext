@@ -5,6 +5,7 @@ import 'package:flutter/rendering.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/board_image_snapshot.dart';
 import '../../ports/png_file_exporter.dart';
+import '../../ports/image_clipboard.dart';
 import '../board/board_display_scope.dart';
 import '../board/xiangqi_board.dart';
 
@@ -15,10 +16,12 @@ class BoardImageDialog extends StatefulWidget {
     super.key,
     required this.snapshot,
     this.exporter,
+    this.clipboard,
     this.capture,
   });
   final BoardImageSnapshot snapshot;
   final PngFileExporter? exporter;
+  final ImageClipboard? clipboard;
 
   /// A test seam for render cancellation; production always captures this board.
   final BoardPngCapture? capture;
@@ -29,15 +32,17 @@ class BoardImageDialog extends StatefulWidget {
 class _BoardImageDialogState extends State<BoardImageDialog> {
   final boundary = GlobalKey();
   ThemeData? boardTheme;
-  bool busy = false, dismissed = false;
+  bool busy = false, copying = false, dismissed = false;
   PngImage? cached;
   String? status;
   FileExportCancellation? cancellation;
+  ImageCopyCancellation? copyCancellation;
   bool get active =>
       mounted && !dismissed && ModalRoute.of(context)?.isCurrent == true;
   void dismiss() {
     dismissed = true;
     cancellation?.cancel();
+    copyCancellation?.cancel();
   }
 
   @override
@@ -100,6 +105,44 @@ class _BoardImageDialogState extends State<BoardImageDialog> {
       if (active) setState(() => status = '棋盘图片生成或保存失败，请重试。');
     } finally {
       if (mounted && !dismissed) setState(() => busy = false);
+    }
+  }
+
+  Future<void> copy() async {
+    if (busy || widget.clipboard == null) return;
+    final token = ImageCopyCancellation();
+    copyCancellation = token;
+    setState(() {
+      busy = true;
+      copying = true;
+      status = null;
+    });
+    try {
+      cached ??= await (widget.capture ?? capture)();
+      if (!active || token.isCancelled) return;
+      final result = await widget.clipboard!.copyPng(
+        cached!,
+        cancellation: token,
+      );
+      if (active) {
+        setState(
+          () =>
+              status = result == ImageCopyResult.copied ? '棋盘图片已复制' : '已取消图片复制',
+        );
+      }
+    } on PngExportException catch (e) {
+      if (active) setState(() => status = e.message);
+    } on ImageCopyException catch (e) {
+      if (active) setState(() => status = e.message);
+    } catch (_) {
+      if (active) setState(() => status = '棋盘图片生成或复制失败，请重试。');
+    } finally {
+      if (mounted && !dismissed) {
+        setState(() {
+          busy = false;
+          copying = false;
+        });
+      }
     }
   }
 
@@ -171,6 +214,7 @@ class _BoardImageDialogState extends State<BoardImageDialog> {
               const SizedBox(height: 12),
               const Text('仅棋盘及已显示的分析标记；不含侧栏、局势条或当前选子提示。保存不改变棋谱。'),
               if (widget.exporter == null) const Text('当前设备暂不支持图片文件保存。'),
+              if (widget.clipboard == null) const Text('当前设备暂不支持图片复制。'),
               if (busy) const LinearProgressIndicator(),
               if (status != null)
                 Text(status!, key: const ValueKey('png-export-status')),
@@ -185,11 +229,17 @@ class _BoardImageDialogState extends State<BoardImageDialog> {
             },
             child: const Text('关闭'),
           ),
+          OutlinedButton(
+            onPressed: busy || widget.clipboard == null
+                ? null
+                : () => unawaited(copy()),
+            child: Text(busy && copying ? '正在复制…' : '复制图片'),
+          ),
           FilledButton(
             onPressed: busy || widget.exporter == null
                 ? null
                 : () => unawaited(save()),
-            child: Text(busy ? '正在保存…' : '保存图片'),
+            child: Text(busy && !copying ? '正在保存…' : '保存图片'),
           ),
         ],
       ),

@@ -94,3 +94,5 @@ M3-34 / ADR-038：BoardSession.mirrored只会话状态，XiangqiBoard复用Board
 M3-35 / ADR-039：RecordTextExchange.exportText.includeFuture默认true仅PGN使用currentLine末端goTo只读视图，原PgnCodec.path无变化；ExportTextDialog同rendering支持复制与文件、范围及评注选择、失败显示与打开快照。UI无新增IO，原文件端口/取消规则保留。
 
 M4-02 / ADR-040：BoardImageSnapshot仅持打开时Position、末步、可靠评级、有效箭头、双方向和显示偏好；BoardImageDialog用固定RepaintBoundary异步编码PNG，UI只调用PngFileExporter。MacOsPngFileExporter拥有chooser/cancellation映射，原生RecordFileWriter以独立writePngAtomic路径执行8MB/尺寸门槛、ImageIO实际解码、regular目标检查和Foundation原子写；文字UTF8/256KB协议保持独立。其它平台未注入writer，仍可预览但明确禁保存。
+
+M4-03 / ADR-041：ImageClipboard与TextClipboard分离，接收已有PngImage及独立取消令牌；BoardImageDialog保存/复制共享缓存但UI不接触平台。MacOsImageClipboard经独立MethodChannel交ImageClipboardBridge，原生ImageIO解码后在主线程声明PNG NSPasteboard类型、写入并读回核对。生产使用general pasteboard；native fixture使用命名pasteboard保护用户剪贴板。其它平台未注入并明确禁复制。

@@ -450,3 +450,11 @@ ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默
 失败保留：首次把真实PNG编码放flutter_tester保存流程，约100秒无完成后SIGINT；改直接boundary仍30秒无完成后SIGINT，二者不计通过。保留生产capture不弱化，移到macOS集成实际通过；组件测试只验证固定boundary和注入状态机。早期对话框括号补丁两次解析失败、首目标RepaintBoundary finder假定唯一失败，均修正后目标全过；初analyze7大括号info及后续1 unnecessary import已修到0。
 
 未验系统保存面板人工交互/外部沙箱scope/视觉、Release签名及其它平台；图片复制/GIF后续。下一M4-03独立ImageClipboard/macOS PNG剪贴板。
+
+## 2026-11-02 / M4-03 / F11 → B11,B19 棋盘PNG复制
+
+新增ImageClipboard/ImageCopyCancellation/MacOsImageClipboard，和文字剪贴板、文件保存职责分离。BoardImageDialog增加复制按钮，保存/复制共享首次成功的PngImage，busy互斥，渲染/平台失败可重试，route关闭取消迟到生成。main仅macOS注入能力。新增ImageClipboardBridge.swift与Xcode source登记，ImageIO校验后向NSPasteboard声明PNG、写入并读回相同字节；生产general，集成固定命名pasteboard保护用户当前剪贴板。ADR-041/BOARD_PNG_CLIPBOARD_SLICE及帮助/README同步。
+
+目标11/11与analyze0先过；macOS真实Flutter渲染900×1000、命名NSPasteboard写入读回、镜像字节变化、坏PNG拒绝1/1（00:04）exit0。最终官方NNUE根425/425（session85147，00:55）、flutter analyze0（2.0秒）、pbxproj plutil OK、git diff --check0。无新依赖/外部素材；现40原生未全40，完整32基线，core67沿用。
+
+未验general pasteboard跨应用人工粘贴、其它平台图片剪贴板与GIF。下一独立切片先审计GIF实际边界或F28声音/动画，不凭入口实现。

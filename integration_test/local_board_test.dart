@@ -18,6 +18,7 @@ import 'package:chess_next/features/board/board_file_coordinates.dart';
 import 'dart:convert';
 import 'package:chess_next/adapters/platform/macos_png_file_exporter.dart';
 import 'package:chess_next/ports/png_file_exporter.dart';
+import 'package:chess_next/adapters/platform/macos_image_clipboard.dart';
 import 'package:chess_next/adapters/platform/macos_record_file_exporter.dart';
 import 'package:chess_next/ports/record_file_exporter.dart';
 import 'package:chess_next/adapters/platform/file_selector_record_picker.dart';
@@ -3613,6 +3614,120 @@ void main() {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
         await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native PNG clipboard writes an isolated pasteboard and follows mirror',
+    (tester) async {
+      final copied = <PngImage>[];
+      final clipboard = MacOsImageClipboard(
+        writer: (bytes) async {
+          copied.add(PngImage.fromBytes(bytes));
+          await MacOsImageClipboard.channel.invokeMethod<void>('copyPng', {
+            'bytes': bytes,
+            'testPasteboard': true,
+          });
+        },
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        expect(target.hitTestable(), findsOneWidget);
+        await tester.tap(target);
+        await tester.pump();
+      }
+
+      Future<void> copyCurrent() async {
+        await tap(find.text('导出图片'));
+        await tap(find.text('复制图片'));
+        for (
+          var i = 0;
+          i < 200 && find.text('棋盘图片已复制').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(find.text('棋盘图片已复制'), findsOneWidget);
+        await tap(find.text('关闭'));
+      }
+
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(key: UniqueKey(), imageClipboard: clipboard),
+        );
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(session.playMove(Move.parse('h2e2')), isTrue);
+        await tester.pump();
+        final tree = session.tree, revision = session.revision;
+        await copyCurrent();
+        expect(copied.single.width, 900);
+        expect(copied.single.height, 1000);
+        final normal = copied.single.bytes;
+
+        session.mirror();
+        await tester.pump();
+        await copyCurrent();
+        expect(copied, hasLength(2));
+        expect(copied.last.bytes, isNot(orderedEquals(normal)));
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.dirty, isTrue);
+
+        await expectLater(
+          MacOsImageClipboard.channel.invokeMethod<void>('copyPng', {
+            'bytes': Uint8List.fromList(const [
+              137,
+              80,
+              78,
+              71,
+              13,
+              10,
+              26,
+              10,
+              0,
+              0,
+              0,
+              13,
+              73,
+              72,
+              68,
+              82,
+              0,
+              0,
+              3,
+              132,
+              0,
+              0,
+              3,
+              232,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+              0,
+            ]),
+            'testPasteboard': true,
+          }),
+          throwsA(
+            isA<PlatformException>().having(
+              (error) => error.code,
+              'code',
+              'invalid_image',
+            ),
+          ),
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
       }
     },
   );

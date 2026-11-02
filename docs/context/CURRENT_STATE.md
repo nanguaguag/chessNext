@@ -19,19 +19,19 @@
 - 复盘方式best/candidates即时本机记忆，取消不启动/不回滚；已有评分结果重开默认重算，显式开skip仍可复用安全缓存，skip仅本次意图。其它预算/范围仍每次默认。
 - 当前着单节点WDL评级投影与独立只读角徽/交点语义，缺失或过期不画；复盘/设置共享着法标记偏好与滚动图例，隐藏保留损失数字，算法版本不变。
 - 当前线路/整树可取消最佳或多候选有限队列，单步父局面候选试走分支，首评分曲线/详情/跳转/跳过已有；完整历史/身份/预算键的有界内存及独立文件缓存，损坏降级重算；WDL预期损失报告为项目模型，不冒充源站准确率算法。
-- 当前棋盘可冻结打开时Position/末步/可靠评级/有效箭头/旋转镜像/显示偏好，以原创450×500只读预览生成900×1000 PNG；生成缓存、关闭取消迟到选择、错误可重试且不改谱。macOS经独立二进制端口、ImageIO实际解码和Foundation atomic保存；文字UTF8门槛不受影响。图片复制/GIF/其它平台writer尚未实现。
+- 当前棋盘可冻结打开时Position/末步/可靠评级/有效箭头/旋转镜像/显示偏好，以原创450×500只读预览生成900×1000 PNG；生成缓存、关闭取消迟到操作、错误可重试且不改谱。macOS经独立二进制端口、ImageIO实际解码和Foundation atomic保存，并以独立ImageClipboard写入PNG NSPasteboard；文字剪贴板/UTF8门槛不受影响。GIF和其它平台图片适配尚未实现。
 - 原创可搜索离线帮助、四步只读引导/首次版本记忆；主题、资源/AI用时独立偏好；全局字号系统/100/115/130实时记忆且保留系统非线性；棋盘显示坐标红黑路数与翻转镜像/编辑器共用；棋子尺寸10–200/步5/重置，仅面容与拖动反馈缩放，点击交点不变；推荐箭头组合显隐/尖标准宽头部/即时偏好，不重启搜索或丢最新PV；本步同级绿色编号箭头/双开关及会话局部重置，不改棋谱，最多64含当前原编号。局势条基于原生WDL红方预期得分、随视图旋转；缺失/bound/mate独立灰态，真实领域终局与记录结果分开；隐藏回收空间且不重启分析，停止保留同局面结果。最后一步提供源点环与终点光圈/四角框；600ms单周旋转/系统减少动画静止，本机记忆且不拦点击。选子抬起/固定交点四角框共用编辑器，10–200%棋子保持90交点命中/语义与合法落点，不改搜索或棋谱。
 
-实际边界见architecture/IMPLEMENTED_MODULES及ADR-005至040。
+实际边界见architecture/IMPLEMENTED_MODULES及ADR-005至041。
 
 ## 最新验证
 
-M4-02最终显式官方NNUE根flutter test419/419（session7987，00:55）+flutter analyze无问题（2.1秒）exit0；目标15/15。macOS生产真实900×1000 PNG、ImageIO/原子文件、冻结快照/镜像及坏PNG/目录/符号链接不覆盖1/1（00:06）exit0；现39未全39，最近完整32/32仍M3-29，core未改沿用67/67+dart analyze。`flutter_tester`真实栅格编码两次卡住并SIGINT，不计通过，生产macOS路径已实际覆盖；所有验证session已结束。
+M4-03最终显式官方NNUE根flutter test425/425（session85147，00:55）+flutter analyze无问题（2.0秒）exit0；相关目标11/11。macOS生产真实900×1000 PNG、命名NSPasteboard写入读回/镜像及坏PNG拒绝1/1（00:04）exit0；现40未全40，最近完整32/32仍M3-29，core未改沿用67/67+dart analyze。M4-02文件保存真实测试仍有效；所有验证session已结束。
 
 生产main有文件导入/仅macOS文件导出；当前Debug/Release user-selected.read-write+sandbox，实际Debug签名已核，Release实际构建签名未验。系统Open/Save面板/外部授权/精确scope释放、真实OS焦点/最小化/人工视觉未验，Computer Use桌面权限未授不绕过；native fixture只保持framework-resumed，raw[]不是OS验证。Android/iOS/Windows/Linux运行与移动FFI仍未验/未实现。
 
 ## 下一步与环境
 
-E34已验证图片保存/复制PNG与镜像（101证据核对），M4-02已交付原创PNG快照与macOS文件保存；下一M4-03图片复制端口/macOS剪贴板。K09节点已统一，独立字节门槛K10后续；B22 hover/原站跨文档仍未知；仍有F21素材、F28声音动画、布局/工作区/语言、错题/题库、其它文件/GIF/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
+E34已验证图片保存/复制PNG与镜像（101证据核对），M4-02/03已交付原创PNG快照、macOS文件保存和图片复制；下一按离线差距评估GIF或F28声音动画。K09节点已统一，独立字节门槛K10后续；B22 hover/原站跨文档仍未知；仍有F21素材、布局/工作区/语言、错题/题库、其它文件/GIF/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest复核仍Pikafish2026-09-06 commit4c17cee，lock/NNUE校验见engine/pikafish.lock.json，.local忽略不提交。普通用户旧窗口不关闭/热重启；native测试覆盖build入口，最终审查前需重建普通main。

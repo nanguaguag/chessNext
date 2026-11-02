@@ -402,3 +402,9 @@ ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默
 ADR-040/BOARD_PNG_SLICE：BoardImageSnapshot冻结Position/末步/可靠评级/有效箭头/双方向与显示偏好，不保留Controller或IO；选中/目标/焦点不导出。BoardImageDialog固定450×500逻辑预览、2倍900×1000 PNG、主题/字号/动画Scope冻结、只读单组语义，生成缓存/错误重试/关闭取消迟到操作。PngImage独立8MB/4096边长/400万像素不可变门槛，PngFileExporter与文字UTF8协议分离。macOS chooser+writePngAtomic经ImageIO实际解码、regular目标检查及Foundation atomic；main只在macOS注入。图片复制/GIF/其它平台writer未实现。
 
 新增端口2+适配器5+快照3+组件5=15个目标通过；首次及直接`flutter_tester`真实栅格PNG测试各卡住，均SIGINT结束并明确不计通过，改由macOS生产渲染/原生桥验证。最终显式官方NNUE根flutter test **419/419**（session7987，00:55）与flutter analyze无问题（2.1秒）exit0；macOS真实900×1000 PNG、开窗快照后台变化冻结且同局面字节一致、镜像字节变化、ImageIO解码/原子文件、坏PNG/目录/符号链接不覆盖 **1/1**（最终00:06）exit0。现39原生未全39，最近完整32/32仍M3-29；core未改沿用67/67+dart analyze。系统保存面板/外部沙箱授权/人工视觉、其它平台未验；无新依赖或产品素材。
+
+## 2026-11-02 / M4-03 / F11 → B11,B19 棋盘PNG复制
+
+ADR-041/BOARD_PNG_CLIPBOARD_SLICE：新增ImageClipboard/ImageCopyCancellation，与文字TextClipboard和文件端口分离；BoardImageDialog保存/复制共享首次PngImage缓存，busy互斥、关闭可取消迟到生成、平台失败重试不重画。MacOsImageClipboard经独立通道调用ImageClipboardBridge，ImageIO实际解码后声明`.png`、写NSPasteboard并读回字节核对；生产general，native测试固定命名pasteboard保护用户数据。无能力平台禁用并解释，GIF未实现。
+
+新增适配器4+组件2=6，连相关目标11/11通过；macOS真实Flutter渲染900×1000、命名NSPasteboard写入读回、正常/镜像字节变化及坏PNG拒绝1/1（00:04）exit0。最终显式官方NNUE根flutter test **425/425**（session85147，00:55）与flutter analyze无问题（2.0秒）exit0；现40原生未全40，完整32/32仍M3-29，core67沿用。命名pasteboard验证不等于人工跨应用general粘贴，其它平台未验，无新依赖或素材。

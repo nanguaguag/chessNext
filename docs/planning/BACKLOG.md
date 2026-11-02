@@ -180,3 +180,5 @@ M3-35已补E33 PGN完整所选线路含未来、可显式当前路径，资料/�
 E34 / F11,B11,B19：PNG保存实际文件与复制实际image/png均V，1000×1100当前样本，只当前棋盘含末步/评级/坐标，镜像随主盘，侧栏/局势条不含；两普通方向文件字节一致。源码实现尚无PNG，先本机原创绘制/二进制文件端口，再复制。取消/拒绝/其它显示组合/分辨率策略及GIF仍U；参考PNG含站点资源仅证据。
 
 M4-02 / F11,B11,B19：项目原创棋盘快照预览、固定900×1000 PNG和macOS ImageIO校验/原子文件保存已实现，根419/analyze0/native真实PNG1过。固定尺寸/取消策略为P，不冒充源策略；系统保存面板、其它平台writer未验。下一M4-03独立ImageClipboard与macOS PNG复制，不能复用文字剪贴板或让UI直调NSPasteboard；GIF仍后续。
+
+M4-03 / F11,B11,B19：独立ImageClipboard、同窗PNG缓存复用与macOS NSPasteboard PNG复制已实现，native命名pasteboard真实写入读回1过且不触碰用户general剪贴板。general跨应用人工粘贴、其它平台图片剪贴板与GIF仍缺。下一按离线差距优先评估GIF导出或F28声音/动画，不以静态两入口关闭F11全部分享能力。

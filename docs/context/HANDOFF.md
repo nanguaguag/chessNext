@@ -4,6 +4,10 @@
 
 ## 当前检查点
 
+M4-03 / F11 PNG图片复制已完成，本次功能提交见git log。ImageClipboard与TextClipboard/文件端口分离；Dialog保存复制共享首次PngImage、busy互斥、平台失败复用缓存重试、关闭取消迟到生成。MacOsImageClipboard独立MethodChannel；ImageClipboardBridge ImageIO实际解码后声明PNG NSPasteboard并读回核对。生产general，集成使用命名pasteboard避免覆盖用户剪贴板。ADR-041/BOARD_PNG_CLIPBOARD_SLICE。
+
+相关11/11、native真实渲染+命名pasteboard+镜像+坏PNG1/1（00:04）通过；官方NNUE根425/425（session85147，00:55）+analyze0（2.0秒）exit0。现40未全40，完整32基线，core67沿用。general跨应用人工粘贴/其它平台/GIF未验。
+
 M4-02 / F11原创棋盘PNG与macOS文件保存已完成，本次功能提交见git log。BoardImageSnapshot只复制打开时Position/末步/可靠评级/当时有效箭头/双方向及显示偏好；BoardImageDialog固定450×500只读预览、2倍900×1000 PNG、主题字号动画冻结、缓存/重试/退场取消。PngImage独立8MB/4096/400万像素门槛，MacOsPngFileExporter经独立writePngAtomic、ImageIO实际解码、regular目标与Foundation atomic；原文字UTF8/256KB不变。main仅macOS注入，图片复制/GIF/其它平台未做。ADR-040/BOARD_PNG_SLICE。
 
 目标15/15通过；官方NNUE根419/419（session7987，00:55）+analyze0（2.1秒）exit0。macOS生产真实PNG/冻结同局面字节一致/镜像变化/坏PNG目录符号链接不覆盖1/1（00:06）过。现39未全39，完整32基线，core67沿用。`flutter_tester`真实栅格测试两次卡住后SIGINT，未冒充通过；实际生产macOS渲染与原生解码已覆盖。系统chooser人工/外部scope/人工视觉与其它平台未验。
@@ -30,9 +34,9 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一M4-03 / F11图片复制：复用BoardImageSnapshot/PngImage生成缓存，新增独立ImageClipboard端口与macOS NSPasteboard适配器，不能复用文字TextClipboard或UI直调平台。先定义拒绝/外部剪贴板失败模型、复制成功后提示和关闭迟到保护；实际macOS验证image/png可读取/解码/900×1000/方向与打开快照，不称其它平台或GIF完成。E34源普通保存与复制字节相同只是该样本V；项目同窗优先共享生成缓存。
+下一需按FEATURE_GAPS/BACKLOG选择一个独立离线切片；候选为F11 GIF动态导出前先审计范围/播放/帧率，或F28声音与走子动画先做公开站点实测。不能把静态PNG两入口当F11完整分享能力；若审计GIF，先确认公开入口实际输出与取消边界，不从站点素材生成产品资源。
 
-图片复制不得重新读取保存文件或依赖file_selector；端口接收PngImage拥有字节。macOS可在同一私有MethodChannel增加copyPng并在主线程使用NSPasteboard，先实际解码后声明PNG类型/写data，失败类型化且不泄露棋谱或路径。组件需覆盖无clipboard能力、失败重试、busy关闭、同窗先保存后复制只生成一次；native需从NSPasteboard实际读回并ImageIO解码，测试后清理测试写入，不能把mock MethodChannel当系统剪贴板通过。
+M4-03实际使用独立通道而非RecordFileWriter通道；native命名pasteboard由原生写后立即读回相同PNG字节，避免污染general。生产general分支代码相同但未做人工跨应用粘贴，因此不能扩大为系统剪贴板全验收。
 
 E34自制位置图片仍含参考外观资源，只docs研究，不拿作产品/单测渲染素材；样本清单samples/E34-manifest.json。源图片已直接view，实际1000×1100（不要按渲染预览估999）；截图PNG后缀实际JPEG照旧。clipboard read只处理本次image/png后写证据，原FEN空读失败不被此改称成功。
 

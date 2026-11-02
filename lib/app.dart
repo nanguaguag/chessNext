@@ -2,6 +2,7 @@ import 'application/board_evaluation.dart';
 import 'features/analysis/evaluation_board.dart';
 import 'ports/record_file_exporter.dart';
 import 'ports/png_file_exporter.dart';
+import 'ports/image_clipboard.dart';
 import 'application/board_image_snapshot.dart';
 import 'features/export/board_image_dialog.dart';
 import 'features/settings/app_text_scaling.dart';
@@ -57,6 +58,7 @@ class ChessNextApp extends StatefulWidget {
     this.filePicker,
     this.fileExporter,
     this.pngExporter,
+    this.imageClipboard,
     this.engineFactory,
     this.reviewCache,
     this.deviceThreads = 1,
@@ -68,6 +70,7 @@ class ChessNextApp extends StatefulWidget {
   final RecordFilePicker? filePicker;
   final RecordFileExporter? fileExporter;
   final PngFileExporter? pngExporter;
+  final ImageClipboard? imageClipboard;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
@@ -280,6 +283,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       filePicker: widget.filePicker,
       fileExporter: widget.fileExporter,
       pngExporter: widget.pngExporter,
+      imageClipboard: widget.imageClipboard,
       session: session,
       library: library,
       readings: readings,
@@ -301,6 +305,7 @@ class _BoardPage extends StatelessWidget {
     this.filePicker,
     this.fileExporter,
     this.pngExporter,
+    this.imageClipboard,
     required this.toggleTheme,
     required this.showGuide,
     required this.library,
@@ -315,6 +320,7 @@ class _BoardPage extends StatelessWidget {
   final RecordFilePicker? filePicker;
   final RecordFileExporter? fileExporter;
   final PngFileExporter? pngExporter;
+  final ImageClipboard? imageClipboard;
   final BoardSession session;
   final VoidCallback toggleTheme;
   final Future<void> Function() showGuide;
@@ -534,8 +540,11 @@ class _BoardPage extends StatelessWidget {
     );
     await showDialog<void>(
       context: context,
-      builder: (_) =>
-          BoardImageDialog(snapshot: snapshot, exporter: pngExporter),
+      builder: (_) => BoardImageDialog(
+        snapshot: snapshot,
+        exporter: pngExporter,
+        clipboard: imageClipboard,
+      ),
     );
   }
 

@@ -3,6 +3,7 @@ import FlutterMacOS
 
 class MainFlutterWindow: NSWindow {
   private var recordFileWriter: RecordFileWriter?
+  private var imageClipboardBridge: ImageClipboardBridge?
   override func awakeFromNib() {
     let flutterViewController = FlutterViewController()
     let windowFrame = self.frame
@@ -12,6 +13,7 @@ class MainFlutterWindow: NSWindow {
 
     RegisterGeneratedPlugins(registry: flutterViewController)
     recordFileWriter = RecordFileWriter(messenger: flutterViewController.engine.binaryMessenger)
+    imageClipboardBridge = ImageClipboardBridge(messenger: flutterViewController.engine.binaryMessenger)
 
     super.awakeFromNib()
   }

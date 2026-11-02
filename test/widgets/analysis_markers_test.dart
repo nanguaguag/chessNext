@@ -131,7 +131,9 @@ void main() {
       await tester.pumpAndSettle();
       await open(tester);
       expect(
-        tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value,
+        tester
+            .widget<SwitchListTile>(find.widgetWithText(SwitchListTile, '推荐箭头'))
+            .value,
         isFalse,
       );
       expect(

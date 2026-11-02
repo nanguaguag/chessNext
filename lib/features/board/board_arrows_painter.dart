@@ -2,6 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/board_appearance.dart';
 
+Offset boardSquarePoint(
+  Square square,
+  Size size, {
+  bool flipped = false,
+  bool mirrored = false,
+}) {
+  final step = size.width / 9;
+  return Offset(
+    ((flipped != mirrored ? 8 - square.file : square.file) + .5) * step,
+    ((flipped ? square.rank : 9 - square.rank) + .5) * step,
+  );
+}
+
 class BoardArrowsPainter extends CustomPainter {
   const BoardArrowsPainter({
     this.recommendation,
@@ -9,18 +22,18 @@ class BoardArrowsPainter extends CustomPainter {
     this.flipped = false,
     this.mirrored = false,
     this.headStyle = ArrowHeadStyle.standard,
+    this.recommendationColor = const Color(0xff226b9c),
   });
   final Move? recommendation, reply;
   final bool flipped, mirrored;
   final ArrowHeadStyle headStyle;
+  final Color recommendationColor;
   @override
   void paint(Canvas canvas, Size size) {
     final step = size.width / 9;
     if (step <= 0 || !step.isFinite) return;
-    Offset location(Square square) => Offset(
-      ((flipped != mirrored ? 8 - square.file : square.file) + .5) * step,
-      ((flipped ? square.rank : 9 - square.rank) + .5) * step,
-    );
+    Offset location(Square square) =>
+        boardSquarePoint(square, size, flipped: flipped, mirrored: mirrored);
     void arrow(Move move, Color color) {
       final from = location(move.from), to = location(move.to);
       final distance = (to - from).distance;
@@ -49,7 +62,7 @@ class BoardArrowsPainter extends CustomPainter {
     }
 
     if (reply != null) arrow(reply!, const Color(0xff965ba3));
-    if (recommendation != null) arrow(recommendation!, const Color(0xff226b9c));
+    if (recommendation != null) arrow(recommendation!, recommendationColor);
   }
 
   @override
@@ -58,5 +71,6 @@ class BoardArrowsPainter extends CustomPainter {
       reply != old.reply ||
       flipped != old.flipped ||
       mirrored != old.mirrored ||
-      headStyle != old.headStyle;
+      headStyle != old.headStyle ||
+      recommendationColor != old.recommendationColor;
 }

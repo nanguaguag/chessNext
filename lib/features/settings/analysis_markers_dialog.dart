@@ -28,6 +28,16 @@ class AnalysisMarkersDialog extends StatelessWidget {
                     : (value) =>
                           unawaited(preferences.setAnalysisArrows(value)),
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('变着箭头'),
+                subtitle: const Text('还需在本步变着中开启“棋盘箭头”'),
+                value: preferences.value.showVariationArrows,
+                onChanged: preferences.loading
+                    ? null
+                    : (value) =>
+                          unawaited(preferences.setVariationArrows(value)),
+              ),
               DropdownButtonFormField<ArrowHeadStyle>(
                 key: ValueKey(preferences.value.arrowHead),
                 initialValue: preferences.value.arrowHead,

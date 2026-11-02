@@ -21,6 +21,7 @@ final class AppPreferences {
     this.showCoordinates = true,
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
+    this.showVariationArrows = true,
     this.arrowHead = ArrowHeadStyle.standard,
     this.threads = 1,
     this.hashMb = 16,
@@ -49,6 +50,7 @@ final class AppPreferences {
   final bool showCoordinates;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
+  final bool showVariationArrows;
   final ArrowHeadStyle arrowHead;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
@@ -58,6 +60,7 @@ final class AppPreferences {
     bool? showCoordinates,
     int? pieceSizePercent,
     bool? showAnalysisArrows,
+    bool? showVariationArrows,
     ArrowHeadStyle? arrowHead,
     int? threads,
     int? hashMb,
@@ -70,6 +73,7 @@ final class AppPreferences {
     showCoordinates: showCoordinates ?? this.showCoordinates,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
+    showVariationArrows: showVariationArrows ?? this.showVariationArrows,
     arrowHead: arrowHead ?? this.arrowHead,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
@@ -84,6 +88,7 @@ final class AppPreferences {
     if (!showCoordinates) 'showCoordinates': false,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
     if (!showAnalysisArrows) 'showAnalysisArrows': false,
+    if (!showVariationArrows) 'showVariationArrows': false,
     if (arrowHead != ArrowHeadStyle.standard) 'arrowHead': arrowHead.name,
     'threads': threads,
     'hashMb': hashMb,
@@ -93,6 +98,8 @@ final class AppPreferences {
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
+        (json.containsKey('showVariationArrows') &&
+            json['showVariationArrows'] is! bool) ||
         (json.containsKey('showAnalysisArrows') &&
             json['showAnalysisArrows'] is! bool) ||
         (json.containsKey('arrowHead') && json['arrowHead'] is! String) ||
@@ -113,6 +120,7 @@ final class AppPreferences {
     }
     try {
       return AppPreferences(
+        showVariationArrows: json['showVariationArrows'] as bool? ?? true,
         showAnalysisArrows: json['showAnalysisArrows'] as bool? ?? true,
         arrowHead: ArrowHeadStyle.values.byName(
           json['arrowHead'] as String? ?? 'standard',
@@ -136,6 +144,7 @@ final class AppPreferences {
   @override
   bool operator ==(Object other) =>
       other is AppPreferences &&
+      showVariationArrows == other.showVariationArrows &&
       showAnalysisArrows == other.showAnalysisArrows &&
       arrowHead == other.arrowHead &&
       theme == other.theme &&
@@ -149,6 +158,7 @@ final class AppPreferences {
       guideVersion == other.guideVersion;
   @override
   int get hashCode => Object.hash(
+    showVariationArrows,
     showAnalysisArrows,
     arrowHead,
     theme,

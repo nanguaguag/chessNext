@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/board_session.dart';
 import '../../application/engine_session_controller.dart';
+import '../board/board_display_scope.dart';
 
 /// Current-move alternatives and next moves have different parent positions.
 /// Both are document nodes; engine suggestions will be a separate projection.
@@ -52,11 +53,43 @@ class VariationPanel extends StatelessWidget {
       children: [
         Padding(
           padding: const EdgeInsets.only(top: 16, bottom: 8),
-          child: Text(
-            '$title（${parent.children.length}）',
-            style: Theme.of(context).textTheme.titleSmall,
+          child: Wrap(
+            spacing: 12,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            children: [
+              Text(
+                '$title（${parent.children.length}）',
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
+              if (current)
+                MergeSemantics(
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text('棋盘箭头'),
+                      Switch(
+                        key: const ValueKey('current-variation-arrows'),
+                        value: session.showCurrentVariationArrows,
+                        onChanged: (value) {
+                          if (session.epoch == epoch) {
+                            session.setCurrentVariationArrows(value);
+                          }
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+            ],
           ),
         ),
+        if (current &&
+            session.showCurrentVariationArrows &&
+            session.currentMoveArrows.truncated)
+          const Text('棋盘最多显示64条并保留当前着法，完整编号请看列表。'),
+        if (current &&
+            session.showCurrentVariationArrows &&
+            !BoardDisplayScope.variationArrowsOf(context))
+          const Text('变着箭头已在分析标记设置中关闭。'),
         SizedBox(
           height: math.min(240, parent.children.length * extent),
           child: ListView.builder(
@@ -88,7 +121,9 @@ class VariationPanel extends StatelessWidget {
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
-                subtitle: Text(index == 0 ? '主线' : '变着'),
+                subtitle: Text(
+                  '${current ? '${index + 1} · ' : ''}${index == 0 ? '主线' : '变着'}',
+                ),
                 onTap: () {
                   if (valid()) engine.navigateToNode(id);
                 },

@@ -82,6 +82,9 @@ class PreferencesController extends ChangeNotifier {
         final stored = loaded.value;
         value = _bounded(
           stored.copyWith(
+            showVariationArrows: _edited.contains('showVariationArrows')
+                ? previous.showVariationArrows
+                : null,
             showAnalysisArrows: _edited.contains('showAnalysisArrows')
                 ? previous.showAnalysisArrows
                 : null,
@@ -150,6 +153,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(pieceSizePercent: percent));
   Future<void> setAnalysisArrows(bool visible) =>
       apply(value.copyWith(showAnalysisArrows: visible));
+  Future<void> setVariationArrows(bool visible) =>
+      apply(value.copyWith(showVariationArrows: visible));
   Future<void> setArrowHead(ArrowHeadStyle style) =>
       apply(value.copyWith(arrowHead: style));
   Future<void> retryPersistence() =>
@@ -164,6 +169,9 @@ class PreferencesController extends ChangeNotifier {
   }
 
   void _recordEdits(AppPreferences next) {
+    if (next.showVariationArrows != value.showVariationArrows) {
+      _edited.add('showVariationArrows');
+    }
     if (next.showAnalysisArrows != value.showAnalysisArrows) {
       _edited.add('showAnalysisArrows');
     }

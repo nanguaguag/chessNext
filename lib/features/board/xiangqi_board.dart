@@ -1,3 +1,5 @@
+import '../../application/current_move_arrows.dart';
+import 'variation_arrows_painter.dart';
 import 'board_arrows_painter.dart';
 import '../../application/board_appearance.dart';
 import 'board_display_scope.dart';
@@ -42,6 +44,9 @@ class XiangqiBoard extends StatelessWidget {
     onCancel: session.cancelSelection,
     recommendation: recommendation,
     reply: reply,
+    variations: session.showCurrentVariationArrows
+        ? session.currentMoveArrows.visible
+        : const [],
   );
 }
 
@@ -64,6 +69,7 @@ class BoardSurface extends StatefulWidget {
     this.pieceSizePercent,
     this.showAnalysisArrows,
     this.arrowHeadStyle,
+    this.variations = const [],
     this.enabled = true,
     this.onCancel,
     this.onRemove,
@@ -89,6 +95,7 @@ class BoardSurface extends StatefulWidget {
   final int? pieceSizePercent;
   final bool? showAnalysisArrows;
   final ArrowHeadStyle? arrowHeadStyle;
+  final List<VariationArrow> variations;
   final bool enabled;
   final Move? recommendation;
   final Move? reply;
@@ -187,6 +194,27 @@ class _BoardSurfaceState extends State<BoardSurface> {
                             painter: BoardArrowsPainter(
                               recommendation: widget.recommendation,
                               reply: widget.reply,
+                              flipped: widget.flipped,
+                              mirrored: widget.mirrored,
+                              headStyle:
+                                  widget.arrowHeadStyle ??
+                                  BoardDisplayScope.arrowHeadOf(context),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                  if (BoardDisplayScope.variationArrowsOf(context) &&
+                      widget.variations.isNotEmpty)
+                    Positioned.fill(
+                      child: Semantics(
+                        container: true,
+                        label:
+                            '上一局面的本步变着：${widget.variations.take(CurrentMoveArrows.maxVisible).map((a) => '${a.number} ${a.notation}').join('；')}',
+                        child: IgnorePointer(
+                          child: CustomPaint(
+                            painter: VariationArrowsPainter(
+                              arrows: widget.variations,
                               flipped: widget.flipped,
                               mirrored: widget.mirrored,
                               headStyle:

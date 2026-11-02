@@ -8,6 +8,7 @@ class BoardDisplayScope extends InheritedWidget {
     required this.showCoordinates,
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
+    this.showVariationArrows = true,
     this.arrowHead = ArrowHeadStyle.standard,
     required super.child,
   }) : assert(
@@ -18,6 +19,12 @@ class BoardDisplayScope extends InheritedWidget {
   final bool showCoordinates;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
+  final bool showVariationArrows;
+  static bool variationArrowsOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.showVariationArrows ??
+      true;
   final ArrowHeadStyle arrowHead;
   static bool analysisArrowsOf(BuildContext context) =>
       context
@@ -43,6 +50,7 @@ class BoardDisplayScope extends InheritedWidget {
   bool updateShouldNotify(BoardDisplayScope oldWidget) =>
       showCoordinates != oldWidget.showCoordinates ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||
+      showVariationArrows != oldWidget.showVariationArrows ||
       arrowHead != oldWidget.arrowHead ||
       pieceSizePercent != oldWidget.pieceSizePercent;
 }

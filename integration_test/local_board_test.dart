@@ -1,3 +1,5 @@
+import '../test/support/branched_record.dart';
+import 'package:chess_next/features/board/variation_arrows_painter.dart';
 import 'package:chess_next/application/board_appearance.dart';
 import 'package:chess_next/features/board/board_arrows_painter.dart';
 import 'package:chess_next/features/board/board_file_coordinates.dart';
@@ -1990,7 +1992,11 @@ void main() {
         await tap(find.byTooltip('应用设置'));
         await tap(find.text('分析标记'));
         expect(
-          tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value,
+          tester
+              .widget<SwitchListTile>(
+                find.widgetWithText(SwitchListTile, '推荐箭头'),
+              )
+              .value,
           isFalse,
         );
         expect(
@@ -2001,6 +2007,117 @@ void main() {
               .initialValue,
           ArrowHeadStyle.wide,
         );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native numbered variation arrows share a global gate but never change the saved tree',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-variation-arrows-');
+      final games = FileGameRepository(() async => directory);
+      final preferences = FilePreferencesRepository(() async => directory);
+      await games.save(
+        SavedGame(
+          id: 'numbered-variation',
+          title: '编号变着验证',
+          tree: branchedRecord(),
+          modifiedAt: DateTime.now(),
+        ),
+      );
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        repository: FileGameRepository(() async => directory),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+        engineFactory: openBundledEngine,
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      Finder arrows() => find.byWidgetPredicate(
+        (w) => w is CustomPaint && w.painter is VariationArrowsPainter,
+      );
+      final toggle = find.byKey(const ValueKey('current-variation-arrows'));
+      Future<void> openRecord() async {
+        await tap(find.text('棋谱库'));
+        final row = find.widgetWithText(ListTile, '编号变着验证');
+        for (var i = 0; i < 50 && row.evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tap(row);
+      }
+
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await openRecord();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final tree = session.tree,
+            revision = session.revision,
+            positionRevision = session.positionRevision;
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        for (var i = 0; i < 100 && engine.infos.isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.infos, isNotEmpty);
+        final token = engine.infos.first.token;
+        await tap(toggle);
+        final paint =
+            tester.widget<CustomPaint>(arrows()).painter!
+                as VariationArrowsPainter;
+        expect(paint.arrows.map((a) => a.move.toString()), ['b0c2', 'h2h4']);
+        expect(paint.arrows.map((a) => a.number), [1, 2]);
+        await tap(find.byTooltip('应用设置'));
+        expect(session.showCurrentVariationArrows, isFalse);
+        await tap(find.text('分析标记'));
+        await tap(find.text('变着箭头'));
+        await tap(find.text('关闭'));
+        await tap(find.text('取消'));
+        await tap(toggle);
+        expect(session.showCurrentVariationArrows, isTrue);
+        expect(arrows(), findsNothing);
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.infos, isNotEmpty);
+        expect(engine.infos.every((info) => info.token == token), isTrue);
+        expect((await preferences.load())!.value.showVariationArrows, isFalse);
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.positionRevision, positionRevision);
+        expect(session.dirty, isFalse);
+        expect(
+          (await games.load('numbered-variation')).tree.toJson(),
+          tree.toJson(),
+        );
+        await engine.disable();
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await openRecord();
+        final restored = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(restored.showCurrentVariationArrows, isFalse);
+        expect(restored.tree.nodeCount, 6);
+        await tap(toggle);
+        expect(arrows(), findsNothing);
+        expect(find.text('变着箭头已在分析标记设置中关闭。'), findsOneWidget);
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

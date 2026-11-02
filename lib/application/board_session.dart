@@ -1,4 +1,5 @@
 import 'reading_navigation.dart';
+import 'current_move_arrows.dart';
 import 'package:flutter/foundation.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 
@@ -9,6 +10,25 @@ class BoardSession extends ChangeNotifier {
   }
   GameTree _tree;
   GameTree get tree => _tree;
+  bool _showCurrentVariationArrows = false;
+  bool get showCurrentVariationArrows => _showCurrentVariationArrows;
+  void setCurrentVariationArrows(bool visible) {
+    if (visible && tree.current.parentId == null) return;
+    if (_showCurrentVariationArrows == visible) return;
+    _showCurrentVariationArrows = visible;
+    notifyListeners();
+  }
+
+  GameTree? _arrowsTree;
+  CurrentMoveArrows? _arrows;
+  CurrentMoveArrows get currentMoveArrows {
+    if (!identical(_arrowsTree, tree)) {
+      _arrowsTree = tree;
+      _arrows = CurrentMoveArrows.fromTree(tree);
+    }
+    return _arrows!;
+  }
+
   GameMetadata _metadata = GameMetadata.empty;
   GameMetadata get metadata => _metadata;
   Position get position => tree.current.position;
@@ -39,6 +59,7 @@ class BoardSession extends ChangeNotifier {
     GameMetadata metadata = GameMetadata.empty,
   }) {
     _inputLocked = false;
+    _showCurrentVariationArrows = false;
     _tree = value;
     _metadata = metadata;
     _revision++;
@@ -84,6 +105,7 @@ class BoardSession extends ChangeNotifier {
   bool isLegalMove(Move move) => _legal.contains(move);
 
   void _refresh() {
+    if (tree.current.parentId == null) _showCurrentVariationArrows = false;
     _legal = position.legalMoves.toList(growable: false);
     _outcome = position.boardOutcome();
   }

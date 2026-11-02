@@ -280,3 +280,11 @@ E24实测推荐同时控本步/预计应着两支、变着开关另有对象、�
 新增2应用+3真实像素绘制+4组件通过（9）；像素确认头面积顺序/恒定杆、四方向/无PV、两色；组件确认运行中Fake实际requests/stops不变、隐藏期间最新PV/恢复、命中/语义/200%与读写重试/新App。显式NNUE根310/310与analyze0，原生真实NNUE单项1/1先过；之后加网格临时TextPainter.dispose，最终根310/310 exit0（32031）+analyze0（45893）+原生同项1/1（36716，00:13）均过。真实NNUE活动令牌/身份未变、显示用最新PV，文件偏好新App恢复。原生当前25未全25，上次完整23/23；核心未改65沿用。
 
 初analyze1大括号info修复，业务/组件/绘制/全量/原生运行无失败；没有待等待进程。日志/tmp/chessnext-arrows-{painter,widget,analyze-initial,full,full-final,analyze,analyze-final,native,native-final}.log。其它F26/变着树与PV历史B22仍缺，不能关闭F26整项；真实OS焦点/人工视觉/其它平台未验。
+
+## 2026-11-02 / M3-23 / F13,F26 → B08,B17,B20 本步编号变着箭头
+
+E25已V双开关共同门控、父局面同级/单项/根无本步/根与设置返回局部重置；一个编号点未导航。项目CurrentMoveArrows纯投影/树对象缓存/最多64保留当前原编号，BoardSession局部非文档状态与旧epoch保护，showVariationArrows可选全局偏好；绿色只读数字层复用几何/样式，不拦落子，编辑器无旧树。ADR-027/VARIATION_ARROWS_SLICE。
+
+新增5应用+4组件+1实际绿色数字像素=10；加旧绘制目标8/8、加旧推荐组件目标9/9。大合法局面超64投影实证保留当前/原编号；运行中Fake实际requests/stops不变、树/修订不变/根重置/新文档/置顶删除/200%/读屏/命中。显式NNUE根首320/320（22549），macOS旧推荐+新变着2/2（71609，00:26）exit0，真实NNUEtoken不变/保存树与内容位置修订不改/全局偏好及新App读取恢复、局部不恢复。
+
+初App设置回调patch多逗号导致format/analyze编译失败，修为正常showDialog语句；随后1大括号info、最后1未用测试import清理。相关widget最终5/5；最后只改超限提示准确措辞（最多64且含当前），最终根320/320 exit0（43252）与analyze0（6777）。原生当前26未全26，上片完整23过；核心未改65沿用。其它平台/真实OS焦点/人工视觉未验。日志/tmp/chessnext-variation-arrows-{projection,widget,widget-final,full,full-final,analyze-initial,analyze-fixed,analyze,analyze-final,analyze-verified,native}.log，全部会话结束。

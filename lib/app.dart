@@ -258,6 +258,7 @@ class _ChessNextAppState extends State<ChessNextApp>
         showCoordinates: preferences.value.showCoordinates,
         pieceSizePercent: preferences.value.pieceSizePercent,
         showAnalysisArrows: preferences.value.showAnalysisArrows,
+        showVariationArrows: preferences.value.showVariationArrows,
         arrowHead: preferences.value.arrowHead,
         child: child!,
       ),
@@ -562,10 +563,13 @@ class _BoardPage extends StatelessWidget {
           IconButton(
             tooltip: '应用设置',
             icon: const Icon(Icons.settings_outlined),
-            onPressed: () => showDialog<void>(
-              context: context,
-              builder: (_) => PreferencesDialog(preferences: preferences),
-            ),
+            onPressed: () {
+              session.setCurrentVariationArrows(false);
+              showDialog<void>(
+                context: context,
+                builder: (_) => PreferencesDialog(preferences: preferences),
+              );
+            },
           ),
           IconButton(
             onPressed: toggleTheme,

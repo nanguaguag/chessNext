@@ -8,11 +8,13 @@
 
 ## 最新检查点
 
-M3-29所选PV前缀已完成，独立中文commit见git log。显式官方NNUE根373/373（90009，00:39）与analyze0问题（33296）exit0；**完整macOS32/32（36917，06:49）exit0**，核心未改65沿用。全部验证session结束；日志/tmp/chessnext-pv-apply-*.log。新增真实NNUE+worker原子两步/保留旧后续、资料和评注、实际文件保存与新App完整恢复、原entry同源重开复用不dirty，旧31项全回归通过。raw lifecycle[]只fixture不代表OS焦点/人工视觉。证据64项stat/SHA/实际sips尺寸与本地链接16项核验过。
+M3-30本谱跨位置历史完成，独立中文commit见git log。显式官方NNUE根378/378（38271，00:40）与最终analyze0（44950）exit0。macOS首4项56503旧history/preview/prefix三项过，新cross-position因ensureVisible后未等布局tap miss失败；补pumpAndSettle+hitTestable断言，新增单1/1（40288，00:10）过。即3+1相关验收，不说首命令4/4；现33未全33，上片完整32/32（36917，06:49）过，核心未改65沿用。所有验证session结束，日志/tmp/chessnext-pv-archive-*.log。
 
-ADR-033/PV_APPLY_SLICE：纯PvPrefixAction/取消/枚举失败，Controller.createPvPrefixAction打开时捕获source tree/epoch/content+position revision，源entry epoch/node/FEN须匹配。旧entry同源重开可取当前新快照（保留新评注后续），打开后变更过期。先disable/stop屏障→gen/stopfailed/源/cancel→纯PvPrefixPlan Worker全树追加最多128步/2000节点→复查→Session.commitContinuation单次发布；新节点revision+1，已有复用只位置revision/不dirty，epoch/metadata/库绑定不变。planner可注入测试worker等待取消/源变。UI监听sourceChanges即时stale禁用/0和busy禁用/停播放/Close取消未提交，typedPvPreviewExit成功关原preview及history current/mounted route，迟到不关新route。帮助已补。K09普通手工/旧入口容量未统一是代码审计差距，PV已提前原子拒绝，不能称全App解决。
+ADR-034/PV_ARCHIVE_SLICE：独立historyEpoch在同文档跨位置保留64×128，换新局/导入/开谱epoch清，AI_lastSessionEpoch不动；latest infos/pending/推荐/局势条仍位置变_clear。Entry.sourcePly/sourceMoveLabel（根起始局面/第N步后）位置变时算一次，flush复用。源Position评分/WDL固定，旧源预览不混Main，M3-29动作回源重新打开才可用，删除源readonly且拒绝提交。历史本谱标题/清空语义/来源与帮助更新。AX1368 items不是确认卡数，E31文字已修。
 
-初UI脚本format断言失败使Preview未写/History先引用缺API，analyze4编译错+8info；补完API后9 braces限定fix，最后测试underscore1info修。目标12→16→17及最终全量/native全部运行无失败。新增8应用+4组件，旧预览5回归，目标17（59687）。不要把旧analyze失败覆盖为通过，详情SESSION_LOG。
+初目标全页score finder误命中behind-modal及200%mini仅81.6px，前者scope到Dialog，生产layout改compact（宽<560/高<500/14字号scale>21）整体SCS，300px棋盘区+200px虚拟步表，wide仍分栏；失败GlobalKey自动scroll入视区。旧narrow检查语义前实际滚回board。新增3应用+2widget、相关目标22（51108）过，200%>=240。初/最终analyze0。新native实际NNUE混源/worker旧源禁用、回源重开启用、新局清已过。
+
+M3-29 f4ca0a3原子前缀：PvPrefixAction/取消/失败模型，打开时tree/epoch/revisions+源node/FEN，disable/stop+generation屏障，worker整个续谱<=128步/2000节点，回来再核源/cancel/gen，Session单notify提交；新增内容revision+1，已有复用只位置revision不dirty，metadata/epoch/库绑定保持。typed结果关preview+原history current/mounted route，Close取消未提交。planner注入验证worker等待竞态。K09旧手工等入口容量未统一，B16/B19后续。原根373/完整native32现为最近全原生基线。
 
 M3-28 fd6b2fb预览：PvPreview真实worker至多128步整体合法重放/中文/不可变序列；Dialog loader代次/route取消迟到，自适应+虚拟步表/只读BoardSurface/语义，1/0/首尾/键盘/点着/800ms主动播放暂停/失活退场停Timer。来源score/方向固定，未选择应用时不改谱或搜索；原始361/原生单1过，现在完整32回归已覆盖。
 
@@ -34,9 +36,11 @@ AppTextScaling系统保留原TextScaler非线性，手动100/115/130覆盖；Boa
 
 ## 下一可执行
 
-M3-30下一：E31跨位置历史保留已V（37bfaac研究），现只在当前局面保留是已知差距。计划同一session文档epoch内保留64×128历史，latest infos/推荐/局势条仍随位置清空；换谱epoch清历史，sourcePly/来源着法标签，旧来源只读可预览但不同当前source不可应用，回源节点重新打开可以用M3-29已实现的新快照。保持未知跨文档源站策略为P，别耦合_lastSessionEpoch AI取消逻辑（可独立_historyEpoch）。测试需改旧“换位置history清”的预期，同时确认latest确实清旧/迟到token不进archive/新doc清、双执方源评分、deleted来源只读/不能误提交/200%/源返回应用。先计划和验收，功能通过根test/analyze后独立commit。
+下一E32研究文档/manifest独立commit（raw research/E32*未追踪），然后F26着法评级徽标：原站Quick D4/线程1已结束，green check在当前炮h4，图例“好着”2–5%，源详情52.6→49即显示差3.6个百分点。结果面板开关与全局设置同值；关只去棋盘评级徽标，光圈/52.6→49/变着第一马的最佳星号仍留。图例可滚动，10类：妙手/绝佳/最佳/优秀(<2%)/好着(2–5)/不精确(5–10)/错误(10–20)/败着(20以上)/错失良机/更快杀法（慢是更快杀法图标）；精确等号/网站概率与准确率公式仍U，不复制算法。
 
-E31原站已37bfaac：源三着炮二进二添加两步炮２平１/马八进七后回原阅读点，保留新增后续和另一原分支，历史1368/AI分析0、样式默认。曾全页同名text误命中新后续只导航1步，fresh AX发现回退后限定.engine-pv成功预览，未计伪成功。source树现在有新增未来，不再把炮二进二称叶子。跨文档历史/来源绑定/活动AI原行为/hover仍U。其它F21素材/F26评级、布局声音训练格式后端五平台完整历史规则继续，不能停止称全部对齐。
+已恢复全局标记开/原彻底分析模式（Cancel后再开仍彻底V），D4/时限0/节点0/最多2/线程1；“重新分析”打开时skip总重置0V（手改1取消，再开又0，不由此推store），末次手改skip1并Cancel，最终无弹窗/队列，AI分析0，root三着炮二进二阅读点+E31两未来+另一分支保留，Quick新分析数据保留，source截图E32-final-restored.png已嵌图。sourceDOM分析计数是局面/非总节点，勿推内部算法；宏观Accuracy92.7/97.5仅观察不认公式。
+
+下一实现建议投影现有review_report当前节点分类，只读badge/单全局pref/报告面板同步入口/legend，用自有Material图形，不从raw cp猜概率，不把本机模型称原站算法。先读review_report/review_models/engine_review与Native-LOSS ADR-016；源高级妙手/绝佳/错失等算法另追B18。B22 hover/跨文档参考未知、K09容量、F21资源/F28声音动画/布局训练格式后端五平台完整历史规则等继续，不能停称全对齐。
 
 
 IAB browser2/tab4 https://xiangqiai.com/#/，E19自制树正常方向、选中炮八平五/马２进３/炮二进二支线叶子，另一马八进七/马８进７主线仍在。E24分析已停止checkbox0但保留历史卡；E25恢复全局变着开/局部关/推荐开/标准/棋子100/系统字号。E25证据已commit，源站两层AND、父局面同级/单项/根/设置返回局部重置已V，编号1中央单次不导航，其它命中仍U。压缩后先cua.rewriteDocumentation再fresh AX；别重新载入。getAX在历史PV行会很长，可emit:false后截取操作段/过滤含“text 红分”的历史行，但文件注明截取/过滤。截图变更后保存并commentary嵌图；研究素材不进产品资源。

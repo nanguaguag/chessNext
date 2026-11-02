@@ -2494,7 +2494,7 @@ void main() {
     },
   );
   testWidgets(
-    'native NNUE PV history is frozen, retained on stop and cleared by position',
+    'native NNUE PV history is frozen, retained across positions and cleared by new document',
     (tester) async {
       Future<void> tap(Finder target) async {
         await tester.ensureVisible(target);
@@ -2552,7 +2552,7 @@ void main() {
         await tap(find.byKey(const ValueKey('pv-history-open')));
         expect(find.byType(PvHistoryDialog), findsOneWidget);
         await tap(find.text('关闭'));
-        await tap(find.byTooltip('清空本局面PV历史'));
+        await tap(find.byTooltip('清空本谱PV历史'));
         expect(engine.history, isEmpty);
         expect(session.tree, same(tree));
         await tap(find.text('开始分析'));
@@ -2561,7 +2561,12 @@ void main() {
         }
         expect(engine.history, isNotEmpty);
         await tap(find.text('停止分析'));
+        final archive = engine.history;
         session.playMove(Move.parse('h2e2'));
+        await tester.pumpAndSettle();
+        expect(engine.history, same(archive));
+        expect(engine.infos, isEmpty);
+        session.newGame();
         await tester.pumpAndSettle();
         expect(engine.history, isEmpty);
         expect(tester.takeException(), isNull);
@@ -2820,6 +2825,118 @@ void main() {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
         await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native cross-position PV archive preserves source previews and rejects a different current node',
+    (tester) async {
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(ChessNextApp(engineFactory: openBundledEngine));
+        await tester.pumpAndSettle();
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        for (
+          var i = 0;
+          i < 100 && !engine.history.any((e) => e.info.pv.length >= 2);
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        final original = engine.history.firstWhere(
+          (e) => e.info.pv.length >= 2,
+        );
+        expect(original.sourcePly, 0);
+        session.playMove(Move.parse('h2e2'));
+        expect(engine.infos, isEmpty);
+        expect(engine.recommended, isNull);
+        for (
+          var i = 0;
+          i < 100 && !engine.history.any((e) => e.sourcePly == 1);
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          engine.history.any(
+            (e) => e.sourcePly == 1 && e.sourceMoveLabel == '炮二平五',
+          ),
+          isTrue,
+        );
+        await engine.disable();
+        await tester.pumpAndSettle();
+        expect(engine.history.any((e) => e.id == original.id), isTrue);
+        final tree = session.tree, revision = session.revision;
+        Future<void> oldPreview() async {
+          await tap(find.byKey(const ValueKey('pv-history-open')));
+          final row = find.byKey(ValueKey('pv-history-preview-${original.id}'));
+          await tester.ensureVisible(row);
+          await tester.pumpAndSettle();
+          expect(row.hitTestable(), findsOneWidget);
+          await tester.tap(row);
+          await tester.pump();
+          final progress = find.byKey(const ValueKey('pv-preview-progress'));
+          for (var i = 0; i < 100 && progress.evaluate().isEmpty; i++) {
+            await tester.pump(const Duration(milliseconds: 100));
+          }
+          expect(progress, findsOneWidget);
+        }
+
+        await oldPreview();
+        expect(
+          tester
+              .widget<FilledButton>(
+                find.byKey(const ValueKey('pv-apply-prefix')),
+              )
+              .onPressed,
+          isNull,
+        );
+        expect(find.text('来源：起始局面'), findsOneWidget);
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        final board = tester.widget<BoardSurface>(
+          find.descendant(
+            of: find.byType(PvPreviewDialog),
+            matching: find.byType(BoardSurface),
+          ),
+        );
+        expect(board.lastMove, original.info.pv.first);
+        expect(board.enabled, isFalse);
+        await tap(find.text('关闭预览'));
+        await tap(find.text('关闭'));
+        session.first();
+        await tester.pumpAndSettle();
+        await oldPreview();
+        expect(
+          tester
+              .widget<FilledButton>(
+                find.byKey(const ValueKey('pv-apply-prefix')),
+              )
+              .onPressed,
+          isNotNull,
+        );
+        await tap(find.text('关闭预览'));
+        await tap(find.text('关闭'));
+        session.newGame();
+        await tester.pumpAndSettle();
+        expect(engine.history, isEmpty);
+        expect(find.text('PV历史（0）'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
       }
     },
   );

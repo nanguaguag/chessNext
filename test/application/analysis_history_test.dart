@@ -142,7 +142,7 @@ void main() {
     },
   );
   test(
-    'controller samples valid tokens, retains stopped history and clears only for position changes',
+    'controller samples valid tokens, retains stopped history and clears only for document changes',
     () async {
       final session = BoardSession(), fake = FakeEngine();
       final controller = EngineSessionController(
@@ -182,9 +182,13 @@ void main() {
         expect(session.tree, same(tree));
         await emit(fake.requests.last.token, 12);
         expect(controller.history.length, 1);
+        final retained = controller.history;
         session.playMove(Move.parse('h2e2'));
-        expect(controller.history, isEmpty);
+        expect(controller.history, same(retained));
+        expect(controller.infos, isEmpty);
         await emit(token, 100);
+        expect(controller.history, same(retained));
+        session.newGame();
         expect(controller.history, isEmpty);
       } finally {
         controller.dispose();

@@ -158,7 +158,7 @@ class AnalysisPanel extends StatelessWidget {
                 label: Text('PV历史（${analysis.history.length}）'),
               ),
               IconButton(
-                tooltip: '清空本局面PV历史',
+                tooltip: '清空本谱PV历史',
                 onPressed: analysis.history.isEmpty
                     ? null
                     : analysis.clearAnalysisHistory,

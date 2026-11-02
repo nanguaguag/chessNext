@@ -40,6 +40,8 @@ class EngineSessionController extends ChangeNotifier {
   }) : reviewCache = reviewCache ?? MemoryReviewCacheRepository() {
     _lastRevision = session.positionRevision;
     _lastSessionEpoch = session.epoch;
+    _historyEpoch = session.epoch;
+    _updateHistorySource();
     session.addListener(_changed);
   }
   final BoardSession session;
@@ -77,6 +79,19 @@ class EngineSessionController extends ChangeNotifier {
   Future<EngineGateway>? _opening;
   StreamSubscription<EngineInfo>? _subscription;
   final AnalysisHistory _history = AnalysisHistory();
+  int _historyEpoch = 0, _historyPly = 0;
+  String? _historyMoveLabel;
+  void _updateHistorySource() {
+    final tree = session.tree, node = tree.current;
+    _historyPly = tree.path.length - 1;
+    _historyMoveLabel = node.move == null
+        ? null
+        : ChineseNotation.format(
+            tree.node(node.parentId!).position,
+            node.move!,
+          );
+  }
+
   List<PvHistoryEntry> get history => _history.entries;
   void clearAnalysisHistory() {
     if (_disposed || history.isEmpty) return;
@@ -152,9 +167,17 @@ class EngineSessionController extends ChangeNotifier {
   void _changed() {
     _reviewChanged();
     _candidatesChanged();
-    if (_lastRevision == session.positionRevision) return;
+    final newDocument = _historyEpoch != session.epoch;
+    if (newDocument) {
+      _historyEpoch = session.epoch;
+      _history.clear();
+    }
+    if (_lastRevision == session.positionRevision) {
+      if (newDocument) _notify();
+      return;
+    }
     _lastRevision = session.positionRevision;
-    _history.clear();
+    _updateHistorySource();
     _clear();
     _restart?.cancel();
     if (_suppressRestart) return;
@@ -238,6 +261,8 @@ class EngineSessionController extends ChangeNotifier {
           nodeId: session.tree.cursorId,
           revision: session.revision,
           positionRevision: session.positionRevision,
+          sourcePly: _historyPly,
+          sourceMoveLabel: _historyMoveLabel,
           info: info,
         );
       }

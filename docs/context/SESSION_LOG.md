@@ -366,3 +366,17 @@ PvPrefixAction/取消与枚举失败，预览打开时新鲜tree/epoch/内容位
 首Python UI补丁因format压缩actions断言失败（Preview原子未写，History/Controller先已改），首analyze4 API编译错+8info，补全接口后9 braces限定dart fix，callback改perform formal，最后1测试underscore info修wildcard；运行目标12、16、17/全量/原生均无失败。日志/tmp/chessnext-pv-apply-{analyze-initial,analyze-fixed,target,target-final,target-verified,analyze,full,analyze-final,native-full}.log，全会话收尾。证据清单64项实际字节/SHA/图片尺寸全一致，本地文档链接16项有效；首次临时核验错误假定每图1280×720导致E24一项误报，改按sips实际尺寸后0错误，清单无改。
 
 下一M3-30保留本谱跨位置有界历史/来源标记与旧来源只读保护，修E31已知差距；跨文档原站行为/hover/其它源站深层/平台/后端等仍未完成，不停止给全量审查。
+
+### 2026-11-02 / M3-30进行中
+
+ADR-034修同谱跨位置保留，源Ply/着法标签/latest隔离；初目标score全页finder误匹配、200%棋盘81.6px实测失败，限定finder并紧凑布局整体滚动/300px棋盘区/200px步表，目标最终22（51108）及analyze0（35376）过。根显式NNUE38271仍跑，原生四项待跑，不能声明最终过。CURRENT_STATE/HANDOFF记进程和下一命令。
+
+## 2026-11-02 / M3-30 / F02,F13 → B08,B17,B22 本谱跨局面PV历史
+
+ADR-034修ADR-031换位置清历史：独立historyEpoch同文档共享64×128，换谱/新局清空，不改AI_lastSessionEpoch。位置变化仍清latest infos/pending/推荐/局势条，旧token不能进archive。Entry补sourcePly/中文sourceMoveLabel，位置变时算一次，flush复用；每条源Position/score/WDL独立冻结。历史本谱标题/来源、预览旧源只读/M3-29严格应用guard，回源重开可用、删除来源禁提交；帮助已同步。原站AX1368 items不等于确认卡数，已修E31错误表述。
+
+新增应用3+组件2=5（两来源/双执方/WDL/迟到/元资料与flip/回源/新doc、共享预算、删除源readonly拒绝、UI旧源与Main独立/回源重开应用保留旧分支、200%可辨认），加相关模型/历史/预览/前缀目标22/22（51108）。最终显式官方NNUE根378/378（38271，00:40），flutter analyze无问题（44950，最终fixture改后）exit0。macOS相关首批4项（56503）：旧history/preview/prefix三项通过，新增cross-position滚动后tap未命中失败，没将首命令称全过。补ensureVisible后pumpAndSettle+hitTestable验证，新增单项1/1（40288，00:10）exit0。即相关3+重跑1已验；现33原生未全33，上片完整32/32（36917，06:49）过，核心未改65沿用。OS焦点/人工视觉/其它平台未验。
+
+初目标11过2失败：全页score finder匹配主面板+Dialog，限定Dialog；新增source/stale文本下200%棋盘实测81.6px，生产改compact整体滚动（窄/短/大字号）+300px棋盘区域/独立200px虚拟列表，宽高够仍分栏；失败提示自动滚入视区。旧narrow语义测试先实际滚回board再查，没有弱化语义。目标最终22通过且200%棋盘>=240，全部初/最终analyze0问题。日志/tmp/chessnext-pv-archive-{analyze-initial,target,target-final,analyze,full,native,native-final,analyze-final}.log，验证全部会话结束。
+
+E32着法标记审计已操作完成raw证据未提交：快速depth4/线程1完成后徽标出现，结果开关与设置联动，关只去board徽标/评估数据和变着星号仍在；图例9类含常规2/5/10/20%与妙手/绝佳/错失/更快杀法。恢复全局开/原彻底模式/自制原阅读点，保留Quick新增分析数据。下一独立研究commit，再F26只读当前着法评级徽标，源站算法不冒充本机模型。

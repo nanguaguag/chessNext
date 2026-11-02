@@ -39,6 +39,7 @@ class _PvPreviewDialogState extends State<PvPreviewDialog>
   PvApplyResult? applyResult;
   PvApplyCancellation? applyCancellation;
   final scroll = ScrollController();
+  final applyMessageKey = GlobalKey();
   double rowExtent = 48;
   @override
   void initState() {
@@ -167,6 +168,12 @@ class _PvPreviewDialogState extends State<PvPreviewDialog>
         applying = false;
         applyResult = result;
       });
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        final messageContext = applyMessageKey.currentContext;
+        if (mounted && !closed && messageContext != null) {
+          unawaited(Scrollable.ensureVisible(messageContext));
+        }
+      });
     }
   }
 
@@ -284,82 +291,103 @@ class _PvPreviewDialogState extends State<PvPreviewDialog>
         ),
       ),
     );
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          '${_scoreLabel()} · 深度${value.entry.info.depth} · 变化${value.entry.info.multiPv} · 未写入棋谱',
-        ),
-        if (value.entry.truncated)
-          Text('仅预览前128步（原PV共${value.entry.originalPvLength}步）'),
-        if (widget.action != null) ...[
-          const Text('走到棋盘上将暂停计算，仅应用当前所选前缀。'),
-          if (!widget.action!.isCurrent && !applying)
-            const Text('来源局面已变化，请重新打开预览', key: ValueKey('pv-apply-stale')),
-          if (applying) const LinearProgressIndicator(),
-          if (applyResult != null) Text(_applyMessage(applyResult!)),
-        ],
-        const SizedBox(height: 8),
-        Expanded(
-          child: LayoutBuilder(
-            builder: (context, constraints) => constraints.maxWidth >= 560
-                ? Row(
-                    children: [
-                      Expanded(child: board),
-                      const SizedBox(width: 12),
-                      Expanded(child: moves),
-                    ],
-                  )
-                : Column(
-                    children: [
-                      Expanded(flex: 3, child: board),
-                      const SizedBox(height: 8),
-                      Expanded(flex: 2, child: moves),
-                    ],
-                  ),
+    final header = <Widget>[
+      Text(
+        '${_scoreLabel()} · 深度${value.entry.info.depth} · 变化${value.entry.info.multiPv} · 未写入棋谱',
+      ),
+      Text('来源：${value.entry.sourceLabel}'),
+      if (value.entry.truncated)
+        Text('仅预览前128步（原PV共${value.entry.originalPvLength}步）'),
+      if (widget.action != null) ...[
+        const Text('走到棋盘上将暂停计算，仅应用当前所选前缀。'),
+        if (!widget.action!.isCurrent && !applying)
+          const Text(
+            '请返回来源着法后重开预览；来源已删除时仅可查看',
+            key: ValueKey('pv-apply-stale'),
           ),
+        if (applying) const LinearProgressIndicator(),
+        if (applyResult != null)
+          Text(_applyMessage(applyResult!), key: applyMessageKey),
+      ],
+      const SizedBox(height: 8),
+    ];
+    final progress = Text(
+      '$cursor / ${value.length}',
+      key: const ValueKey('pv-preview-progress'),
+    );
+    final controls = Wrap(
+      spacing: 4,
+      children: [
+        IconButton(
+          tooltip: '回到原局面',
+          onPressed: applying || cursor == 0 ? null : () => _jump(0),
+          icon: const Icon(Icons.first_page),
         ),
-        Text(
-          '$cursor / ${value.length}',
-          key: const ValueKey('pv-preview-progress'),
+        IconButton(
+          tooltip: '上一步',
+          onPressed: applying || cursor == 0 ? null : () => _jump(cursor - 1),
+          icon: const Icon(Icons.chevron_left),
         ),
-        Wrap(
-          spacing: 4,
-          children: [
-            IconButton(
-              tooltip: '回到原局面',
-              onPressed: applying || cursor == 0 ? null : () => _jump(0),
-              icon: const Icon(Icons.first_page),
-            ),
-            IconButton(
-              tooltip: '上一步',
-              onPressed: applying || cursor == 0
-                  ? null
-                  : () => _jump(cursor - 1),
-              icon: const Icon(Icons.chevron_left),
-            ),
-            IconButton(
-              tooltip: timer == null ? '播放' : '暂停',
-              onPressed: applying ? null : _toggle,
-              icon: Icon(timer == null ? Icons.play_arrow : Icons.pause),
-            ),
-            IconButton(
-              tooltip: '下一步',
-              onPressed: applying || cursor == value.length
-                  ? null
-                  : () => _jump(cursor + 1),
-              icon: const Icon(Icons.chevron_right),
-            ),
-            IconButton(
-              tooltip: '到预览末尾',
-              onPressed: applying || cursor == value.length
-                  ? null
-                  : () => _jump(value.length),
-              icon: const Icon(Icons.last_page),
-            ),
-          ],
+        IconButton(
+          tooltip: timer == null ? '播放' : '暂停',
+          onPressed: applying ? null : _toggle,
+          icon: Icon(timer == null ? Icons.play_arrow : Icons.pause),
+        ),
+        IconButton(
+          tooltip: '下一步',
+          onPressed: applying || cursor == value.length
+              ? null
+              : () => _jump(cursor + 1),
+          icon: const Icon(Icons.chevron_right),
+        ),
+        IconButton(
+          tooltip: '到预览末尾',
+          onPressed: applying || cursor == value.length
+              ? null
+              : () => _jump(value.length),
+          icon: const Icon(Icons.last_page),
         ),
       ],
+    );
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final compact =
+            constraints.maxWidth < 560 ||
+            constraints.maxHeight < 500 ||
+            MediaQuery.textScalerOf(context).scale(14) > 21;
+        if (compact) {
+          return SingleChildScrollView(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                ...header,
+                SizedBox(height: 300, child: board),
+                const SizedBox(height: 8),
+                SizedBox(height: 200, child: moves),
+                progress,
+                controls,
+              ],
+            ),
+          );
+        }
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            ...header,
+            Expanded(
+              child: Row(
+                children: [
+                  Expanded(child: board),
+                  const SizedBox(width: 12),
+                  Expanded(child: moves),
+                ],
+              ),
+            ),
+            progress,
+            controls,
+          ],
+        );
+      },
     );
   }
 

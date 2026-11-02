@@ -11,8 +11,15 @@ class PvHistoryEntry {
     required this.positionRevision,
     required this.info,
     required this.originalPvLength,
+    required this.sourcePly,
+    this.sourceMoveLabel,
   });
   final int id, epoch, revision, positionRevision, originalPvLength;
+  final int sourcePly;
+  final String? sourceMoveLabel;
+  String get sourceLabel => sourcePly == 0
+      ? '起始局面'
+      : '第$sourcePly步后${sourceMoveLabel == null ? "" : "：$sourceMoveLabel"}';
   final String nodeId;
   final Position position;
   final EngineInfo info;
@@ -29,7 +36,7 @@ class PvHistoryEntry {
       position.turn == side ? info.wdl : info.wdl?.flipped();
 }
 
-/// Current-position display samples, independent of caches and saved records.
+/// Current-document display samples, independent of caches and saved records.
 class AnalysisHistory {
   static const maxEntries = 64, maxPlies = 128;
   List<PvHistoryEntry> _entries = const [];
@@ -43,8 +50,11 @@ class AnalysisHistory {
     required int revision,
     required int positionRevision,
     required EngineInfo info,
+    int sourcePly = 0,
+    String? sourceMoveLabel,
   }) {
-    if (info.pv.isEmpty ||
+    if (sourcePly < 0 ||
+        info.pv.isEmpty ||
         info.multiPv < 1 ||
         info.multiPv > 256 ||
         info.depth < 0 ||
@@ -99,6 +109,8 @@ class AnalysisHistory {
         positionRevision: positionRevision,
         info: copy,
         originalPvLength: info.pv.length,
+        sourcePly: sourcePly,
+        sourceMoveLabel: sourceMoveLabel,
       ),
       ..._entries.take(maxEntries - 1),
     ]);

@@ -34,14 +34,14 @@ class PvHistoryDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-    title: const Text('当前局面PV历史'),
+    title: const Text('本谱PV历史'),
     content: SizedBox(
       width: 600,
       height: 500,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('打开时的${entries.length}条快照；最多64条，切换局面清空，不写入棋谱。'),
+          Text('打开时的${entries.length}条快照；最多64条，跨局面保留，换谱清空，不写入棋谱。'),
           const SizedBox(height: 8),
           Expanded(
             child: ListView.builder(
@@ -60,6 +60,9 @@ class PvHistoryDialog extends StatelessWidget {
                         Text(
                           '变化 ${info.multiPv} · 深度 ${info.depth} · ${score(entry)}',
                           style: Theme.of(context).textTheme.titleSmall,
+                        ),
+                        Text(
+                          '${entry.sourceLabel} · ${entry.position.turn == Side.red ? "红方" : "黑方"}行棋',
                         ),
                         Text(
                           '${((info.timeMs ?? 0) / 1000).toStringAsFixed(1)} 秒 · ${info.nps ?? 0} 节点/秒',

@@ -80,3 +80,5 @@ M3-27：纯AnalysisHistory/PvHistoryEntry拥有有界原始采样、源Position/
 M3-28：PvPreview纯worker准备有界合法Position/中文序列及错误DTO；PvPreviewDialog loader/route代次保护、独立readonly BoardSurface、自适应/虚拟步列表/有限Timer与生命周期；历史入口只读，不拥有会话或引擎。ADR-032。
 
 M3-29：PvPrefixAction/PvApplyCancellation/PvPrefixPlan纯契约与worker；EngineSessionController新鲜来源快照/stop-generation屏障/取消及planner等待验证；BoardSession.commitContinuation一次发布，无UI IO与部分中间谱。History/Preview传动作和源Listenable、typed结果双route退出。ADR-033；普通入口2000容量统一K09后续。
+
+M3-30：历史文档epoch独立于AI状态，位置只清latest、历史跨位置有界保留；源Ply/中文着法冻结，源评分与预览不跟Main漂移，应用guard仍M3-29。紧凑预览整体滚动+固定棋盘区/虚拟步表，ADR-034取代ADR-031历史清理策略，历史记录不重写。

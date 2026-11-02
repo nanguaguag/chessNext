@@ -292,6 +292,8 @@ void main() {
           find.byKey(const ValueKey('pv-preview-step-128')),
           findsOneWidget,
         );
+        await tester.ensureVisible(find.byType(BoardSurface));
+        await tester.pumpAndSettle();
         expect(find.bySemanticsLabel('第128步只读局面'), findsOneWidget);
         final board = tester.widget<BoardSurface>(find.byType(BoardSurface));
         expect(board.flipped, isTrue);

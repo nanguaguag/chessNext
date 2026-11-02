@@ -81,7 +81,7 @@ void main() {
       final tree = session.tree,
           requests = fake.requests.length,
           stops = fake.stops;
-      await tap(tester, find.byTooltip('清空本局面PV历史'));
+      await tap(tester, find.byTooltip('清空本谱PV历史'));
       expect(engine.history, isEmpty);
       expect(fake.requests.length, requests);
       expect(fake.stops, stops);
@@ -94,6 +94,10 @@ void main() {
       expect(find.text('PV历史（1）'), findsOneWidget);
       await tap(tester, find.byKey(const ValueKey('square-h2')));
       await tap(tester, find.byKey(const ValueKey('square-e2')));
+      expect(find.text('PV历史（1）'), findsOneWidget);
+      expect(engine.infos, isEmpty);
+      session.newGame();
+      await tester.pumpAndSettle();
       expect(find.text('PV历史（0）'), findsOneWidget);
     },
   );

@@ -204,7 +204,7 @@ https://xiangqiai.com/#/，访客IAB，E19自制支线末着炮二进二，分�
 
 https://xiangqiai.com/#/，访客IAB，E19自制三着末端炮二进二，全部AI/分析关、历史1368保留。打开E30首卡D31预览，点第2着马八进七为2/33（V，[提交前](screenshots/E31-prefix-two-before.png)）。点走到棋盘上，主谱追加且仅追加炮２平１/马八进七，选中末端，共5着，原另一条保存变化仍在（V，[已追加](screenshots/E31-prefix-two-applied.png)）。不是整条33步。操作后短暂AX显示按钮禁用/局面已变化，随后预览实际关闭；已用后续fresh AX区分中间状态。
 
-主谱上一着两次回原炮二进二，新增两步后续仍在，历史卡数量1368与内容仍保留（V，原站至少在此种局面变化与读谱回退不清历史）。再次从引擎历史限定区域打开原PV，在已有后续的源点选2/33并走到棋盘，回到同一5着末端、无可见重复和新同级项（V，仅可见结构，不据此推断内部节点ID复用，[已有前缀](screenshots/E31-existing-prefix-before.png)/[重复应用](screenshots/E31-existing-prefix-applied.png)/[AX](E31-existing-prefix-applied.txt)）。未测试与已有前缀不同的新增分支/覆盖确认/分析或AI活动时应用。
+主谱上一着两次回原炮二进二，新增两步后续仍在，引擎AX容器仍标记1368 items且旧卡内容保留（不是确认1368张卡）（V，原站至少在此种局面变化与读谱回退不清历史）。再次从引擎历史限定区域打开原PV，在已有后续的源点选2/33并走到棋盘，回到同一5着末端、无可见重复和新同级项（V，仅可见结构，不据此推断内部节点ID复用，[已有前缀](screenshots/E31-existing-prefix-before.png)/[重复应用](screenshots/E31-existing-prefix-applied.png)/[AX](E31-existing-prefix-applied.txt)）。未测试与已有前缀不同的新增分支/覆盖确认/分析或AI活动时应用。
 
 一次全页getByText炮２平１.first命中新出现的主谱后续文本，仅导航1步并未开预览。fresh AX识别后回退一步，使用此前观察过的DOM .engine-pv.first范围成功打开；未将误导航计成预览。最后回原三着阅读位置，**保留新增两步后续**而非删除，分析/AI0、样式默认，原另一分支保留（V，[最终](screenshots/E31-restored-cursor-with-future.png)/[AX](E31-restored-cursor.txt)）。没有登录、外部上传或永久删除。
 

@@ -1,6 +1,9 @@
 import 'application/board_evaluation.dart';
 import 'features/analysis/evaluation_board.dart';
 import 'ports/record_file_exporter.dart';
+import 'ports/png_file_exporter.dart';
+import 'application/board_image_snapshot.dart';
+import 'features/export/board_image_dialog.dart';
 import 'features/settings/app_text_scaling.dart';
 import 'features/board/board_display_scope.dart';
 import 'features/transfer/import_file_dialog.dart';
@@ -53,6 +56,7 @@ class ChessNextApp extends StatefulWidget {
     this.clipboard,
     this.filePicker,
     this.fileExporter,
+    this.pngExporter,
     this.engineFactory,
     this.reviewCache,
     this.deviceThreads = 1,
@@ -63,6 +67,7 @@ class ChessNextApp extends StatefulWidget {
   final TextClipboard? clipboard;
   final RecordFilePicker? filePicker;
   final RecordFileExporter? fileExporter;
+  final PngFileExporter? pngExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
@@ -274,6 +279,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       filePicker: widget.filePicker,
       fileExporter: widget.fileExporter,
+      pngExporter: widget.pngExporter,
       session: session,
       library: library,
       readings: readings,
@@ -294,6 +300,7 @@ class _BoardPage extends StatelessWidget {
     required this.clipboard,
     this.filePicker,
     this.fileExporter,
+    this.pngExporter,
     required this.toggleTheme,
     required this.showGuide,
     required this.library,
@@ -307,6 +314,7 @@ class _BoardPage extends StatelessWidget {
   final TextClipboard clipboard;
   final RecordFilePicker? filePicker;
   final RecordFileExporter? fileExporter;
+  final PngFileExporter? pngExporter;
   final BoardSession session;
   final VoidCallback toggleTheme;
   final Future<void> Function() showGuide;
@@ -513,6 +521,21 @@ class _BoardPage extends StatelessWidget {
         clipboard: clipboard,
         fileExporter: fileExporter,
       ),
+    );
+  }
+
+  Future<void> _exportImage(BuildContext context) async {
+    final snapshot = BoardImageSnapshot.capture(
+      session,
+      preferences.value,
+      assessment: analysis.currentMoveAssessment,
+      recommendation: analysis.recommended,
+      reply: analysis.reply,
+    );
+    await showDialog<void>(
+      context: context,
+      builder: (_) =>
+          BoardImageDialog(snapshot: snapshot, exporter: pngExporter),
     );
   }
 
@@ -726,6 +749,11 @@ class _BoardPage extends StatelessWidget {
                         onPressed: () => _export(context),
                         icon: const Icon(Icons.ios_share),
                         label: const Text('导出文字'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () => _exportImage(context),
+                        icon: const Icon(Icons.image_outlined),
+                        label: const Text('导出图片'),
                       ),
                       OutlinedButton.icon(
                         onPressed: library.busy ? null : () => _edit(context),

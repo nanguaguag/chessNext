@@ -4,6 +4,10 @@
 
 ## 当前检查点
 
+M4-02 / F11原创棋盘PNG与macOS文件保存已完成，本次功能提交见git log。BoardImageSnapshot只复制打开时Position/末步/可靠评级/当时有效箭头/双方向及显示偏好；BoardImageDialog固定450×500只读预览、2倍900×1000 PNG、主题字号动画冻结、缓存/重试/退场取消。PngImage独立8MB/4096/400万像素门槛，MacOsPngFileExporter经独立writePngAtomic、ImageIO实际解码、regular目标与Foundation atomic；原文字UTF8/256KB不变。main仅macOS注入，图片复制/GIF/其它平台未做。ADR-040/BOARD_PNG_SLICE。
+
+目标15/15通过；官方NNUE根419/419（session7987，00:55）+analyze0（2.1秒）exit0。macOS生产真实PNG/冻结同局面字节一致/镜像变化/坏PNG目录符号链接不覆盖1/1（00:06）过。现39未全39，完整32基线，core67沿用。`flutter_tester`真实栅格测试两次卡住后SIGINT，未冒充通过；实际生产macOS渲染与原生解码已覆盖。系统chooser人工/外部scope/人工视觉与其它平台未验。
+
 M3-35 / F12 PGN完整所选线路完成，提交见git log。RecordTextExchange.exportText.includeFuture默认true仅PGN，source.currentLine末端goTo只读视图交原PgnCodec.path（core没改），非主线anchor取正确选定未来；false仅根到当前，普通文字/FEN不变。ExportTextDialog复选框默认开、includeComments独立、busy禁改与清状态，copy/file同rendering、固定打开tree/metadata；未来非法评注明确错误/禁导出，显式范围/省评注可恢复，不默丢。帮助/引导/README范围已修，ADR-039/PGN_SELECTED_LINE_SLICE。
 
 目标14/14（80555），根显式NNUE404/404（98447，00:50）+analyze0（78476）exit0，native新实际Foundation文件/两范围两记谱格式/源后来修改不追随/MemoryClipboard一致1/1（5512，00:09）exit0。现38未全38，完整32基线，core67沿用。无测试失败，新增test unused import warning移除；全部session消费完，/tmp/chessnext-pgn-line-*.log。真实系统Chooser/Clipboard仍未验，不扩大含义。
@@ -26,11 +30,9 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一M4-02 / F11静态PNG快照与保存文件：E34已验证源公开面板保存与复制/实际imagePNG，当前棋盘1000×1100，含坐标/末步/评级、无侧栏/局势条，镜像跟随。实际普通保存与复制字节相同；源固定尺寸策略/取消/拒绝/其它组合U，GIF另项。已研究commit见git log，101manifest核对（10新），源正常方向/原reading+future/其它分支/评级数据保留、AI分析0，无弹层，markHandoff。
+下一M4-03 / F11图片复制：复用BoardImageSnapshot/PngImage生成缓存，新增独立ImageClipboard端口与macOS NSPasteboard适配器，不能复用文字TextClipboard或UI直调平台。先定义拒绝/外部剪贴板失败模型、复制成功后提示和关闭迟到保护；实际macOS验证image/png可读取/解码/900×1000/方向与打开快照，不称其它平台或GIF完成。E34源普通保存与复制字节相同只是该样本V；项目同窗优先共享生成缓存。
 
-建议独立slice/ADR，先原创Flutter棋盘只读快照/PNG生成/预览/可替换PngFileExporter与macOS原子写入，复制用后续独立ImageClipboard增量。snapshot捕获Position/lastMove/assessment/箭层/方向/外观，不捕获Controller或IO；禁止参考图片做产品素材。预览只读/可取消，关闭或source后台变化不误写，toImage/PNG原生异步释放Image资源。先固定有界输出尺寸（P非源固定断言），最小Material按钮/200%滚动/错误重试，roottest+analyze/native真PNG解析文件验证后中文commit。
-
-已有RecordFileExporter只saveText，MacOsRecordFileExporter用channel dev.chessnext/record-file-writer.writeAtomic传path+Uint8List，Swift RecordFileWriter验证UTF8与256000byte，再DispatchQueue data.write(.atomic)并拒绝非regular目标。新PNG需独立端口/类型错误和writer方法，不能绕过文本限额或UI直IO；可共用原路径/原子写协议但独立PNG大小/头校验。系统Chooser仍可注入，真实人工面板未验。不新增依赖即可用Flutter RepaintBoundary.toImage(ImageByteFormat.png)与file_selector已锁版本；其它平台writer未实现，留替换能力，不称五平台过。
+图片复制不得重新读取保存文件或依赖file_selector；端口接收PngImage拥有字节。macOS可在同一私有MethodChannel增加copyPng并在主线程使用NSPasteboard，先实际解码后声明PNG类型/写data，失败类型化且不泄露棋谱或路径。组件需覆盖无clipboard能力、失败重试、busy关闭、同窗先保存后复制只生成一次；native需从NSPasteboard实际读回并ImageIO解码，测试后清理测试写入，不能把mock MethodChannel当系统剪贴板通过。
 
 E34自制位置图片仍含参考外观资源，只docs研究，不拿作产品/单测渲染素材；样本清单samples/E34-manifest.json。源图片已直接view，实际1000×1100（不要按渲染预览估999）；截图PNG后缀实际JPEG照旧。clipboard read只处理本次image/png后写证据，原FEN空读失败不被此改称成功。
 

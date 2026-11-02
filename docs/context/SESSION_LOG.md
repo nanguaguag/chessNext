@@ -440,3 +440,13 @@ ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默
 ## 2026-11-02 / E34 / F11静态图片导出续审
 
 实际IAB公开面板仅保存/复制图片；download正常PNG+clipboard实际image/png已验证，二者1000×1100/1205692bytes/SHA一致，当前三着棋盘含坐标/末步/评级，不含侧栏与局势条或未来局面。镜像保存PNG跟随方向。已恢复正常方向和原reading/树/评估，AI分析0无弹窗队列，markHandoff。10新证据，101manifest全部真实SHA/bytes/sips尺寸过；rawPNG版权资源只证据不产品。不推固定分辨率或未测取消/拒绝/其它组合。无业务修改，不重复Flutter门槛；上一根404/analyze0/native相关1有效，core67沿用。下一M4-02原创PNG快照/文件导出，复制后片。
+
+## 2026-11-02 / M4-02 / F11 → B11,B19 原创棋盘PNG与macOS文件保存
+
+实现不可变BoardImageSnapshot、PngImage/PngFileExporter、BoardImageDialog固定只读预览与缓存/取消/重试，App/main装配macOS适配器。RecordFileWriter新增与文字约束独立的writePngAtomic：8MB签名初筛、utility队列ImageIO实际解码/4096边长/400万像素、普通文件目标与Foundation atomic；不泄露路径。帮助/设计/ADR-040/追踪同步，未引入依赖或参考资源。
+
+目标15/15、官方NNUE根419/419（session7987，00:55）、flutter analyze0（2.1秒）、git diff --check0。macOS目标1/1两次最终均约00:06：生产toImage生成900×1000，原生解码/文件读回；开窗后走子镜像仍冻结，恢复同局面PNG字节一致，镜像新窗字节不同；坏PNG、目录和符号链接均未覆盖。现39未全39，完整32基线，core67沿用。
+
+失败保留：首次把真实PNG编码放flutter_tester保存流程，约100秒无完成后SIGINT；改直接boundary仍30秒无完成后SIGINT，二者不计通过。保留生产capture不弱化，移到macOS集成实际通过；组件测试只验证固定boundary和注入状态机。早期对话框括号补丁两次解析失败、首目标RepaintBoundary finder假定唯一失败，均修正后目标全过；初analyze7大括号info及后续1 unnecessary import已修到0。
+
+未验系统保存面板人工交互/外部沙箱scope/视觉、Release签名及其它平台；图片复制/GIF后续。下一M4-03独立ImageClipboard/macOS PNG剪贴板。

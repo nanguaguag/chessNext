@@ -16,6 +16,8 @@ import 'package:chess_next/application/board_appearance.dart';
 import 'package:chess_next/features/board/board_arrows_painter.dart';
 import 'package:chess_next/features/board/board_file_coordinates.dart';
 import 'dart:convert';
+import 'package:chess_next/adapters/platform/macos_png_file_exporter.dart';
+import 'package:chess_next/ports/png_file_exporter.dart';
 import 'package:chess_next/adapters/platform/macos_record_file_exporter.dart';
 import 'package:chess_next/ports/record_file_exporter.dart';
 import 'package:chess_next/adapters/platform/file_selector_record_picker.dart';
@@ -3435,6 +3437,177 @@ void main() {
         expect(session.revision, revision);
         expect(session.dirty, isTrue);
         await tap(find.text('关闭'));
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native PNG export freezes the board, follows mirror and rejects invalid replacement',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-png-export-');
+      final files = <File>[];
+      final exporter = MacOsPngFileExporter(
+        chooser: (_) async {
+          final file = File('${directory.path}/board-${files.length}.png');
+          files.add(file);
+          return file.path;
+        },
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        expect(target.hitTestable(), findsOneWidget);
+        await tester.tap(target);
+        await tester.pump();
+      }
+
+      Future<Uint8List> saveCurrent() async {
+        await tap(find.text('导出图片'));
+        await tap(find.text('保存图片'));
+        for (
+          var i = 0;
+          i < 200 && find.text('图片文件已保存').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(find.text('图片文件已保存'), findsOneWidget);
+        expect(await files.last.exists(), isTrue);
+        final bytes = await files.last.readAsBytes();
+        final png = PngImage.fromBytes(bytes);
+        expect(png.width, 900);
+        expect(png.height, 1000);
+        await tap(find.text('关闭'));
+        return bytes;
+      }
+
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(key: UniqueKey(), pngExporter: exporter),
+        );
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(session.playMove(Move.parse('h2e2')), isTrue);
+        await tester.pump();
+        final revision = session.revision;
+
+        await tap(find.text('导出图片'));
+        expect(session.playMove(Move.parse('b9c7')), isTrue);
+        session.mirror();
+        await tester.pump();
+        await tap(find.text('保存图片'));
+        for (
+          var i = 0;
+          i < 200 && find.text('图片文件已保存').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(find.text('图片文件已保存'), findsOneWidget);
+        final frozen = await files.single.readAsBytes();
+        expect(PngImage.fromBytes(frozen).width, 900);
+        await tap(find.text('关闭'));
+
+        session.undo();
+        session.mirror();
+        await tester.pump();
+        final sameSnapshot = await saveCurrent();
+        expect(sameSnapshot, orderedEquals(frozen));
+        expect(session.revision, revision + 1);
+
+        session.mirror();
+        await tester.pump();
+        final mirrored = await saveCurrent();
+        expect(mirrored, isNot(orderedEquals(frozen)));
+
+        final good = await files.last.readAsBytes();
+        final invalid = Uint8List.fromList(const [
+          137,
+          80,
+          78,
+          71,
+          13,
+          10,
+          26,
+          10,
+          0,
+          0,
+          0,
+          13,
+          73,
+          72,
+          68,
+          82,
+          0,
+          0,
+          3,
+          132,
+          0,
+          0,
+          3,
+          232,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+        ]);
+        await expectLater(
+          MacOsPngFileExporter.channel.invokeMethod<void>('writePngAtomic', {
+            'path': files.last.path,
+            'bytes': invalid,
+          }),
+          throwsA(
+            isA<PlatformException>().having(
+              (error) => error.code,
+              'code',
+              'write_failed',
+            ),
+          ),
+        );
+        expect(await files.last.readAsBytes(), orderedEquals(good));
+        await expectLater(
+          MacOsPngFileExporter.channel.invokeMethod<void>('writePngAtomic', {
+            'path': directory.path,
+            'bytes': good,
+          }),
+          throwsA(
+            isA<PlatformException>().having(
+              (error) => error.code,
+              'code',
+              'write_failed',
+            ),
+          ),
+        );
+        final link = Link('${directory.path}/board-link.png');
+        await link.create(files.last.path);
+        await expectLater(
+          MacOsPngFileExporter.channel.invokeMethod<void>('writePngAtomic', {
+            'path': link.path,
+            'bytes': good,
+          }),
+          throwsA(
+            isA<PlatformException>().having(
+              (error) => error.code,
+              'code',
+              'write_failed',
+            ),
+          ),
+        );
+        expect(await link.target(), files.last.path);
+        expect(await files.last.readAsBytes(), orderedEquals(good));
+        expect(session.dirty, isTrue);
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

@@ -92,3 +92,5 @@ M3-33 / ADR-037：纯GameTree.maxNodes与GameTreeCapacityException统一所有�
 M3-34 / ADR-038：BoardSession.mirrored只会话状态，XiangqiBoard复用BoardSurface映射；AnalysisPanel在打开history前捕获mirror，经过History/Preview只读属性传入小盘。不改core/document或engine协调，无新增IO。Editor自己的mirrored仍独立。
 
 M3-35 / ADR-039：RecordTextExchange.exportText.includeFuture默认true仅PGN使用currentLine末端goTo只读视图，原PgnCodec.path无变化；ExportTextDialog同rendering支持复制与文件、范围及评注选择、失败显示与打开快照。UI无新增IO，原文件端口/取消规则保留。
+
+M4-02 / ADR-040：BoardImageSnapshot仅持打开时Position、末步、可靠评级、有效箭头、双方向和显示偏好；BoardImageDialog用固定RepaintBoundary异步编码PNG，UI只调用PngFileExporter。MacOsPngFileExporter拥有chooser/cancellation映射，原生RecordFileWriter以独立writePngAtomic路径执行8MB/尺寸门槛、ImageIO实际解码、regular目标检查和Foundation原子写；文字UTF8/256KB协议保持独立。其它平台未注入writer，仍可预览但明确禁保存。

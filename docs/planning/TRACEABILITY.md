@@ -396,3 +396,9 @@ ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默
 无测试失败；初analyze仅新增测试unused import warning移除，最终0。日志/tmp/chessnext-pgn-line-{target,analyze-initial,analyze-gate,full,native}.log，所有session已消费；git diff --check0，无新依赖资源。E33自制PGN夹具验证读取到3着默认导出5着，不读取站点内部状态或借用户棋谱。
 
 下一F11静态局面图片导出续审E34，先确认公开选项/生成结果/导出范围，再实现本机原创棋盘PNG与可替换文件端口；GIF/OCR/在线云库等继续，不能停称全部对齐。
+
+## 2026-11-02 / M4-02 / F11 → B11,B19 原创棋盘PNG与macOS文件保存
+
+ADR-040/BOARD_PNG_SLICE：BoardImageSnapshot冻结Position/末步/可靠评级/有效箭头/双方向与显示偏好，不保留Controller或IO；选中/目标/焦点不导出。BoardImageDialog固定450×500逻辑预览、2倍900×1000 PNG、主题/字号/动画Scope冻结、只读单组语义，生成缓存/错误重试/关闭取消迟到操作。PngImage独立8MB/4096边长/400万像素不可变门槛，PngFileExporter与文字UTF8协议分离。macOS chooser+writePngAtomic经ImageIO实际解码、regular目标检查及Foundation atomic；main只在macOS注入。图片复制/GIF/其它平台writer未实现。
+
+新增端口2+适配器5+快照3+组件5=15个目标通过；首次及直接`flutter_tester`真实栅格PNG测试各卡住，均SIGINT结束并明确不计通过，改由macOS生产渲染/原生桥验证。最终显式官方NNUE根flutter test **419/419**（session7987，00:55）与flutter analyze无问题（2.1秒）exit0；macOS真实900×1000 PNG、开窗快照后台变化冻结且同局面字节一致、镜像字节变化、ImageIO解码/原子文件、坏PNG/目录/符号链接不覆盖 **1/1**（最终00:06）exit0。现39原生未全39，最近完整32/32仍M3-29；core未改沿用67/67+dart analyze。系统保存面板/外部沙箱授权/人工视觉、其它平台未验；无新依赖或产品素材。

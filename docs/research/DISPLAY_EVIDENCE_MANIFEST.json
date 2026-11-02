@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -390,6 +390,66 @@
       "sha256": "5f851570d497c13f0effb6a84feb7f63e53360f198b0f330e580d9dbc1888190",
       "height": 720,
       "width": 1280,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E30",
+      "path": "E30-pv-closed.txt",
+      "bytes": 3561,
+      "sha256": "bd638f7b02eba913689a6255baa26e4d3dcc26a95ef76bed813b8250e470882f"
+    },
+    {
+      "id": "E30",
+      "path": "E30-pv-origin-boundary.txt",
+      "bytes": 5051,
+      "sha256": "5cb9b1c70e8e7c2a2368394e5923334f512c6c0f8f296dd6734d0697aae1f244"
+    },
+    {
+      "id": "E30",
+      "path": "E30-pv-preview-first.txt",
+      "bytes": 11168,
+      "sha256": "e43ec41f37d9f0b15ceeb467efc795c13a15624cd11d2d5c7bf14eed10f59cf5"
+    },
+    {
+      "id": "E30",
+      "path": "E30-pv-play-paused.txt",
+      "bytes": 4968,
+      "sha256": "808d9356c0507c1ffe4718fea5f61c715c1b9c5151dc269816d03eea355a7a6b"
+    },
+    {
+      "id": "E30",
+      "path": "screenshots/E30-pv-click-first.png",
+      "bytes": 137248,
+      "sha256": "0786bed117c2ec06c697c79286221569802af2fe95ca267b907098bde0375376",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E30",
+      "path": "screenshots/E30-pv-preview-next.png",
+      "bytes": 139405,
+      "sha256": "a058a08aa8e64608e1894de7f483f052ef1afb6cbaee07ead7ff4b2849a45a78",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E30",
+      "path": "screenshots/E30-pv-preview-origin.png",
+      "bytes": 138661,
+      "sha256": "5fd8be482662e692fb1e4eb87b141892f457dcf2038faa834088a047d4060080",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E30",
+      "path": "screenshots/E30-pv-escape.png",
+      "bytes": 129488,
+      "sha256": "b9ff3b83ef90768836444140c0c0ac91da9831ceb5d1d919534e278cbcf2392f",
+      "width": 1280,
+      "height": 720,
       "mimeType": "image/jpeg"
     }
   ]

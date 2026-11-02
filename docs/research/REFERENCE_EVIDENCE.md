@@ -191,3 +191,11 @@ https://xiangqiai.com/#/settings/board 与/#/，访客IAB，E19自制炮二进�
 https://xiangqiai.com/#/settings/board 与/#/，访客IAB，E19同一自制谱，黑方行棋，分析/AI关。初始抬起已选（E28设置AX）。点击截图1280×720上c7黑马中心(476,210)，马呈略上移与增强阴影，绿合法落点出现（V，[抬起](screenshots/E29-selection-lift.png)）。再次点同一子取消，不落子；菜单设置选选择框，AX radio1（V，[设置](E29-selection-box-settings.txt)），返回点同一马，出现绿四角框/合法落点，马无抬起阴影效果（V，[选择框](screenshots/E29-selection-box.png)）。不据截图推断具体位移/阴影/命中算法。
 
 再点同子取消、回设置仍选择框选中（V，[回访](E29-selection-box-revisit.txt)）。改回抬起并返回，未选子/原三着支线未变/分析0（V，[恢复](screenshots/E29-selection-restored.png)）。未新增着法或复制产品资源。翻转/编辑器/极大极小棋子/减少动画/跨重载未验，项目保持交点命中及编辑器共用为P。来源摘要见DISPLAY_EVIDENCE_MANIFEST。
+
+## E30 / 2026-11-02 引擎PV历史点击预览、步进播放与零边界
+
+https://xiangqiai.com/#/，访客IAB，E19自制支线末着炮二进二，分析/AI均关且保留历史。AX引擎区显示0–500 of 1368 items，多深度卡D31/D30等仍可见（O），不推断1368是上限或后台数据结构。点击第一张D31历史PV首着炮２平１，打开带小棋盘、完整33步按钮、播放/上一步/下一步/走到棋盘上的预览，初始1/33（V，[点击](screenshots/E30-pv-click-first.png)/[AX](E30-pv-preview-first.txt)），主谱仍原三着。
+
+下一步2/33（V，[次步](screenshots/E30-pv-preview-next.png)）；点播放后按钮变暂停，后续确实推进6/33，再点暂停实际停在13/33，按钮恢复播放（V，[暂停AX](E30-pv-play-paused.txt)）。没有测量固定间隔，不能由工具往返时间推测频率。点击预览首着按钮可回1/33，上一步到0/33，此时上一步与走到棋盘上禁用（V，[原局面](screenshots/E30-pv-preview-origin.png)/[边界AX](E30-pv-origin-boundary.txt)）。Escape关闭预览，主谱仍炮八平五/马２进３/炮二进二及另一保存变化，分析0（V，[关闭](screenshots/E30-pv-escape.png)/[过滤历史长行AX](E30-pv-closed.txt)）。首次Escape后AX还未变化但截图已关闭，补fresh完整AX才确认关闭，不把中间态当结果。
+
+本轮未点走到棋盘上，写谱/冲突/是否追加全PV或所选前缀仍U；hover预览只O，触控/键盘按钮和播放结束行为、历史清理/上限/跨局面/重启记忆仍U。项目有界历史与只读快照预览先单独设计，应用到谱后续独立增量。来源/SHA见DISPLAY_EVIDENCE_MANIFEST，研究截图不是产品资源。

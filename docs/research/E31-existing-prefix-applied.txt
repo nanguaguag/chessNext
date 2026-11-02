@@ -1,0 +1,89 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container app
+		2 container
+			3 button 菜单
+				4 image
+				5 text 菜单
+			6 button 新局
+				7 image
+				8 text 新局
+			9 checkbox Description: 引擎执红, Value: 0
+				10 image
+				11 text 引擎执红
+			12 checkbox Description: 引擎执黑, Value: 0
+				13 image
+				14 text 引擎执黑
+			15 checkbox Description: 分析模式, Value: 0
+				16 image
+				17 text 分析模式
+			18 button 立即出招
+				19 image
+				20 text 立即出招
+			21 button 变招
+				22 image
+				23 text 变招
+			24 container 翻转
+				25 container
+					26 image
+					27 text 翻转
+			28 button 导入
+				29 image
+				30 text 导入
+			31 container 保存 / 分享 · 有未保存的修改
+				32 container
+					33 image
+					34 text 保存 / 分享
+			35 checkbox Description: 编辑, Value: 0
+				36 image
+				37 text 编辑
+			38 container displayArea
+				39 splitter Description: 调整左栏宽度, Value: 22
+				40 splitter Description: 调整棋盘宽度, Value: 70
+				41 container
+					42 text 开始 1. 炮八平五 马２进３ 2. 炮二进二
+					43 container 另有 1 条已保存的变化
+						44 text 1变
+					45 text 炮２平１ 3. 马八进七
+					46 button 棋谱分析
+						47 image
+						48 text 棋谱分析
+				49 splitter Description: 调整上下分区, Value: 55
+				50 container
+					51 text 着法
+					52 button  存题, Help: 存为题
+						53 text 
+						54 text 存题
+					55 button 上一着
+						56 text 
+					57 button (disabled) 下一着
+						58 text 
+					59 text 马八进七
+					60 button 添加注释
+						61 image
+						62 text 添加注释
+					63 text 本步变着
+					64 switch 棋盘箭头, Value: 0
+					65 text 1 马八进七
+					66 button (disabled) 置顶
+						67 image
+					68 button 删除这步及后续
+						69 image
+					70 image
+					71 text 彻底分析可行着法
+					72 button 彻底分析设置
+						73 image
+				74 container
+					75 text 引擎
+					76 button 重置布局
+					77 button 引擎参数
+						78 image
+					79 container (showing 0-500 of 1368 items)
+				81 splitter Description: 调整上下分区, Value: 55
+				82 container
+					83 text 云库
+					84 text 着法 红方 评分 1 车１平２ -29 2 卒７进１ 0 3 马８进７ 1 4 士６进５ 12 5 士４进５ 19 6 象３进５ 29 7 卒３进１ 51 8 炮８平９ 52 9 炮８平６ 55 10 象７进５ 68 11 车１进１ 75 12 卒９进１ 80 13 卒１进１ 95 14 炮８平７ 104 15 马８进９ 104 16 炮１退１ 116 17 象７进９ 140 18 炮８平５ 158 19 炮８进２ 160 20 炮８进１ 223 21 马３退５ 241 22 炮１平２ 258 23 车９进１ 284 24 将５进１ 287 25 炮８退１ 309 26 车９进２ 462 27 炮１进４ 602 28 炮８进７ 622 29 炮８平４ 755 30 卒５进１ 1296 31 马３退１ 1482 32 马３退２ 1658
+			85 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+			86 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+
+The focused UI element is 0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/

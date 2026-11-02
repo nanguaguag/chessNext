@@ -352,3 +352,7 @@ PvPreview工作Isolate最多128步整体合法重放/中文记谱/不可变Posit
 新增模型3（真实worker/非法后缀/black源/128界限）+组件5（真实worker接历史且Fake请求stops与谱不变、计时播放/边界/键盘/失活/卸载、关闭迟到不影响新route、错误重试/内部路径不泄露、200%长PV末端/语义）；加历史回归目标11/11（5249）过。最终显式官方NNUE根361/361（48185，00:37）与analyze无问题（62423）exit0；macOS新项1/1（53828，00:11）exit0，实际NNUE/worker/首步局面/播放暂停/主树与修订/token不变、关闭回历史。现native31未全31，上片完整27过；核心未改65沿用，真实OS失活/人工视觉/其它平台未验。
 
 初4大括号info限定dart fix；首目标7过1失败因新Flutter find.byTooltip返回RawTooltip不能cast IconButton，改按IconButton.tooltip取组件；fixture独立support/pv_history_entry.dart。最终所有门槛通过，日志/tmp/chessnext-pv-preview-{analyze-initial,target,target-final,analyze,full,analyze-final,native}.log，所有进程收尾。E31后续审计已实际只应用2/33前缀并回原点重复应用已有路径，原站跨位置仍保留1368历史；证据待研究commit，当前项目换位置清历史为局部差距，下一应用前缀及跨位置保留/保护。
+
+### 2026-11-02 / E31前缀应用与历史补证
+
+只用E19自制谱实测2/33追加两步、原分支保留，回源点重复相同前缀不见重复、最终回原阅读点但保留新增后续。历史1368跨该位置变与回退保留V，项目清空已转已知差距。全页文本first误命中新主谱后续，只导航，freshAX后限定engine-pv正确打开，不造成功。截图已嵌图，原站分析/AI0，无删除。下一前缀原子应用+停止/取消屏障，再跨位置历史。

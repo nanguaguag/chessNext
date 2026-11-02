@@ -199,3 +199,13 @@ https://xiangqiai.com/#/，访客IAB，E19自制支线末着炮二进二，分�
 下一步2/33（V，[次步](screenshots/E30-pv-preview-next.png)）；点播放后按钮变暂停，后续确实推进6/33，再点暂停实际停在13/33，按钮恢复播放（V，[暂停AX](E30-pv-play-paused.txt)）。没有测量固定间隔，不能由工具往返时间推测频率。点击预览首着按钮可回1/33，上一步到0/33，此时上一步与走到棋盘上禁用（V，[原局面](screenshots/E30-pv-preview-origin.png)/[边界AX](E30-pv-origin-boundary.txt)）。Escape关闭预览，主谱仍炮八平五/马２进３/炮二进二及另一保存变化，分析0（V，[关闭](screenshots/E30-pv-escape.png)/[过滤历史长行AX](E30-pv-closed.txt)）。首次Escape后AX还未变化但截图已关闭，补fresh完整AX才确认关闭，不把中间态当结果。
 
 本轮未点走到棋盘上，写谱/冲突/是否追加全PV或所选前缀仍U；hover预览只O，触控/键盘按钮和播放结束行为、历史清理/上限/跨局面/重启记忆仍U。项目有界历史与只读快照预览先单独设计，应用到谱后续独立增量。来源/SHA见DISPLAY_EVIDENCE_MANIFEST，研究截图不是产品资源。
+
+## E31 / 2026-11-02 将所选PV前缀走到棋盘与已有后续
+
+https://xiangqiai.com/#/，访客IAB，E19自制三着末端炮二进二，全部AI/分析关、历史1368保留。打开E30首卡D31预览，点第2着马八进七为2/33（V，[提交前](screenshots/E31-prefix-two-before.png)）。点走到棋盘上，主谱追加且仅追加炮２平１/马八进七，选中末端，共5着，原另一条保存变化仍在（V，[已追加](screenshots/E31-prefix-two-applied.png)）。不是整条33步。操作后短暂AX显示按钮禁用/局面已变化，随后预览实际关闭；已用后续fresh AX区分中间状态。
+
+主谱上一着两次回原炮二进二，新增两步后续仍在，历史卡数量1368与内容仍保留（V，原站至少在此种局面变化与读谱回退不清历史）。再次从引擎历史限定区域打开原PV，在已有后续的源点选2/33并走到棋盘，回到同一5着末端、无可见重复和新同级项（V，仅可见结构，不据此推断内部节点ID复用，[已有前缀](screenshots/E31-existing-prefix-before.png)/[重复应用](screenshots/E31-existing-prefix-applied.png)/[AX](E31-existing-prefix-applied.txt)）。未测试与已有前缀不同的新增分支/覆盖确认/分析或AI活动时应用。
+
+一次全页getByText炮２平１.first命中新出现的主谱后续文本，仅导航1步并未开预览。fresh AX识别后回退一步，使用此前观察过的DOM .engine-pv.first范围成功打开；未将误导航计成预览。最后回原三着阅读位置，**保留新增两步后续**而非删除，分析/AI0、样式默认，原另一分支保留（V，[最终](screenshots/E31-restored-cursor-with-future.png)/[AX](E31-restored-cursor.txt)）。没有登录、外部上传或永久删除。
+
+源站跨位置至少保留本次旧历史已V，具体全局/跨文档清理和来源绑定算法仍U。项目当前换位置清空成为已知差距，下一独立补有界跨位置历史及旧来源只读/提交保护。应用到谱采用打开时当前源节点匹配与完整新快照、停止屏障/取消/原子多步提交为项目P，不从可见行为猜内部实现。截图与AX摘要见DISPLAY_EVIDENCE_MANIFEST。

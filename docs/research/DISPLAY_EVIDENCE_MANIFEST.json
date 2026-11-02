@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -448,6 +448,69 @@
       "path": "screenshots/E30-pv-escape.png",
       "bytes": 129488,
       "sha256": "b9ff3b83ef90768836444140c0c0ac91da9831ceb5d1d919534e278cbcf2392f",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E31",
+      "path": "E31-prefix-applied-intermediate.txt",
+      "bytes": 3292,
+      "sha256": "c85f471521f07c3a7f433de025c4de607be0a55561a2d76ece8cfce15249e5c9"
+    },
+    {
+      "id": "E31",
+      "path": "E31-existing-prefix-applied.txt",
+      "bytes": 3292,
+      "sha256": "c85f471521f07c3a7f433de025c4de607be0a55561a2d76ece8cfce15249e5c9"
+    },
+    {
+      "id": "E31",
+      "path": "E31-restored-cursor.txt",
+      "bytes": 3538,
+      "sha256": "022120ab5bf92099f43df48385ab2e8f01c17bccba6633cb8db51edf04dd46f2"
+    },
+    {
+      "id": "E31",
+      "path": "screenshots/E31-prefix-two-applied.png",
+      "bytes": 130675,
+      "sha256": "b0834af30cb914a17bac76a24403205903c3b277287ee693a5c5abf900ac2e2c",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E31",
+      "path": "screenshots/E31-prefix-two-before.png",
+      "bytes": 139352,
+      "sha256": "1213bef073a6ff50fc407fa3cac1d979bda62f83375d88daca58a4e593febc6e",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E31",
+      "path": "screenshots/E31-existing-prefix-applied.png",
+      "bytes": 130650,
+      "sha256": "e99138dc15c91d87a1f386f2d5068f47683493048cf3f71b0e3038b566e924c4",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E31",
+      "path": "screenshots/E31-existing-prefix-before.png",
+      "bytes": 138558,
+      "sha256": "1a9cca1f8d8c422b9490c4a3c1cd69120904b0894ac06f309357d921ca424863",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E31",
+      "path": "screenshots/E31-restored-cursor-with-future.png",
+      "bytes": 130904,
+      "sha256": "f7b9a6636ac33e64978bbe6e8628629a6bd2c021b0138879aecc6226337c6d5b",
       "width": 1280,
       "height": 720,
       "mimeType": "image/jpeg"

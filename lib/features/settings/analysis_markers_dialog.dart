@@ -38,6 +38,15 @@ class AnalysisMarkersDialog extends StatelessWidget {
                     : (value) =>
                           unawaited(preferences.setVariationArrows(value)),
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('局势条'),
+                subtitle: const Text('本机WDL预期得分；缺失模型时显示问号'),
+                value: preferences.value.showEvaluationBar,
+                onChanged: preferences.loading
+                    ? null
+                    : (value) => unawaited(preferences.setEvaluationBar(value)),
+              ),
               DropdownButtonFormField<ArrowHeadStyle>(
                 key: ValueKey(preferences.value.arrowHead),
                 initialValue: preferences.value.arrowHead,

@@ -1,3 +1,5 @@
+import 'application/board_evaluation.dart';
+import 'features/analysis/evaluation_board.dart';
 import 'ports/record_file_exporter.dart';
 import 'features/settings/app_text_scaling.dart';
 import 'features/board/board_display_scope.dart';
@@ -608,12 +610,27 @@ class _BoardPage extends StatelessWidget {
                   scrollDirection: Axis.horizontal,
                   child: SizedBox(
                     width: (constraints.maxWidth - 48 - (wide ? 344 : 0))
-                        .clamp(432, 540)
+                        .clamp(
+                          preferences.value.showEvaluationBar ? 492 : 464,
+                          540,
+                        )
                         .toDouble(),
-                    child: XiangqiBoard(
-                      session: session,
-                      recommendation: analysis.recommended,
-                      reply: analysis.reply,
+                    child: EvaluationBoard(
+                      visible: preferences.value.showEvaluationBar,
+                      flipped: session.flipped,
+                      evaluation: BoardEvaluation.fromInfo(
+                        turn: session.position.turn,
+                        outcome: session.outcome,
+                        info: analysis.infos
+                            .where((info) => info.multiPv == 1)
+                            .firstOrNull,
+                        frozen: !analysis.enabled && !analysis.playing,
+                      ),
+                      child: XiangqiBoard(
+                        session: session,
+                        recommendation: analysis.recommended,
+                        reply: analysis.reply,
+                      ),
                     ),
                   ),
                 ),

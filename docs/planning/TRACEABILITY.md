@@ -288,3 +288,11 @@ E25已V双开关共同门控、父局面同级/单项/根无本步/根与设置�
 新增5应用+4组件+1实际绿色数字像素=10；加旧绘制目标8/8、加旧推荐组件目标9/9。大合法局面超64投影实证保留当前/原编号；运行中Fake实际requests/stops不变、树/修订不变/根重置/新文档/置顶删除/200%/读屏/命中。显式NNUE根首320/320（22549），macOS旧推荐+新变着2/2（71609，00:26）exit0，真实NNUEtoken不变/保存树与内容位置修订不改/全局偏好及新App读取恢复、局部不恢复。
 
 初App设置回调patch多逗号导致format/analyze编译失败，修为正常showDialog语句；随后1大括号info、最后1未用测试import清理。相关widget最终5/5；最后只改超限提示准确措辞（最多64且含当前），最终根320/320 exit0（43252）与analyze0（6777）。原生当前26未全26，上片完整23过；核心未改65沿用。其它平台/真实OS焦点/人工视觉未验。日志/tmp/chessnext-variation-arrows-{projection,widget,widget-final,full,full-final,analyze-initial,analyze-fixed,analyze,analyze-final,analyze-verified,native}.log，全部会话结束。
+
+## 2026-11-02 / M3-24 / F26 → B08,B17,B20 本地模型局势条
+
+E26显隐/空间回收/随旋转方向/停止保留为V，原比例公式未知。纯BoardEvaluation以首PV原生WDL换红方预期得分（2W+D）/半和，不造CP概率；缺失/bound/mate0/预测杀棋/真实领域将死困毙独立，记录Result不裁决。EvaluationBoard只读/无动画/不反复播报，灰态问号、红黑文字与Tooltip，旋转与隐藏回收28dp；最低总宽492/464维持交点约48dp。可选showEvaluationBar默认开，逐字段晚到合并/持久化/错误重试，不改变搜索及谱。ADR-028/EVALUATION_BAR_SLICE。
+
+新增模型5+组件5+真实像素1=11，覆盖两执方/缺失/边界/杀棋/终局/旧字段/晚到/失败重试、停止同位置保留/导航失效、搜索请求不变/翻转/200%/键盘/几何。显式官方NNUE根flutter test331/331（99436）与flutter analyze无问题（55541）exit0；完整macOS27/27（96958，04:53）exit0，含真实NNUEWDL/同令牌/条空间+28/停止翻转/文件偏好新App及完整旧功能回归。fixture raw[]，不等同真实OS生命周期/人工视觉；其它平台未验。核心未改65沿用。
+
+初analyze8项info（3大括号/5插值花括号），限定dart fix两规则修复，最终0问题，运行测试无失败。日志/tmp/chessnext-evaluation-bar-{model,target,full,analyze-initial,analyze,native-full}.log，全部验证进程收尾。下一F21落子与选择样式实测，F26其它标记/B22仍未完成。

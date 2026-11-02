@@ -1,3 +1,5 @@
+import 'package:chess_next/application/board_evaluation.dart';
+import 'package:chess_next/features/analysis/evaluation_board.dart';
 import '../test/support/branched_record.dart';
 import 'package:chess_next/features/board/variation_arrows_painter.dart';
 import 'package:chess_next/application/board_appearance.dart';
@@ -2118,6 +2120,121 @@ void main() {
         await tap(toggle);
         expect(arrows(), findsNothing);
         expect(find.text('变着箭头已在分析标记设置中关闭。'), findsOneWidget);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native WDL evaluation bar preserves search, frozen view and persisted visibility',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-evaluation-');
+      final repository = FilePreferencesRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+        engineFactory: openBundledEngine,
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> markers() async {
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('分析标记'));
+      }
+
+      BoardEvaluation evaluation() => tester
+          .widget<EvaluationBoard>(find.byType(EvaluationBoard))
+          .evaluation;
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        expect(evaluation().redRatio, isNull);
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final tree = session.tree, revision = session.revision;
+        await tap(find.text('开始分析'));
+        for (
+          var i = 0;
+          i < 100 && evaluation().kind != EvaluationKind.model;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(evaluation().kind, EvaluationKind.model);
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final token = engine.infos.first.token;
+        final width = tester.getSize(find.byType(XiangqiBoard)).width;
+        await markers();
+        await tap(find.text('局势条'));
+        expect(find.byKey(const ValueKey('evaluation-strip')), findsNothing);
+        expect(
+          tester.getSize(find.byType(XiangqiBoard)).width,
+          closeTo(width + 28, .01),
+        );
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.enabled, isTrue);
+        expect(engine.infos, isNotEmpty);
+        expect(engine.infos.every((value) => value.token == token), isTrue);
+        await tap(find.text('局势条'));
+        await tap(find.text('关闭'));
+        await tap(find.text('取消'));
+        await tap(find.text('停止分析'));
+        final frozen = evaluation().redUnits;
+        expect(frozen, isNotNull);
+        expect(evaluation().description, contains('保留的当前局面结果'));
+        await tap(find.text('翻转'));
+        final paint =
+            tester
+                    .widget<CustomPaint>(
+                      find.byKey(const ValueKey('evaluation-fill')),
+                    )
+                    .painter!
+                as EvaluationStripPainter;
+        expect(paint.flipped, isTrue);
+        expect(evaluation().redUnits, frozen);
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.dirty, isFalse);
+        await markers();
+        await tap(find.text('局势条'));
+        for (
+          var i = 0;
+          i < 50 && (await repository.load())?.value.showEvaluationBar != false;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await repository.load())!.value.showEvaluationBar, isFalse);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 50 &&
+              find
+                  .byKey(const ValueKey('evaluation-strip'))
+                  .evaluate()
+                  .isNotEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(find.byKey(const ValueKey('evaluation-strip')), findsNothing);
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

@@ -68,3 +68,5 @@ M3-21：既有显示Scope/偏好增加有界pieceSizePercent，BoardDisplayDialo
 M3-22：纯board_appearance.ArrowHeadStyle存储枚举、AppPreferences/Controller可选字段与合并；AnalysisMarkersDialog即时偏好、BoardDisplayScope注入。BoardArrowsPainter与静态网格分离，组合显隐只撤视觉/语义不丢PV，IgnorePointer不抢交点；三头宽/恒定杆/四方向真实绘制测试。ADR-026。变着树箭头及其它F26后续。
 
 M3-23：纯CurrentMoveArrows按父局面投影/稳定编号/最多64含当前，BoardSession按树对象缓存与会话局部开关；全局showVariationArrows独立偏好，经Scope门控。VariationPanel局部开关/原编号与超限提示，VariationArrowsPainter绿色只读层复用Square映射/头部，主棋盘传投影，编辑器不传。根/新文档/打开设置清局部，旧epoch回调拒绝；ADR-027。
+
+M3-24：application/board_evaluation.dart无Flutter投影原生WDL/边界/杀棋/终局，features/analysis/evaluation_board.dart只读灰态/方向/语义。App传当前首PV与领域outcome，偏好Controller独立showEvaluationBar；无新引擎/IO所有者，ADR-028。

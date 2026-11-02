@@ -300,3 +300,11 @@ ANALYSIS_ARROWS_SLICE/ADR-026；可选偏好/迟到独立字段合并/即时Anal
 ### 2026-11-02 / E26 局势条调查
 
 实际访客已停分析状态开关条/布局空间70↔68、旋转红黑方向交换，恢复原朝向/全局开/分析0。首点翻转只是菜单，截图按真实内容改名flip-menu，再点旋转后才记V。原站公式/完全空态未知，方案不凭CP造概率。纯调查无业务改动；下一本地原生WDL条。
+
+## 2026-11-02 / M3-24 / F26 → B08,B17,B20 本地模型局势条
+
+E26显隐/空间回收/随旋转方向/停止保留为V，原比例公式未知。纯BoardEvaluation以首PV原生WDL换红方预期得分（2W+D）/半和，不造CP概率；缺失/bound/mate0/预测杀棋/真实领域将死困毙独立，记录Result不裁决。EvaluationBoard只读/无动画/不反复播报，灰态问号、红黑文字与Tooltip，旋转与隐藏回收28dp；最低总宽492/464维持交点约48dp。可选showEvaluationBar默认开，逐字段晚到合并/持久化/错误重试，不改变搜索及谱。ADR-028/EVALUATION_BAR_SLICE。
+
+新增模型5+组件5+真实像素1=11，覆盖两执方/缺失/边界/杀棋/终局/旧字段/晚到/失败重试、停止同位置保留/导航失效、搜索请求不变/翻转/200%/键盘/几何。显式官方NNUE根flutter test331/331（99436）与flutter analyze无问题（55541）exit0；完整macOS27/27（96958，04:53）exit0，含真实NNUEWDL/同令牌/条空间+28/停止翻转/文件偏好新App及完整旧功能回归。fixture raw[]，不等同真实OS生命周期/人工视觉；其它平台未验。核心未改65沿用。
+
+初analyze8项info（3大括号/5插值花括号），限定dart fix两规则修复，最终0问题，运行测试无失败。日志/tmp/chessnext-evaluation-bar-{model,target,full,analyze-initial,analyze,native-full}.log，全部验证进程收尾。下一F21落子与选择样式实测，F26其它标记/B22仍未完成。

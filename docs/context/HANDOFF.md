@@ -8,13 +8,9 @@
 
 ## 最新检查点
 
-业务基线51dcba0推荐箭头、a0a9024 E25审计；当前M3-23本步编号箭头独立commit见git log。最终显式官方NNUE根320/320（43252）与analyze0（6777）exit0；macOS旧推荐+新编号2/2（71609，00:26）exit0，之后只改超限提示文案。当前26原生未全26；上个完整23/23（34715）过。核心未改沿用65/65+dart analyze。所有命令收尾，无未等待验证会话；失败/修复见SESSION_LOG和TRACEABILITY，日志/tmp/chessnext-variation-arrows-*.log。
+M3-24局势条已完成，独立commit见git log。显式官方NNUE根flutter test331/331（99436）与analyze无问题（55541）exit0；完整macOS27/27（96958，04:53）exit0，核心未改沿用65/65+dart analyze。无待等待验证会话；日志/tmp/chessnext-evaluation-bar-*.log，失败/修复见SESSION_LOG/TRACEABILITY。
 
-M3-23：纯CurrentMoveArrows按当前节点parent.children投影稳定ID/原编号/父Position记谱，树对象缓存；最多64，当前在首64外时取首63+当前。完整列表不截断，超限说明。BoardSession.showCurrentVariationArrows默认false、非文档/无内容或位置修订，普通读谱保留，根/replaceTree/newGame/打开App设置清除。局部callback绑定epoch。AppPreferences.showVariationArrows可选默认true，Controller逐字段合并/serial/retry，Scope只读全局门控。两个开关都开才显示，局部不写全局，global关local可开但不画并有说明。
-
-VariationPanel局部Switch/current编号subtitle，主棋盘提供投影，编辑器不传旧树。VariationArrowsPainter绿色箭头/数字徽号在棋子下、IgnorePointer/只读语义，共用boardSquarePoint/BoardArrowsPainter头部。后者新增recommendationColor并纳入shouldRepaint；旧实际像素3项仍过。根/单项/置顶删除/新谱/过期callback/>64合法局面/双层画面Fake请求不变/命中/200%语义/绿色实际像素已验，ADR-027/VARIATION_ARROWS_SLICE。
-
-本片首App.showDialog patch多逗号造成编译失败已修；后1大括号info和1unused测试import已清，最终门槛无问题。没有修改引擎生命周期来迎合测试。
+纯BoardEvaluation区分首PV原生WDL期望/缺失/bound/mate/真实终局，红方0–2000整数单位；记录Result不裁决局面。EvaluationBoard灰态/Tooltip/只读语义、翻转颜色、showEvaluationBar可选默认开/逐字段合并/即时偏好，不拥有引擎或存储。停止保留同局面，导航依现有位置修订清info。主棋盘最小总宽492开/464关，条20+8，保持坐标交点约48dp；编辑器无旧条。模型5+组件5+实际像素1通过，完整原生包含真实NNUE令牌不变/空间+28/停止及翻转/偏好新App/文档不变。ADR-028/EVALUATION_BAR_SLICE。
 
 ## 现有关键边界
 
@@ -26,7 +22,7 @@ AppTextScaling系统保留原TextScaler非线性，手动100/115/130覆盖；Boa
 
 ## 下一可执行
 
-F26局势条：先实测源站开关/当前有效或缺失数据/翻转视角/停止状态，随后设计本地原生WDL预期得分呈现，不凭cp猜实战胜率。缺WDL/bound/mate必须分别定义，不伪造50%。其它F26着法标记、F21落子/选择/素材，F28声音/动画、布局/工作区、B22 PV历史/小棋盘、错题题库、格式/图片GIF/OCR、自建后端与部署、完整历史长将长捉、五平台ABI与发行仍待实现，持续推进。
+F21落子标记/选择样式下一片，先参考实际操作。F26着法标记当前样本开关后无可确认可见区别，不推断对象；B22历史/预览、资源、声音动画、布局/工作区、错题题库、格式/图片GIF/OCR、自建后端与部署、完整历史规则、五平台ABI仍待持续推进。
 
 IAB browser2/tab4 https://xiangqiai.com/#/，E19自制树正常方向、选中炮八平五/马２进３/炮二进二支线叶子，另一马八进七/马８进７主线仍在。E24分析已停止checkbox0但保留历史卡；E25恢复全局变着开/局部关/推荐开/标准/棋子100/系统字号。E25证据已commit，源站两层AND、父局面同级/单项/根/设置返回局部重置已V，编号1中央单次不导航，其它命中仍U。压缩后先cua.rewriteDocumentation再fresh AX；别重新载入。getAX在历史PV行会很长，可emit:false后截取操作段/过滤含“text 红分”的历史行，但文件注明截取/过滤。截图变更后保存并commentary嵌图；研究素材不进产品资源。
 

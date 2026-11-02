@@ -384,3 +384,13 @@ E32着法标记审计已操作完成raw证据未提交：快速depth4/线程1完
 ### 2026-11-02 / E32着法标记补审计
 
 自制谱Quick D4/线程1，出现绿色好着勾；结果/设置同值，关只去棋盘徽标不去最后落子光圈/胜率变化/变着最佳星号。图例10类上下滚动V，常规阈值文字/O声明，高级公式仍U。恢复标记开/原彻底模式，最后skip1取消，重开分析默认skip0V单独记录；无弹窗、AI分析0，保留Quick新增评估但没改棋树。图片已commentary嵌图，下一F26本机评级徽标。研究无业务变更，未空跑Flutter门槛。
+
+## 2026-11-02 / M3-31 / F26 → B08,B18 当前着本机评级徽标
+
+ADR-035/MOVE_GRADE_MARKER_SLICE：纯单节点评级复用v1、run+node缓存/源身份保护、固定交点只读角徽与语义、Material原创图标/六类滚动说明、两入口同全局showMoveGrades偏好/保存失败重试/新实例恢复。关只徽标，数字/光圈保留，不改搜索或棋谱。E32 BACKLOG“v1<2等号不同”经原始代码复核为误判，已勘误，不改算法版本。高级四类/原站公式仍U。
+
+目标原报告7+新增应用3/组件4=14/14（81530）exit0；官方NNUE根最终385/385（30612，00:42）与flutter analyze无问题（93098，2.3秒）exit0；新增macOS实际NNUE三局面WDL、徽标/翻转/双入口/真实FilePreferences新App恢复1/1（6123，00:10）exit0。现34未全34，最近完整32/32沿用。core未改65/65+dart analyze沿用，OS人工视觉/其它平台未验。
+
+初analyze3错因缓存字段误放extension，移到Controller；首目标Material fixture漏Material且fake timer不推进卡住，Ctrl-C结束非通过；再编译因删掉extension所在import失败，补import；再目标错误/重试全页finder非唯一，限定MoveGradeControls后目标14过。首根384过1失败为旧text_size_test全页开关非唯一，改限定TextSizeDialog，不改生产字号逻辑；最终全量385通过。初/修正analyze记录和所有目标/根/native日志/tmp/chessnext-grade-{analyze-initial,analyze-final,analyze-corrected,analyze-gate,analyze-final-gate,target,target-final,target-corrected,target-verified,target-pass,full,full-final,native}.log，验证session全部已消费。新增依赖/外部资源为0，git diff --check通过。
+
+下一F32模式选择取消记忆/重新分析skip默认关（E12/E32），继续其它站点缺项，不称全部对齐。

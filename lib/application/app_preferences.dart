@@ -23,6 +23,7 @@ final class AppPreferences {
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
     this.showEvaluationBar = true,
+    this.showMoveGrades = true,
     this.arrowHead = ArrowHeadStyle.standard,
     this.lastMoveMarker = LastMoveMarkerStyle.halo,
     this.selectionStyle = SelectionStyle.lift,
@@ -55,6 +56,7 @@ final class AppPreferences {
   final bool showAnalysisArrows;
   final bool showVariationArrows;
   final bool showEvaluationBar;
+  final bool showMoveGrades;
   final ArrowHeadStyle arrowHead;
   final LastMoveMarkerStyle lastMoveMarker;
   final SelectionStyle selectionStyle;
@@ -68,6 +70,7 @@ final class AppPreferences {
     bool? showAnalysisArrows,
     bool? showVariationArrows,
     bool? showEvaluationBar,
+    bool? showMoveGrades,
     ArrowHeadStyle? arrowHead,
     LastMoveMarkerStyle? lastMoveMarker,
     SelectionStyle? selectionStyle,
@@ -84,6 +87,7 @@ final class AppPreferences {
     showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
     showVariationArrows: showVariationArrows ?? this.showVariationArrows,
     showEvaluationBar: showEvaluationBar ?? this.showEvaluationBar,
+    showMoveGrades: showMoveGrades ?? this.showMoveGrades,
     arrowHead: arrowHead ?? this.arrowHead,
     lastMoveMarker: lastMoveMarker ?? this.lastMoveMarker,
     selectionStyle: selectionStyle ?? this.selectionStyle,
@@ -106,6 +110,7 @@ final class AppPreferences {
     if (!showAnalysisArrows) 'showAnalysisArrows': false,
     if (!showVariationArrows) 'showVariationArrows': false,
     if (!showEvaluationBar) 'showEvaluationBar': false,
+    if (!showMoveGrades) 'showMoveGrades': false,
     if (arrowHead != ArrowHeadStyle.standard) 'arrowHead': arrowHead.name,
     'threads': threads,
     'hashMb': hashMb,
@@ -119,6 +124,8 @@ final class AppPreferences {
             json['selectionStyle'] is! String) ||
         (json.containsKey('lastMoveMarker') &&
             json['lastMoveMarker'] is! String) ||
+        (json.containsKey('showMoveGrades') &&
+            json['showMoveGrades'] is! bool) ||
         (json.containsKey('showEvaluationBar') &&
             json['showEvaluationBar'] is! bool) ||
         (json.containsKey('showVariationArrows') &&
@@ -150,6 +157,7 @@ final class AppPreferences {
           json['lastMoveMarker'] as String? ?? 'halo',
         ),
         showEvaluationBar: json['showEvaluationBar'] as bool? ?? true,
+        showMoveGrades: json['showMoveGrades'] as bool? ?? true,
         showVariationArrows: json['showVariationArrows'] as bool? ?? true,
         showAnalysisArrows: json['showAnalysisArrows'] as bool? ?? true,
         arrowHead: ArrowHeadStyle.values.byName(
@@ -177,6 +185,7 @@ final class AppPreferences {
       selectionStyle == other.selectionStyle &&
       lastMoveMarker == other.lastMoveMarker &&
       showEvaluationBar == other.showEvaluationBar &&
+      showMoveGrades == other.showMoveGrades &&
       showVariationArrows == other.showVariationArrows &&
       showAnalysisArrows == other.showAnalysisArrows &&
       arrowHead == other.arrowHead &&
@@ -194,6 +203,7 @@ final class AppPreferences {
     selectionStyle,
     lastMoveMarker,
     showEvaluationBar,
+    showMoveGrades,
     showVariationArrows,
     showAnalysisArrows,
     arrowHead,

@@ -82,3 +82,5 @@ M3-28：PvPreview纯worker准备有界合法Position/中文序列及错误DTO；
 M3-29：PvPrefixAction/PvApplyCancellation/PvPrefixPlan纯契约与worker；EngineSessionController新鲜来源快照/stop-generation屏障/取消及planner等待验证；BoardSession.commitContinuation一次发布，无UI IO与部分中间谱。History/Preview传动作和源Listenable、typed结果双route退出。ADR-033；普通入口2000容量统一K09后续。
 
 M3-30：历史文档epoch独立于AI状态，位置只清latest、历史跨位置有界保留；源Ply/中文着法冻结，源评分与预览不跟Main漂移，应用guard仍M3-29。紧凑预览整体滚动+固定棋盘区/虚拟步表，ADR-034取代ADR-031历史清理策略，历史记录不重写。
+
+M3-31 / ADR-035：ReviewReport.assess纯单节点规则复用，EngineReview.currentMoveAssessment按run身份/节点缓存并校验文档，UI MoveGradeBadge只读角徽/交点语义，MoveGradeControls两个入口共用PreferencesController.showMoveGrades。UI无新增IO，评级版本不改。

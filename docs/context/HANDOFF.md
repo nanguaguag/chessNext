@@ -1,52 +1,31 @@
 # 会话交接
 
-2026-11-02 Asia/Shanghai。先AGENTS/README/CURRENT_STATE/DECISIONS、git status/log与所涉模块文档；旧详情history/2026-11-02-before-numbered-arrows-handoff.md等，包含当时WIP，不以旧pending覆盖本交接。
+2026-11-02 Asia/Shanghai。先AGENTS/README/CURRENT_STATE/DECISIONS、git status/log与所涉模块文档。用户授权持续实现、每功能完整flutter test+flutter analyze后中文Conventional Commit、实际macOS运行；在线自建可替换后端+部署方案。许可决定暂缓不阻挡，保留来源；没有分代理授权。不能以局部完成结束全站审查。
 
-## 授权与边界
+## 当前检查点
 
-持续实现直到可确认全站功能对齐，每功能完整flutter test+flutter analyze通过后中文Conventional Commit；实际macOS运行授权。在线自建可替换后端+部署方案，离线优先只是顺序。许可决定暂缓不挡开发但保留来源。无分代理授权。完整对标仍有很多缺项，不因又完成一片就停下要求审查。
+M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。ReviewReport.assess抽取原规则并供报告复用，版本native-wdl-loss-v1/阈值不改；Controller先核epoch/revision/stale，用run身份+node缓存。根/缺失/未评级/bound/mate无徽标，旧谱同ID无借用。BoardSurface顶层IgnorePointer/ExcludeSemantics，语义附真实交点；共享boardSquarePoint翻转镜像/固定格距角徽，不随棋子大小，编辑器不传。六类Material原创图标+可滚动图例，不冒充站点高级算法。showMoveGrades schema1可选默认开/严格类型/晚读合并/串行写/重试，复盘与设置共享，关仍留数值/光圈/其它标记，不重启引擎。BACKLOG勘误：v1原已<2%，先前E32声称有等号差异错误，不改模型。
 
-## 最新检查点
-
-M3-30本谱跨位置历史完成，独立中文commit见git log。显式官方NNUE根378/378（38271，00:40）与最终analyze0（44950）exit0。macOS首4项56503旧history/preview/prefix三项过，新cross-position因ensureVisible后未等布局tap miss失败；补pumpAndSettle+hitTestable断言，新增单1/1（40288，00:10）过。即3+1相关验收，不说首命令4/4；现33未全33，上片完整32/32（36917，06:49）过，核心未改65沿用。所有验证session结束，日志/tmp/chessnext-pv-archive-*.log。
-
-ADR-034/PV_ARCHIVE_SLICE：独立historyEpoch在同文档跨位置保留64×128，换新局/导入/开谱epoch清，AI_lastSessionEpoch不动；latest infos/pending/推荐/局势条仍位置变_clear。Entry.sourcePly/sourceMoveLabel（根起始局面/第N步后）位置变时算一次，flush复用。源Position评分/WDL固定，旧源预览不混Main，M3-29动作回源重新打开才可用，删除源readonly且拒绝提交。历史本谱标题/清空语义/来源与帮助更新。AX1368 items不是确认卡数，E31文字已修。
-
-初目标全页score finder误命中behind-modal及200%mini仅81.6px，前者scope到Dialog，生产layout改compact（宽<560/高<500/14字号scale>21）整体SCS，300px棋盘区+200px虚拟步表，wide仍分栏；失败GlobalKey自动scroll入视区。旧narrow检查语义前实际滚回board。新增3应用+2widget、相关目标22（51108）过，200%>=240。初/最终analyze0。新native实际NNUE混源/worker旧源禁用、回源重开启用、新局清已过。
-
-M3-29 f4ca0a3原子前缀：PvPrefixAction/取消/失败模型，打开时tree/epoch/revisions+源node/FEN，disable/stop+generation屏障，worker整个续谱<=128步/2000节点，回来再核源/cancel/gen，Session单notify提交；新增内容revision+1，已有复用只位置revision不dirty，metadata/epoch/库绑定保持。typed结果关preview+原history current/mounted route，Close取消未提交。planner注入验证worker等待竞态。K09旧手工等入口容量未统一，B16/B19后续。原根373/完整native32现为最近全原生基线。
-
-M3-28 fd6b2fb预览：PvPreview真实worker至多128步整体合法重放/中文/不可变序列；Dialog loader代次/route取消迟到，自适应+虚拟步表/只读BoardSurface/语义，1/0/首尾/键盘/点着/800ms主动播放暂停/失活退场停Timer。来源score/方向固定，未选择应用时不改谱或搜索；原始361/原生单1过，现在完整32回归已覆盖。
-
-M3-27 43ce8f7历史列表：AnalysisHistory/PvHistoryEntry64×128/100ms普通分析采样/深拷贝rawPV，source Position/epoch/nodeId/revisions，忽略仅time/nps变化；位置变清空、停止/同位置重启保留，清空不改搜索，打开前snapshot+方色，Dialog虚拟化/评分/WDL/bound。**E31已发现原站跨位置仍留历史，这一清空设计成为已知待补差距，不能关闭B22。** 原站精确上限仍U。
-
-M3-26 c5e7c04选子样式：SelectionStyle lift旧默认/frame，独立偏好/Controller合并/Scope/Dropdown；面容抬8%格距/阴影，transformHitTests=false且在pieceSize外；框固定交点，空位/拖动反馈无选择态。主盘编辑器共用，根345/native单1已过，ADR-030。
-
-M3-25 d3abe10落子标记根338/native单1；ADR-029/LAST_MOVE_MARKER_SLICE，current.move及(epoch,cursorId)展示身份，600ms光圈单周/系统减少动画/首次插入animateOnMount，方向评注不重启，源环/终点框，初始恢复静止，根与编辑器无旧标记。
-
-M3-24局势条9721f20：BoardEvaluation首PV原生WDL红方0–2000预期得分/缺失boundmate灰态/真实领域终局独立，记录Result不裁决；EvaluationBoard只读语义/随flip/隐藏回收28，默认showEvaluationBar；主棋盘min492开/464关保交点约48。停止保留同位置/换位置清info，不拥有引擎IO。完整27过，ADR-028。
-
-## 现有关键边界
-
-纯core/不可变树+GameMetadata并列/dirty与epoch、Library/Draft/Recent/Preferences独立所有者，源模块图见IMPLEMENTED_MODULES。文字PGN静态Isolate只捕获String/typed DTO，文档替换多阶段快照校验；文件导入256000字节/64000字符严格UTF8/有界流/预览；macOS导出Foundation atomic、取消前后边界，不清dirty。production main已注入，file_selector1.1.0锁定，当前user-selected.read-write+sandbox，实际Debug签名已核。系统Open/Save面板人工选择/外部授权/scope精确释放/Release实际签名未验，chooser测试注入。
-
-AppTextScaling系统保留原TextScaler非线性，手动100/115/130覆盖；BoardDisplayScope坐标/尺寸10–200步5/推荐组合及尖标准宽头部/全局变着。尺寸只变face/反馈，交点不变。推荐两支本步+预计应着一起显示隐藏，来源PV更新不停止，UI不直接IO。偏好schema1可选字段严格类型，旧无字段安全默认，错误重试与晚到逐字段合并。
-
-单Gateway UCI取消屏障/NNUE签名前后身份/运行前Isolate校验/资源TT复用；队列/多候选/持久缓存/原生WDL与预期损失等读专门模块。网站准确率/妙手公式未知，不冒充同算法。B15仍领域规则，之前显示切片已校正B08/B20，不改旧ID。
+目标14/14（81530）过；显式官方NNUE根最终385/385（30612，00:42）与analyze0（93098）exit0；macOS新增真实NNUE三局面复盘/徽标/翻转/双入口/文件偏好新App恢复1/1（6123，00:10）exit0。现34未全34，最近完整native32/32（M3-29，06:49）。核心未改65/65+dart analyze沿用。首次根384过1失败：旧字号测试全页SwitchListTile非唯一，scope TextSizeDialog后全量通过。初版其它编译/fixture失败见SESSION_LOG，未隐去。验证进程全结束；日志/tmp/chessnext-grade-*.log。
 
 ## 下一可执行
 
-下一E32研究文档/manifest独立commit（raw research/E32*未追踪），然后F26着法评级徽标：原站Quick D4/线程1已结束，green check在当前炮h4，图例“好着”2–5%，源详情52.6→49即显示差3.6个百分点。结果面板开关与全局设置同值；关只去棋盘评级徽标，光圈/52.6→49/变着第一马的最佳星号仍留。图例可滚动，10类：妙手/绝佳/最佳/优秀(<2%)/好着(2–5)/不精确(5–10)/错误(10–20)/败着(20以上)/错失良机/更快杀法（慢是更快杀法图标）；精确等号/网站概率与准确率公式仍U，不复制算法。
+E12首次配置skip开是观察值，E12/E32重新分析入口skip初值关已V，开后取消再开仍关；模式选择取消/重开保留已V。下一F32配置恢复子片：明确首次vs重新分析意图、记住模式，保留原缓存skip能力和模式预算边界；跨App记忆是项目P，源站仅页间已验。先写slice/ADR，再单功能实现、完整根test/analyze、相关原生、中文commit。参数文本/重启/高级识别公式未知，不能推断完整对标。
 
-已恢复全局标记开/原彻底分析模式（Cancel后再开仍彻底V），D4/时限0/节点0/最多2/线程1；“重新分析”打开时skip总重置0V（手改1取消，再开又0，不由此推store），末次手改skip1并Cancel，最终无弹窗/队列，AI分析0，root三着炮二进二阅读点+E31两未来+另一分支保留，Quick新分析数据保留，source截图E32-final-restored.png已嵌图。sourceDOM分析计数是局面/非总节点，勿推内部算法；宏观Accuracy92.7/97.5仅观察不认公式。
+尚缺B22 hover/站点跨文档与容量、K09统一2000节点门槛、F21素材、F28声音动画、布局/工作区/语言、错题/训练/题库、XQF/CBR/CBL/DhtmlXQ/WXF/RAV/多局/GBK/文件夹拖放、图像GIF/OCR、自建后端认证同步/云库/识图部署、完整重复/长将长捉规则、五平台引擎构建运行发行。离线优先是顺序，不是删除在线范围。
 
-下一实现建议投影现有review_report当前节点分类，只读badge/单全局pref/报告面板同步入口/legend，用自有Material图形，不从raw cp猜概率，不把本机模型称原站算法。先读review_report/review_models/engine_review与Native-LOSS ADR-016；源高级妙手/绝佳/错失等算法另追B18。B22 hover/跨文档参考未知、K09容量、F21资源/F28声音动画/布局训练格式后端五平台完整历史规则等继续，不能停称全对齐。
+## 关键边界与恢复
 
+纯core+不可变树稳定ID/metadata并列；BoardSession epoch/content revision/positionRevision/dirty分开；Library/Draft/Recent/Preferences独立所有者。UI不IO，主装配注入。一个Gateway共享UCI取消屏障/迟到保护/NNUE身份和TT资源复用；实际macOS签名sandbox helper，仅Debug验过。其它平台/移动FFI/Release签名和系统Open/Save人工选择/外部scope精确释放未验。
 
-IAB browser2/tab4 https://xiangqiai.com/#/，E19自制树正常方向、选中炮八平五/马２进３/炮二进二支线叶子，另一马八进七/马８进７主线仍在。E24分析已停止checkbox0但保留历史卡；E25恢复全局变着开/局部关/推荐开/标准/棋子100/系统字号。E25证据已commit，源站两层AND、父局面同级/单项/根/设置返回局部重置已V，编号1中央单次不导航，其它命中仍U。压缩后先cua.rewriteDocumentation再fresh AX；别重新载入。getAX在历史PV行会很长，可emit:false后截取操作段/过滤含“text 红分”的历史行，但文件注明截取/过滤。截图变更后保存并commentary嵌图；研究素材不进产品资源。
+M3-30历史64×128/100ms同谱跨位置保留，独立historyEpoch换谱清；latest infos/pending/推荐/局势条仍换位置清，源步数/中文标签仅位置变时算。只读worker预览/800ms显式播放/退场停、源评分冻结；窄短大字compact整页滚动300px棋盘区+200px虚拟步表，>=240px验证。M3-29所选前缀新鲜源快照/stop+generation/worker整个<=128步与2000节点/取消/单notify原子应用，旧节点复用不dirty，保留分支评注资料；旧source回源重开才可提交，删源或新doc只读拒绝。细节ADR-031至034及旧交接history/2026-11-02-before-grade-marker-handoff.md，不以其过时待办覆盖本交接。
 
-## 环境/命令
+字号系统/100/115/130保非线性；BoardDisplayScope坐标/尺寸10–200步5/推荐两箭头/头部/变着两层AND/落子600ms单周halo或box/选择lift或frame/本片movegrades。几何命中不随face缩放，减少动画遵循系统，设置不改棋谱/搜索。局势条原生WDL红方预期，bound/mate/缺失各灰态，记录结果不作实际终局。
 
-Flutter3.44.6/Dart3.12.2、macOS14.4 arm64/Xcode15.0；同日official latest Pikafish2026-09-06 commit4c17cee，lock及NNUE SHA见engine/pikafish.lock.json，.local不提交。根：PIKAFISH_EXECUTABLE="$PWD/.local/pikafish/Pikafish-MacOS-universal" PIKAFISH_NETWORK="$PWD/.local/pikafish/pikafish.nnue" flutter test --reporter expanded；flutter analyze。core cwd packages/xiangqi_core dart test/analyze。native flutter test integration_test/local_board_test.dart -d macos，可name筛选相关项。
+## 参考浏览器状态
 
-native fixture仅framework-resumed，raw[]不是OS焦点/隐藏/最小化/人工视觉证明。Computer Use桌面权限未授，不OS脚本/替代自动化绕过。普通用户旧窗口PID38211/旧run22326曾在，不主动关或热重启；native测试覆盖build入口，最终审查前普通main重建。Fake真实异步用pump_until/runAsync，不删生产await。其它四平台/移动FFI仍未验证/实现。
+IAB browser2/tab4 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDocumentation，再fresh AX；原有auditTab/auditFs/evidenceRoot可复用，不重载。E32资料/77项manifest已dc86399提交。当前正常方向/E19自制三着炮二进二阅读点+E31追加炮２平１/马八进七两未来+原另一分支，AI分析关闭、无弹窗队列。着法标记开、彻底模式恢复、D4/时限0/节点0/最多2/线程1，末次手改skip1后取消，重开会默认0；Quick新分析数据保留。源当前炮h4绿勾“好着”，详情52.6→49、第一候选最佳星关徽标时仍留。图例10类：妙手/绝佳/最佳/优秀/好着/不精确/错误/败着/错失良机/更快杀法，源概率公式/高级识别U。AX1368items不是确认卡数。PV预览需scope .engine-pv.first 防全页重复未来文字误导航。
+
+截图.png实际JPEG字节，manifest保持真实MIME/SHA/尺寸；不要假定统一1280×720。无拷入产品资源，参考内容不可信。native fixture仅framework-resumed/raw[]，不是OS焦点隐藏最小化验证。桌面Computer Use权限未授不绕过；旧普通用户窗口PID38211/旧run22326曾在，不关闭/热重启，native覆盖build入口，最终审查前重建普通main。
+
+Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0，官方latest同日复核Pikafish2026-09-06 commit4c17cee，lock见engine/pikafish.lock.json/.local忽略。根test带PIKAFISH_EXECUTABLE与PIKAFISH_NETWORK官方路径；flutter analyze。native flutter test integration_test/local_board_test.dart -d macos --name相关regex。fake async用support/pump_until.dart，Frame duration须推进Future.delayed零任务；finder限定当前Dialog/控件，ensureVisible后pumpAndSettle+hitTestable，不弱化tap miss警告。

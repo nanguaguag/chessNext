@@ -1,4 +1,5 @@
 import 'dart:async';
+import '../review/move_grade_controls.dart';
 import 'package:flutter/material.dart';
 import '../../application/board_appearance.dart';
 import '../../application/preferences_controller.dart';
@@ -18,6 +19,7 @@ class AnalysisMarkersDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              MoveGradeControls(preferences: preferences),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('推荐箭头'),

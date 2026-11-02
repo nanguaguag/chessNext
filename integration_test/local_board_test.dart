@@ -1,3 +1,6 @@
+import 'package:chess_next/application/review_report.dart';
+import 'package:chess_next/features/board/move_grade_badge.dart';
+import 'package:chess_next/features/settings/analysis_markers_dialog.dart';
 import 'package:chess_next/application/pv_prefix_action.dart';
 import 'package:chess_next/features/analysis/pv_preview_dialog.dart';
 import 'package:chess_next/features/analysis/pv_history_dialog.dart';
@@ -2937,6 +2940,108 @@ void main() {
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
+      }
+    },
+  );
+  testWidgets(
+    'native move grade badge uses NNUE review and shared persisted toggle',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-grade-');
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        engineFactory: openBundledEngine,
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+      );
+      Future<void> tap(Finder f) async {
+        await tester.ensureVisible(f);
+        await tester.pumpAndSettle();
+        expect(f.hitTestable(), findsOneWidget);
+        await tester.tap(f);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final session = engine.session;
+        session.playMove(Move.parse('h2e2'));
+        session.playMove(Move.parse('b9c7'));
+        await tester.pumpAndSettle();
+        final tree = session.tree, revision = session.revision;
+        var done = false;
+        final job = engine
+            .startReview(limits: ReviewLimits(depth: 4, moveTimeMs: null))
+            .whenComplete(() => done = true);
+        for (var i = 0; i < 150 && !done; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(done, isTrue);
+        await job;
+        await tester.pumpAndSettle();
+        expect(engine.review!.phase, ReviewPhase.completed);
+        expect(
+          engine.review!.results.values.every((r) => r.info?.wdl != null),
+          isTrue,
+        );
+        final row = engine.currentMoveAssessment!;
+        expect(row.rated, isTrue);
+        expect(find.byType(MoveGradeBadge), findsOneWidget);
+        await tap(find.byKey(const ValueKey('show-move-grades')));
+        expect(find.byType(MoveGradeBadge), findsNothing);
+        expect(
+          find.textContaining('本机模型评级：${row.grade.label}'),
+          findsOneWidget,
+        );
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('分析标记'));
+        final flag = find.descendant(
+          of: find.byType(AnalysisMarkersDialog),
+          matching: find.byKey(const ValueKey('show-move-grades')),
+        );
+        expect(tester.widget<SwitchListTile>(flag).value, isFalse);
+        await tap(flag);
+        expect(find.byType(MoveGradeBadge), findsOneWidget);
+        await tap(find.text('关闭'));
+        await tap(find.text('取消'));
+        await tap(find.text('翻转'));
+        expect(
+          tester.widget<MoveGradeBadge>(find.byType(MoveGradeBadge)).flipped,
+          isTrue,
+        );
+        expect(engine.currentMoveAssessment, same(row));
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        await tap(find.byKey(const ValueKey('show-move-grades')));
+        final store = FilePreferencesRepository(() async => directory);
+        for (
+          var i = 0;
+          i < 50 && (await store.load())?.value.showMoveGrades != false;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await store.load())!.value.showMoveGrades, isFalse);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<SwitchListTile>(
+                find.byKey(const ValueKey('show-move-grades')),
+              )
+              .value,
+          isFalse,
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
       }
     },
   );

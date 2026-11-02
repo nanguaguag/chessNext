@@ -69,7 +69,14 @@ void main() {
       expect(store.value!.textSize, TextSizePreference.large);
       expect(font(tester), closeTo(23, .001));
       expect(
-        tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value,
+        tester
+            .widget<SwitchListTile>(
+              find.descendant(
+                of: find.byType(TextSizeDialog),
+                matching: find.byType(SwitchListTile),
+              ),
+            )
+            .value,
         isFalse,
       );
       // Touch taps need not acquire keyboard focus. Reach the slider through

@@ -1,4 +1,6 @@
 import 'dart:async';
+import '../../application/preferences_controller.dart';
+import 'move_grade_controls.dart';
 import 'dart:math' as math;
 import 'package:flutter/material.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -11,7 +13,8 @@ import 'review_report_dialog.dart';
 import '../../application/review_report.dart';
 
 class ReviewPanel extends StatelessWidget {
-  const ReviewPanel({super.key, required this.engine});
+  const ReviewPanel({super.key, required this.engine, this.preferences});
+  final PreferencesController? preferences;
   final EngineSessionController engine;
 
   Future<void> _configure(BuildContext context) async {
@@ -83,6 +86,12 @@ class ReviewPanel extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               Text('整谱复盘', style: Theme.of(context).textTheme.titleMedium),
+              if (preferences != null)
+                MoveGradeControls(
+                  preferences: preferences!,
+                  assessment: engine.currentMoveAssessment,
+                  showPersistenceErrors: true,
+                ),
               const SizedBox(height: 8),
               Semantics(liveRegion: true, child: Text(status)),
               if (run != null) ...[

@@ -8,6 +8,7 @@ import '../ports/engine_gateway.dart';
 import 'board_session.dart';
 
 import 'review_models.dart';
+import 'review_report.dart';
 import 'candidate_models.dart';
 import 'review_cache_access.dart';
 import 'finite_search_executor.dart';
@@ -74,6 +75,9 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   ReviewRun? _review;
+  ReviewRun? _assessmentRun;
+  String? _assessmentNode;
+  MoveAssessment? _assessment;
   int _reviewJob = 0;
   EngineGateway? _engine;
   Future<EngineGateway>? _opening;

@@ -15,19 +15,20 @@
 - FEN/UCI/ICCS/中文/有限单局PGN文字剪贴板交换，PGN后台worker携资料和评注；单UTF8文件导入有界流/严格编码/预览；macOS五格式UTF8文件导出原生Foundation atomic，取消边界清楚/不清dirty。RAV/WXF/多局/GBK/XQF等仍缺。
 - 单UCI引擎调度/取消屏障/超时EOF/迟到保护，MultiPV/评分箭头/WDL；AI执红黑双AI/催招变招悔棋。macOS沙箱内签名helper+NNUE，运行前Isolate验证身份，资源TT复用。
 - 本谱跨局面PV历史64×128/100ms采样、不可变源Position与步数/中文着法标签、固定快照虚拟列表；停止与换局面保留，换谱/新局清空。只读worker预览/播放/键盘及源评分，窄短窗大字号滚动保留可辨认棋盘；所选前缀经新鲜源快照/stop/worker全树准备/取消后原子应用，复用已有不dirty/保留分支评注资料。latest推荐/局势条数据仍换位置清空；旧来源或删除节点不能误提交。
+- 当前着单节点WDL评级投影与独立只读角徽/交点语义，缺失或过期不画；复盘/设置共享着法标记偏好与滚动图例，隐藏保留损失数字，算法版本不变。
 - 当前线路/整树可取消最佳或多候选有限队列，单步父局面候选试走分支，首评分曲线/详情/跳转/跳过已有；完整历史/身份/预算键的有界内存及独立文件缓存，损坏降级重算；WDL预期损失报告为项目模型，不冒充源站准确率算法。
 - 原创可搜索离线帮助、四步只读引导/首次版本记忆；主题、资源/AI用时独立偏好；全局字号系统/100/115/130实时记忆且保留系统非线性；棋盘显示坐标红黑路数与翻转镜像/编辑器共用；棋子尺寸10–200/步5/重置，仅面容与拖动反馈缩放，点击交点不变；推荐箭头组合显隐/尖标准宽头部/即时偏好，不重启搜索或丢最新PV；本步同级绿色编号箭头/双开关及会话局部重置，不改棋谱，最多64含当前原编号。局势条基于原生WDL红方预期得分、随视图旋转；缺失/bound/mate独立灰态，真实领域终局与记录结果分开；隐藏回收空间且不重启分析，停止保留同局面结果。最后一步提供源点环与终点光圈/四角框；600ms单周旋转/系统减少动画静止，本机记忆且不拦点击。选子抬起/固定交点四角框共用编辑器，10–200%棋子保持90交点命中/语义与合法落点，不改搜索或棋谱。
 
-实际边界见architecture/IMPLEMENTED_MODULES及ADR-005至034。
+实际边界见architecture/IMPLEMENTED_MODULES及ADR-005至035。
 
 ## 最新验证
 
-M3-30最终显式官方NNUE根flutter test378/378，flutter analyze无问题，均exit0；核心未改沿用65/65+dart analyze。macOS相关旧三项过，新增跨位置项首因scroll后未等布局点击miss失败，补frame/hitTest验证后新单项1/1过；即相关3+1已验，现33未全33。上片完整macOS32/32（06:49）已过。无待等待进程，失败/修复全留SESSION_LOG。
+M3-31显式官方NNUE根flutter test最终385/385（30612，00:42）与flutter analyze无问题（93098）均exit0；核心未改沿用65/65+dart analyze。新增macOS真实NNUE评级/开关/恢复单项1/1（6123，00:10）exit0，现34未全34，上片完整32/32为最近完整原生基线。首次根384过1失败为旧字号测试全页开关定位非唯一，改限定TextSizeDialog后全量通过；详细失败/修复见SESSION_LOG。无待等待验证进程。
 
 生产main有文件导入/仅macOS文件导出；当前Debug/Release user-selected.read-write+sandbox，实际Debug签名已核，Release实际构建签名未验。系统Open/Save面板/外部授权/精确scope释放、真实OS焦点/最小化/人工视觉未验，Computer Use桌面权限未授不绕过；native fixture只保持framework-resumed，raw[]不是OS验证。Android/iOS/Windows/Linux运行与移动FFI仍未验/未实现。
 
 ## 下一步与环境
 
-下一F26当前着法评级徽标与E32审计整理；B22 hover/原站跨文档仍未知；仍有F21素材/落子与选择样式、F28声音动画、布局/工作区/语言、错题/题库、其它文件/图片GIF/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
+下一F32复盘模式记忆与重算入口skip意图对齐（E12/E32）；B22 hover/原站跨文档仍未知；仍有F21素材/落子与选择样式、F28声音动画、布局/工作区/语言、错题/题库、其它文件/图片GIF/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest复核仍Pikafish2026-09-06 commit4c17cee，lock/NNUE校验见engine/pikafish.lock.json，.local忽略不提交。普通用户旧窗口不关闭/热重启；native测试覆盖build入口，最终审查前需重建普通main。

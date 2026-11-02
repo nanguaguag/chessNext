@@ -88,6 +88,9 @@ class PreferencesController extends ChangeNotifier {
             lastMoveMarker: _edited.contains('lastMoveMarker')
                 ? previous.lastMoveMarker
                 : null,
+            showMoveGrades: _edited.contains('showMoveGrades')
+                ? previous.showMoveGrades
+                : null,
             showEvaluationBar: _edited.contains('showEvaluationBar')
                 ? previous.showEvaluationBar
                 : null,
@@ -164,6 +167,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(showAnalysisArrows: visible));
   Future<void> setVariationArrows(bool visible) =>
       apply(value.copyWith(showVariationArrows: visible));
+  Future<void> setMoveGrades(bool visible) =>
+      apply(value.copyWith(showMoveGrades: visible));
   Future<void> setEvaluationBar(bool visible) =>
       apply(value.copyWith(showEvaluationBar: visible));
   Future<void> setSelectionStyle(SelectionStyle style) =>
@@ -189,6 +194,9 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.lastMoveMarker != value.lastMoveMarker) {
       _edited.add('lastMoveMarker');
+    }
+    if (next.showMoveGrades != value.showMoveGrades) {
+      _edited.add('showMoveGrades');
     }
     if (next.showEvaluationBar != value.showEvaluationBar) {
       _edited.add('showEvaluationBar');

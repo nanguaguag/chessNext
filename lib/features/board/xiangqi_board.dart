@@ -1,4 +1,6 @@
 import 'selected_piece_frame.dart';
+import 'move_grade_badge.dart';
+import '../../application/review_report.dart';
 import 'last_move_markers.dart';
 import '../../application/current_move_arrows.dart';
 import 'variation_arrows_painter.dart';
@@ -29,16 +31,19 @@ class XiangqiBoard extends StatelessWidget {
   const XiangqiBoard({
     super.key,
     required this.session,
+    this.assessment,
     this.recommendation,
     this.reply,
   });
   final BoardSession session;
+  final MoveAssessment? assessment;
   final Move? recommendation;
   final Move? reply;
   @override
   Widget build(BuildContext context) => BoardSurface(
     at: session.position.at,
     lastMove: session.tree.current.move,
+    assessment: assessment,
     lastMoveIdentity: (session.epoch, session.tree.cursorId),
     selected: session.selected,
     targets: session.targets,
@@ -67,6 +72,7 @@ class BoardSurface extends StatefulWidget {
     required this.onTap,
     this.selected,
     this.lastMove,
+    this.assessment,
     this.lastMoveIdentity,
     this.lastMoveMarkerStyle,
     this.selectionStyle,
@@ -97,6 +103,7 @@ class BoardSurface extends StatefulWidget {
   final void Function(BoardDragData, Square)? onDrop;
   final Square? selected;
   final Move? lastMove;
+  final MoveAssessment? assessment;
   final Object? lastMoveIdentity;
   final LastMoveMarkerStyle? lastMoveMarkerStyle;
   final SelectionStyle? selectionStyle;
@@ -175,6 +182,14 @@ class _BoardSurfaceState extends State<BoardSurface> {
     }
     return KeyEventResult.handled;
   }
+
+  MoveAssessment? get visibleAssessment =>
+      BoardDisplayScope.moveGradesOf(context) &&
+          widget.lastMove != null &&
+          widget.assessment?.rated == true &&
+          widget.assessment?.lossUnits != null
+      ? widget.assessment
+      : null;
 
   @override
   Widget build(BuildContext context) {
@@ -266,6 +281,15 @@ class _BoardSurfaceState extends State<BoardSurface> {
                         style:
                             widget.lastMoveMarkerStyle ??
                             BoardDisplayScope.lastMoveMarkerOf(context),
+                        flipped: widget.flipped,
+                        mirrored: widget.mirrored,
+                      ),
+                    ),
+                  if (visibleAssessment != null)
+                    Positioned.fill(
+                      child: MoveGradeBadge(
+                        square: widget.lastMove!.to,
+                        grade: visibleAssessment!.grade,
                         flipped: widget.flipped,
                         mirrored: widget.mirrored,
                       ),
@@ -416,7 +440,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
     final selected = widget.selected == square;
     final target = widget.targets.contains(square);
     final label =
-        '${piece == null ? '空位' : '${piece.side == Side.red ? '红方' : '黑方'}${pieceName(piece)}'} $square${target ? ' 可落子' : ''}';
+        '${piece == null ? '空位' : '${piece.side == Side.red ? '红方' : '黑方'}${pieceName(piece)}'} $square${target ? ' 可落子' : ''}${visibleAssessment != null && square == widget.lastMove!.to ? '；${moveGradeDescription(visibleAssessment!)}' : ''}';
     Widget tile = Semantics(
       label: label,
       button: true,

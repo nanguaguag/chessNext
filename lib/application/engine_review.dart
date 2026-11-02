@@ -2,6 +2,24 @@ part of 'engine_session_controller.dart';
 
 extension EngineReview on EngineSessionController {
   ReviewRun? get review => _review;
+  MoveAssessment? get currentMoveAssessment {
+    final run = _review;
+    if (run == null ||
+        run.phase == ReviewPhase.stale ||
+        run.epoch != session.epoch ||
+        run.revision != session.revision) {
+      return null;
+    }
+    final id = session.tree.cursorId;
+    if (!identical(run, _assessmentRun) || id != _assessmentNode) {
+      _assessmentRun = run;
+      _assessmentNode = id;
+      final row = ReviewReport.assess(run, id);
+      _assessment = row?.rated == true ? row : null;
+    }
+    return _assessment;
+  }
+
   bool get reviewing => _review?.active ?? false;
 
   /// Starts a single finite queue, sharing the analysis/play engine and barriers.

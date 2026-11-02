@@ -1,0 +1,80 @@
+过滤长历史行的AX：
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container
+		2 container app
+			3 container
+				4 button 菜单
+					5 image
+					6 text 菜单
+				7 button 新局
+					8 image
+					9 text 新局
+				10 checkbox Description: 引擎执红, Value: 0
+					11 image
+					12 text 引擎执红
+				13 checkbox Description: 引擎执黑, Value: 0
+					14 image
+					15 text 引擎执黑
+				16 checkbox Description: 分析模式, Value: 0
+					17 image
+					18 text 分析模式
+				19 button 立即出招
+					20 image
+					21 text 立即出招
+				22 button 变招
+					23 image
+					24 text 变招
+				25 container 翻转
+					26 container
+						27 image
+						28 text 翻转
+				29 button 导入
+					30 image
+					31 text 导入
+				32 container 保存 / 分享 · 有未保存的修改
+					33 container
+						34 image
+						35 text 保存 / 分享
+				36 checkbox Description: 编辑, Value: 0
+					37 image
+					38 text 编辑
+				39 container displayArea
+					40 splitter Description: 调整左栏宽度, Value: 22
+					41 splitter Description: 调整棋盘宽度, Value: 70
+					42 container
+						43 text 开始 1. 炮八平五 马２进３ 2. 炮二进二
+						44 container 另有 1 条已保存的变化
+							45 text 1变
+						46 text 炮２平１ 3. 马八进七
+						47 button 分析结果
+							48 image
+							49 text 分析结果
+					50 splitter Description: 调整上下分区, Value: 55
+					51 container
+						52 text 分析结果 着法标记
+						53 button 标记说明
+							54 image
+						55 switch 1
+						56 text 
+						57 text 红方 92.7% 表现完美 　平均损失 1.4% 黑方 97.5% 表现完美 　平均损失 0.7% 亮点 0 问题 0 全部 红方 黑方
+						58 text 没有错着
+						59 button 清除分析
+						60 button 重新分析
+						61 button 关闭
+					62 container
+						63 text 引擎
+						64 button 重置布局
+						65 button 引擎参数
+							66 image
+						67 container (showing 0-500 of 1368 items)
+					69 splitter Description: 调整上下分区, Value: 55
+					70 container
+						71 text 云库
+						72 text 着法 红方 评分 1 卒７进１ -60 2 卒３进１ -57 3 车１平２ -28 4 炮２平１ -28 5 马８进７ -9 6 炮８平６ -1 7 象７进５ -1 8 象３进５ 0 9 士６进５ 0 10 卒９进１ 0 11 炮２进２ 0 12 炮２进５ 0 13 炮２进４ 1 14 炮８平７ 2 15 马８进９ 3 16 炮２进６ 3 17 炮８平５ 6 18 士４进５ 12 19 炮８平９ 22 20 车１进１ 42 21 卒１进１ 59 22 炮２退１ 70 23 炮２进３ 81 24 炮８进２ 88 25 炮２进１ 92 26 象３进１ 117 27 象７进９ 122 28 马３退５ 147 29 炮８进１ 166 30 炮２退２ 177 31 炮８退１ 189 32 车９进１ 190 33 将５进１ 258 34 炮８进７ 388 35 车９进２ 595 36 车１进２ 666 37 炮８平４ 731 38 马３退２ 1283 39 卒５进１ 1331
+				73 link Description: 闽ICP备2023017377号-1, Value: beian.miit.gov.cn/
+				74 link Description: 闽公网安备35020302035925, Value: beian.mps.gov.cn/#/query/webSearch?code=35020302035925
+		75 container
+			76 text 标记说明 妙手 弃子等不易发现的好棋，走完局面依然不差 绝佳 只有这一步能守住局面，其他走法都差很多 最佳 引擎认为最好的一步 优秀 和最佳几乎一样好，胜率损失不到 2% 好着 胜率损失 2%～5% 不精确 胜率损失 5%～10% 错误 胜率损失 10%～20% 败着 胜率损失 20% 以上 错失良机 对方刚走坏，这一步没抓住机会；或本来有杀，走完杀没了 慢 更快杀法 仍然能杀，但有更快的杀法
+
+The focused UI element is 53 button 标记说明

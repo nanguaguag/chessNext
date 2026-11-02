@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路；E32复盘着法标记与图例",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -511,6 +511,111 @@
       "path": "screenshots/E31-restored-cursor-with-future.png",
       "bytes": 130904,
       "sha256": "f7b9a6636ac33e64978bbe6e8628629a6bd2c021b0138879aecc6226337c6d5b",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "E32-markers-off-settings.txt",
+      "bytes": 2206,
+      "sha256": "b2b8fc807b9617e3a136571621fc6f20d33e8e15015fcb334de199b8c96be6aa"
+    },
+    {
+      "id": "E32",
+      "path": "E32-review-restored-parameters.txt",
+      "bytes": 5171,
+      "sha256": "9d22fc69a34ba11a81795bb14d142c722db92cf093a69133d98dfb92a9c2b4fd"
+    },
+    {
+      "id": "E32",
+      "path": "E32-marker-legend.txt",
+      "bytes": 3775,
+      "sha256": "27cd7e1ecb5184a24ce94c600b3a709c8ffa33e05f1d1f6ee21dc6fe92bbfb7f"
+    },
+    {
+      "id": "E32",
+      "path": "E32-final-restored.txt",
+      "bytes": 3709,
+      "sha256": "da369a3e97e251040b265e366201308b7dd12ad5fe70710f8442a6035fd578e9"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-review-quick-result.png",
+      "bytes": 136449,
+      "sha256": "9e258b4af19fc22bc3df437c3b16d7e62c53be9ee3d355221d01d49eeabd1c8d",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-marker-legend.png",
+      "bytes": 139382,
+      "sha256": "caa3afbddf03190cf4fa60a8264ee389860ba492f035a22238f58d18e9d71f5f",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-marker-legend-bottom.png",
+      "bytes": 139348,
+      "sha256": "d70fbac22ba3442d3e81fbbac65d68d0fcb330e36a0f19e510c579ea2ce52fd3",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-markers-off.png",
+      "bytes": 135921,
+      "sha256": "d60367b60e77220f36ebed884cbd45d4e12dd53a279af46401476b5a215df435",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-markers-restored.png",
+      "bytes": 132448,
+      "sha256": "28244cfbf784aece3e47e7c024236576ae373ff5e175aa974d3bb3aa31a5ae2a",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-review-mode-restored.png",
+      "bytes": 65590,
+      "sha256": "17bd0f141ac644ec041d90ca6b004ea8e64cbb971b293590b6f70647923d8dd1",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-markers-off-detail.png",
+      "bytes": 132204,
+      "sha256": "6dbfae85b05ade385a04a4ba7139e098016a9584c41a0834dfc50c725e4e40d3",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-final-restored.png",
+      "bytes": 132449,
+      "sha256": "242a1224c5acde640a974d29090cdf0f9b00c144f44db676fe22d2df89dd3289",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E32",
+      "path": "screenshots/E32-review-quick-settings.png",
+      "bytes": 64061,
+      "sha256": "a0518a75edac2c4d0bb25633b69b27ca32c18fdacd74662fb10faa93262ae6c9",
       "width": 1280,
       "height": 720,
       "mimeType": "image/jpeg"

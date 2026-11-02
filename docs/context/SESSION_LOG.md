@@ -380,3 +380,7 @@ ADR-034修ADR-031换位置清历史：独立historyEpoch同文档共享64×128�
 初目标11过2失败：全页score finder匹配主面板+Dialog，限定Dialog；新增source/stale文本下200%棋盘实测81.6px，生产改compact整体滚动（窄/短/大字号）+300px棋盘区域/独立200px虚拟列表，宽高够仍分栏；失败提示自动滚入视区。旧narrow语义测试先实际滚回board再查，没有弱化语义。目标最终22通过且200%棋盘>=240，全部初/最终analyze0问题。日志/tmp/chessnext-pv-archive-{analyze-initial,target,target-final,analyze,full,native,native-final,analyze-final}.log，验证全部会话结束。
 
 E32着法标记审计已操作完成raw证据未提交：快速depth4/线程1完成后徽标出现，结果开关与设置联动，关只去board徽标/评估数据和变着星号仍在；图例9类含常规2/5/10/20%与妙手/绝佳/错失/更快杀法。恢复全局开/原彻底模式/自制原阅读点，保留Quick新增分析数据。下一独立研究commit，再F26只读当前着法评级徽标，源站算法不冒充本机模型。
+
+### 2026-11-02 / E32着法标记补审计
+
+自制谱Quick D4/线程1，出现绿色好着勾；结果/设置同值，关只去棋盘徽标不去最后落子光圈/胜率变化/变着最佳星号。图例10类上下滚动V，常规阈值文字/O声明，高级公式仍U。恢复标记开/原彻底模式，最后skip1取消，重开分析默认skip0V单独记录；无弹窗、AI分析0，保留Quick新增评估但没改棋树。图片已commentary嵌图，下一F26本机评级徽标。研究无业务变更，未空跑Flutter门槛。

@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import '../../application/app_preferences.dart';
 import '../../application/preferences_controller.dart';
 import 'text_size_dialog.dart';
+import 'board_display_dialog.dart';
 
 class PreferencesDialog extends StatefulWidget {
   const PreferencesDialog({super.key, required this.preferences});
@@ -80,20 +81,37 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                     if (value != null) setState(() => theme = value);
                   },
                 ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    OutlinedButton.icon(
+                      onPressed: () => showDialog<void>(
+                        context: context,
+                        builder: (_) =>
+                            TextSizeDialog(preferences: widget.preferences),
+                      ),
+                      icon: const Icon(Icons.format_size),
+                      label: const Text('界面字号'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () => showDialog<void>(
+                        context: context,
+                        builder: (_) =>
+                            BoardDisplayDialog(preferences: widget.preferences),
+                      ),
+                      icon: const Icon(Icons.grid_on),
+                      label: const Text('棋盘显示'),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 12),
                 number(
                   '分析线程',
                   threads,
                   widget.preferences.engine.maxThreads,
                   (value) => threads = value,
-                ),
-                OutlinedButton.icon(
-                  onPressed: () => showDialog<void>(
-                    context: context,
-                    builder: (_) =>
-                        TextSizeDialog(preferences: widget.preferences),
-                  ),
-                  icon: const Icon(Icons.format_size),
-                  label: const Text('界面字号'),
                 ),
                 number(
                   '分析内存（MB）',

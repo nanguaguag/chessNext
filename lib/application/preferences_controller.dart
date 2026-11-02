@@ -83,6 +83,9 @@ class PreferencesController extends ChangeNotifier {
           stored.copyWith(
             theme: _edited.contains('theme') ? previous.theme : null,
             textSize: _edited.contains('textSize') ? previous.textSize : null,
+            showCoordinates: _edited.contains('showCoordinates')
+                ? previous.showCoordinates
+                : null,
             guideVersion: _edited.contains('guideVersion')
                 ? previous.guideVersion
                 : null,
@@ -131,6 +134,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(theme: theme));
   Future<void> setTextSize(TextSizePreference size) =>
       apply(value.copyWith(textSize: size));
+  Future<void> setShowCoordinates(bool visible) =>
+      apply(value.copyWith(showCoordinates: visible));
   Future<void> retryPersistence() =>
       _allowWrite ? flush(force: true) : initialize();
   Future<void> apply(AppPreferences next) {
@@ -145,6 +150,9 @@ class PreferencesController extends ChangeNotifier {
   void _recordEdits(AppPreferences next) {
     if (next.theme != value.theme) _edited.add('theme');
     if (next.textSize != value.textSize) _edited.add('textSize');
+    if (next.showCoordinates != value.showCoordinates) {
+      _edited.add('showCoordinates');
+    }
     if (next.guideVersion != value.guideVersion) _edited.add('guideVersion');
     if (next.threads != value.threads) _edited.add('threads');
     if (next.hashMb != value.hashMb) _edited.add('hashMb');

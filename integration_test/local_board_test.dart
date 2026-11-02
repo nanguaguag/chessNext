@@ -1,3 +1,4 @@
+import 'package:chess_next/features/board/board_file_coordinates.dart';
 import 'dart:convert';
 import 'package:chess_next/adapters/platform/macos_record_file_exporter.dart';
 import 'package:chess_next/ports/record_file_exporter.dart';
@@ -1684,6 +1685,113 @@ void main() {
           (await repository.load())!.value.textSize,
           TextSizePreference.system,
         );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native board coordinate preference restores and keeps flipped editor targets',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-coordinates-');
+      final repository = FilePreferencesRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> display() async {
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('棋盘显示'));
+      }
+
+      String rail(String edge) => [
+        for (var i = 0; i < 9; i++)
+          tester
+              .widget<Text>(find.byKey(ValueKey('coordinate-$edge-$i')))
+              .data!,
+      ].join();
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(rail('top'), '123456789');
+        await tap(find.byKey(const ValueKey('square-h2')));
+        await tap(find.byKey(const ValueKey('square-e2')));
+        final tree = session.tree;
+        final revision = session.revision;
+        await display();
+        await tap(find.text('显示坐标'));
+        for (
+          var i = 0;
+          i < 50 && (await repository.load())?.value.showCoordinates != false;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await repository.load())!.value.showCoordinates, isFalse);
+        expect(find.byType(BoardFileCoordinates), findsNothing);
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        await tap(find.text('关闭'));
+        await tap(find.widgetWithText(FilledButton, '应用设置'));
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 50 && find.byType(BoardFileCoordinates).evaluate().isNotEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(find.byType(BoardFileCoordinates), findsNothing);
+        await display();
+        await tap(find.text('显示坐标'));
+        await tap(find.text('关闭'));
+        await tap(find.text('取消'));
+        await tap(find.text('翻转'));
+        expect(rail('top'), '一二三四五六七八九');
+        await tap(find.byKey(const ValueKey('square-h2')));
+        await tap(find.byKey(const ValueKey('square-e2')));
+        final restored = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(restored.tree.current.move, Move.parse('h2e2'));
+        await tap(find.text('编辑局面'));
+        await tap(find.text('继续编辑'));
+        await tap(find.text('旋转棋盘'));
+        await tap(find.text('左右翻转'));
+        expect(rail('top'), '九八七六五四三二一');
+        await tap(find.text('清空'));
+        final from = tester.getCenter(
+          find.byKey(const ValueKey('palette-red-pawn')),
+        );
+        final to = tester.getCenter(find.byKey(const ValueKey('square-a3')));
+        await tester.dragFrom(from, to - from);
+        await tester.pumpAndSettle();
+        expect(
+          tester
+              .widget<BoardSurface>(find.byType(BoardSurface))
+              .at(Square.parse('a3'))
+              ?.type,
+          PieceType.pawn,
+        );
+        await tap(find.byTooltip('取消编辑'));
+        expect(restored.tree.current.move, Move.parse('h2e2'));
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

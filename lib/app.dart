@@ -1,5 +1,6 @@
 import 'ports/record_file_exporter.dart';
 import 'features/settings/app_text_scaling.dart';
+import 'features/board/board_display_scope.dart';
 import 'features/transfer/import_file_dialog.dart';
 import 'ports/record_file_picker.dart';
 import 'application/record_text_exchange.dart';
@@ -251,8 +252,13 @@ class _ChessNextAppState extends State<ChessNextApp>
       brightness: Brightness.dark,
     ),
     themeMode: mode,
-    builder: (context, child) =>
-        AppTextScaling(preference: preferences.value.textSize, child: child!),
+    builder: (context, child) => AppTextScaling(
+      preference: preferences.value.textSize,
+      child: BoardDisplayScope(
+        showCoordinates: preferences.value.showCoordinates,
+        child: child!,
+      ),
+    ),
     home: _BoardPage(
       drafts: drafts,
       preferences: preferences,

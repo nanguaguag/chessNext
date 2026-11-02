@@ -135,3 +135,9 @@ URL https://xiangqiai.com/#/settings/display，访客桌面IAB，本机系统字
 V：关“跟随系统”后slider0；设2显示130%（特大），设1显示115%（大），预览及页面字号变化。开跟随显示100%且slider0；再关仍100%，未保留115%手动值。在follow开时直接设slider1，自动变follow关/115%。选115%按Escape回棋盘，再按菜单→设置→显示与语言，仍115%/follow关，证明本页导航间记忆，未重载/重启浏览器，不推断长期存储。自制谱着法/分支仍在，无落子/分析。最后恢复follow开/100%，Escape回原棋谱，已markHandoff。
 
 [130%截图](screenshots/E21-display-extra-large.png)/[AX](E21-display-extra-large.ax.txt)、[115%截图](screenshots/E21-display-large.png)/[AX](E21-display-large.ax.txt)、[大字号棋盘](screenshots/E21-board-large.png)、[恢复截图](screenshots/E21-display-restored.png)。截图仅证据，非产品素材。系统非100%/不同平台非线性比例、页重载/跨进程记忆、语言选择与布局切换本轮未验（U/O）。
+
+## E22 / 2026-11-02 棋盘坐标显隐
+
+URL https://xiangqiai.com/#/settings与/#/，访客IAB，E19同一自制树/AI全关/系统字号恢复100%。设置棋盘与棋子内显示坐标初开，关闭后Escape回棋盘，原顶部空马位上方数字2消失；再入设置开关仍关（[AX](E22-coordinates-off.ax.txt)）。恢复开后回棋盘，顶部2重新可见，自制着法及另一分支仍在。[关闭截图](screenshots/E22-coordinates-off.png)/[恢复截图](screenshots/E22-coordinates-on.png)。V仅开关/页间记忆和可见数字显隐；其它数字大多被当前棋子遮挡，不能证明全部标注/翻转/镜像/编辑器/重载行为。项目独立坐标边框及红黑完整路数映射是P，后续测试不冒充站点V。
+
+E21/E22截图与AX的尺寸/字节/SHA及来源用途统一见[显示证据清单](DISPLAY_EVIDENCE_MANIFEST.json)，不是产品可再分发素材许可声明。

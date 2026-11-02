@@ -1,3 +1,5 @@
+import 'board_display_scope.dart';
+import 'board_file_coordinates.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -56,6 +58,7 @@ class BoardSurface extends StatefulWidget {
     this.targets = const {},
     this.flipped = false,
     this.mirrored = false,
+    this.showCoordinates,
     this.enabled = true,
     this.onCancel,
     this.onRemove,
@@ -72,6 +75,7 @@ class BoardSurface extends StatefulWidget {
   final Set<Square> targets;
   final bool flipped;
   final bool mirrored;
+  final bool? showCoordinates;
   final bool enabled;
   final Move? recommendation;
   final Move? reply;
@@ -132,51 +136,61 @@ class _BoardSurfaceState extends State<BoardSurface> {
   }
 
   @override
-  Widget build(BuildContext context) => Focus(
-    autofocus: true,
-    focusNode: boardFocus,
-    onKeyEvent: _key,
-    onFocusChange: (value) => setState(() => hasFocus = value),
-    child: AspectRatio(
-      aspectRatio: 9 / 10,
-      child: LayoutBuilder(
-        builder: (context, constraints) {
-          final step = constraints.maxWidth / 9;
-          return DecoratedBox(
-            decoration: BoxDecoration(
-              color: const Color(0xfff1dfbf),
-              borderRadius: BorderRadius.circular(20),
-            ),
-            child: Stack(
-              children: [
-                Positioned.fill(
-                  child: CustomPaint(
-                    painter: _BoardPainter(
-                      recommendation: widget.recommendation,
-                      reply: widget.reply,
-                      flipped: widget.flipped,
-                      mirrored: widget.mirrored,
+  Widget build(BuildContext context) {
+    final board = Focus(
+      autofocus: true,
+      focusNode: boardFocus,
+      onKeyEvent: _key,
+      onFocusChange: (value) => setState(() => hasFocus = value),
+      child: AspectRatio(
+        aspectRatio: 9 / 10,
+        child: LayoutBuilder(
+          builder: (context, constraints) {
+            final step = constraints.maxWidth / 9;
+            return DecoratedBox(
+              decoration: BoxDecoration(
+                color: const Color(0xfff1dfbf),
+                borderRadius: BorderRadius.circular(20),
+              ),
+              child: Stack(
+                children: [
+                  Positioned.fill(
+                    child: CustomPaint(
+                      painter: _BoardPainter(
+                        recommendation: widget.recommendation,
+                        reply: widget.reply,
+                        flipped: widget.flipped,
+                        mirrored: widget.mirrored,
+                      ),
                     ),
                   ),
-                ),
-                for (var row = 0; row < 10; row++)
-                  for (var col = 0; col < 9; col++)
-                    _cell(
-                      Square(
-                        widget.flipped != widget.mirrored ? 8 - col : col,
-                        widget.flipped ? row : 9 - row,
+                  for (var row = 0; row < 10; row++)
+                    for (var col = 0; col < 9; col++)
+                      _cell(
+                        Square(
+                          widget.flipped != widget.mirrored ? 8 - col : col,
+                          widget.flipped ? row : 9 - row,
+                        ),
+                        col,
+                        row,
+                        step,
                       ),
-                      col,
-                      row,
-                      step,
-                    ),
-              ],
-            ),
-          );
-        },
+                ],
+              ),
+            );
+          },
+        ),
       ),
-    ),
-  );
+    );
+    return (widget.showCoordinates ?? BoardDisplayScope.coordinatesOf(context))
+        ? BoardFileCoordinates(
+            flipped: widget.flipped,
+            mirrored: widget.mirrored,
+            child: board,
+          )
+        : board;
+  }
+
   Widget _face(
     Piece? piece,
     double step,

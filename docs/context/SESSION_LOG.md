@@ -258,3 +258,11 @@ M4-01c最终：根真NNUE238/238、flutter analyze无问题，旧文字原生1/1
 按TEXT_SIZE_SLICE/E21，AppPreferences新增可选枚举/迟到逐字段合并/错误重试，AppTextScaling在Navigator上保留系统TextScaler或显式手动比例，不叠乘；独立即时字号Dialog，原参数表单保留最新字段。应用6/6；widget首4过2失败：触摸tap不获取键盘焦点与SemanticsHandle在addTearDown太晚，改测试实际Tab遍历后Right及body finally dispose，生产无迎合测试的焦点修改，最终6/6。初及最终analyze无问题。
 
 根显式PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK flutter test284/284 exit0（52844）；最终flutter analyze exit0（1360）。macOS字号目标56302 1/1 exit0（00:07），实际偏好文件/新App恢复与棋谱不变；旧设置/资源恢复86147 1/1 exit0（00:06），不自动开AI。原生当前22项未全跑22；核心不变65沿用。系统200与变动为组件模拟、非线性是自制对象验证保留identity，不当实际OS设置操作证据。所有命令收尾；日志/tmp/chessnext-text-size-*.log。下一F21坐标/外观，完整对标仍缺多项不停止工作。
+
+### 2026-11-02 / E22 与 M3-20 坐标
+
+IAB访客实际坐标开关/导航记忆与顶部2显隐，恢复原开启返回E19自制棋谱，AX/截图证据已嵌commentary。无站点资源/库复制进产品。实现BoardDisplayScope、独立路数边框/方向/几何、布尔偏好/晚到合并/即时对话框，主棋盘/编辑器共用，不影响棋谱与搜索。
+
+初apply_patch上下文不符时工具原子拒绝，无文件改动；修定位后正常。初新组件测试多一括号格式/加载失败，修后15过3失败为夹具两处缺Material与dirty编辑确认遗漏，补夹具和继续编辑后目标18/18；同时改晚到测试为相反存储值避免无效断言。初analyze1大括号info补齐。根显式NNUE293/293（72677）与analyze0（22995）exit0；完整macOS23/23（34715，03:29）exit0，fixture raw[]，生产无生命周期覆盖。
+
+最后整理普通设置两个显示入口为主题下Wrap、保留连续资源参数，最终显式NNUE根293/293（37551）、analyze无问题（27849）、macOS旧设置+新坐标相关2/2（65239，00:21）均exit0。所有命令结束，核心不变65沿用，真实OS焦点/人工视觉及其它平台未验。日志/tmp/chessnext-coordinates-*.log。ADR-024/TEXT_SIZE及BOARD_COORDINATES_SLICE、E21/E22 DISPLAY_EVIDENCE_MANIFEST可追溯。下一棋子尺寸，继续不停止对标。

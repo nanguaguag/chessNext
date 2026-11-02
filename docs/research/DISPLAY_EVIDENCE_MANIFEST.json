@@ -1,0 +1,75 @@
+{
+  "date": "2026-11-02 Asia/Shanghai",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/",
+  "version": "同日访客桌面IAB实际观察，站点版本号未知",
+  "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
+  "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
+  "items": [
+    {
+      "id": "E21",
+      "path": "screenshots/E21-board-large.png",
+      "bytes": 110517,
+      "sha256": "7d39432cf055ade5d39405e7206a9c5edc3f9900b12964248f392a8abe31f271",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E21",
+      "path": "screenshots/E21-display-extra-large.png",
+      "bytes": 39833,
+      "sha256": "76cb357a6701066898a6d9c5d15842a101c4af4ad28ca4eb7ed74f3933aaccc8",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E21",
+      "path": "screenshots/E21-display-large.png",
+      "bytes": 35487,
+      "sha256": "9187f4360f33bd042c574afbb30ae1c5fe5c125465134b8687d9a7b56e9ecceb",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E21",
+      "path": "screenshots/E21-display-restored.png",
+      "bytes": 32366,
+      "sha256": "5c88042e499c8fe7f9be80eb8d2435f6ef402f703692b91cc8c5478843fc9915",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E21",
+      "path": "E21-display-extra-large.ax.txt",
+      "bytes": 1396,
+      "sha256": "6a0dbbb854cbc0fabc02e90cb83065670dd3473949f303b648bb62969583839b"
+    },
+    {
+      "id": "E21",
+      "path": "E21-display-large.ax.txt",
+      "bytes": 1396,
+      "sha256": "eca3cdd58497b2cc5427f22dba175d9de91c4302eb0de9013382d98cf48233d6"
+    },
+    {
+      "id": "E22",
+      "path": "screenshots/E22-coordinates-off.png",
+      "bytes": 108267,
+      "sha256": "3fb5912f5968c28339af220dc265a29d64082d2c6af9dbfd37a97a9a27aec704",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E22",
+      "path": "screenshots/E22-coordinates-on.png",
+      "bytes": 108458,
+      "sha256": "e16cff91ad4e91a810c3ffad53c8a7372a15bbc9257f0e0ad7f01f8f66d51be7",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E22",
+      "path": "E22-coordinates-off.ax.txt",
+      "bytes": 1567,
+      "sha256": "71c0ce585818ebd8b8a3ad931689e4f063914900091846c45c489f1060eb62cd"
+    }
+  ]
+}

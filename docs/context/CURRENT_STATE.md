@@ -32,7 +32,7 @@ FiniteSearchExecutor已统一整谱/单步的最终着法/PV与缓存校验及�
 
 ## 最新验证
 
-M3-19后根flutter test284/284（显式官方NNUE）与flutter analyze无问题；核心未改沿用65/65+dart analyze。macOS本片文件导出单项1/1、前片导入1/1通过，均真实文件流/原生写入，chooser注入。原生现22例，未本轮全跑22；历史完整/失败/修后单项见TRACEABILITY/SESSION_LOG，不扩大为整套全过。无待等待验证进程。
+M3-20后根flutter test293/293（显式官方NNUE）与flutter analyze无问题；核心未改沿用65/65+dart analyze。macOS完整23/23通过（含真实NNUE/IO及新坐标），随后仅显示入口布局调整后旧设置/坐标相关2/2通过。历史完整/失败/修后单项见TRACEABILITY/SESSION_LOG；文件选择器在测试中注入，不能当实际系统面板已验。无待等待验证进程。
 
 production main已装配文件导入/仅macOS文件导出，当前Debug/Release为user-selected.read-write且sandbox保留，实际Debug签名已核。真实系统Open/Save面板/外部授权/精确scope释放/Release实际签名及其它平台未验。Computer Use桌面未授权不绕过；native fixture仅framework-resumed，真实OS焦点/最小化/人工视觉未验。
 
@@ -63,3 +63,5 @@ M4-01d只读文件导入已实现：官方file_selector1.1.0/端口/实际有界
 M4-01e macOS UTF8文件导出（五格式/开窗快照/取消边界/Foundation atomic/失败保留）已实现，272/analyze/native目标1通过；ADR-022。下一补审计字号/外观并单功能实现。其它平台writer/实际系统面板仍未验，不称完整对齐。
 
 M3-19全局字号已实现（标准100/大115/特大130/跟随系统/实时全路由与本机记忆/保存失败重试），E21/ADR-023。新增12测试，根284/284与analyze、原生字号1/1及旧设置1/1通过；不改谱、不重启搜索，系统非线性原对象保留。语言仍未做。无待等待验证，下一F21坐标/外观补审计后单功能。
+
+M3-20坐标已实现：主棋盘/编辑器共享只读Scope/独立红黑路数/翻转镜像/显示开关/本机记忆和失败重试，不改谱或搜索。新增9测试/目标18，根293/analyze、完整macOS23及最终布局相关2通过（ADR-024）。无待等待验证；下一棋子尺寸审计后单功能。

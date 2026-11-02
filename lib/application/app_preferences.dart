@@ -16,6 +16,7 @@ final class AppPreferences {
   AppPreferences({
     this.theme = ThemePreference.system,
     this.textSize = TextSizePreference.system,
+    this.showCoordinates = true,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
@@ -37,11 +38,13 @@ final class AppPreferences {
   }
   final ThemePreference theme;
   final TextSizePreference textSize;
+  final bool showCoordinates;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
     ThemePreference? theme,
     TextSizePreference? textSize,
+    bool? showCoordinates,
     int? threads,
     int? hashMb,
     int? multiPv,
@@ -50,6 +53,7 @@ final class AppPreferences {
   }) => AppPreferences(
     theme: theme ?? this.theme,
     textSize: textSize ?? this.textSize,
+    showCoordinates: showCoordinates ?? this.showCoordinates,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
@@ -60,6 +64,7 @@ final class AppPreferences {
     'schema': 1,
     'theme': theme.name,
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
+    if (!showCoordinates) 'showCoordinates': false,
     'threads': threads,
     'hashMb': hashMb,
     'multiPv': multiPv,
@@ -70,6 +75,8 @@ final class AppPreferences {
     if (json['schema'] != 1 ||
         json['theme'] is! String ||
         (json.containsKey('textSize') && json['textSize'] is! String) ||
+        (json.containsKey('showCoordinates') &&
+            json['showCoordinates'] is! bool) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         ![
           'threads',
@@ -86,6 +93,7 @@ final class AppPreferences {
           json['textSize'] as String? ?? 'system',
         ),
         threads: json['threads'] as int,
+        showCoordinates: json['showCoordinates'] as bool? ?? true,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
@@ -100,6 +108,7 @@ final class AppPreferences {
       other is AppPreferences &&
       theme == other.theme &&
       textSize == other.textSize &&
+      showCoordinates == other.showCoordinates &&
       threads == other.threads &&
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
@@ -109,6 +118,7 @@ final class AppPreferences {
   int get hashCode => Object.hash(
     theme,
     textSize,
+    showCoordinates,
     threads,
     hashMb,
     multiPv,

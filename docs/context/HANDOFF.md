@@ -8,7 +8,7 @@
 
 ## 最新交付与门槛
 
-HEAD见git log：先af1ba2f只读UTF8文件导入；2779dee文件导出、04d51f4 E21字号审计；当前M3-19全局字号独立提交（见git log）。记录在TRACEABILITY/ADR-021,022与RECORD_FILE_IMPORT/EXPORT_SLICE。根最终显式NNUE flutter test284/284 exit0（52844），flutter analyze无问题exit0（1360）；native文件导出目标1/1 exit0（80542）、上一导入1/1；核心未改沿用65/65+dart analyze。原生文件现22用例，并未本片全跑22。字号native新偏好恢复1/1（56302）+旧设置1/1（86147）均exit0。无未等待验证进程。失败/修复详情SESSION_LOG，日志/tmp/chessnext-file-{import,export}-*.log、text-size-*.log和atomic-probe*.log。
+HEAD见git log：先af1ba2f只读UTF8文件导入；2779dee文件导出、04d51f4 E21字号审计；7fb009e全局字号；当前M3-20坐标独立提交（见git log）。记录在TRACEABILITY/ADR-021,022与RECORD_FILE_IMPORT/EXPORT_SLICE。根最终显式NNUE flutter test293/293 exit0（37551），flutter analyze无问题exit0（27849）；native文件导出目标1/1 exit0（80542）、上一导入1/1；核心未改沿用65/65+dart analyze。完整macOS23/23（34715，03:29）已过，最后仅设置显示入口归并后相关旧设置/坐标2/2（65239，00:21）也通过。字号native新偏好恢复1/1（56302）+旧设置1/1（86147）均exit0。无未等待验证进程。失败/修复详情SESSION_LOG，日志/tmp/chessnext-file-{import,export}-*.log、text-size-*.log、coordinates-*.log和atomic-probe*.log。
 
 Import：RecordFilePicker返回名字/文字，FileSelectorRecordPicker独占XFile/流，256000字节+64000字符/严格UTF8/读绝对期限/名称清理。ImportFileDialog选择、后台worker、预览确认/重试/取消退场保护；App._import(fromFile)复用epoch/内容/位置/dirty确认/先保存重验。格式核心只单局PGN ICCS/中文及旧文字，RAV/WXF/多局/GBK等不支持，源不改。
 
@@ -18,9 +18,11 @@ Export：RecordFileExporter纯端口/取消令牌，MacOsRecordFileExporter官�
 
 M3-19字号：AppPreferences.textSize可选枚举system/standard/large/extraLarge，Controller逐字段合并/serial/retryPersistence（坏读重读，明确未存选择重写）。AppTextScaling在MaterialApp.builder/Navigator外保留源系统scaler；系统原对象非线性，手动1/1.15/1.3覆盖。TextSizeDialog从普通设置进入、即改即存/系统开关/Slider；原参数表单copyWith保留它。初widget4+2测试错误修后6/6（touch不保证焦点，用Tab遍历到Slider；semantics在body finally释放），应用6/6。普通用户真实OS字号未改/其它平台未验；F27语言未实现。ADR-023/TEXT_SIZE_SLICE。
 
+M3-20坐标：AppPreferences.showCoordinates可选bool旧defaulttrue、Controller字段合并/串行/错误重试；BoardDisplayScope只读bool在Navigator外，BoardSurface共用/nullable override，无scope独立默认false。BoardFileCoordinates上下黑1至9/红九至一，按逻辑file与flipped/mirrored映射、边框在90格外，格距与命中同源，整体9:10。BoardDisplayDialog从普通设置即时生效；两个显示入口已放主题下Wrap，资源字段连续。ADR-024/BOARD_COORDINATES_SLICE。新增3应用+6组件、加旧棋盘/编辑器目标18过。初括号/缺Material/漏dirty确认失败与修复记SESSION_LOG。E22只证站点坐标数字2显隐/导航记忆，完整方向/编辑器仍U；本地边框P不冒充同布局。E21/E22校验见DISPLAY_EVIDENCE_MANIFEST。
+
 ## 下一可执行
 
-补审计F21坐标/棋子尺寸等外观，单功能实现及门槛commit；随后F26箭头标记/F28声音/工作区与其余缺项。文件其余XQF/CBR/CBL/东萍、多局/拖放、图片/GIF/OCR、错题训练/题库、布局/工作区/声音、完整历史重复长将长捉、五平台引擎ABI/发布、自建后端与部署仍缺；不因为某平台待验停止独立工作。
+补审计F21棋子尺寸等其它外观，单功能实现及门槛commit；随后F26箭头标记/F28声音/工作区与其余缺项。文件其余XQF/CBR/CBL/东萍、多局/拖放、图片/GIF/OCR、错题训练/题库、布局/工作区/声音、完整历史重复长将长捉、五平台引擎ABI/发布、自建后端与部署仍缺；不因为某平台待验停止独立工作。
 
 ## 环境与注意
 

@@ -256,3 +256,11 @@ E21三档100/115/130与系统/手动切换、同会话页间记忆为V；本地A
 新增6应用+6组件均通过，含OS200与变化模拟/自制非线性对象/键盘Tab到滑块/语义/窄窗/写失败重试/新App恢复；根显式官方NNUE flutter test284/284 exit0（52844）与flutter analyze无问题exit0（1360）。macOS字号真实偏好文件新App目标1/1（56302，00:07）及旧设置/资源恢复目标1/1（86147，00:06）均exit0。原生文件22用例，未全跑22；核心未改沿用65。真实OS系统设置操作/其它平台/语言与字体资源未验/未做。
 
 初组件4过2失败：touch tap不保证键盘焦点，改用实际Tab遍历到滑块再Right，不改生产焦点逻辑；SemanticsHandle需在test body finally dispose（addTearDown晚于framework校验），修测试后6/6、完整根全过。日志/tmp/chessnext-text-size-{application,widget,widget-final,full,analyze-initial,analyze,analyze-final,native,native-settings}.log，所有session结束。
+
+## 2026-11-02 / M3-20 / F21 → B15 棋盘路数坐标
+
+E22实测参考显示坐标开关/数字2显隐/导航记忆并恢复原设置。项目BoardFileCoordinates提供独立上下红黑方路数边框/四种方向，BoardDisplayScope在Navigator外覆盖主棋盘与编辑器；showCoordinates可选旧默认true/严格坏值、逐字段晚到合并/持久化/重试，普通设置保留新值，不改谱/重启分析。上下边框和90格统一比例/内部格距，不拦截落子/拖放。ADR-024/BOARD_COORDINATES_SLICE。原站完整方向/编辑器/重载仍U，边框为项目P。
+
+新增3应用+6组件，加原棋盘/编辑器目标18/18通过；根显式官方NNUE flutter test293/293与flutter analyze无问题exit0。完整macOS23/23通过（03:29，34715），含实际NNUE/AI/缓存/复盘与文件交换、偏好恢复/坐标新例。之后仅把两个显示入口归到主题下Wrap、资源字段连续，最终根293/293 exit0（37551）、analyze0（27849）、原生相关旧设置+新坐标2/2（00:21，65239）通过。核心未改65沿用；真实OS焦点/人工视觉、其它平台仍未验，fixture raw[]不改变该边界。
+
+首测试文件多一括号导致格式/加载失败；修后15过3失败为两独立BoardSurface夹具缺Material、脏文档编辑漏继续编辑确认；补夹具/流程后18过，没有改生产保护。晚到测试改为存储值与显式选择相反，以实证合并。初analyze1项大括号info补齐；所有最终门槛通过。日志/tmp/chessnext-coordinates-{target,target-final,target-retry,full,full-final,analyze-initial,analyze,analyze-final,native-full,native-settings-final}.log，所有命令收尾。E21/E22证据来源/校验清单DISPLAY_EVIDENCE_MANIFEST。

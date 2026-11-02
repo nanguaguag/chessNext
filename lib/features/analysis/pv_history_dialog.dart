@@ -9,11 +9,13 @@ class PvHistoryDialog extends StatelessWidget {
     super.key,
     required List<PvHistoryEntry> entries,
     required this.side,
+    this.mirrored = false,
     this.actionFactory,
     this.sourceChanges,
   }) : entries = List.unmodifiable(entries);
   final List<PvHistoryEntry> entries;
   final Side side;
+  final bool mirrored;
   final PvPrefixActionFactory? actionFactory;
   final Listenable? sourceChanges;
   String score(PvHistoryEntry entry) {
@@ -80,6 +82,7 @@ class PvHistoryDialog extends StatelessWidget {
                               builder: (_) => PvPreviewDialog(
                                 entry: entry,
                                 flipped: side == Side.black,
+                                mirrored: mirrored,
                                 action: action,
                                 sourceChanges: sourceChanges,
                               ),

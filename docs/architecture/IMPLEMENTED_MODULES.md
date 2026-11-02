@@ -88,3 +88,5 @@ M3-31 / ADR-035：ReviewReport.assess纯单节点规则复用，EngineReview.cur
 M3-32 / ADR-036：AppPreferences.reviewMode/PreferencesController为独立枚举偏好，复盘配置立即保存/取消保留；ReviewPanel根据已有评分结果传initialSkipExisting，Dialog只拥有本次预算和跳过意图，应用层cache身份/调度不改。
 
 M3-33 / ADR-037：纯GameTree.maxNodes与GameTreeCapacityException统一所有新增；BoardSession捕获为MoveRejection.capacity且事务不改文档。CandidateApplyResult经应用层区分容量与过期/stop失败，UI只呈现；AI容量清排程解锁并保留Gateway；PV worker映射原有capacity。
+
+M3-34 / ADR-038：BoardSession.mirrored只会话状态，XiangqiBoard复用BoardSurface映射；AnalysisPanel在打开history前捕获mirror，经过History/Preview只读属性传入小盘。不改core/document或engine协调，无新增IO。Editor自己的mirrored仍独立。

@@ -15,12 +15,14 @@ class PvPreviewDialog extends StatefulWidget {
     super.key,
     required this.entry,
     this.flipped = false,
+    this.mirrored = false,
     this.loader = PvPreview.prepareInWorker,
     this.action,
     this.sourceChanges,
   });
   final PvHistoryEntry entry;
   final bool flipped;
+  final bool mirrored;
   final PvPreviewLoader loader;
   final PvPrefixAction? action;
   final Listenable? sourceChanges;
@@ -263,6 +265,7 @@ class _PvPreviewDialogState extends State<PvPreviewDialog>
                 onTap: (_) {},
                 enabled: false,
                 flipped: widget.flipped,
+                mirrored: widget.mirrored,
                 lastMove: cursor == 0 ? null : value.entry.info.pv[cursor - 1],
                 lastMoveIdentity: cursor,
               ),

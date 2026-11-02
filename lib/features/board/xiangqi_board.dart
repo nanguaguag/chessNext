@@ -48,6 +48,7 @@ class XiangqiBoard extends StatelessWidget {
     selected: session.selected,
     targets: session.targets,
     flipped: session.flipped,
+    mirrored: session.mirrored,
     enabled: !session.inputLocked && !session.outcome.isTerminal,
     onTap: session.tap,
     onCancel: session.cancelSelection,

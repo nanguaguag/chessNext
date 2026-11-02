@@ -90,6 +90,13 @@ class BoardSession extends ChangeNotifier {
   Square? get selected => _selected;
   bool _flipped = false;
   bool get flipped => _flipped;
+  bool _mirrored = false;
+  bool get mirrored => _mirrored;
+  void mirror() {
+    _mirrored = !_mirrored;
+    notifyListeners();
+  }
+
   static const capacityNotice =
       '棋谱已达${GameTree.maxNodes}个局面上限（含起始局面）。可保存或导出当前棋谱，删除不需要的分支后继续；已有着法仍可阅读和切换。';
   MoveRejection? _moveRejection;

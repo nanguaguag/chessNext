@@ -416,3 +416,13 @@ ADR-037/DOCUMENT_CAPACITY_SLICE：GameTree.maxNodes=2000含根/复用已有优�
 ## 2026-11-02 / E33 / F05,F02,F12镜像及导出范围续审
 
 实际IAB source翻转/左右镜像、组合旋转、两态PV预览后恢复原方向与读点，PGN两次公开下载168bytes SHA一致，主线未来2着也包含；原站selectedline包含未来已V，B19新增差距。FEN复制toast但clipboard空不计直接验证，旧关闭索引自动退后无layout错误已留notes，未读系统其它clipboard。91manifest实际SHA/bytes/图片sips尺寸全过，新14项。无业务修改，不重复Flutter门槛；上一功能根395/core67/analyze0/native相关1仍有效。CUA markHandoff，临时浏览器状态无依赖于未落盘推断。下一M3-34主盘镜像与preview方向透传，不停整体对标。
+
+## 2026-11-02 / M3-34 / F05,F02 → B05,B08,B22 主盘左右镜像
+
+ADR-038/BOARD_MIRROR_SLICE：session.mirrored与flip独立会话只读方向、主盘按钮/Tooltip/toggled语义，透传既有交点/坐标/箭层/末步/评级几何；不改源谱/metadata/epoch/两revision/dirty/选子或分析token。新局/换谱保留本会话、退出默认为P，Editor草稿视图不继承。AnalysisPanel打开前捕获mirror，History→Preview→BoardSurface传递，打开后不追随Main变更，实际worker来源位置/评分不变。E33 PGN未来线路差距留下一B19。
+
+新增应用2+组件3共5，连历史既有3目标8/8（37532，00:06）exit0；根显式官方NNUE400/400（25411，00:49）与最终flutter analyze无问题（84413，2.4秒）exit0；core未改沿用67/67+dart analyze。macOS新相关真实NNUE不重搜/身份token保持/组合PV真实worker1/1（56475，00:10）exit0，现37未全37，最近完整32/32仍M3-29。OS/其它平台未验。
+
+首目标3过2失败：真实worker预览用pumpAndSettle等待loading导致假时钟超时，改点击后pumpUntil推进真实任务；Editor Piece实例无值相等，改逐90格(side,type)值比较，并使用实际取消Tooltip。次目标7过1失败为把关闭预览误写关闭，按现UI标签改；最后8过。初生产analyze0，新增测试后1 unused import警告移除，最终0；没有修改生产语义来迎合fixture。日志/tmp/chessnext-mirror-{analyze-initial,analyze-final,analyze-gate,target,target-final,target-verified,full,native}.log，全部session消费，git diff --check0，无新依赖资源。
+
+下一M3-35 / F12,B19：E33确认源PGN导出完整所选线路（含阅读点后未来），项目仅根到当前；独立slice补PGN默认范围及可选当前路径/评注/资料/打开时快照、文件和复制一致，非全树RAV。继续整体对标。

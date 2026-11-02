@@ -3256,4 +3256,93 @@ void main() {
       }
     },
   );
+  testWidgets(
+    'native mirror keeps NNUE search and captures composed PV preview direction',
+    (tester) async {
+      Future<void> tap(Finder f) async {
+        await tester.ensureVisible(f);
+        await tester.pumpAndSettle();
+        expect(f.hitTestable(), findsOneWidget);
+        await tester.tap(f);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(key: UniqueKey(), engineFactory: openBundledEngine),
+        );
+        await tester.pumpAndSettle();
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final session = engine.session, tree = engine.session.tree;
+        await tap(find.text('开始分析'));
+        for (var i = 0; i < 100 && engine.history.isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.history, isNotEmpty);
+        final token = engine.infos.first.token,
+            identity = engine.engineIdentity;
+        await tap(find.text('左右翻转'));
+        await tap(find.text('翻转'));
+        expect(session.mirrored, isTrue);
+        expect(session.flipped, isTrue);
+        expect(session.tree, same(tree));
+        expect(session.dirty, isFalse);
+        expect(engine.enabled, isTrue);
+        expect(engine.infos.every((i) => i.token == token), isTrue);
+        expect(engine.engineIdentity, same(identity));
+        await tap(find.byKey(const ValueKey('pv-history-open')));
+        final history = tester.widget<PvHistoryDialog>(
+          find.byType(PvHistoryDialog),
+        );
+        expect(history.mirrored, isTrue);
+        expect(history.side, Side.black);
+        final first = history.entries.first;
+        await tap(find.byKey(ValueKey('pv-history-preview-${first.id}')));
+        for (
+          var i = 0;
+          i < 100 &&
+              find
+                  .byKey(const ValueKey('pv-preview-progress'))
+                  .evaluate()
+                  .isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(
+          find.byKey(const ValueKey('pv-preview-progress')),
+          findsOneWidget,
+        );
+        final surface = tester.widget<BoardSurface>(
+          find.descendant(
+            of: find.byType(PvPreviewDialog),
+            matching: find.byType(BoardSurface),
+          ),
+        );
+        expect(surface.mirrored, isTrue);
+        expect(surface.flipped, isTrue);
+        await tap(
+          find.descendant(
+            of: find.byType(PvPreviewDialog),
+            matching: find.text('关闭预览'),
+          ),
+        );
+        await tap(find.text('关闭'));
+        expect(session.tree, same(tree));
+        expect(engine.enabled, isTrue);
+        expect(engine.infos.every((i) => i.token == token), isTrue);
+        await tap(find.text('左右翻转'));
+        expect(session.mirrored, isFalse);
+        expect(session.flipped, isTrue);
+        await engine.disable();
+        await tester.pumpAndSettle();
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+      }
+    },
+  );
 }

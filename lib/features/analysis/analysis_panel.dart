@@ -141,6 +141,7 @@ class AnalysisPanel extends StatelessWidget {
                     ? null
                     : () {
                         final snapshot = analysis.history;
+                        final mirrored = analysis.session.mirrored;
                         final side = analysis.session.flipped
                             ? Side.black
                             : Side.red;
@@ -149,6 +150,7 @@ class AnalysisPanel extends StatelessWidget {
                           builder: (_) => PvHistoryDialog(
                             entries: snapshot,
                             side: side,
+                            mirrored: mirrored,
                             actionFactory: analysis.createPvPrefixAction,
                             sourceChanges: analysis.session,
                           ),

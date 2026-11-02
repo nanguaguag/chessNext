@@ -691,6 +691,17 @@ class _BoardPage extends StatelessWidget {
                         icon: const Icon(Icons.flip_camera_android_outlined),
                         label: const Text('翻转'),
                       ),
+                      Tooltip(
+                        message: '左右镜像，只改变显示方向',
+                        child: Semantics(
+                          toggled: session.mirrored,
+                          child: OutlinedButton.icon(
+                            onPressed: session.mirror,
+                            icon: const Icon(Icons.flip),
+                            label: const Text('左右翻转'),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 12),

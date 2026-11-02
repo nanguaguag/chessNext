@@ -1,3 +1,4 @@
+import 'pv_prefix_action.dart';
 import 'reading_navigation.dart';
 import 'current_move_arrows.dart';
 import 'package:flutter/foundation.dart';
@@ -141,6 +142,28 @@ class BoardSession extends ChangeNotifier {
     if (tree.nodeCount != before) _revision++;
     _selected = null;
     _notice = null;
+    _refresh();
+    notifyListeners();
+    return true;
+  }
+
+  /// Publishes a complete, validated worker continuation of this exact snapshot.
+  /// The coordinator owns preparation and the engine/cancellation barriers.
+  bool commitContinuation(GameTree source, GameTree target) {
+    if (!identical(source, tree) ||
+        _inputLocked ||
+        target.cursorId == source.cursorId ||
+        target.nodeCount < source.nodeCount ||
+        target.nodeCount > PvPrefixPlan.maxDocumentNodes ||
+        target.root.position.toFen() != source.root.position.toFen() ||
+        !target.path.any((node) => node.id == source.cursorId)) {
+      return false;
+    }
+    _tree = target;
+    if (target.nodeCount > source.nodeCount) _revision++;
+    _positionRevision++;
+    _selected = null;
+    _notice = '已应用所选PV前缀';
     _refresh();
     notifyListeners();
     return true;

@@ -356,3 +356,13 @@ PvPreview工作Isolate最多128步整体合法重放/中文记谱/不可变Posit
 ### 2026-11-02 / E31前缀应用与历史补证
 
 只用E19自制谱实测2/33追加两步、原分支保留，回源点重复相同前缀不见重复、最终回原阅读点但保留新增后续。历史1368跨该位置变与回退保留V，项目清空已转已知差距。全页文本first误命中新主谱后续，只导航，freshAX后限定engine-pv正确打开，不造成功。截图已嵌图，原站分析/AI0，无删除。下一前缀原子应用+停止/取消屏障，再跨位置历史。
+
+## 2026-11-02 / M3-29 / F02,F13 → B08,B17,B22 PV所选前缀原子应用
+
+PvPrefixAction/取消与枚举失败，预览打开时新鲜tree/epoch/内容位置revision及entry源node/FEN匹配；同源旧entry重开可绑定现有后续新快照，打开后变化失效。Controller复用disable/stop屏障，核generation/失败/取消后worker全树准备最多128步/2000节点，回来复查再单次commitContinuation；保留原节点/顺序/注释/metadata/epoch与库绑定，新节点内容revision+1，已有路径只位置revision/不dirty，不发布中间草稿。纯planner可注入，Worker闭包只GameTree+复制Moves。预览0/busy/stale禁用/停止播放/Close取消尚未提交，typed成功退出两个仍current/mounted的route，错误留预览，帮助已补。ADR-033/PV_APPLY_SLICE；K09旧手工等入口容量未统一，B16/B19追踪。
+
+新增应用8+组件4=12，加旧预览5目标17/17（59687）；真实worker保留未来/分支评注/单notify/2000边界/已有复用不dirty/非法尾，停止与worker等待中的cancel/source变/新搜索/stop失败/busy；UI双route成功/0/来源即时失效/忙态Close与迟到/200%错误重试。最终显式官方NNUE根373/373（90009，00:39）+flutter analyze无问题（33296）exit0；**完整macOS32/32（36917，06:49）exit0**，包括全部前31项回归和新实际NNUE/stop+worker两步原子新增/保留原后续与资料/原生文件保存/新App完整恢复/旧entry同源重开复用不dirty。核心未改65沿用。fixture raw[]，不等同真实OS焦点/人工视觉/其它平台验收。
+
+首Python UI补丁因format压缩actions断言失败（Preview原子未写，History/Controller先已改），首analyze4 API编译错+8info，补全接口后9 braces限定dart fix，callback改perform formal，最后1测试underscore info修wildcard；运行目标12、16、17/全量/原生均无失败。日志/tmp/chessnext-pv-apply-{analyze-initial,analyze-fixed,target,target-final,target-verified,analyze,full,analyze-final,native-full}.log，全会话收尾。证据清单64项实际字节/SHA/图片尺寸全一致，本地文档链接16项有效；首次临时核验错误假定每图1280×720导致E24一项误报，改按sips实际尺寸后0错误，清单无改。
+
+下一M3-30保留本谱跨位置有界历史/来源标记与旧来源只读保护，修E31已知差距；跨文档原站行为/hover/其它源站深层/平台/后端等仍未完成，不停止给全量审查。

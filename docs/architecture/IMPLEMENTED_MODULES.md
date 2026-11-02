@@ -78,3 +78,5 @@ M3-26：SelectionStyle纯枚举与可选偏好、Controller合并/Scope/棋盘�
 M3-27：纯AnalysisHistory/PvHistoryEntry拥有有界原始采样、源Position/revisions和不可变PV；EngineSessionController复用100ms flush，普通分析采样/位置变清空；AnalysisPanel捕获快照后PvHistoryDialog虚拟列表只读显示，独立于复盘持久缓存，无新IO或引擎。ADR-031。
 
 M3-28：PvPreview纯worker准备有界合法Position/中文序列及错误DTO；PvPreviewDialog loader/route代次保护、独立readonly BoardSurface、自适应/虚拟步列表/有限Timer与生命周期；历史入口只读，不拥有会话或引擎。ADR-032。
+
+M3-29：PvPrefixAction/PvApplyCancellation/PvPrefixPlan纯契约与worker；EngineSessionController新鲜来源快照/stop-generation屏障/取消及planner等待验证；BoardSession.commitContinuation一次发布，无UI IO与部分中间谱。History/Preview传动作和源Listenable、typed结果双route退出。ADR-033；普通入口2000容量统一K09后续。

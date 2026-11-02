@@ -1,3 +1,4 @@
+import 'pv_prefix_action.dart';
 import 'analysis_history.dart';
 import 'dart:async';
 import 'dart:math' as math;
@@ -243,6 +244,70 @@ class EngineSessionController extends ChangeNotifier {
       _pending.clear();
       _notify();
     });
+  }
+
+  PvPrefixAction createPvPrefixAction(
+    PvHistoryEntry entry, {
+    PvPrefixPlanner planner = PvPrefixPlan.prepareInWorker,
+  }) {
+    final source = session.tree;
+    final epoch = session.epoch,
+        revision = session.revision,
+        positionRevision = session.positionRevision;
+    final sourceMatches =
+        entry.epoch == epoch &&
+        entry.nodeId == source.cursorId &&
+        entry.position.toFen() == source.current.position.toFen();
+    bool valid() =>
+        !_disposed &&
+        sourceMatches &&
+        session.epoch == epoch &&
+        session.revision == revision &&
+        session.positionRevision == positionRevision &&
+        identical(session.tree, source);
+    var running = false;
+    return PvPrefixAction(
+      isCurrent: valid,
+      perform: (plies, cancellation) async {
+        if (cancellation.cancelled) return PvApplyResult.cancelled;
+        if (!valid()) return PvApplyResult.stale;
+        if (plies < 1 ||
+            plies > entry.info.pv.length ||
+            plies > AnalysisHistory.maxPlies) {
+          return PvApplyResult.invalid;
+        }
+        if (running) return PvApplyResult.busy;
+        running = true;
+        try {
+          final stopping = disable();
+          final generation = _generation;
+          await stopping;
+          if (cancellation.cancelled || _disposed) {
+            return PvApplyResult.cancelled;
+          }
+          if (!valid() || generation != _generation) return PvApplyResult.stale;
+          if (_stopFailedGeneration == generation) {
+            return PvApplyResult.stopFailed;
+          }
+          final plan = await planner(
+            source,
+            entry.info.pv.take(plies).toList(growable: false),
+          );
+          if (cancellation.cancelled || _disposed) {
+            return PvApplyResult.cancelled;
+          }
+          if (!valid() || generation != _generation) return PvApplyResult.stale;
+          if (plan.error != null) return plan.error!;
+          return session.commitContinuation(source, plan.tree!)
+              ? PvApplyResult.applied
+              : PvApplyResult.stale;
+        } catch (_) {
+          return PvApplyResult.failed;
+        } finally {
+          running = false;
+        }
+      },
+    );
   }
 
   Future<void> enable() async {

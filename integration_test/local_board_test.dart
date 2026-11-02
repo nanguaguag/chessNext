@@ -1,3 +1,4 @@
+import 'package:chess_next/application/pv_prefix_action.dart';
 import 'package:chess_next/features/analysis/pv_preview_dialog.dart';
 import 'package:chess_next/features/analysis/pv_history_dialog.dart';
 import 'package:chess_next/features/board/last_move_markers.dart';
@@ -2666,6 +2667,159 @@ void main() {
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
+      }
+    },
+  );
+  testWidgets(
+    'native PV prefix applies atomically, preserves saved branches and reuses existing nodes',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-pv-prefix-');
+      final games = FileGameRepository(() async => directory);
+      final oldMove = Move.parse('a6a5');
+      var original = branchedRecord()
+          .play(oldMove)
+          .play(Move.parse('a3a4'))
+          .annotate('保留原后续');
+      final oldLeaf = original.cursorId;
+      original = original.goTo('n5');
+      await games.save(
+        SavedGame(
+          id: 'pv-source',
+          title: 'PV应用验证',
+          tree: original,
+          metadata: GameMetadata({'Event': '原资料'}),
+          modifiedAt: DateTime.now(),
+        ),
+      );
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        repository: FileGameRepository(() async => directory),
+        engineFactory: openBundledEngine,
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> openRecord() async {
+        await tap(find.text('棋谱库'));
+        final row = find.widgetWithText(ListTile, 'PV应用验证');
+        for (var i = 0; i < 50 && row.evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tap(row);
+      }
+
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await openRecord();
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        bool suitable() => engine.history.any(
+          (e) => e.info.pv.length >= 3 && e.info.pv.first != oldMove,
+        );
+        for (var i = 0; i < 100 && !suitable(); i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(suitable(), isTrue);
+        final source = session.tree,
+            revision = session.revision,
+            positionRevision = session.positionRevision,
+            epoch = session.epoch;
+        await tap(find.byKey(const ValueKey('pv-history-open')));
+        final entry = tester
+            .widget<PvHistoryDialog>(find.byType(PvHistoryDialog))
+            .entries
+            .firstWhere(
+              (e) => e.info.pv.length >= 3 && e.info.pv.first != oldMove,
+            );
+        final button = find.byKey(ValueKey('pv-history-preview-${entry.id}'));
+        await tester.ensureVisible(button);
+        await tester.tap(button);
+        await tester.pump();
+        final progress = find.byKey(const ValueKey('pv-preview-progress'));
+        for (var i = 0; i < 100 && progress.evaluate().isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(progress, findsOneWidget);
+        await tap(find.byTooltip('下一步'));
+        expect(
+          tester.widget<Text>(progress).data,
+          '2 / ${entry.info.pv.length}',
+        );
+        await tester.tap(find.byKey(const ValueKey('pv-apply-prefix')));
+        await tester.pump();
+        for (
+          var i = 0;
+          i < 100 && find.byType(PvPreviewDialog).evaluate().isNotEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        await tester.pumpAndSettle();
+        expect(find.byType(PvPreviewDialog), findsNothing);
+        expect(find.byType(PvHistoryDialog), findsNothing);
+        expect(engine.enabled, isFalse);
+        expect(engine.playing, isFalse);
+        expect(session.tree.nodeCount, source.nodeCount + 2);
+        expect(session.moves.skip(3), entry.info.pv.take(2));
+        expect(session.tree.node(oldLeaf).comment, '保留原后续');
+        expect(
+          session.tree.node('n5').children.first,
+          source.node('n5').children.first,
+        );
+        expect(session.metadata.tags['Event'], '原资料');
+        expect(session.revision, revision + 1);
+        expect(session.positionRevision, positionRevision + 1);
+        expect(session.epoch, epoch);
+        expect(session.dirty, isTrue);
+        await tap(find.text('保存棋谱'));
+        await tap(find.widgetWithText(FilledButton, '保存'));
+        for (var i = 0; i < 50 && session.dirty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(session.dirty, isFalse);
+        final saved = await games.load('pv-source'),
+            savedRevision = session.revision,
+            target = session.tree.cursorId;
+        session.navigate(entry.nodeId);
+        await tester.pumpAndSettle();
+        expect(
+          await engine
+              .createPvPrefixAction(entry)
+              .apply(2, PvApplyCancellation()),
+          PvApplyResult.applied,
+        );
+        await tester.pumpAndSettle();
+        expect(session.revision, savedRevision);
+        expect(session.dirty, isFalse);
+        expect(session.tree.cursorId, target);
+        expect(session.tree.nodeCount, saved.tree.nodeCount);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await openRecord();
+        final restored = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(restored.tree.toJson(), saved.tree.toJson());
+        expect(restored.metadata.tags['Event'], '原资料');
+        expect(restored.tree.node(oldLeaf).comment, '保留原后续');
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
       }
     },
   );

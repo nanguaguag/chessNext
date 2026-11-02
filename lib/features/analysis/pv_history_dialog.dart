@@ -1,3 +1,4 @@
+import '../../application/pv_prefix_action.dart';
 import 'pv_preview_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -8,9 +9,13 @@ class PvHistoryDialog extends StatelessWidget {
     super.key,
     required List<PvHistoryEntry> entries,
     required this.side,
+    this.actionFactory,
+    this.sourceChanges,
   }) : entries = List.unmodifiable(entries);
   final List<PvHistoryEntry> entries;
   final Side side;
+  final PvPrefixActionFactory? actionFactory;
+  final Listenable? sourceChanges;
   String score(PvHistoryEntry entry) {
     final value = entry.scoreFor(side), bound = entry.boundFor(side);
     final name = side == Side.red ? '红' : '黑';
@@ -41,7 +46,7 @@ class PvHistoryDialog extends StatelessWidget {
           Expanded(
             child: ListView.builder(
               itemCount: entries.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (_, index) {
                 final entry = entries[index],
                     info = entry.info,
                     wdl = entry.wdlFor(side);
@@ -65,13 +70,23 @@ class PvHistoryDialog extends StatelessWidget {
                           ),
                         TextButton.icon(
                           key: ValueKey('pv-history-preview-${entry.id}'),
-                          onPressed: () => showDialog<void>(
-                            context: context,
-                            builder: (_) => PvPreviewDialog(
-                              entry: entry,
-                              flipped: side == Side.black,
-                            ),
-                          ),
+                          onPressed: () async {
+                            final action = actionFactory?.call(entry);
+                            final result = await showDialog<PvPreviewExit>(
+                              context: context,
+                              builder: (_) => PvPreviewDialog(
+                                entry: entry,
+                                flipped: side == Side.black,
+                                action: action,
+                                sourceChanges: sourceChanges,
+                              ),
+                            );
+                            if (result == PvPreviewExit.applied &&
+                                context.mounted &&
+                                ModalRoute.of(context)?.isCurrent == true) {
+                              Navigator.pop(context);
+                            }
+                          },
                           icon: const Icon(Icons.preview_outlined),
                           label: const Text('预览'),
                         ),

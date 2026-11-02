@@ -146,8 +146,12 @@ class AnalysisPanel extends StatelessWidget {
                             : Side.red;
                         showDialog<void>(
                           context: context,
-                          builder: (_) =>
-                              PvHistoryDialog(entries: snapshot, side: side),
+                          builder: (_) => PvHistoryDialog(
+                            entries: snapshot,
+                            side: side,
+                            actionFactory: analysis.createPvPrefixAction,
+                            sourceChanges: analysis.session,
+                          ),
                         );
                       },
                 icon: const Icon(Icons.history),

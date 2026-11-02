@@ -33,7 +33,8 @@ void main() {
   Widget host(WidgetBuilder builder) => MaterialApp(
     home: Builder(
       builder: (context) => FilledButton(
-        onPressed: () => showDialog<void>(context: context, builder: builder),
+        onPressed: () =>
+            showDialog<PvPreviewExit>(context: context, builder: builder),
         child: const Text('打开预览'),
       ),
     ),

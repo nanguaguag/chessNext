@@ -4,6 +4,10 @@
 
 ## 当前检查点
 
+M3-35 / F12 PGN完整所选线路完成，提交见git log。RecordTextExchange.exportText.includeFuture默认true仅PGN，source.currentLine末端goTo只读视图交原PgnCodec.path（core没改），非主线anchor取正确选定未来；false仅根到当前，普通文字/FEN不变。ExportTextDialog复选框默认开、includeComments独立、busy禁改与清状态，copy/file同rendering、固定打开tree/metadata；未来非法评注明确错误/禁导出，显式范围/省评注可恢复，不默丢。帮助/引导/README范围已修，ADR-039/PGN_SELECTED_LINE_SLICE。
+
+目标14/14（80555），根显式NNUE404/404（98447，00:50）+analyze0（78476）exit0，native新实际Foundation文件/两范围两记谱格式/源后来修改不追随/MemoryClipboard一致1/1（5512，00:09）exit0。现38未全38，完整32基线，core67沿用。无测试失败，新增test unused import warning移除；全部session消费完，/tmp/chessnext-pgn-line-*.log。真实系统Chooser/Clipboard仍未验，不扩大含义。
+
 M3-34 / F05,F02左右镜像完成，提交见git log。session.mirrored独立flip会话方向，主盘Material按钮+Tooltip/toggled语义；XiangqiBoard共用BoardSurface镜像，所有交点/坐标/箭层/末步/徽标方向。newGame/replaceTree与flip一样保留会话，退出默认P；Editor独立不继承。AnalysisPanel打开前capture mirror，与side取session.flipped一起经History→Preview→BoardSurface固定来源方向，Main后改不追随。ADR-038/BOARD_MIRROR_SLICE。
 
 目标8/8（37532），根官方NNUE400/400（25411，00:49）+analyze0（84413）exit0；native真实NNUE不重搜/identity与token保留、真实worker组合小盘1/1（56475，00:10）exit0。现37未全37，完整32基线，core67沿用。初目标workerloading用pumpAndSettle超时→用pumpUntil真实异步；Piece实例等号→90格side/type值比；取消tooltip/关闭预览实际标签修，最终8过。测试新增unused import warning移除，最终analyze0。全部session已消费，/tmp/chessnext-mirror-*.log。
@@ -22,9 +26,9 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一M3-35 / F12,B19整条所选线路PGN导出：RecordTextExchange.exportText现PGN调用PgnCodec.path(tree当前cursor)，ExportTextDialog rendering同步生成并由copy/saveFile读取，捕获打开时tree/metadata。改PGN默认导出tree.currentLine到末端（含阅读点后未来），可加明确当前路径选项兼顾旧用例；其它FEN/普通文字范围不随之改变。PGN ICCS/中文、includeComments/metadata、复制与实际文件相同范围，取消/后台来源变化仍固定快照，不改文档或dirty。源码lib/application/record_text_exchange.dart、features/transfer/text_transfer_dialog.dart，pure PgnCodec.path可对tree.goTo(tree.currentLine.last.id)工作，无需改core序列化算法。先slice/ADR，单功能root test/analyze/native后中文commit；不要同时做RAV/多局。
+下一F11静态局面图片导出：先feature-audit续审参考分享/导出→导出图片（当前仅O），采集E34实际选项/执行结果/导出局面范围/可取消与边界，恢复源原状态；研究图只证据不进产品资源。然后独立slice/ADR，原创Flutter棋盘图导出PNG/可替换二进制文件端口、macOS原子写入、固定快照/方向/坐标与取消、单功能root test/analyze/native后中文commit。现RecordFileExporter只saveText，MacOsRecordFileExporter原生Foundation channel可查如何扩展binary（不得UI直IO）。已有board painter可用于原创绘制，不下载参考资源做产品素材。GIF/OCR/其它格式/自建后端五平台等继续。
 
-E33新增F12/B19差距：阅读停三着导出PGN包含所选线路五着（两未来），前后mirror文件相同。项目当前PGN只根到当前，后续改整条所选线路/明确格式范围，不能称全树RAV。E33首次FENclipboard空未取值，0字节文件已删除；导出复制后弹层自动退，旧104关闭索引无layout失败已记录；未读其它系统剪贴板。原站镜像/旋转/preview都恢复，正常红下/未镜像/源三着reading+两future/另一branch保留，AI分析0，评级数据保留，无弹层。原始PGN下载在Downloads自有两文件，研究样本sources/SHA已登记。
+E33曾发现F12/B19差距，现M3-35已补：阅读停三着源PGN包含所选线路五着（两未来），项目PGN默认完整所选线路并可关闭未来，不称全树RAV。E33首次FENclipboard空未取值，0字节文件已删除；导出复制后弹层自动退，旧104关闭索引无layout失败已记录；未读其它系统剪贴板。原站镜像/旋转/preview都恢复，正常红下/未镜像/源三着reading+两future/另一branch保留，AI分析0，评级数据保留，无弹层。原始PGN下载在Downloads自有两文件，研究样本sources/SHA已登记。
 
 尚缺B22 hover/站点跨文档与容量、K09统一2000节点门槛、F21素材、F28声音动画、布局/工作区/语言、错题/训练/题库、XQF/CBR/CBL/DhtmlXQ/WXF/RAV/多局/GBK/文件夹拖放、图像GIF/OCR、自建后端认证同步/云库/识图部署、完整重复/长将长捉规则、五平台引擎构建运行发行。离线优先是顺序，不是删除在线范围。
 

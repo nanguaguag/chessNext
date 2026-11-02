@@ -90,3 +90,5 @@ M3-32 / ADR-036：AppPreferences.reviewMode/PreferencesController为独立枚举
 M3-33 / ADR-037：纯GameTree.maxNodes与GameTreeCapacityException统一所有新增；BoardSession捕获为MoveRejection.capacity且事务不改文档。CandidateApplyResult经应用层区分容量与过期/stop失败，UI只呈现；AI容量清排程解锁并保留Gateway；PV worker映射原有capacity。
 
 M3-34 / ADR-038：BoardSession.mirrored只会话状态，XiangqiBoard复用BoardSurface映射；AnalysisPanel在打开history前捕获mirror，经过History/Preview只读属性传入小盘。不改core/document或engine协调，无新增IO。Editor自己的mirrored仍独立。
+
+M3-35 / ADR-039：RecordTextExchange.exportText.includeFuture默认true仅PGN使用currentLine末端goTo只读视图，原PgnCodec.path无变化；ExportTextDialog同rendering支持复制与文件、范围及评注选择、失败显示与打开快照。UI无新增IO，原文件端口/取消规则保留。

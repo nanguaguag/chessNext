@@ -58,6 +58,7 @@ abstract final class RecordTextExchange {
     GameMetadata metadata,
     TextExportFormat format, {
     bool includeComments = true,
+    bool includeFuture = true,
   }) {
     if (format == TextExportFormat.fen) return tree.current.position.toFen();
     if (!format.isPgn) {
@@ -66,8 +67,11 @@ abstract final class RecordTextExchange {
     final pgnFormat = format == TextExportFormat.pgnIccs
         ? PgnMoveFormat.iccs
         : PgnMoveFormat.chinese;
+    final exportTree = includeFuture
+        ? tree.goTo(tree.currentLine.last.id)
+        : tree;
     final record = PgnRecord(
-      tree: tree,
+      tree: exportTree,
       tags: {
         ...metadata.tags,
         'Game': 'Chinese Chess',

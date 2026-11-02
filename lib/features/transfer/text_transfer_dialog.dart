@@ -176,7 +176,7 @@ class ExportTextDialog extends StatefulWidget {
 
 class _ExportTextDialogState extends State<ExportTextDialog> {
   TextExportFormat format = TextExportFormat.fen;
-  bool busy = false, includeComments = true;
+  bool busy = false, includeComments = true, includeFuture = true;
   String? status;
   bool dismissed = false;
   FileExportCancellation? fileCancellation;
@@ -237,6 +237,7 @@ class _ExportTextDialogState extends State<ExportTextDialog> {
           widget.metadata,
           format,
           includeComments: includeComments,
+          includeFuture: includeFuture,
         ),
         error: null,
       );
@@ -307,6 +308,20 @@ class _ExportTextDialogState extends State<ExportTextDialog> {
                 ),
                 if (format.isPgn)
                   CheckboxListTile(
+                    key: const ValueKey('pgn-include-future'),
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('包含所选线路的后续着法'),
+                    subtitle: const Text('关闭时仅导出到当前阅读点'),
+                    value: includeFuture,
+                    onChanged: busy
+                        ? null
+                        : (value) => setState(() {
+                            includeFuture = value ?? false;
+                            status = null;
+                          }),
+                  ),
+                if (format.isPgn)
+                  CheckboxListTile(
                     contentPadding: EdgeInsets.zero,
                     title: const Text('包含路径评注'),
                     value: includeComments,
@@ -333,7 +348,9 @@ class _ExportTextDialogState extends State<ExportTextDialog> {
                 const SizedBox(height: 16),
                 Text(
                   format.isPgn
-                      ? 'PGN保留棋谱资料与所选评注，仅含初始局面至当前着。其它分支及后续着法不会导出；完整棋树请保存到本地库。'
+                      ? (includeFuture
+                            ? 'PGN保留棋谱资料与所选评注，包含完整所选线路及当前阅读点后的着法。其它分支不会导出；完整棋树请保存到本地库。'
+                            : 'PGN保留棋谱资料与所选评注，仅含初始局面至当前着。其它分支及后续着法不会导出；完整棋树请保存到本地库。')
                       : 'FEN只含当前局面；其它普通文字格式只含初始局面至当前着。分支、后续、评注和资料不在这些格式内，完整内容请保存到本地库。',
                 ),
                 if (status != null) Text(status!),

@@ -3345,4 +3345,102 @@ void main() {
       }
     },
   );
+  testWidgets(
+    'native PGN export writes full selected future and optional current path from one snapshot',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-pgn-line-');
+      final files = <File>[], clipboard = MemoryClipboard();
+      final exporter = MacOsRecordFileExporter(
+        chooser: (extension) async {
+          expect(extension, 'pgn');
+          final file = File('${directory.path}/line-${files.length}.pgn');
+          files.add(file);
+          return file.path;
+        },
+      );
+      Future<void> tap(Finder f) async {
+        await tester.ensureVisible(f);
+        await tester.pumpAndSettle();
+        expect(f.hitTestable(), findsOneWidget);
+        await tester.tap(f);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(
+            key: UniqueKey(),
+            clipboard: clipboard,
+            fileExporter: exporter,
+          ),
+        );
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        session.replaceTree(
+          branchedRecord().annotate('未来原生注').goTo('n1'),
+          metadata: GameMetadata({'Event': '原生线路导出'}),
+        );
+        await tester.pumpAndSettle();
+        final snapshot = session.tree;
+        await tap(find.text('导出文字'));
+        session.navigate('n4');
+        session.annotate('后来改动');
+        session.updateMetadata(GameMetadata({'Event': '后来赛事'}));
+        final source = session.tree, revision = session.revision;
+        await tap(find.byKey(const ValueKey('export-format')));
+        await tap(find.text('PGN（ICCS）').last);
+        await tap(find.widgetWithText(FilledButton, '复制'));
+        await tap(find.text('保存文件'));
+        for (
+          var i = 0;
+          i < 100 && (files.isEmpty || !await files.last.exists());
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(files.length, 1);
+        final fullText = await files.first.readAsString();
+        expect(fullText, clipboard.text);
+        final full = PgnCodec.parse(fullText);
+        expect(full.tree.nodeCount, 4);
+        expect(full.tree.current.move, Move.parse('h2h4'));
+        expect(full.tree.current.comment, '未来原生注');
+        expect(full.tags['Event'], '原生线路导出');
+        await tap(find.byKey(const ValueKey('pgn-include-future')));
+        await tap(find.byKey(const ValueKey('export-format')));
+        await tap(find.text('PGN（中文）').last);
+        await tap(find.widgetWithText(FilledButton, '复制'));
+        await tap(find.text('保存文件'));
+        for (
+          var i = 0;
+          i < 100 && (files.length < 2 || !await files.last.exists());
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(files.length, 2);
+        final partialText = await files.last.readAsString();
+        expect(partialText, clipboard.text);
+        final partial = PgnCodec.parse(partialText);
+        expect(partial.tree.nodeCount, 2);
+        expect(
+          partial.tree.current.position.toFen(),
+          snapshot.current.position.toFen(),
+        );
+        expect(partial.tags['Event'], '原生线路导出');
+        expect(session.tree, same(source));
+        expect(session.revision, revision);
+        expect(session.dirty, isTrue);
+        await tap(find.text('关闭'));
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }

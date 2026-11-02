@@ -386,3 +386,13 @@ ADR-038/BOARD_MIRROR_SLICE：session.mirrored与flip独立会话只读方向、�
 首目标3过2失败：真实worker预览用pumpAndSettle等待loading导致假时钟超时，改点击后pumpUntil推进真实任务；Editor Piece实例无值相等，改逐90格(side,type)值比较，并使用实际取消Tooltip。次目标7过1失败为把关闭预览误写关闭，按现UI标签改；最后8过。初生产analyze0，新增测试后1 unused import警告移除，最终0；没有修改生产语义来迎合fixture。日志/tmp/chessnext-mirror-{analyze-initial,analyze-final,analyze-gate,target,target-final,target-verified,full,native}.log，全部session消费，git diff --check0，无新依赖资源。
 
 下一M3-35 / F12,B19：E33确认源PGN导出完整所选线路（含阅读点后未来），项目仅根到当前；独立slice补PGN默认范围及可选当前路径/评注/资料/打开时快照、文件和复制一致，非全树RAV。继续整体对标。
+
+## 2026-11-02 / M3-35 / F12 → B11,B19 PGN完整所选线路
+
+ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默认true只对PGN，用原source.currentLine末端的goTo只读视图交原PgnCodec.path；含选中非主线的未来，不导出未选兄弟/RAV。显式false根到当前，FEN/普通文字仍原范围。UI后续着法复选框/评注独立，busy禁改/状态重置，打开时tree/metadata捕获；copy与file同rendering。未来评注不支持默认报错禁导出，用户可显式缩范围/省评注，不默删。帮助和引导范围文案同步，结果/未知标签保留。
+
+新增应用2+组件2=4，连文字交换与文件目标14/14（80555，00:03）exit0；显式官方NNUE根404/404（98447，00:50）+最终flutter analyze无问题（78476，1.5秒）exit0；core未改沿用67/67+dart analyze。macOS新PGN完整所选线路ICCS+显式当前路径中文、实际Foundation文件读回/测试剪贴板一致/源后来变动不追随1/1（5512，00:09）exit0。系统chooser注入与MemoryClipboard，未称OS保存面板/系统剪贴板通过。现38未全38，最近完整32/32仍M3-29。
+
+无测试失败；初analyze仅新增测试unused import warning移除，最终0。日志/tmp/chessnext-pgn-line-{target,analyze-initial,analyze-gate,full,native}.log，所有session已消费；git diff --check0，无新依赖资源。E33自制PGN夹具验证读取到3着默认导出5着，不读取站点内部状态或借用户棋谱。
+
+下一F11静态局面图片导出续审E34，先确认公开选项/生成结果/导出范围，再实现本机原创棋盘PNG与可替换文件端口；GIF/OCR/在线云库等继续，不能停称全部对齐。

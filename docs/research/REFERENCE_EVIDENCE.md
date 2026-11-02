@@ -167,3 +167,11 @@ URL https://xiangqiai.com/#/、/#/settings/analysis，访客IAB，E19同一自�
 在可见编号1中心（截图1280×720坐标463,544）点一次，当前仍炮二进二，未换支线（V，仅这个点）[结果](screenshots/E25-number-click-result.png)。上一着到马２进３，局部仍开，此时本步只有1项，仍画其黑马绿箭头（V）[单项](screenshots/E25-single-sibling.png)。再上一着两次到根，着法详情改为空态且无箭头/开关；下一着回第一步时局部关（V）[根](screenshots/E25-root-no-current-arrows.png)。
 
 最后下一着回原炮二进二支线末端，局部关，全局开/标准/棋子100/字号系统，分析0，未新落子/置顶/删除。[恢复截图](screenshots/E25-restored.png)/[恢复AX](E25-restored.ax.txt，过滤超长引擎历史text行保留操作状态，非完整AX)。不同屏幕/翻转/编号其它点交互/超多兄弟/跨重载仍U。截图及AX摘要见DISPLAY_EVIDENCE_MANIFEST。
+
+## E26 / 2026-11-02 局势条开关、旋转与停止状态
+
+URL https://xiangqiai.com/#/、/#/settings/analysis，访客IAB，E19自制支线，E24分析已停止但保留PV历史/局势显示。设置局势条初开，关后返回红黑竖条消失，棋盘宽度分隔比例实际从70变68（V）；重开恢复70和竖条。[关闭](screenshots/E26-evaluation-bar-off.png)。
+
+点翻转先只打开含旋转/左右翻转的菜单（O，[菜单](screenshots/E26-flip-menu.png)，未将这一步当已翻转），再点旋转棋盘，红棋到上/黑棋到下，竖条相应红上黑下（V）[旋转](screenshots/E26-evaluation-bar-flipped.png)。停止分析时这些显示仍存在（V），但历史PV卡仍写红分而曲线/云库标签已随视角改，不能推断所有历史卡视角一致。
+
+最后再实际旋转恢复正常红下黑上，局势条开、分析0/AI关/本步局部箭头关，原自制支线仍选中。[恢复](screenshots/E26-evaluation-bar-restored.png)/[过滤历史行AX](E26-restored.ax.txt)。没有新落子/替换谱。来源/SHA见DISPLAY_EVIDENCE_MANIFEST。原站比例公式、完全无分析数据的空态/跨局面缓存/杀棋或边界值比例仍U。本地方案以原生WDL预期得分明确呈现，缺失不伪造50%，不冒充同公式。

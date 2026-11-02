@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -228,6 +228,44 @@
       "path": "E25-restored.ax.txt",
       "bytes": 3539,
       "sha256": "c7bec2c1d571df3fbd7e6a733d6ec8ef3931b86d1d8a10549a404be6eef97040"
+    },
+    {
+      "id": "E26",
+      "path": "screenshots/E26-evaluation-bar-flipped.png",
+      "bytes": 129859,
+      "sha256": "0ba7161dbe19210e053e0ef93ae82429cd2194f1f4bf43759edc2d32c30cb14e",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E26",
+      "path": "screenshots/E26-evaluation-bar-off.png",
+      "bytes": 127720,
+      "sha256": "df0fbdfba2e2d1be12c67b9b96a1a2116b16cbee3419b31ebf08dac24832cad6",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E26",
+      "path": "screenshots/E26-evaluation-bar-restored.png",
+      "bytes": 129429,
+      "sha256": "6744f4660c0dbd46018b87212ab3c5e473cfd1660183dc27971682796f1d1e53",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E26",
+      "path": "screenshots/E26-flip-menu.png",
+      "bytes": 129391,
+      "sha256": "225c99d0e37339c37d734a8998a579997535e9a23afc47de98389a42091ae5be",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E26",
+      "path": "E26-restored.ax.txt",
+      "bytes": 3561,
+      "sha256": "bd638f7b02eba913689a6255baa26e4d3dcc26a95ef76bed813b8250e470882f"
     }
   ]
 }

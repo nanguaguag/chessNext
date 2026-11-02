@@ -4,6 +4,7 @@ import '../../application/app_preferences.dart';
 import '../../application/preferences_controller.dart';
 import 'text_size_dialog.dart';
 import 'board_display_dialog.dart';
+import 'analysis_markers_dialog.dart';
 
 class PreferencesDialog extends StatefulWidget {
   const PreferencesDialog({super.key, required this.preferences});
@@ -86,6 +87,16 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   spacing: 8,
                   runSpacing: 8,
                   children: [
+                    OutlinedButton.icon(
+                      onPressed: () => showDialog<void>(
+                        context: context,
+                        builder: (_) => AnalysisMarkersDialog(
+                          preferences: widget.preferences,
+                        ),
+                      ),
+                      icon: const Icon(Icons.north_east),
+                      label: const Text('分析标记'),
+                    ),
                     OutlinedButton.icon(
                       onPressed: () => showDialog<void>(
                         context: context,

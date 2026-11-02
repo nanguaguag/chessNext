@@ -1,3 +1,5 @@
+import 'board_appearance.dart';
+
 enum ThemePreference { system, light, dark }
 
 enum TextSizePreference { system, standard, large, extraLarge }
@@ -18,6 +20,8 @@ final class AppPreferences {
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
     this.pieceSizePercent = 100,
+    this.showAnalysisArrows = true,
+    this.arrowHead = ArrowHeadStyle.standard,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
@@ -44,6 +48,8 @@ final class AppPreferences {
   final TextSizePreference textSize;
   final bool showCoordinates;
   final int pieceSizePercent;
+  final bool showAnalysisArrows;
+  final ArrowHeadStyle arrowHead;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
@@ -51,6 +57,8 @@ final class AppPreferences {
     TextSizePreference? textSize,
     bool? showCoordinates,
     int? pieceSizePercent,
+    bool? showAnalysisArrows,
+    ArrowHeadStyle? arrowHead,
     int? threads,
     int? hashMb,
     int? multiPv,
@@ -61,6 +69,8 @@ final class AppPreferences {
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
+    showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
+    arrowHead: arrowHead ?? this.arrowHead,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
@@ -73,6 +83,8 @@ final class AppPreferences {
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
+    if (!showAnalysisArrows) 'showAnalysisArrows': false,
+    if (arrowHead != ArrowHeadStyle.standard) 'arrowHead': arrowHead.name,
     'threads': threads,
     'hashMb': hashMb,
     'multiPv': multiPv,
@@ -81,6 +93,9 @@ final class AppPreferences {
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
+        (json.containsKey('showAnalysisArrows') &&
+            json['showAnalysisArrows'] is! bool) ||
+        (json.containsKey('arrowHead') && json['arrowHead'] is! String) ||
         json['theme'] is! String ||
         (json.containsKey('textSize') && json['textSize'] is! String) ||
         (json.containsKey('showCoordinates') &&
@@ -98,6 +113,10 @@ final class AppPreferences {
     }
     try {
       return AppPreferences(
+        showAnalysisArrows: json['showAnalysisArrows'] as bool? ?? true,
+        arrowHead: ArrowHeadStyle.values.byName(
+          json['arrowHead'] as String? ?? 'standard',
+        ),
         theme: ThemePreference.values.byName(json['theme'] as String),
         textSize: TextSizePreference.values.byName(
           json['textSize'] as String? ?? 'system',
@@ -117,6 +136,8 @@ final class AppPreferences {
   @override
   bool operator ==(Object other) =>
       other is AppPreferences &&
+      showAnalysisArrows == other.showAnalysisArrows &&
+      arrowHead == other.arrowHead &&
       theme == other.theme &&
       textSize == other.textSize &&
       showCoordinates == other.showCoordinates &&
@@ -128,6 +149,8 @@ final class AppPreferences {
       guideVersion == other.guideVersion;
   @override
   int get hashCode => Object.hash(
+    showAnalysisArrows,
+    arrowHead,
     theme,
     textSize,
     showCoordinates,

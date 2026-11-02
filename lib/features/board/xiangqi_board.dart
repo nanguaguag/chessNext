@@ -1,3 +1,5 @@
+import 'board_arrows_painter.dart';
+import '../../application/board_appearance.dart';
 import 'board_display_scope.dart';
 import 'board_file_coordinates.dart';
 import 'package:flutter/material.dart';
@@ -60,6 +62,8 @@ class BoardSurface extends StatefulWidget {
     this.mirrored = false,
     this.showCoordinates,
     this.pieceSizePercent,
+    this.showAnalysisArrows,
+    this.arrowHeadStyle,
     this.enabled = true,
     this.onCancel,
     this.onRemove,
@@ -83,6 +87,8 @@ class BoardSurface extends StatefulWidget {
   final bool mirrored;
   final bool? showCoordinates;
   final int? pieceSizePercent;
+  final bool? showAnalysisArrows;
+  final ArrowHeadStyle? arrowHeadStyle;
   final bool enabled;
   final Move? recommendation;
   final Move? reply;
@@ -162,15 +168,35 @@ class _BoardSurfaceState extends State<BoardSurface> {
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: CustomPaint(
-                      painter: _BoardPainter(
-                        recommendation: widget.recommendation,
-                        reply: widget.reply,
-                        flipped: widget.flipped,
-                        mirrored: widget.mirrored,
+                    child: CustomPaint(painter: const _BoardPainter()),
+                  ),
+                  if ((widget.showAnalysisArrows ??
+                          BoardDisplayScope.analysisArrowsOf(context)) &&
+                      (widget.recommendation != null || widget.reply != null))
+                    Positioned.fill(
+                      child: Semantics(
+                        container: true,
+                        label: [
+                          if (widget.recommendation != null)
+                            '引擎推荐：${widget.recommendation!.from}至${widget.recommendation!.to}',
+                          if (widget.reply != null)
+                            '预计应着：${widget.reply!.from}至${widget.reply!.to}',
+                        ].join('；'),
+                        child: IgnorePointer(
+                          child: CustomPaint(
+                            painter: BoardArrowsPainter(
+                              recommendation: widget.recommendation,
+                              reply: widget.reply,
+                              flipped: widget.flipped,
+                              mirrored: widget.mirrored,
+                              headStyle:
+                                  widget.arrowHeadStyle ??
+                                  BoardDisplayScope.arrowHeadOf(context),
+                            ),
+                          ),
+                        ),
                       ),
                     ),
-                  ),
                   for (var row = 0; row < 10; row++)
                     for (var col = 0; col < 9; col++)
                       _cell(
@@ -365,17 +391,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
 }
 
 class _BoardPainter extends CustomPainter {
-  _BoardPainter({
-    this.recommendation,
-    this.reply,
-    this.flipped = false,
-    this.mirrored = false,
-  });
-  final Move? recommendation;
-  final Move? reply;
-  final bool flipped;
-  final bool mirrored;
-
+  const _BoardPainter();
   @override
   void paint(Canvas canvas, Size size) {
     final step = size.width / 9;
@@ -414,41 +430,9 @@ class _BoardPainter extends CustomPainter {
       canvas,
       Offset((size.width - text.width) / 2, step * 5 - text.height / 2),
     );
-    void arrow(Move move, Color color) {
-      Offset location(Square square) => point(
-        (flipped != mirrored ? 8 - square.file : square.file).toDouble(),
-        (flipped ? square.rank : 9 - square.rank).toDouble(),
-      );
-      final from = location(move.from);
-      final to = location(move.to);
-      final distance = (to - from).distance;
-      if (distance == 0) return;
-      final unit = (to - from) / distance;
-      final start = from + unit * step * .3;
-      final end = to - unit * step * .3;
-      final arrowPaint = Paint()
-        ..color = color
-        ..strokeWidth = 4
-        ..strokeCap = StrokeCap.round;
-      canvas.drawLine(start, end, arrowPaint);
-      final wing = Offset(-unit.dy, unit.dx) * step * .12;
-      final base = end - unit * step * .22;
-      final head = Path()
-        ..moveTo(end.dx, end.dy)
-        ..lineTo((base + wing).dx, (base + wing).dy)
-        ..lineTo((base - wing).dx, (base - wing).dy)
-        ..close();
-      canvas.drawPath(head, arrowPaint);
-    }
-
-    if (reply != null) arrow(reply!, const Color(0xff965ba3));
-    if (recommendation != null) arrow(recommendation!, const Color(0xff226b9c));
+    text.dispose();
   }
 
   @override
-  bool shouldRepaint(covariant _BoardPainter oldDelegate) =>
-      recommendation != oldDelegate.recommendation ||
-      reply != oldDelegate.reply ||
-      flipped != oldDelegate.flipped ||
-      mirrored != oldDelegate.mirrored;
+  bool shouldRepaint(covariant _BoardPainter oldDelegate) => false;
 }

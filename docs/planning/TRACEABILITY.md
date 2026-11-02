@@ -272,3 +272,11 @@ E23实际10–200/步5与最小点状/最大重叠裁切、页间记忆并恢复
 新增3应用+5组件；加坐标回归目标14/14通过，后强化拖动中真实Overlay反馈存在/同200%断言，最终组件5/5。根显式官方NNUE flutter test301/301 exit0（84139），flutter analyze无问题exit0（43285）；macOS坐标旧例+尺寸新例2/2 exit0（71222，00:21），真实偏好文件新App恢复200、点击重叠面容仍落正确交点、重置100保留其它字段/原棋谱。原生现24项，本片未全跑24；上片完整23/23已过。核心未改65沿用；OS人工视觉/其它平台未验。
 
 本片analyze初/最终无问题，目标和最终根/原生无失败；首次apply_patch缺格式化后上下文原子拒绝，无文件改动，核实际文本后应用。截图/AX来源与摘要在DISPLAY_EVIDENCE_MANIFEST，无复制产品资源。日志/tmp/chessnext-piece-size-{application,target,widget-final,analyze-initial,analyze,analyze-final,full,native}.log，所有session收尾。
+
+## 2026-11-02 / M3-22 / F26 → B08,B17,B20 推荐箭头显示
+
+E24实测推荐同时控本步/预计应着两支、变着开关另有对象、三种头部实际可见；恢复默认并停参考引擎。AppPreferences可选showAnalysisArrows/arrowHead与Controller逐字段合并/串行写；AnalysisMarkersDialog独立即时，BoardDisplayScope到BoardSurface；独立BoardArrowsPainter、只读语义/IgnorePointer，关闭不丢PV/不重启引擎，重开最新PV；三头宽仅头部变化。ADR-026/ANALYSIS_ARROWS_SLICE。
+
+新增2应用+3真实像素绘制+4组件通过（9）；像素确认头面积顺序/恒定杆、四方向/无PV、两色；组件确认运行中Fake实际requests/stops不变、隐藏期间最新PV/恢复、命中/语义/200%与读写重试/新App。显式NNUE根310/310与analyze0，原生真实NNUE单项1/1先过；之后加网格临时TextPainter.dispose，最终根310/310 exit0（32031）+analyze0（45893）+原生同项1/1（36716，00:13）均过。真实NNUE活动令牌/身份未变、显示用最新PV，文件偏好新App恢复。原生当前25未全25，上次完整23/23；核心未改65沿用。
+
+初analyze1大括号info修复，业务/组件/绘制/全量/原生运行无失败；没有待等待进程。日志/tmp/chessnext-arrows-{painter,widget,analyze-initial,full,full-final,analyze,analyze-final,native,native-final}.log。其它F26/变着树与PV历史B22仍缺，不能关闭F26整项；真实OS焦点/人工视觉/其它平台未验。

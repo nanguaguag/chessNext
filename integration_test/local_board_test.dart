@@ -1,3 +1,5 @@
+import 'package:chess_next/application/board_appearance.dart';
+import 'package:chess_next/features/board/board_arrows_painter.dart';
 import 'package:chess_next/features/board/board_file_coordinates.dart';
 import 'dart:convert';
 import 'package:chess_next/adapters/platform/macos_record_file_exporter.dart';
@@ -1898,6 +1900,107 @@ void main() {
         expect(scale('e2'), 1);
         expect(session.tree, same(tree));
         expect(session.dirty, isTrue);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native analysis markers preserve live NNUE search and reopen persisted style',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-markers-');
+      final repository = FilePreferencesRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+        engineFactory: openBundledEngine,
+      );
+      Future<void> tap(Finder finder) async {
+        await tester.ensureVisible(finder);
+        await tester.pumpAndSettle();
+        await tester.tap(finder);
+        await tester.pumpAndSettle();
+      }
+
+      Finder arrows() => find.byWidgetPredicate(
+        (w) => w is CustomPaint && w.painter is BoardArrowsPainter,
+      );
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        for (var i = 0; i < 100 && engine.reply == null; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.recommended, isNotNull);
+        expect(engine.reply, isNotNull);
+        final token = engine.infos.first.token;
+        final identity = engine.engineIdentity;
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final tree = session.tree;
+        expect(arrows(), findsOneWidget);
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('分析标记'));
+        await tap(find.text('推荐箭头'));
+        expect(arrows(), findsNothing);
+        expect(engine.enabled, isTrue);
+        await tap(find.byType(DropdownButtonFormField<ArrowHeadStyle>));
+        await tap(find.text('宽').last);
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.infos.every((info) => info.token == token), isTrue);
+        expect(engine.infos, isNotEmpty);
+        expect(engine.engineIdentity, identity);
+        await tap(find.text('推荐箭头'));
+        final paint =
+            tester.widget<CustomPaint>(arrows()).painter! as BoardArrowsPainter;
+        expect(paint.headStyle, ArrowHeadStyle.wide);
+        expect(paint.recommendation, engine.recommended);
+        expect(paint.reply, engine.reply);
+        await tap(find.text('推荐箭头'));
+        for (
+          var i = 0;
+          i < 50 &&
+              (await repository.load())?.value.arrowHead != ArrowHeadStyle.wide;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await repository.load())!.value.arrowHead, ArrowHeadStyle.wide);
+        expect((await repository.load())!.value.showAnalysisArrows, isFalse);
+        expect(session.tree, same(tree));
+        expect(session.dirty, isFalse);
+        await tap(find.text('关闭'));
+        await tap(find.text('取消'));
+        await engine.disable();
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('分析标记'));
+        expect(
+          tester.widget<SwitchListTile>(find.byType(SwitchListTile)).value,
+          isFalse,
+        );
+        expect(
+          tester
+              .widget<DropdownButtonFormField<ArrowHeadStyle>>(
+                find.byType(DropdownButtonFormField<ArrowHeadStyle>),
+              )
+              .initialValue,
+          ArrowHeadStyle.wide,
+        );
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

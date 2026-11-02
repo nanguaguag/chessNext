@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import '../ports/preferences_repository.dart';
 import 'app_preferences.dart';
+import 'board_appearance.dart';
 import 'engine_session_controller.dart';
 
 class PreferencesController extends ChangeNotifier {
@@ -81,6 +82,12 @@ class PreferencesController extends ChangeNotifier {
         final stored = loaded.value;
         value = _bounded(
           stored.copyWith(
+            showAnalysisArrows: _edited.contains('showAnalysisArrows')
+                ? previous.showAnalysisArrows
+                : null,
+            arrowHead: _edited.contains('arrowHead')
+                ? previous.arrowHead
+                : null,
             theme: _edited.contains('theme') ? previous.theme : null,
             textSize: _edited.contains('textSize') ? previous.textSize : null,
             pieceSizePercent: _edited.contains('pieceSizePercent')
@@ -141,6 +148,10 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(showCoordinates: visible));
   Future<void> setPieceSize(int percent) =>
       apply(value.copyWith(pieceSizePercent: percent));
+  Future<void> setAnalysisArrows(bool visible) =>
+      apply(value.copyWith(showAnalysisArrows: visible));
+  Future<void> setArrowHead(ArrowHeadStyle style) =>
+      apply(value.copyWith(arrowHead: style));
   Future<void> retryPersistence() =>
       _allowWrite ? flush(force: true) : initialize();
   Future<void> apply(AppPreferences next) {
@@ -153,6 +164,12 @@ class PreferencesController extends ChangeNotifier {
   }
 
   void _recordEdits(AppPreferences next) {
+    if (next.showAnalysisArrows != value.showAnalysisArrows) {
+      _edited.add('showAnalysisArrows');
+    }
+    if (next.arrowHead != value.arrowHead) {
+      _edited.add('arrowHead');
+    }
     if (next.theme != value.theme) _edited.add('theme');
     if (next.textSize != value.textSize) _edited.add('textSize');
     if (next.pieceSizePercent != value.pieceSizePercent) {

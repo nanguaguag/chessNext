@@ -8,7 +8,7 @@
 
 ## 最新交付与门槛
 
-HEAD见git log：先af1ba2f只读UTF8文件导入；2779dee文件导出、04d51f4 E21字号审计；7fb009e全局字号；ab921f3坐标；当前M3-21棋子大小独立提交（见git log）。记录在TRACEABILITY/ADR-021,022与RECORD_FILE_IMPORT/EXPORT_SLICE。根最终显式NNUE flutter test301/301 exit0（84139），flutter analyze无问题exit0（43285）；native文件导出目标1/1 exit0（80542）、上一导入1/1；核心未改沿用65/65+dart analyze。完整macOS23/23（34715，03:29）已过，最后仅设置显示入口归并后相关旧设置/坐标2/2（65239，00:21）也通过；本片新尺寸后坐标+尺寸2/2（71222，00:21）通过，当前24未全跑24。字号native新偏好恢复1/1（56302）+旧设置1/1（86147）均exit0。无未等待验证进程。失败/修复详情SESSION_LOG，日志/tmp/chessnext-file-{import,export}-*.log、text-size-*.log、coordinates-*.log、piece-size-*.log和atomic-probe*.log。
+HEAD见git log：先af1ba2f只读UTF8文件导入；2779dee文件导出、04d51f4 E21字号审计；7fb009e全局字号；ab921f3坐标；98f4146棋子大小，658e96a E24审计；当前M3-22推荐箭头独立提交（见git log）。记录在TRACEABILITY/ADR-021,022与RECORD_FILE_IMPORT/EXPORT_SLICE。根最终显式NNUE flutter test310/310 exit0（32031），flutter analyze无问题exit0（45893）；native文件导出目标1/1 exit0（80542）、上一导入1/1；核心未改沿用65/65+dart analyze。完整macOS23/23（34715，03:29）已过，最后仅设置显示入口归并后相关旧设置/坐标2/2（65239，00:21）也通过；本片新尺寸后坐标+尺寸2/2（71222，00:21）通过，当前25未全跑25；本片真实NNUE箭头1/1（36716，00:13）通过。字号native新偏好恢复1/1（56302）+旧设置1/1（86147）均exit0。无未等待验证进程。失败/修复详情SESSION_LOG，日志/tmp/chessnext-file-{import,export}-*.log、text-size-*.log、coordinates-*.log、piece-size-*.log、arrows-*.log和atomic-probe*.log。
 
 Import：RecordFilePicker返回名字/文字，FileSelectorRecordPicker独占XFile/流，256000字节+64000字符/严格UTF8/读绝对期限/名称清理。ImportFileDialog选择、后台worker、预览确认/重试/取消退场保护；App._import(fromFile)复用epoch/内容/位置/dirty确认/先保存重验。格式核心只单局PGN ICCS/中文及旧文字，RAV/WXF/多局/GBK等不支持，源不改。
 
@@ -22,9 +22,11 @@ M3-20坐标：AppPreferences.showCoordinates可选bool旧defaulttrue、Controlle
 
 M3-21尺寸：AppPreferences.pieceSizePercent可选整数旧100，10–200/步5严格验证；Controller字段晚到合并，Scope只读值/BoardSurface nullable override。只实际piece face Transform.scale且transformHitTests:false，90格/空位/箭头/坐标不缩放；200重叠在内Stack边缘裁切，drag feedback同face。BoardDisplayDialog即时滑块+重置100，保留其它字段。目标含坐标14/14，强化拖动中浮层实际存在/同缩放后组件5/5，根301/analyze与原生相关2通过，ADR-025/PIECE_SIZE_SLICE。E23 min/max实际显示/导航记忆已V，恢复100回自制谱，源站命中/其它方向U；正常路数因min10全显已V。
 
+M3-22推荐箭头：AppPreferences可选showAnalysisArrows true/arrowHead standard、纯ArrowHeadStyle(enum sharp/standard/wide)与Controller字段合并，Scope注入/BoardSurface可override。BoardArrowsPainter从静态网格拆离，组合关撤两支视觉/只读语义且保留PV，重开取最新，IgnorePointer不抢格子，项目头宽.07/.12/.19格，杆4/避让沿旧，四方向同格。网格临时TextPainter.dispose。AnalysisMarkersDialog从普通设置进入即时写；其它表单保留它。目标9全过/根310/真实NNUE1过，ADR-026/ANALYSIS_ARROWS_SLICE，全部会话结束。E24明确source推荐同时控蓝粉，global变着关这两支仍显示，所以不能误叫预计应着独立开关；准确变着对象U。源站分析现已停止、两开关开/标准，当前自制谱仍在。B22另追PV历史/小棋盘预览（O，App仅最新MultiPV）。B15是领域规则，之前显示切片误关联已校正B08/B20，不改旧ID。
+
 ## 下一可执行
 
-下一F26分析箭头显示参数补审计与增量，再F21其它外观/F28声音/工作区与其余缺项。文件其余XQF/CBR/CBL/东萍、多局/拖放、图片/GIF/OCR、错题训练/题库、布局/工作区/声音、完整历史重复长将长捉、五平台引擎ABI/发布、自建后端与部署仍缺；不因为某平台待验停止独立工作。
+下一F26变着树箭头准确对象/本步变着局部开关联动补审计与增量，再F21其它外观/F28声音/工作区与其余缺项。文件其余XQF/CBR/CBL/东萍、多局/拖放、图片/GIF/OCR、错题训练/题库、布局/工作区/声音、完整历史重复长将长捉、五平台引擎ABI/发布、自建后端与部署仍缺；不因为某平台待验停止独立工作。
 
 ## 环境与注意
 

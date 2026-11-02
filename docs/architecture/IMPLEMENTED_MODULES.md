@@ -64,3 +64,5 @@ M3-19：AppPreferences可选textSize枚举/Controller合并与retryPersistence�
 M3-20：BoardDisplayScope在Navigator外持只读显示bool，BoardSurface统一使用/可override，BoardFileCoordinates独立上下路数边框；翻转/镜像和格距沿同一逻辑Square，坐标不拦截落子。AppPreferences可选showCoordinates与Controller合并/串行持久化，BoardDisplayDialog独立即改即存/失败重试；普通设置保留最新字段。ADR-024，棋子大小/素材与其它外观后续。
 
 M3-21：既有显示Scope/偏好增加有界pieceSizePercent，BoardDisplayDialog离散滑块/重置即改即存。BoardSurface只对实际piece face做Transform.scale（不变hit test），空交点、路数和90格几何保持，拖动feedback共用face。ADR-025/PIECE_SIZE_SLICE。
+
+M3-22：纯board_appearance.ArrowHeadStyle存储枚举、AppPreferences/Controller可选字段与合并；AnalysisMarkersDialog即时偏好、BoardDisplayScope注入。BoardArrowsPainter与静态网格分离，组合显隐只撤视觉/语义不丢PV，IgnorePointer不抢交点；三头宽/恒定杆/四方向真实绘制测试。ADR-026。变着树箭头及其它F26后续。

@@ -2,3 +2,5 @@
 enum ArrowHeadStyle { sharp, standard, wide }
 
 enum LastMoveMarkerStyle { halo, box }
+
+enum SelectionStyle { lift, frame }

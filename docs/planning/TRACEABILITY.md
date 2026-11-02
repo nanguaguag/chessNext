@@ -304,3 +304,11 @@ E28光圈/方框终点与源环、页间记忆已V。AppPreferences.lastMoveMark
 新增应用2+组件4+实际像素1=7，含四方向源点终点/样式不同、无填充中心/200%与200%棋子/命中、根导航换谱编辑隔离、首落子及动画时序/减少动画、失败重试/新App/运行Fake requests和stops不变；加尺寸回归目标12/12（48659）。最终显式官方NNUE根flutter test338/338（78319，00:34）、flutter analyze无问题（82250）均exit0。macOS新用例1/1（59669，00:13）exit0，真实NNUEtoken/文件偏好/几何/保存树/导航翻转与新App恢复；当前28原生未全28，上片完整27已过。核心未改65沿用，真实OS减少动画设置/人工视觉与其它平台未验。
 
 初analyze1大括号info修复，首目标5过2失败：完成帧还有额外调度帧、相同错误文案存在三层route；增加额外帧/稳定时间并限定BoardDisplayDialog查找，未删生产保护。native测试首静态分析session.next不存在，改现有forward；最终全门槛通过。日志/tmp/chessnext-last-move-{analyze-initial,analyze,analyze-final,target,target-final,full,native}.log，无待等待进程。下一选子抬起/框样式，研究E29自制样本已恢复，未改谱。
+
+## 2026-11-02 / M3-26 / F21 → B08,B20 选子样式
+
+SelectionStyle lift/frame可选旧默认lift、严格解析/逐字段晚到合并/串行保存重试，棋盘显示即时Dropdown/Scope/主盘编辑器共用。抬起面容上移格距8%加阴影且transformHitTests=false，固定交点四角框不随尺寸缩放；90格/合法目标/语义/焦点保持，空位不抬起/画框，拖动反馈不带selected。无新增动画/IO/引擎所有者。E29实际功能边界，几何/编辑器为P；ADR-030/SELECTION_STYLE_SLICE。
+
+新增应用2+组件4+实际像素1=7，含四方向×三尺寸×双样式、90交点/命中/selected语义、运行Fake requests/stops不改及同选中保持、失败重试与新App、编辑器镜像旋转/实际拖动反馈与取消、200%字号/键盘Enter和Escape、框中心无填充/四角像素。加旧编辑器/尺寸目标17/17（89701）通过；显式官方NNUE根345/345（46199，00:35）与analyze无问题（37459）exit0；macOS新单项1/1（11998，00:13）exit0，真实NNUEtoken不变/偏好文件新App/交点/保存树/编辑器旋转镜像与拖动取消保护。原生现29未全29，上片完整27过，核心未改65沿用。
+
+本片初及最终analyze无问题，业务/组件/全量/原生无运行失败。日志/tmp/chessnext-selection-{analyze-initial,target,full,analyze,native}.log，全部会话结束。F21素材/原站精确几何/真实OS人工视觉/其它平台仍待；下一B22历史PV与小棋盘预览，E30已取只读点击/步进播放/0边界/Escape证据，尚未提交实现。

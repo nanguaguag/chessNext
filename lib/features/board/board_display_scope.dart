@@ -11,6 +11,7 @@ class BoardDisplayScope extends InheritedWidget {
     this.showVariationArrows = true,
     this.arrowHead = ArrowHeadStyle.standard,
     this.lastMoveMarker = LastMoveMarkerStyle.halo,
+    this.selectionStyle = SelectionStyle.lift,
     required super.child,
   }) : assert(
          pieceSizePercent >= 10 &&
@@ -28,6 +29,12 @@ class BoardDisplayScope extends InheritedWidget {
       true;
   final ArrowHeadStyle arrowHead;
   final LastMoveMarkerStyle lastMoveMarker;
+  final SelectionStyle selectionStyle;
+  static SelectionStyle selectionStyleOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.selectionStyle ??
+      SelectionStyle.lift;
   static LastMoveMarkerStyle lastMoveMarkerOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
@@ -55,6 +62,7 @@ class BoardDisplayScope extends InheritedWidget {
       false;
   @override
   bool updateShouldNotify(BoardDisplayScope oldWidget) =>
+      selectionStyle != oldWidget.selectionStyle ||
       lastMoveMarker != oldWidget.lastMoveMarker ||
       showCoordinates != oldWidget.showCoordinates ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||

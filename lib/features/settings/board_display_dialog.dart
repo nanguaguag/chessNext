@@ -43,6 +43,31 @@ class BoardDisplayDialog extends StatelessWidget {
               ),
               const Text('标出最后一步的起点与终点。光圈在换步时旋转一周；系统减少动画时静止。'),
               const SizedBox(height: 12),
+              DropdownButtonFormField<SelectionStyle>(
+                key: ValueKey(preferences.value.selectionStyle),
+                initialValue: preferences.value.selectionStyle,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: '选子样式'),
+                items: const [
+                  DropdownMenuItem(
+                    value: SelectionStyle.lift,
+                    child: Text('抬起'),
+                  ),
+                  DropdownMenuItem(
+                    value: SelectionStyle.frame,
+                    child: Text('选择框'),
+                  ),
+                ],
+                onChanged: preferences.loading
+                    ? null
+                    : (style) {
+                        if (style != null) {
+                          unawaited(preferences.setSelectionStyle(style));
+                        }
+                      },
+              ),
+              const Text('只改变选中棋子的显示，点击区域保持在交点。'),
+              const SizedBox(height: 12),
               Text('棋子大小：${preferences.value.pieceSizePercent}%'),
               Semantics(
                 label: '棋子大小',

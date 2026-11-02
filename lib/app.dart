@@ -257,6 +257,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     builder: (context, child) => AppTextScaling(
       preference: preferences.value.textSize,
       child: BoardDisplayScope(
+        selectionStyle: preferences.value.selectionStyle,
         lastMoveMarker: preferences.value.lastMoveMarker,
         showCoordinates: preferences.value.showCoordinates,
         pieceSizePercent: preferences.value.pieceSizePercent,

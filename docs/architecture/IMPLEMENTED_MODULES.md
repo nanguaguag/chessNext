@@ -72,3 +72,5 @@ M3-23：纯CurrentMoveArrows按父局面投影/稳定编号/最多64含当前，
 M3-24：application/board_evaluation.dart无Flutter投影原生WDL/边界/杀棋/终局，features/analysis/evaluation_board.dart只读灰态/方向/语义。App传当前首PV与领域outcome，偏好Controller独立showEvaluationBar；无新引擎/IO所有者，ADR-028。
 
 M3-25：LastMoveMarkerStyle偏好值/Controller合并与Scope；XiangqiBoard传当前着法及(epoch,cursorId)，LastMoveMarkers独立有限动画与Painter，共用boardSquarePoint、纯展示不持IO/引擎/文档。根/编辑器不传move，ADR-029。
+
+M3-26：SelectionStyle纯枚举与可选偏好、Controller合并/Scope/棋盘显示Dropdown；BoardSurface只改变已选非空面容/固定交点SelectedPieceFramePainter，变换不改hit test，选子与拖放仍原会话/编辑器负责。ADR-030。

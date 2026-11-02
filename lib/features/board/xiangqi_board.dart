@@ -1,3 +1,4 @@
+import 'selected_piece_frame.dart';
 import 'last_move_markers.dart';
 import '../../application/current_move_arrows.dart';
 import 'variation_arrows_painter.dart';
@@ -68,6 +69,7 @@ class BoardSurface extends StatefulWidget {
     this.lastMove,
     this.lastMoveIdentity,
     this.lastMoveMarkerStyle,
+    this.selectionStyle,
     this.targets = const {},
     this.flipped = false,
     this.mirrored = false,
@@ -97,6 +99,7 @@ class BoardSurface extends StatefulWidget {
   final Move? lastMove;
   final Object? lastMoveIdentity;
   final LastMoveMarkerStyle? lastMoveMarkerStyle;
+  final SelectionStyle? selectionStyle;
   final Set<Square> targets;
   final bool flipped;
   final bool mirrored;
@@ -290,6 +293,10 @@ class _BoardSurfaceState extends State<BoardSurface> {
     bool target, {
     bool focused = false,
   }) {
+    final selectionStyle =
+        widget.selectionStyle ?? BoardDisplayScope.selectionStyleOf(context);
+    final lifted =
+        selected && piece != null && selectionStyle == SelectionStyle.lift;
     final face = Container(
       margin: EdgeInsets.all(step * .06),
       decoration: BoxDecoration(
@@ -309,6 +316,14 @@ class _BoardSurfaceState extends State<BoardSurface> {
         ),
         boxShadow: piece == null
             ? null
+            : lifted
+            ? const [
+                BoxShadow(
+                  color: Color(0x66000000),
+                  blurRadius: 8,
+                  offset: Offset(0, 7),
+                ),
+              ]
             : const [
                 BoxShadow(
                   color: Color(0x26000000),
@@ -361,17 +376,39 @@ class _BoardSurfaceState extends State<BoardSurface> {
               ],
             ),
     );
-    return piece == null
-        ? face
-        : Transform.scale(
-            key: const ValueKey('piece-size'),
-            scale:
-                (widget.pieceSizePercent ??
-                    BoardDisplayScope.pieceSizeOf(context)) /
-                100,
-            transformHitTests: false,
-            child: face,
-          );
+    if (piece == null) return face;
+    Widget scaled = Transform.scale(
+      key: const ValueKey('piece-size'),
+      scale:
+          (widget.pieceSizePercent ?? BoardDisplayScope.pieceSizeOf(context)) /
+          100,
+      transformHitTests: false,
+      child: face,
+    );
+    if (lifted) {
+      scaled = Transform.translate(
+        key: const ValueKey('selected-piece-lift'),
+        offset: Offset(0, -step * .08),
+        transformHitTests: false,
+        child: scaled,
+      );
+    }
+    return Stack(
+      fit: StackFit.expand,
+      clipBehavior: Clip.none,
+      children: [
+        scaled,
+        if (selected && selectionStyle == SelectionStyle.frame)
+          const Positioned.fill(
+            child: IgnorePointer(
+              child: CustomPaint(
+                key: ValueKey('selected-piece-frame'),
+                painter: SelectedPieceFramePainter(),
+              ),
+            ),
+          ),
+      ],
+    );
   }
 
   Widget _cell(Square square, int col, int row, double step) {

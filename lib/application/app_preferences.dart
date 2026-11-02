@@ -25,6 +25,7 @@ final class AppPreferences {
     this.showEvaluationBar = true,
     this.arrowHead = ArrowHeadStyle.standard,
     this.lastMoveMarker = LastMoveMarkerStyle.halo,
+    this.selectionStyle = SelectionStyle.lift,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
@@ -56,6 +57,7 @@ final class AppPreferences {
   final bool showEvaluationBar;
   final ArrowHeadStyle arrowHead;
   final LastMoveMarkerStyle lastMoveMarker;
+  final SelectionStyle selectionStyle;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
@@ -68,6 +70,7 @@ final class AppPreferences {
     bool? showEvaluationBar,
     ArrowHeadStyle? arrowHead,
     LastMoveMarkerStyle? lastMoveMarker,
+    SelectionStyle? selectionStyle,
     int? threads,
     int? hashMb,
     int? multiPv,
@@ -83,6 +86,7 @@ final class AppPreferences {
     showEvaluationBar: showEvaluationBar ?? this.showEvaluationBar,
     arrowHead: arrowHead ?? this.arrowHead,
     lastMoveMarker: lastMoveMarker ?? this.lastMoveMarker,
+    selectionStyle: selectionStyle ?? this.selectionStyle,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
@@ -91,6 +95,8 @@ final class AppPreferences {
   );
   Map<String, Object> toJson() => {
     'schema': 1,
+    if (selectionStyle != SelectionStyle.lift)
+      'selectionStyle': selectionStyle.name,
     if (lastMoveMarker != LastMoveMarkerStyle.halo)
       'lastMoveMarker': lastMoveMarker.name,
     'theme': theme.name,
@@ -109,6 +115,8 @@ final class AppPreferences {
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
+        (json.containsKey('selectionStyle') &&
+            json['selectionStyle'] is! String) ||
         (json.containsKey('lastMoveMarker') &&
             json['lastMoveMarker'] is! String) ||
         (json.containsKey('showEvaluationBar') &&
@@ -135,6 +143,9 @@ final class AppPreferences {
     }
     try {
       return AppPreferences(
+        selectionStyle: SelectionStyle.values.byName(
+          json['selectionStyle'] as String? ?? 'lift',
+        ),
         lastMoveMarker: LastMoveMarkerStyle.values.byName(
           json['lastMoveMarker'] as String? ?? 'halo',
         ),
@@ -163,6 +174,7 @@ final class AppPreferences {
   @override
   bool operator ==(Object other) =>
       other is AppPreferences &&
+      selectionStyle == other.selectionStyle &&
       lastMoveMarker == other.lastMoveMarker &&
       showEvaluationBar == other.showEvaluationBar &&
       showVariationArrows == other.showVariationArrows &&
@@ -179,6 +191,7 @@ final class AppPreferences {
       guideVersion == other.guideVersion;
   @override
   int get hashCode => Object.hash(
+    selectionStyle,
     lastMoveMarker,
     showEvaluationBar,
     showVariationArrows,

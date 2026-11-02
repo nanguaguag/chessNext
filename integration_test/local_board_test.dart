@@ -2365,4 +2365,129 @@ void main() {
       }
     },
   );
+  testWidgets(
+    'native selection style restores preferences and editor hit targets without changing saved game',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-selection-');
+      final preferences = FilePreferencesRepository(() async => directory);
+      final games = FileGameRepository(() async => directory);
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+        engineFactory: openBundledEngine,
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      final frame = find.byKey(const ValueKey('selected-piece-frame'));
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.byKey(const ValueKey('square-h2')));
+        expect(
+          find.byKey(const ValueKey('selected-piece-lift')),
+          findsOneWidget,
+        );
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        final tree = session.tree,
+            revision = session.revision,
+            positionRevision = session.positionRevision;
+        final cell = tester.getRect(find.byKey(const ValueKey('square-h2')));
+        await games.save(
+          SavedGame(
+            id: 'selection-game',
+            title: '选子验证',
+            tree: tree,
+            modifiedAt: DateTime.now(),
+          ),
+        );
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        for (var i = 0; i < 100 && engine.infos.isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.infos, isNotEmpty);
+        final token = engine.infos.first.token;
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('棋盘显示'));
+        await tap(find.byType(DropdownButtonFormField<SelectionStyle>));
+        await tap(find.text('选择框').last);
+        for (
+          var i = 0;
+          i < 50 &&
+              (await preferences.load())?.value.selectionStyle !=
+                  SelectionStyle.frame;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          (await preferences.load())!.value.selectionStyle,
+          SelectionStyle.frame,
+        );
+        expect(frame, findsOneWidget);
+        expect(session.selected, Square.parse('h2'));
+        expect(tester.getRect(find.byKey(const ValueKey('square-h2'))), cell);
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.positionRevision, positionRevision);
+        expect(session.dirty, isFalse);
+        expect(engine.infos.every((info) => info.token == token), isTrue);
+        expect(engine.enabled, isTrue);
+        await tap(find.text('关闭'));
+        await tap(find.text('取消'));
+        await engine.disable();
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        await tap(find.byKey(const ValueKey('square-h2')));
+        expect(frame, findsOneWidget);
+        await tap(find.text('编辑局面'));
+        await tap(find.text('旋转棋盘'));
+        await tap(find.text('左右翻转'));
+        await tap(find.byKey(const ValueKey('square-h2')));
+        expect(frame, findsOneWidget);
+        final from = tester.getCenter(find.byKey(const ValueKey('square-h2'))),
+            to = tester.getCenter(find.byKey(const ValueKey('square-h3')));
+        await tester.dragFrom(from, to - from);
+        await tester.pumpAndSettle();
+        expect(frame, findsNothing);
+        expect(
+          tester
+              .widget<BoardSurface>(find.byType(BoardSurface))
+              .at(Square.parse('h3'))
+              ?.type,
+          PieceType.cannon,
+        );
+        await tap(find.byTooltip('取消编辑'));
+        expect(
+          tester
+              .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+              .session
+              .tree
+              .toJson(),
+          tree.toJson(),
+        );
+        expect(
+          (await games.load('selection-game')).tree.toJson(),
+          tree.toJson(),
+        );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }

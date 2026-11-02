@@ -249,7 +249,7 @@ RecordFileExporter纯端口与取消令牌，MacOsRecordFileExporter官方保存
 
 探针首Swift precondition中throw表达式编译失败改先读再断言；widget首错误调用setComment改实际annotate，修后5/5。初analyze业务1及随后测试2项大括号info补齐，最终analyze0问题；根首272全过，最后修纯测试大括号后再完整272过。日志/tmp/chessnext-{atomic-probe,atomic-probe-final,file-export-adapter,file-export-widget,file-export-widget-final,file-export-full,file-export-full-final,file-export-analyze-initial,file-export-analyze,file-export-analyze-final,file-export-native,file-export-entitlements}.log。无后台验证未收尾。
 
-## 2026-11-02 / M3-19 / F27 → B15 全局字号
+## 2026-11-02 / M3-19 / F27 → B08,B20 全局字号
 
 E21三档100/115/130与系统/手动切换、同会话页间记忆为V；本地AppPreferences可选textSize/旧字段兼容与严格坏值、逐字段晚到合并/串行最新值/重试，TextSizeDialog即时全路由生效，普通设置表单保留字段。AppTextScaling保留系统TextScaler原对象/非线性，手动不乘系统；不改棋谱/dirty、搜索请求数不变。ADR-023/TEXT_SIZE_SLICE。
 
@@ -257,7 +257,7 @@ E21三档100/115/130与系统/手动切换、同会话页间记忆为V；本地A
 
 初组件4过2失败：touch tap不保证键盘焦点，改用实际Tab遍历到滑块再Right，不改生产焦点逻辑；SemanticsHandle需在test body finally dispose（addTearDown晚于framework校验），修测试后6/6、完整根全过。日志/tmp/chessnext-text-size-{application,widget,widget-final,full,analyze-initial,analyze,analyze-final,native,native-settings}.log，所有session结束。
 
-## 2026-11-02 / M3-20 / F21 → B15 棋盘路数坐标
+## 2026-11-02 / M3-20 / F21 → B08,B20 棋盘路数坐标
 
 E22实测参考显示坐标开关/数字2显隐/导航记忆并恢复原设置。项目BoardFileCoordinates提供独立上下红黑方路数边框/四种方向，BoardDisplayScope在Navigator外覆盖主棋盘与编辑器；showCoordinates可选旧默认true/严格坏值、逐字段晚到合并/持久化/重试，普通设置保留新值，不改谱/重启分析。上下边框和90格统一比例/内部格距，不拦截落子/拖放。ADR-024/BOARD_COORDINATES_SLICE。原站完整方向/编辑器/重载仍U，边框为项目P。
 
@@ -265,7 +265,7 @@ E22实测参考显示坐标开关/数字2显隐/导航记忆并恢复原设置�
 
 首测试文件多一括号导致格式/加载失败；修后15过3失败为两独立BoardSurface夹具缺Material、脏文档编辑漏继续编辑确认；补夹具/流程后18过，没有改生产保护。晚到测试改为存储值与显式选择相反，以实证合并。初analyze1项大括号info补齐；所有最终门槛通过。日志/tmp/chessnext-coordinates-{target,target-final,target-retry,full,full-final,analyze-initial,analyze,analyze-final,native-full,native-settings-final}.log，所有命令收尾。E21/E22证据来源/校验清单DISPLAY_EVIDENCE_MANIFEST。
 
-## 2026-11-02 / M3-21 / F21 → B15 棋子大小
+## 2026-11-02 / M3-21 / F21 → B08,B20 棋子大小
 
 E23实际10–200/步5与最小点状/最大重叠裁切、页间记忆并恢复100；正常方向上下完整路数可见补E22。AppPreferences/Controller/Scope增加pieceSizePercent，可选旧100/严格范围与步长/晚到合并/持久化；BoardDisplayDialog即时滑块/默认重置/错误重试，BoardSurface只缩放实际棋子面容和拖动反馈、transformHitTests=false，90格/空位/箭头/路数几何保持，两个路由共用。ADR-025/PIECE_SIZE_SLICE。
 

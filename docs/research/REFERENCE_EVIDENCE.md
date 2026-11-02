@@ -147,3 +147,13 @@ E21/E22截图与AX的尺寸/字节/SHA及来源用途统一见[显示证据清�
 URL https://xiangqiai.com/#/settings与/#/，访客IAB，E19自制树，所有AI关，系统字号100/坐标开。只读观察已显示的“棋子大小”slider DOM属性min=10/max=200/step=5/value=100（O）；通过AX setValue10与200，标签与滑块值分别更新（V）。Escape回棋盘，10%接近小点，200%发生相邻重叠和边缘裁切（V）；两次回访设置仍保留该值，仅证页间记忆。最后恢复100，回自制棋盘并markHandoff，无落子/谱替换。
 
 [10%棋盘](screenshots/E23-piece-size-min.png)、[200%棋盘](screenshots/E23-piece-size-max.png)/[最大值AX](E23-piece-size-max.ax.txt)、[恢复100%](screenshots/E23-piece-size-restored.png)。10%下完整显示正常方向顶部Arabic1至9、底部中文九至一（V），补E22此前被棋子遮挡的正常方向未知；翻转/镜像/编辑/点击命中/重载仍未在站点操作，不从截图推算法。来源/摘要见DISPLAY_EVIDENCE_MANIFEST。
+
+## E24 / 2026-11-02 实际推荐箭头组合与头部样式
+
+URL https://xiangqiai.com/#/与/#/settings/analysis，访客IAB，E19自制三着支线末端，棋子100/字号系统100/坐标开，起始所有AI及分析关闭。启动分析实际出现D15等PV和蓝色本步/粉色预计应着两支箭头（V）；官方指南也如此解释颜色（D，https://xiangqiai.com/guide/）。[标准基线](screenshots/E24-arrows-standard.png)。
+
+设置推荐箭头关、变着箭头仍开，返回棋盘分析PV有效但蓝/粉两支均不见（V）[关闭截图](screenshots/E24-arrows-recommendation-off.png)。重新推荐开、变着关、选宽，返回后蓝粉两支都在（V）[宽头](screenshots/E24-arrows-wide.png)。说明“变着箭头”开关不是预计应着的独立开关；其准确对象/本步变着局部开关联动未在本轮操作，保留U。选尖，返回可见更窄头部（V）[尖头](screenshots/E24-arrows-sharp.png)/[AX](E24-arrows-sharp.ax.txt)。本步和应着会随引擎PV变化，图片非固定走法比较，不声称量出原站像素算法。
+
+最终停止分析（checkbox0，[截短AX](E24-analysis-stopped.ax.txt)，明确保留前2500字符状态证据），恢复推荐/变着均开、标准样式，回原自制树并markHandoff。[恢复设置](screenshots/E24-arrows-restored-settings.png)。未落子或开启AI自动走。PW checkbox locator找不到，改fresh AX15成功停止；没把失败点击当完成。
+
+O：分析结果持续有多张不同深度的PV历史卡，标准基线截图还出现小棋盘预览；本地目前只显示最新MultiPV，历史/预览的触发与关闭流程待独立审计B22。全部截图/AX来源/摘要见DISPLAY_EVIDENCE_MANIFEST，不作产品素材。

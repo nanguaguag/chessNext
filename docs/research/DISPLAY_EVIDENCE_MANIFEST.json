@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -100,6 +100,58 @@
       "path": "E23-piece-size-max.ax.txt",
       "bytes": 1547,
       "sha256": "0c3edd223240f75219f81827640d8176c22be3c857d8cc578881682c73465359"
+    },
+    {
+      "id": "E24",
+      "path": "screenshots/E24-arrows-recommendation-off.png",
+      "bytes": 129776,
+      "sha256": "3357c050b67ce94c1140b6d69dfd263ad4ee4764d51802ee9954932e65af503f",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E24",
+      "path": "screenshots/E24-arrows-restored-settings.png",
+      "bytes": 51484,
+      "sha256": "05e7b2dbbf0d02a9b25c56e81f326bb615ee296392b3f9807567d5625bfada8b",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E24",
+      "path": "screenshots/E24-arrows-sharp.png",
+      "bytes": 129983,
+      "sha256": "8dc13739bbef2a6597c77be5a1677f14ae6bab9806b760ea240183e102a06a5a",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E24",
+      "path": "screenshots/E24-arrows-standard.png",
+      "bytes": 136986,
+      "sha256": "1aca92d1a46a50a3b2986f9c763309dbfe95328f630abcba9d1237bd9c1eb4a0",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E24",
+      "path": "screenshots/E24-arrows-wide.png",
+      "bytes": 129841,
+      "sha256": "3789618121916487ae25208105caedb4bfa75a84e10ab27e71760d0c28f672d9",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E24",
+      "path": "E24-analysis-stopped.ax.txt",
+      "bytes": 3793,
+      "sha256": "b90c8a989db503becf3768f7453750974cbc6f21e76c1725e5d783046699c9e7"
+    },
+    {
+      "id": "E24",
+      "path": "E24-arrows-sharp.ax.txt",
+      "bytes": 2178,
+      "sha256": "a1bfe5ccc19648e7e515eed6ab2c72b1bbec4ff7d90af55258e37bf3c76d9471"
     }
   ]
 }

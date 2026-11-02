@@ -1,0 +1,89 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/
+	1 container app
+		2 container
+			3 button 菜单
+				4 image
+				5 text 菜单
+			6 button 新局
+				7 image
+				8 text 新局
+			9 checkbox Description: 引擎执红, Value: 0
+				10 image
+				11 text 引擎执红
+			12 checkbox Description: 引擎执黑, Value: 0
+				13 image
+				14 text 引擎执黑
+			15 checkbox Description: 分析模式, Value: 0
+				16 image
+				17 text 分析模式
+			18 button 立即出招
+				19 image
+				20 text 立即出招
+			21 button 变招
+				22 image
+				23 text 变招
+			24 container 翻转
+				25 container
+					26 image
+					27 text 翻转
+			28 button 导入
+				29 image
+				30 text 导入
+			31 container 保存 / 分享 · 有未保存的修改
+				32 container
+					33 image
+					34 text 保存 / 分享
+			35 checkbox Description: 编辑, Value: 0
+				36 image
+				37 text 编辑
+			38 container displayArea
+				39 splitter Description: 调整左栏宽度, Value: 22
+				40 splitter Description: 调整棋盘宽度, Value: 70
+				41 container
+					42 text 开始 1. 炮八平五 马２进３ 2. 炮二进二
+					43 container 另有 1 条已保存的变化
+						44 text 1变
+					45 button 棋谱分析
+						46 image
+						47 text 棋谱分析
+				48 splitter Description: 调整上下分区, Value: 55
+				49 container
+					50 text 着法
+					51 button  存题, Help: 存为题
+						52 text 
+						53 text 存题
+					54 button 上一着
+						55 text 
+					56 button (disabled) 下一着
+						57 text 
+					58 text 炮二进二
+					59 button 添加注释
+						60 image
+						61 text 添加注释
+					62 text 本步变着
+					63 switch 棋盘箭头, Value: 0
+					64 container
+						65 text 1 马八进七
+						66 button (disabled) 置顶
+							67 image
+						68 button 删除这步及后续
+							69 image
+					70 container
+						71 text 2 炮二进二 49%
+						72 button 置顶
+							73 image
+						74 button 删除这步及后续
+							75 image
+					76 container
+						77 image
+						78 text 彻底分析可行着法
+						79 button 彻底分析设置
+							80 image
+				81 container
+					82 text 引擎
+					83 button 重置布局
+					84 button 引擎参数
+						85 image
+					86 container (showing 0-500 of 1368 items)
+						87 text 红分 -8 D31 18.7s 3155K 炮２平１ 马八进七 车１平２ 马二进三 卒７进１ 炮二平九 卒１进１ 炮九进三 炮８平１ 车一平二 马８进７ 车二进四 车９平８ 车二进五 马７退８ 兵五进一 马８进７ 马三进五 马７进６ 兵三进一 马６进４ 兵七进一 马４进５ 相三进五 马３退５ 车九进一 马５进４ 兵三进一 车２进６ 兵三平四 车２平４ 车九平四 马４进５ 红分 -8 D30 11.1s 3243K 炮２平１ 马八进七 车１平２ 兵三进一 炮８平７ 马二进一 马８进９ 兵一进一 象７进５ 车九平八 车２进９ 马七退八 士６进５ 兵七进一 车９平８ 车一平二 车８进４ 炮二退三 卒７进１ 炮二平三 车８进５ 马一退二 马９退８ 相三进一 卒７进１ 炮三进六 马８进７ 相一进三 炮１进４ 马二进三 红分 -7 D29 5.0s 3461K 车１平２ 马二进三 炮２平１ 马八进七 卒７进１ 炮二平九 卒１进１ 炮九进三 炮８平１ 车一平二 马８进７ 车二进四 车９平８ 车二进五 马７退８ 兵五进一 马８进７ 马三进五 士６进５ 兵三进一 卒７进１ 马五进三 车２进６ 车九平八 车２进３ 马七退八 卒３进１ 炮五平七 象３进５ 兵七进一 马３进１ 相三进五 卒３进１ 相五进七 马１进３ 炮七进三 象５进３ 马八进七

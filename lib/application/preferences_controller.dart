@@ -83,6 +83,9 @@ class PreferencesController extends ChangeNotifier {
           stored.copyWith(
             theme: _edited.contains('theme') ? previous.theme : null,
             textSize: _edited.contains('textSize') ? previous.textSize : null,
+            pieceSizePercent: _edited.contains('pieceSizePercent')
+                ? previous.pieceSizePercent
+                : null,
             showCoordinates: _edited.contains('showCoordinates')
                 ? previous.showCoordinates
                 : null,
@@ -136,6 +139,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(textSize: size));
   Future<void> setShowCoordinates(bool visible) =>
       apply(value.copyWith(showCoordinates: visible));
+  Future<void> setPieceSize(int percent) =>
+      apply(value.copyWith(pieceSizePercent: percent));
   Future<void> retryPersistence() =>
       _allowWrite ? flush(force: true) : initialize();
   Future<void> apply(AppPreferences next) {
@@ -150,6 +155,9 @@ class PreferencesController extends ChangeNotifier {
   void _recordEdits(AppPreferences next) {
     if (next.theme != value.theme) _edited.add('theme');
     if (next.textSize != value.textSize) _edited.add('textSize');
+    if (next.pieceSizePercent != value.pieceSizePercent) {
+      _edited.add('pieceSizePercent');
+    }
     if (next.showCoordinates != value.showCoordinates) {
       _edited.add('showCoordinates');
     }

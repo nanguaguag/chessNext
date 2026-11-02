@@ -59,13 +59,19 @@ class BoardSurface extends StatefulWidget {
     this.flipped = false,
     this.mirrored = false,
     this.showCoordinates,
+    this.pieceSizePercent,
     this.enabled = true,
     this.onCancel,
     this.onRemove,
     this.onDrop,
     this.recommendation,
     this.reply,
-  });
+  }) : assert(
+         pieceSizePercent == null ||
+             (pieceSizePercent >= 10 &&
+                 pieceSizePercent <= 200 &&
+                 pieceSizePercent % 5 == 0),
+       );
   final Piece? Function(Square) at;
   final ValueChanged<Square> onTap;
   final VoidCallback? onCancel;
@@ -76,6 +82,7 @@ class BoardSurface extends StatefulWidget {
   final bool flipped;
   final bool mirrored;
   final bool? showCoordinates;
+  final int? pieceSizePercent;
   final bool enabled;
   final Move? recommendation;
   final Move? reply;
@@ -197,73 +204,91 @@ class _BoardSurfaceState extends State<BoardSurface> {
     bool selected,
     bool target, {
     bool focused = false,
-  }) => Container(
-    margin: EdgeInsets.all(step * .06),
-    decoration: BoxDecoration(
-      shape: BoxShape.circle,
-      color: selected
-          ? const Color(0xffc6d8b2)
-          : piece != null
-          ? const Color(0xfffff4da)
-          : null,
-      border: Border.all(
-        color: selected || focused
-            ? const Color(0xff3c624a)
+  }) {
+    final face = Container(
+      margin: EdgeInsets.all(step * .06),
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: selected
+            ? const Color(0xffc6d8b2)
             : piece != null
-            ? const Color(0xffbda177)
-            : Colors.transparent,
-        width: selected ? 3 : 1.5,
+            ? const Color(0xfffff4da)
+            : null,
+        border: Border.all(
+          color: selected || focused
+              ? const Color(0xff3c624a)
+              : piece != null
+              ? const Color(0xffbda177)
+              : Colors.transparent,
+          width: selected ? 3 : 1.5,
+        ),
+        boxShadow: piece == null
+            ? null
+            : const [
+                BoxShadow(
+                  color: Color(0x26000000),
+                  blurRadius: 3,
+                  offset: Offset(0, 2),
+                ),
+              ],
       ),
-      boxShadow: piece == null
-          ? null
-          : const [
-              BoxShadow(
-                color: Color(0x26000000),
-                blurRadius: 3,
-                offset: Offset(0, 2),
-              ),
-            ],
-    ),
-    child: piece == null
-        ? Center(
-            child: target
-                ? Container(
-                    width: 12,
-                    height: 12,
-                    decoration: const BoxDecoration(
-                      shape: BoxShape.circle,
-                      color: Color(0xff3c624a),
-                    ),
-                  )
-                : null,
-          )
-        : Stack(
-            alignment: Alignment.center,
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(4),
-                child: FittedBox(
-                  child: Text(
-                    pieceName(piece),
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w600,
-                      color: piece.side == Side.red
-                          ? const Color(0xffa12f29)
-                          : const Color(0xff26362d),
+      child: piece == null
+          ? Center(
+              child: target
+                  ? Container(
+                      width: 12,
+                      height: 12,
+                      decoration: const BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: Color(0xff3c624a),
+                      ),
+                    )
+                  : null,
+            )
+          : Stack(
+              alignment: Alignment.center,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(4),
+                  child: FittedBox(
+                    child: Text(
+                      pieceName(piece),
+                      style: TextStyle(
+                        fontSize: 28,
+                        fontWeight: FontWeight.w600,
+                        color: piece.side == Side.red
+                            ? const Color(0xffa12f29)
+                            : const Color(0xff26362d),
+                      ),
                     ),
                   ),
                 ),
-              ),
-              if (target)
-                const Positioned(
-                  right: 0,
-                  top: 0,
-                  child: Icon(Icons.circle, size: 12, color: Color(0xff3c624a)),
-                ),
-            ],
-          ),
-  );
+                if (target)
+                  const Positioned(
+                    right: 0,
+                    top: 0,
+                    child: Icon(
+                      Icons.circle,
+                      size: 12,
+                      color: Color(0xff3c624a),
+                    ),
+                  ),
+              ],
+            ),
+    );
+    return piece == null
+        ? face
+        : Transform.scale(
+            key: const ValueKey('piece-size'),
+            scale:
+                (widget.pieceSizePercent ??
+                    BoardDisplayScope.pieceSizeOf(context)) /
+                100,
+            transformHitTests: false,
+            child: face,
+          );
+  }
+
   Widget _cell(Square square, int col, int row, double step) {
     final piece = widget.at(square);
     final selected = widget.selected == square;

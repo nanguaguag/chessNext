@@ -141,3 +141,9 @@ V：关“跟随系统”后slider0；设2显示130%（特大），设1显示115
 URL https://xiangqiai.com/#/settings与/#/，访客IAB，E19同一自制树/AI全关/系统字号恢复100%。设置棋盘与棋子内显示坐标初开，关闭后Escape回棋盘，原顶部空马位上方数字2消失；再入设置开关仍关（[AX](E22-coordinates-off.ax.txt)）。恢复开后回棋盘，顶部2重新可见，自制着法及另一分支仍在。[关闭截图](screenshots/E22-coordinates-off.png)/[恢复截图](screenshots/E22-coordinates-on.png)。V仅开关/页间记忆和可见数字显隐；其它数字大多被当前棋子遮挡，不能证明全部标注/翻转/镜像/编辑器/重载行为。项目独立坐标边框及红黑完整路数映射是P，后续测试不冒充站点V。
 
 E21/E22截图与AX的尺寸/字节/SHA及来源用途统一见[显示证据清单](DISPLAY_EVIDENCE_MANIFEST.json)，不是产品可再分发素材许可声明。
+
+## E23 / 2026-11-02 棋子大小范围与实际效果
+
+URL https://xiangqiai.com/#/settings与/#/，访客IAB，E19自制树，所有AI关，系统字号100/坐标开。只读观察已显示的“棋子大小”slider DOM属性min=10/max=200/step=5/value=100（O）；通过AX setValue10与200，标签与滑块值分别更新（V）。Escape回棋盘，10%接近小点，200%发生相邻重叠和边缘裁切（V）；两次回访设置仍保留该值，仅证页间记忆。最后恢复100，回自制棋盘并markHandoff，无落子/谱替换。
+
+[10%棋盘](screenshots/E23-piece-size-min.png)、[200%棋盘](screenshots/E23-piece-size-max.png)/[最大值AX](E23-piece-size-max.ax.txt)、[恢复100%](screenshots/E23-piece-size-restored.png)。10%下完整显示正常方向顶部Arabic1至9、底部中文九至一（V），补E22此前被棋子遮挡的正常方向未知；翻转/镜像/编辑/点击命中/重载仍未在站点操作，不从截图推算法。来源/摘要见DISPLAY_EVIDENCE_MANIFEST。

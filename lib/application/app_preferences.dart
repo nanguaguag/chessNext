@@ -17,13 +17,17 @@ final class AppPreferences {
     this.theme = ThemePreference.system,
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
+    this.pieceSizePercent = 100,
     this.threads = 1,
     this.hashMb = 16,
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
     this.guideVersion = 0,
   }) {
-    if (threads < 1 ||
+    if (pieceSizePercent < 10 ||
+        pieceSizePercent > 200 ||
+        pieceSizePercent % 5 != 0 ||
+        threads < 1 ||
         threads > 1024 ||
         hashMb < 1 ||
         hashMb > 1024 ||
@@ -39,12 +43,14 @@ final class AppPreferences {
   final ThemePreference theme;
   final TextSizePreference textSize;
   final bool showCoordinates;
+  final int pieceSizePercent;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
     ThemePreference? theme,
     TextSizePreference? textSize,
     bool? showCoordinates,
+    int? pieceSizePercent,
     int? threads,
     int? hashMb,
     int? multiPv,
@@ -54,6 +60,7 @@ final class AppPreferences {
     theme: theme ?? this.theme,
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
+    pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     threads: threads ?? this.threads,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
@@ -65,6 +72,7 @@ final class AppPreferences {
     'theme': theme.name,
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
+    if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
     'threads': threads,
     'hashMb': hashMb,
     'multiPv': multiPv,
@@ -78,6 +86,8 @@ final class AppPreferences {
         (json.containsKey('showCoordinates') &&
             json['showCoordinates'] is! bool) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
+        (json.containsKey('pieceSizePercent') &&
+            json['pieceSizePercent'] is! int) ||
         ![
           'threads',
           'hashMb',
@@ -94,6 +104,7 @@ final class AppPreferences {
         ),
         threads: json['threads'] as int,
         showCoordinates: json['showCoordinates'] as bool? ?? true,
+        pieceSizePercent: json['pieceSizePercent'] as int? ?? 100,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
@@ -109,6 +120,7 @@ final class AppPreferences {
       theme == other.theme &&
       textSize == other.textSize &&
       showCoordinates == other.showCoordinates &&
+      pieceSizePercent == other.pieceSizePercent &&
       threads == other.threads &&
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
@@ -119,6 +131,7 @@ final class AppPreferences {
     theme,
     textSize,
     showCoordinates,
+    pieceSizePercent,
     threads,
     hashMb,
     multiPv,

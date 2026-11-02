@@ -256,6 +256,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       preference: preferences.value.textSize,
       child: BoardDisplayScope(
         showCoordinates: preferences.value.showCoordinates,
+        pieceSizePercent: preferences.value.pieceSizePercent,
         child: child!,
       ),
     ),

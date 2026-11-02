@@ -62,3 +62,5 @@ M4-01e：RecordFileExporter与MacOsRecordFileExporter分离外部导出/内部�
 M3-19：AppPreferences可选textSize枚举/Controller合并与retryPersistence，AppTextScaling全路由MediaQuery保留系统非线性与显式manual1/1.15/1.3；TextSizeDialog从原PreferencesDialog独立实时操作/错误重试，旧参数表单copyWith保留它。无新IO/引擎所有者；ADR-023，F27语言/字体资源仍后续。
 
 M3-20：BoardDisplayScope在Navigator外持只读显示bool，BoardSurface统一使用/可override，BoardFileCoordinates独立上下路数边框；翻转/镜像和格距沿同一逻辑Square，坐标不拦截落子。AppPreferences可选showCoordinates与Controller合并/串行持久化，BoardDisplayDialog独立即改即存/失败重试；普通设置保留最新字段。ADR-024，棋子大小/素材与其它外观后续。
+
+M3-21：既有显示Scope/偏好增加有界pieceSizePercent，BoardDisplayDialog离散滑块/重置即改即存。BoardSurface只对实际piece face做Transform.scale（不变hit test），空交点、路数和90格几何保持，拖动feedback共用face。ADR-025/PIECE_SIZE_SLICE。

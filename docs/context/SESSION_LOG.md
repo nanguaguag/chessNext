@@ -266,3 +266,9 @@ IAB访客实际坐标开关/导航记忆与顶部2显隐，恢复原开启返回
 初apply_patch上下文不符时工具原子拒绝，无文件改动；修定位后正常。初新组件测试多一括号格式/加载失败，修后15过3失败为夹具两处缺Material与dirty编辑确认遗漏，补夹具和继续编辑后目标18/18；同时改晚到测试为相反存储值避免无效断言。初analyze1大括号info补齐。根显式NNUE293/293（72677）与analyze0（22995）exit0；完整macOS23/23（34715，03:29）exit0，fixture raw[]，生产无生命周期覆盖。
 
 最后整理普通设置两个显示入口为主题下Wrap、保留连续资源参数，最终显式NNUE根293/293（37551）、analyze无问题（27849）、macOS旧设置+新坐标相关2/2（65239，00:21）均exit0。所有命令结束，核心不变65沿用，真实OS焦点/人工视觉及其它平台未验。日志/tmp/chessnext-coordinates-*.log。ADR-024/TEXT_SIZE及BOARD_COORDINATES_SLICE、E21/E22 DISPLAY_EVIDENCE_MANIFEST可追溯。下一棋子尺寸，继续不停止对标。
+
+### 2026-11-02 / E23 与 M3-21 棋子尺寸
+
+IAB参考站点已显示slider只读DOM min10/max200/step5，AX设置两端/回棋盘实际截图证实点状/重叠裁切，回访记忆；恢复100返回自制棋谱，截图已commentary嵌图，无谱/账号/资源复制进产品。最小棋子时顶部1–9/底部九–一全可见，补E22正常方向V，旋转/命中仍U。
+
+按PIECE_SIZE_SLICE/ADR-025扩展偏好/显示Scope/即时滑块重置，棋子face Transform.scale且不变hit test；范围/步长校验，两个路由和drag feedback共用。首次patch格式化上下文不符原子拒绝后核文本应用，未有部分修改。应用3/3、含坐标回归目标14/14；补拖动中Overlay实际存在+缩放断言后组件5/5。全量显式NNUE根flutter test301/301 exit0（84139）、flutter analyze0问题exit0（43285）；原生坐标+新尺寸2/2 exit0（71222，00:21），源/UI业务与测试无运行失败。上片完整23/23，本片新增24未全跑24；核心未改65沿用。所有session已结束，日志/tmp/chessnext-piece-size-*.log。下一F26箭头显示补审计，继续推进。

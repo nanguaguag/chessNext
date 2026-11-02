@@ -17,6 +17,34 @@ class BoardDisplayDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Text('棋子大小：${preferences.value.pieceSizePercent}%'),
+              Semantics(
+                label: '棋子大小',
+                child: Slider(
+                  key: const ValueKey('piece-size-slider'),
+                  value: preferences.value.pieceSizePercent.toDouble(),
+                  min: 10,
+                  max: 200,
+                  divisions: 38,
+                  label: '${preferences.value.pieceSizePercent}%',
+                  semanticFormatterCallback: (value) => '${value.round()}%',
+                  onChanged: preferences.loading
+                      ? null
+                      : (value) =>
+                            unawaited(preferences.setPieceSize(value.round())),
+                ),
+              ),
+              const Wrap(
+                spacing: 16,
+                children: [Text('10%'), Text('100%'), Text('200%')],
+              ),
+              TextButton(
+                onPressed: preferences.loading
+                    ? null
+                    : () => unawaited(preferences.setPieceSize(100)),
+                child: const Text('恢复默认大小'),
+              ),
+              const Text('大小只影响显示，点击仍按交点。较大值可能使棋子重叠。'),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('显示坐标'),

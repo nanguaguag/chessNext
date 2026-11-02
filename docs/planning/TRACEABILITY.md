@@ -264,3 +264,11 @@ E22实测参考显示坐标开关/数字2显隐/导航记忆并恢复原设置�
 新增3应用+6组件，加原棋盘/编辑器目标18/18通过；根显式官方NNUE flutter test293/293与flutter analyze无问题exit0。完整macOS23/23通过（03:29，34715），含实际NNUE/AI/缓存/复盘与文件交换、偏好恢复/坐标新例。之后仅把两个显示入口归到主题下Wrap、资源字段连续，最终根293/293 exit0（37551）、analyze0（27849）、原生相关旧设置+新坐标2/2（00:21，65239）通过。核心未改65沿用；真实OS焦点/人工视觉、其它平台仍未验，fixture raw[]不改变该边界。
 
 首测试文件多一括号导致格式/加载失败；修后15过3失败为两独立BoardSurface夹具缺Material、脏文档编辑漏继续编辑确认；补夹具/流程后18过，没有改生产保护。晚到测试改为存储值与显式选择相反，以实证合并。初analyze1项大括号info补齐；所有最终门槛通过。日志/tmp/chessnext-coordinates-{target,target-final,target-retry,full,full-final,analyze-initial,analyze,analyze-final,native-full,native-settings-final}.log，所有命令收尾。E21/E22证据来源/校验清单DISPLAY_EVIDENCE_MANIFEST。
+
+## 2026-11-02 / M3-21 / F21 → B15 棋子大小
+
+E23实际10–200/步5与最小点状/最大重叠裁切、页间记忆并恢复100；正常方向上下完整路数可见补E22。AppPreferences/Controller/Scope增加pieceSizePercent，可选旧100/严格范围与步长/晚到合并/持久化；BoardDisplayDialog即时滑块/默认重置/错误重试，BoardSurface只缩放实际棋子面容和拖动反馈、transformHitTests=false，90格/空位/箭头/路数几何保持，两个路由共用。ADR-025/PIECE_SIZE_SLICE。
+
+新增3应用+5组件；加坐标回归目标14/14通过，后强化拖动中真实Overlay反馈存在/同200%断言，最终组件5/5。根显式官方NNUE flutter test301/301 exit0（84139），flutter analyze无问题exit0（43285）；macOS坐标旧例+尺寸新例2/2 exit0（71222，00:21），真实偏好文件新App恢复200、点击重叠面容仍落正确交点、重置100保留其它字段/原棋谱。原生现24项，本片未全跑24；上片完整23/23已过。核心未改65沿用；OS人工视觉/其它平台未验。
+
+本片analyze初/最终无问题，目标和最终根/原生无失败；首次apply_patch缺格式化后上下文原子拒绝，无文件改动，核实际文本后应用。截图/AX来源与摘要在DISPLAY_EVIDENCE_MANIFEST，无复制产品资源。日志/tmp/chessnext-piece-size-{application,target,widget-final,analyze-initial,analyze,analyze-final,full,native}.log，所有session收尾。

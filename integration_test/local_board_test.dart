@@ -1800,4 +1800,110 @@ void main() {
       }
     },
   );
+  testWidgets(
+    'native piece size saves, restores and keeps overlapping piece hit targets',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-piece-size-');
+      final repository = FilePreferencesRepository(() async => directory);
+      await repository.save(
+        AppPreferences(
+          showCoordinates: false,
+          textSize: TextSizePreference.large,
+          guideVersion: 44,
+        ),
+      );
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      Future<void> display() async {
+        await tap(find.byTooltip('应用设置'));
+        await tap(find.text('棋盘显示'));
+      }
+
+      double scale(String square) => tester
+          .widget<Transform>(
+            find.descendant(
+              of: find.byKey(ValueKey('square-$square')),
+              matching: find.byKey(const ValueKey('piece-size')),
+            ),
+          )
+          .transform
+          .storage[0];
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final initialCell = tester.getRect(
+          find.byKey(const ValueKey('square-h2')),
+        );
+        await display();
+        final slider = find.byKey(const ValueKey('piece-size-slider'));
+        await tester.ensureVisible(slider);
+        await tester.pumpAndSettle();
+        final rect = tester.getRect(slider);
+        await tester.tapAt(Offset(rect.right - 5, rect.center.dy));
+        await tester.pumpAndSettle();
+        for (
+          var i = 0;
+          i < 50 && (await repository.load())!.value.pieceSizePercent != 200;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await repository.load())!.value.pieceSizePercent, 200);
+        expect(scale('h2'), 2);
+        expect(
+          tester.getRect(find.byKey(const ValueKey('square-h2'))),
+          initialCell,
+        );
+        await tap(find.text('关闭'));
+        await tap(find.widgetWithText(FilledButton, '应用设置'));
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        for (var i = 0; i < 50 && scale('h2') != 2; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(scale('h2'), 2);
+        await tap(find.byKey(const ValueKey('square-h2')));
+        await tap(find.byKey(const ValueKey('square-e2')));
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(session.tree.current.move, Move.parse('h2e2'));
+        final tree = session.tree;
+        await display();
+        await tap(find.text('恢复默认大小'));
+        for (
+          var i = 0;
+          i < 50 && (await repository.load())!.value.pieceSizePercent != 100;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        final saved = (await repository.load())!.value;
+        expect(saved.pieceSizePercent, 100);
+        expect(saved.showCoordinates, isFalse);
+        expect(saved.textSize, TextSizePreference.large);
+        expect(saved.guideVersion, 44);
+        expect(scale('e2'), 1);
+        expect(session.tree, same(tree));
+        expect(session.dirty, isTrue);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
 }

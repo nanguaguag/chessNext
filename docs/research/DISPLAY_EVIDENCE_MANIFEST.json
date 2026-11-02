@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -70,6 +70,36 @@
       "path": "E22-coordinates-off.ax.txt",
       "bytes": 1567,
       "sha256": "71c0ce585818ebd8b8a3ad931689e4f063914900091846c45c489f1060eb62cd"
+    },
+    {
+      "id": "E23",
+      "path": "screenshots/E23-piece-size-max.png",
+      "bytes": 125641,
+      "sha256": "2e4f0b669d45bd206438da0f1022f11ee08f6b048965bf9ca763994a101e9435",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E23",
+      "path": "screenshots/E23-piece-size-min.png",
+      "bytes": 84332,
+      "sha256": "55ae6ad5f4da232636ebd02372a10930d52b961c72f5f0f2ab36ef9a12528f40",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E23",
+      "path": "screenshots/E23-piece-size-restored.png",
+      "bytes": 56960,
+      "sha256": "f2f9a8e37f86d352387ee9c8e189693fa99f711eed78d19c6b7c4aefacc55a38",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E23",
+      "path": "E23-piece-size-max.ax.txt",
+      "bytes": 1547,
+      "sha256": "0c3edd223240f75219f81827640d8176c22be3c857d8cc578881682c73465359"
     }
   ]
 }

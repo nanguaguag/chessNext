@@ -1,0 +1,42 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/settings/board".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/settings/board
+	1 container app
+		2 container
+			3 text 
+			4 text 设置 Esc 返回棋盘
+		5 container
+			6 link Description: 棋盘与棋子, Value: xiangqiai.com/#
+			7 text 下棋与分析
+			8 link Description: 人机对弈, Value: xiangqiai.com/#
+			9 link Description: 分析与标记, Value: xiangqiai.com/#
+			10 text 通用
+			11 link Description: 显示与语言, Value: xiangqiai.com/#
+			12 link Description: 声音与动画, Value: xiangqiai.com/#
+			13 link Description: 关于, Value: xiangqiai.com/#
+		14 heading 棋盘与棋子, Value: 2
+			15 text 棋盘与棋子
+		16 button 棋子 默认棋子 更换
+			17 text 棋子
+			18 text 默认棋子
+			19 button 更换
+		20 button 棋盘 默认棋盘 更换
+			21 text 棋盘
+			22 text 默认棋盘
+			23 button 更换
+		24 text 落子标记
+		25 text 最后一步落在哪里
+		26 落子标记
+			27 radio button 旋转光圈, Value: 0
+			28 radio button 方框, Value: 1
+		29 text 选子样式
+		30 text 点选棋子时的表现
+		31 选子样式
+			32 radio button 抬起, Value: 1
+			33 radio button 选择框, Value: 0
+		34 text 棋子大小 100%
+		35 slider (settable, integer) Description: 棋子大小, Value: 100
+		36 container
+			37 text 显示坐标 棋盘边上的数字
+			38 switch 1
+
+The focused UI element is 6 link Description: 棋盘与棋子, URL: xiangqiai.com/#

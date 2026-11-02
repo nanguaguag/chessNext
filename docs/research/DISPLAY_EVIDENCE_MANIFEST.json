@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -10,32 +10,36 @@
       "path": "screenshots/E21-board-large.png",
       "bytes": 110517,
       "sha256": "7d39432cf055ade5d39405e7206a9c5edc3f9900b12964248f392a8abe31f271",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E21",
       "path": "screenshots/E21-display-extra-large.png",
       "bytes": 39833,
       "sha256": "76cb357a6701066898a6d9c5d15842a101c4af4ad28ca4eb7ed74f3933aaccc8",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E21",
       "path": "screenshots/E21-display-large.png",
       "bytes": 35487,
       "sha256": "9187f4360f33bd042c574afbb30ae1c5fe5c125465134b8687d9a7b56e9ecceb",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E21",
       "path": "screenshots/E21-display-restored.png",
       "bytes": 32366,
       "sha256": "5c88042e499c8fe7f9be80eb8d2435f6ef402f703692b91cc8c5478843fc9915",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E21",
@@ -54,16 +58,18 @@
       "path": "screenshots/E22-coordinates-off.png",
       "bytes": 108267,
       "sha256": "3fb5912f5968c28339af220dc265a29d64082d2c6af9dbfd37a97a9a27aec704",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E22",
       "path": "screenshots/E22-coordinates-on.png",
       "bytes": 108458,
       "sha256": "e16cff91ad4e91a810c3ffad53c8a7372a15bbc9257f0e0ad7f01f8f66d51be7",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E22",
@@ -76,24 +82,27 @@
       "path": "screenshots/E23-piece-size-max.png",
       "bytes": 125641,
       "sha256": "2e4f0b669d45bd206438da0f1022f11ee08f6b048965bf9ca763994a101e9435",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E23",
       "path": "screenshots/E23-piece-size-min.png",
       "bytes": 84332,
       "sha256": "55ae6ad5f4da232636ebd02372a10930d52b961c72f5f0f2ab36ef9a12528f40",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E23",
       "path": "screenshots/E23-piece-size-restored.png",
       "bytes": 56960,
       "sha256": "f2f9a8e37f86d352387ee9c8e189693fa99f711eed78d19c6b7c4aefacc55a38",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E23",
@@ -106,40 +115,45 @@
       "path": "screenshots/E24-arrows-recommendation-off.png",
       "bytes": 129776,
       "sha256": "3357c050b67ce94c1140b6d69dfd263ad4ee4764d51802ee9954932e65af503f",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E24",
       "path": "screenshots/E24-arrows-restored-settings.png",
       "bytes": 51484,
       "sha256": "05e7b2dbbf0d02a9b25c56e81f326bb615ee296392b3f9807567d5625bfada8b",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1276,
+      "height": 718,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E24",
       "path": "screenshots/E24-arrows-sharp.png",
       "bytes": 129983,
       "sha256": "8dc13739bbef2a6597c77be5a1677f14ae6bab9806b760ea240183e102a06a5a",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E24",
       "path": "screenshots/E24-arrows-standard.png",
       "bytes": 136986,
       "sha256": "1aca92d1a46a50a3b2986f9c763309dbfe95328f630abcba9d1237bd9c1eb4a0",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E24",
       "path": "screenshots/E24-arrows-wide.png",
       "bytes": 129841,
       "sha256": "3789618121916487ae25208105caedb4bfa75a84e10ab27e71760d0c28f672d9",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E24",
@@ -158,64 +172,72 @@
       "path": "screenshots/E25-local-on-with-global-off.png",
       "bytes": 130048,
       "sha256": "e935b3ec3a7b213cfa9f91792f7e79a5fd4649419ecdafa6e2023057ceb147c8",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
       "path": "screenshots/E25-number-click-result.png",
       "bytes": 130029,
       "sha256": "9f07adad7db2261b9fd5d4c343b526072432f41ac983e9e2ba8539847ef1cb81",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
       "path": "screenshots/E25-numbered-current-variations.png",
       "bytes": 130035,
       "sha256": "2c859b01a77269f530b95dcfd276f25bee05d1c423296daa3ee44c671e3e4e86",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
       "path": "screenshots/E25-restored.png",
       "bytes": 129425,
       "sha256": "36004943202f0910c6c8109edbaf266eab77745fc8c4f9225e8d4ddb63681c06",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
       "path": "screenshots/E25-root-no-current-arrows.png",
       "bytes": 125229,
       "sha256": "36926e51cae0e8dbfb3fef5e0b4b6e550b6c107f9d0f7a2f04c22a9b431c92df",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
       "path": "screenshots/E25-single-sibling.png",
       "bytes": 129198,
       "sha256": "c92a7d4c13f9761f0fd3159c04bd214e87e4913b79081a273ede12ab0584f670",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
       "path": "screenshots/E25-variation-arrows-on.png",
       "bytes": 130068,
       "sha256": "1a6a41f352d79d0bc8156c60a40f6a485d70bbc358733542e812dcd84125ee74",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
       "path": "screenshots/E25-variation-global-off.png",
       "bytes": 129837,
       "sha256": "d7ef3371642d53bc754b86a6d19ecc657a75ddfa33ebd80161dc350eeb975cec",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E25",
@@ -234,38 +256,102 @@
       "path": "screenshots/E26-evaluation-bar-flipped.png",
       "bytes": 129859,
       "sha256": "0ba7161dbe19210e053e0ef93ae82429cd2194f1f4bf43759edc2d32c30cb14e",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E26",
       "path": "screenshots/E26-evaluation-bar-off.png",
       "bytes": 127720,
       "sha256": "df0fbdfba2e2d1be12c67b9b96a1a2116b16cbee3419b31ebf08dac24832cad6",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E26",
       "path": "screenshots/E26-evaluation-bar-restored.png",
       "bytes": 129429,
       "sha256": "6744f4660c0dbd46018b87212ab3c5e473cfd1660183dc27971682796f1d1e53",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E26",
       "path": "screenshots/E26-flip-menu.png",
       "bytes": 129391,
       "sha256": "225c99d0e37339c37d734a8998a579997535e9a23afc47de98389a42091ae5be",
-      "width": 65536,
-      "height": 4292542531
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
     },
     {
       "id": "E26",
       "path": "E26-restored.ax.txt",
       "bytes": 3561,
       "sha256": "bd638f7b02eba913689a6255baa26e4d3dcc26a95ef76bed813b8250e470882f"
+    },
+    {
+      "id": "E27",
+      "path": "E27-markers-on-settings.txt",
+      "bytes": 2206,
+      "sha256": "76826683d4bafc8a3c3f020e4a7decd17367951565e411aba18c1b54aab2f739"
+    },
+    {
+      "id": "E27",
+      "path": "E27-markers-off-settings.txt",
+      "bytes": 2160,
+      "sha256": "932079be0b1ddd1ad9d2c75725c5fb9f800bf281efd9c31f0a4a41fb1fdd8b9c"
+    },
+    {
+      "id": "E28",
+      "path": "E28-last-move-box-revisit.txt",
+      "bytes": 1549,
+      "sha256": "fc17c6d9c27ba970b6e83b13b4583e99811584b3b4e06a28b54477f17a98bc2f"
+    },
+    {
+      "id": "E28",
+      "path": "E28-last-move-box-settings.txt",
+      "bytes": 1524,
+      "sha256": "681da9e1f680c4ec8aacf7b97d4fcb1af7ae4abb6c8c91613e328870fc180fb4"
+    },
+    {
+      "id": "E27",
+      "path": "screenshots/E27-markers-on.png",
+      "bytes": 129396,
+      "sha256": "3582edfe121f042b79809c0f43d6bb290bd7b959553991c9a8acc933488bb06a",
+      "height": 720,
+      "width": 1280,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E27",
+      "path": "screenshots/E27-markers-off.png",
+      "bytes": 129362,
+      "sha256": "c5fb0f5f80ac8d559b5e6198c848f4eaf6d3fd1949040651e8668d0267e9ed67",
+      "height": 720,
+      "width": 1280,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E28",
+      "path": "screenshots/E28-last-move-box.png",
+      "bytes": 139531,
+      "sha256": "8585d67a28dc74e17412ff5e48e35b52017e1ea1461dc805aadd4132e91f9a78",
+      "height": 720,
+      "width": 1280,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E28",
+      "path": "screenshots/E28-last-move-halo-restored.png",
+      "bytes": 138018,
+      "sha256": "812f11b4fff313e6f93de0cacda124302e58b371297cbef7452b747ec0d18837",
+      "height": 720,
+      "width": 1280,
+      "mimeType": "image/jpeg"
     }
   ]
 }

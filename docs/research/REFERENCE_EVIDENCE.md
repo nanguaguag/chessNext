@@ -175,3 +175,13 @@ URL https://xiangqiai.com/#/、/#/settings/analysis，访客IAB，E19自制支�
 点翻转先只打开含旋转/左右翻转的菜单（O，[菜单](screenshots/E26-flip-menu.png)，未将这一步当已翻转），再点旋转棋盘，红棋到上/黑棋到下，竖条相应红上黑下（V）[旋转](screenshots/E26-evaluation-bar-flipped.png)。停止分析时这些显示仍存在（V），但历史PV卡仍写红分而曲线/云库标签已随视角改，不能推断所有历史卡视角一致。
 
 最后再实际旋转恢复正常红下黑上，局势条开、分析0/AI关/本步局部箭头关，原自制支线仍选中。[恢复](screenshots/E26-evaluation-bar-restored.png)/[过滤历史行AX](E26-restored.ax.txt)。没有新落子/替换谱。来源/SHA见DISPLAY_EVIDENCE_MANIFEST。原站比例公式、完全无分析数据的空态/跨局面缓存/杀棋或边界值比例仍U。本地方案以原生WDL预期得分明确呈现，缺失不伪造50%，不冒充同公式。
+
+## E27 / 2026-11-02 着法标记开关，效果仍未知
+
+https://xiangqiai.com/#/settings/analysis 与/#/，访客IAB，E19自制三着支线，分析已关。着法标记初开，关闭后AX switch0，返回同一棋盘。两张[开](screenshots/E27-markers-on.png)/[关](screenshots/E27-markers-off.png)图未见可确认差异，不能把此开关说成最后落子光圈开关，也不能判定无效。AX [开](E27-markers-on-settings.txt)/[关](E27-markers-off-settings.txt)是设置状态V，具体标记对象仍U，下一用有已评估评级的自制谱再验。已恢复开，未改谱。
+
+## E28 / 2026-11-02 落子标记两样式
+
+https://xiangqiai.com/#/settings/board 与/#/，访客IAB，E19自制炮二进二末端，分析/AI关。初旋转光圈选中；选方框后返回棋盘，炮所在终点出现白色四角方框，原起点仍为小圆环（V，[方框](screenshots/E28-last-move-box.png)）。截图右下小棋盘为鼠标停PV上出现的预览，仅O，不把它归因于落子设置。回设置仍方框选中（V，[回访AX](E28-last-move-box-revisit.txt)）。再选旋转光圈恢复原终点光圈（V，[恢复](screenshots/E28-last-move-halo-restored.png)），完整棋树/选中着不变，所有分析/AI仍关。
+
+旋转动画持续时长/系统减少动画/翻转/编辑器/重载记忆仍U；项目采用有限一次旋转并尊重减少动画为P，不能说同原站时序。图片为JPEG字节但保留原截图文件名.png，清单已按实际签名修正mime与尺寸（此前误按PNG字节偏移读JPEG导致错误尺寸，SHA不变）。

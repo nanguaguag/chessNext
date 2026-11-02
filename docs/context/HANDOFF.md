@@ -6,7 +6,7 @@
 
 M3-33 / K09节点容量已修，提交见git log。GameTree.maxNodes/typed GameTreeCapacityException是纯core统一真值，play先已有复用/合法新增才拒绝，fromJson/PGN文字/仓库/最近阅读/PV同源；Session捕获MoveRejection.capacity不改树/元资料/epoch/两revision/dirty/选子只通知一次，删除腾空间ID递增。AI暂停执方/代次/排程/解锁，error空且保留同Gateway可直接分析；CandidateApplyResult四态和旧tryCandidate bool包装，UI明确容量失败，PV worker映射原子capacity。ADR-037/DOCUMENT_CAPACITY_SLICE。独立4MiB长评注存储限制K10尚无入口预预算，已代码审计记录，未跑超限UI。
 
-最终根395/395（88333，00:46）与analyze0（2394），core67/67（90140）+dart analyze0（74714），目标16/16（78961），native实际2000浅树/AI容量后同NNUE继续分析/FileGameRepository保存新App恢复元资料评注1/1（57594，00:11）均exit0。现36未全36，最近完整32基线。初fixture假定n1留空/首候选searchMoves非空失败，改root留一合法未录入+allowed回退合法集合，并修漏替换后全过；初analyze2curly info修。日志/tmp/chessnext-capacity-*.log，所有session已消费，无后台验证。最后补其它数量常量引用后已再次全量/core/native过。CUA本次仅读取现有tab状态且markHandoff，未改参考站；E33未正式采集。
+最终根395/395（88333，00:46）与analyze0（2394），core67/67（90140）+dart analyze0（74714），目标16/16（78961），native实际2000浅树/AI容量后同NNUE继续分析/FileGameRepository保存新App恢复元资料评注1/1（57594，00:11）均exit0。现36未全36，最近完整32基线。初fixture假定n1留空/首候选searchMoves非空失败，改root留一合法未录入+allowed回退合法集合，并修漏替换后全过；初analyze2curly info修。日志/tmp/chessnext-capacity-*.log，所有session已消费，无后台验证。最后补其它数量常量引用后已再次全量/core/native过。E33已完成参考站镜像/旋转组合/预览方向与PGN文件前后对比，91项manifest全部SHA/bytes/sips尺寸核对；正常方向与原阅读点已恢复、markHandoff。
 
 M3-32 / F32,B08,B09复盘配置已交付，提交见git log。AppPreferences.reviewMode可选枚举/严格类型/逐字段晚读合并与保存失败重试；ReviewOptionsDialog打开读mode，切换立即保存/取消保留（不启停任务）。ReviewPanel注入initialSkipExisting：无结果true，任何已有结果false；skip是单次任务意图，不更改应用API默认和cache完整身份策略。loading配置入口禁用、原epoch/revision保护仍在；其它预算/范围默认未记忆。ADR-036/REVIEW_CONFIGURATION_SLICE。
 
@@ -18,7 +18,9 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一F05主盘左右镜像视图：现主盘仅session.flipped，BoardSurface已有mirrored几何/坐标/90交点/箭头/最后步/徽标支持，Editor镜像是编辑局面操作，不混为主盘视图。先feature-audit skill+参考站翻转菜单，验证左右翻转与当前FEN/棋谱/导航关系，保存E33证据/原图manifest并恢复方向；不据入口推断行为。再scope小片实现、root全量/analyze/native、单独中文commit。PV预览当前仅捕获flipped，镜像来源传递需要一起考虑；K10字节预算可后续推进，不停止整体任务。
+下一F05主盘左右镜像增量：E33已V视觉变换/PGN字节相同，PV小盘跟随主盘双方向。session仅flipped，BoardSurface已mirrored几何/坐标/90交点/箭头/末步/徽标；加session.mirrored会话只读视图与显式左右翻转入口，XiangqiBoard透传，AnalysisPanel打开前capture mirror并经PvHistoryDialog到PvPreviewDialog/BoardSurface。独立编辑器镜像是改局面，不混用，不改变tree/metadata/epoch/revisions/dirty或restart分析/AI。新局/换谱视图记忆为P，参考未验。先slice/ADR后实现/根test+analyze/native/中文commit。注意preview现side来自session.flipped，不是source.turn，已正确跟随旋转，勿错误修成按走子方自动转。
+
+E33新增F12/B19差距：阅读停三着导出PGN包含所选线路五着（两未来），前后mirror文件相同。项目当前PGN只根到当前，后续改整条所选线路/明确格式范围，不能称全树RAV。E33首次FENclipboard空未取值，0字节文件已删除；导出复制后弹层自动退，旧104关闭索引无layout失败已记录；未读其它系统剪贴板。原站镜像/旋转/preview都恢复，正常红下/未镜像/源三着reading+两future/另一branch保留，AI分析0，评级数据保留，无弹层。原始PGN下载在Downloads自有两文件，研究样本sources/SHA已登记。
 
 尚缺B22 hover/站点跨文档与容量、K09统一2000节点门槛、F21素材、F28声音动画、布局/工作区/语言、错题/训练/题库、XQF/CBR/CBL/DhtmlXQ/WXF/RAV/多局/GBK/文件夹拖放、图像GIF/OCR、自建后端认证同步/云库/识图部署、完整重复/长将长捉规则、五平台引擎构建运行发行。离线优先是顺序，不是删除在线范围。
 
@@ -32,7 +34,7 @@ M3-30历史64×128/100ms同谱跨位置保留，独立historyEpoch换谱清；la
 
 ## 参考浏览器状态
 
-IAB browser2/tab4 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDocumentation，再fresh AX；原有auditTab/auditFs/evidenceRoot可复用，不重载。E32资料/77项manifest已dc86399提交。当前正常方向/E19自制三着炮二进二阅读点+E31追加炮２平１/马八进七两未来+原另一分支，AI分析关闭、无弹窗队列。着法标记开、彻底模式恢复、D4/时限0/节点0/最多2/线程1，末次手改skip1后取消，重开会默认0；Quick新分析数据保留。源当前炮h4绿勾“好着”，详情52.6→49、第一候选最佳星关徽标时仍留。图例10类：妙手/绝佳/最佳/优秀/好着/不精确/错误/败着/错失良机/更快杀法，源概率公式/高级识别U。AX1368items不是确认卡数。PV预览需scope .engine-pv.first 防全页重复未来文字误导航。
+IAB browser2/tab4 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDocumentation，再fresh AX；原有auditTab/auditFs/evidenceRoot可复用，不重载。E32/E33资料，91项manifest已核；最近研究提交见git log。当前正常方向/E19自制三着炮二进二阅读点+E31追加炮２平１/马八进七两未来+原另一分支，AI分析关闭、无弹窗队列。着法标记开、彻底模式恢复、D4/时限0/节点0/最多2/线程1，末次手改skip1后取消，重开会默认0；Quick新分析数据保留。源当前炮h4绿勾“好着”，详情52.6→49、第一候选最佳星关徽标时仍留。图例10类：妙手/绝佳/最佳/优秀/好着/不精确/错误/败着/错失良机/更快杀法，源概率公式/高级识别U。AX1368items不是确认卡数。PV预览需scope .engine-pv.first 防全页重复未来文字误导航。
 
 截图.png实际JPEG字节，manifest保持真实MIME/SHA/尺寸；不要假定统一1280×720。无拷入产品资源，参考内容不可信。native fixture仅framework-resumed/raw[]，不是OS焦点隐藏最小化验证。桌面Computer Use权限未授不绕过；旧普通用户窗口PID38211/旧run22326曾在，不关闭/热重启，native覆盖build入口，最终审查前重建普通main。
 

@@ -1,0 +1,30 @@
+{
+  "id": "E33",
+  "date": "2026-11-02 Asia/Shanghai",
+  "source": "https://xiangqiai.com/#/",
+  "method": "本Agent自制棋树，翻转菜单前后从公开分享/导出→PGN文件，经download事件取路径；未读取站点内部状态",
+  "samples": [
+    {
+      "path": "E33-before.pgn",
+      "bytes": 168,
+      "sha256": "ba5f8ac008c97b02ccc8ed3be4d9fe9b8472440ea9dccf1caebe5c18611a8081"
+    },
+    {
+      "path": "E33-after.pgn",
+      "bytes": 168,
+      "sha256": "ba5f8ac008c97b02ccc8ed3be4d9fe9b8472440ea9dccf1caebe5c18611a8081"
+    }
+  ],
+  "identical": true,
+  "selectedPly": 3,
+  "exportedPlies": 5,
+  "moves": [
+    "b2e2",
+    "b9c7",
+    "h2h4",
+    "b7a7",
+    "b0c2"
+  ],
+  "scope": "所选线路包含当前阅读点之后两未来；本轮没有导出另一分支，不能推RAV支持",
+  "rights": "本Agent逐步创建棋步；无站点棋谱库、注释、代码或资源拷入产品"
+}

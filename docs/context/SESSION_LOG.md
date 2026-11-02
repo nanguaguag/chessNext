@@ -412,3 +412,7 @@ ADR-037/DOCUMENT_CAPACITY_SLICE：GameTree.maxNodes=2000含根/复用已有优�
 首analyze2条curly info加括号；首目标9过2失败（fixture误假定n1有缺失合法子着、首候选searchMoves为空）；改合法浅树保留一root合法着未录入/首候选允许集合用legalMoves，但替换漏格式化后旧n1仍1失败；定位并改root后11过，新增组件连旧候选/PV目标最终16过。未弱化真实容量或造假树，无测试后门。日志/tmp/chessnext-capacity-{analyze-initial,analyze-fixed,analyze-gate,analyze-final,target,target-fixed,target-final,target-widgets,core,core-final,core-analyze,core-analyze-final,full,full-final,native,native-final}.log，所有session消费结束，git diff --check0。没有新增依赖资源。
 
 下一F05左右镜像视图续审（当前仅O，主盘未实现），然后单功能实现/测试/提交；K10后续，继续全站功能，不能结束全量审查。参考CUA本次仅fresh AX读取，状态未改并markHandoff，E33尚未采集。
+
+## 2026-11-02 / E33 / F05,F02,F12镜像及导出范围续审
+
+实际IAB source翻转/左右镜像、组合旋转、两态PV预览后恢复原方向与读点，PGN两次公开下载168bytes SHA一致，主线未来2着也包含；原站selectedline包含未来已V，B19新增差距。FEN复制toast但clipboard空不计直接验证，旧关闭索引自动退后无layout错误已留notes，未读系统其它clipboard。91manifest实际SHA/bytes/图片sips尺寸全过，新14项。无业务修改，不重复Flutter门槛；上一功能根395/core67/analyze0/native相关1仍有效。CUA markHandoff，临时浏览器状态无依赖于未落盘推断。下一M3-34主盘镜像与preview方向透传，不停整体对标。

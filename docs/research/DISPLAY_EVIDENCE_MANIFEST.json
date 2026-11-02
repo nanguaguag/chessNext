@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路；E32复盘着法标记与图例",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头；E26局势条；E27着法标记；E28落子标记；E29选子样式；E30 PV历史预览；E31所选PV前缀与已有线路；E32复盘着法标记与图例；E33左右镜像/组合方向与预览/PGN未来线路",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -619,6 +619,116 @@
       "width": 1280,
       "height": 720,
       "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E33",
+      "path": "E33-baseline.txt",
+      "bytes": 3703,
+      "sha256": "3496cc6c1353fd20acd48360a4990c7fb995b7b3582268a739c18e724bbdf6d5",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E33",
+      "path": "E33-mirrored.txt",
+      "bytes": 3827,
+      "sha256": "f7c200937ca2ff384523439820ab9ad691343c5f8ee4dfffb3dc74f599364598",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E33",
+      "path": "E33-operation-notes.txt",
+      "bytes": 1674,
+      "sha256": "95536ab53d81241a489a4e3e8948dd0359d18455b621990fbb1a5d777d8a9344",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E33",
+      "path": "E33-restored.txt",
+      "bytes": 3827,
+      "sha256": "f7c200937ca2ff384523439820ab9ad691343c5f8ee4dfffb3dc74f599364598",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E33",
+      "path": "E33-rotated-mirrored.txt",
+      "bytes": 3846,
+      "sha256": "803c71e1088316e69a6ed0b560fb56f847bcce568e923595006a015d6794ab6c",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E33",
+      "path": "screenshots/E33-mirror-before.png",
+      "bytes": 132475,
+      "sha256": "e33f3eacff2a8750310fa003b1b9ebb68f6e9a3d04409a75e61a161b6f882040",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E33",
+      "path": "screenshots/E33-mirrored-preview.png",
+      "bytes": 141234,
+      "sha256": "cb25b241b435d258d62f76b373d02f639427281de880fd514ab62a2bd2de1bc7",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E33",
+      "path": "screenshots/E33-mirrored.png",
+      "bytes": 132359,
+      "sha256": "f29c832c498f7c6520ae894d6d315dcd9d609d020d15f2e7218e03195b7f905c",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E33",
+      "path": "screenshots/E33-restored.png",
+      "bytes": 132448,
+      "sha256": "3cfe30be4749574d7e90eeb0de08ee9727d84c5349518f6aa076ea48cc81c374",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E33",
+      "path": "screenshots/E33-rotated-mirrored-preview.png",
+      "bytes": 140089,
+      "sha256": "7894fcbd84c40b97dacda1e1d6221acde7ee0e746064980dbef25958f0cdb8d6",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E33",
+      "path": "screenshots/E33-rotated-mirrored.png",
+      "bytes": 132822,
+      "sha256": "72fa95be3eb9ea9bc238407617232946210589e765a519bee9b368e6a4ff8308",
+      "width": 1280,
+      "height": 720,
+      "mimeType": "image/jpeg"
+    },
+    {
+      "id": "E33",
+      "path": "samples/E33-after.pgn",
+      "bytes": 168,
+      "sha256": "ba5f8ac008c97b02ccc8ed3be4d9fe9b8472440ea9dccf1caebe5c18611a8081",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E33",
+      "path": "samples/E33-before.pgn",
+      "bytes": 168,
+      "sha256": "ba5f8ac008c97b02ccc8ed3be4d9fe9b8472440ea9dccf1caebe5c18611a8081",
+      "mimeType": "text/plain"
+    },
+    {
+      "id": "E33",
+      "path": "samples/E33-manifest.json",
+      "bytes": 919,
+      "sha256": "690f1373718c7f17b40fcbc0d50644ecbfc6d70d55d23329ac91387e7e6ced88",
+      "mimeType": "application/json"
     }
   ]
 }

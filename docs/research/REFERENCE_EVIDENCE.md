@@ -221,3 +221,13 @@ https://xiangqiai.com/#/、/#/settings/analysis，访客IAB，E31自制谱，当
 最后恢复着法标记开；重新分析→切回原彻底模式，D4/最多2/线程1等未改，取消再重开仍彻底（V，模式选择在该流程保留）。重新分析入口每次打开时跳过均为关，手动改开再取消、再次打开仍关（V，仅该入口默认，不推存储策略）；最后改开并取消，不另启动队列。[原参数](screenshots/E32-review-mode-restored.png)/[末次参数AX](E32-review-restored-parameters.txt)。最终无分析弹窗或队列、AI/分析0、原阅读点与棋树未变，保留本次Quick生成评估数据而非清除（V，[最终](screenshots/E32-final-restored.png)/[AX](E32-final-restored.txt)）。全局标记开/推荐与变着开/标准/局部箭头关，正常样式恢复。
 
 跨重载偏好/翻转/极大棋子/终局或未评级标记/点击徽标仍U；本地先实现明确标识的已有native-wdl-loss-v1评级只读徽标与开关，不冒充网站的概率/高级类别。所有截图只研究留存，来源摘要见DISPLAY_EVIDENCE_MANIFEST。
+
+## E33 / 2026-11-02 左右镜像、组合方向与所选线路导出
+
+https://xiangqiai.com/#/，访客IAB，E19自制谱/E31两未来/E32分析结果，原正常方向、当前三着炮二进二，AI/分析全关。翻转菜单→左右翻转，棋子和数字坐标/末步源环/评级角徽一起左右交换；主谱读点/着法详情/另一保存变化保持（V，[前](screenshots/E33-mirror-before.png)/[镜像](screenshots/E33-mirrored.png)/[过滤AX](E33-mirrored.txt)）。前后通过公开PGN下载比较，168字节完全相同（V，[前文件](samples/E33-before.pgn)/[后文件](samples/E33-after.pgn)/[来源清单](samples/E33-manifest.json)），rootFEN与所选线路的五个ICCS着法一致；不据此推内部对象ID。
+
+镜像时从首PV打开小棋盘，显示同样红下黑上/左右镜像；组合旋转后再开，小棋盘改红上黑下，方位继续与主盘一致（V，[镜像预览](screenshots/E33-mirrored-preview.png)/[旋转镜像](screenshots/E33-rotated-mirrored.png)/[组合预览](screenshots/E33-rotated-mirrored-preview.png)）。仅只读1/33，未提交或播放。结束关闭小盘，恢复旋转/镜像，原阅读点/两未来/另一分支/评估数据仍留，AI分析0、无弹窗队列（V，[恢复](screenshots/E33-restored.png)/[AX](E33-restored.txt)）。主盘镜像落子、活动AI、换谱/重载记忆仍U。
+
+**补充F12已确认差距：** PGN在当前读到三着时仍导出整条所选线路五着（含炮２平１/马八进七两未来）；E20当时样本在末端，不能将其“根到当前路径”推广为原站所有情况。当前项目PGN仅根到当前为已注明损失的实现，后续B19补整条所选线路，不混为RAV/全树支持。
+
+FEN复制菜单显示成功toast，但tab clipboard读取为空，未获得直接当前FEN；旧关闭索引因弹层已自动退出失败，fresh AX确认，未借系统剪贴板绕过。翻转菜单Escape初未关闭，点击菜单触发器收起；PV Escape AX有瞬时滞后，以后续截图/fresh AX确认。失败留[操作记录](E33-operation-notes.txt)，不计作成功证据。研究截图与自制PGN不进产品资源，DISPLAY_EVIDENCE_MANIFEST.json含全部SHA/实际MIME和尺寸。

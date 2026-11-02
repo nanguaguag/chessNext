@@ -157,3 +157,13 @@ URL https://xiangqiai.com/#/与/#/settings/analysis，访客IAB，E19自制三�
 最终停止分析（checkbox0，[截短AX](E24-analysis-stopped.ax.txt)，明确保留前2500字符状态证据），恢复推荐/变着均开、标准样式，回原自制树并markHandoff。[恢复设置](screenshots/E24-arrows-restored-settings.png)。未落子或开启AI自动走。PW checkbox locator找不到，改fresh AX15成功停止；没把失败点击当完成。
 
 O：分析结果持续有多张不同深度的PV历史卡，标准基线截图还出现小棋盘预览；本地目前只显示最新MultiPV，历史/预览的触发与关闭流程待独立审计B22。全部截图/AX来源/摘要见DISPLAY_EVIDENCE_MANIFEST，不作产品素材。
+
+## E25 / 2026-11-02 本步变着编号箭头、双开关与根边界
+
+URL https://xiangqiai.com/#/、/#/settings/analysis，访客IAB，E19同一自制支线炮二进二，分析与AI均关。全局变着开/本步变着局部“棋盘箭头”关时无绿箭头；局部开后在当前已走完的棋盘上显示两条绿箭头：马八进七（编号1）和已选炮二进二（V）。起点属上一局面，并非当前局面的下一着。[开启](screenshots/E25-variation-arrows-on.png)/[编号](screenshots/E25-numbered-current-variations.png)。
+
+全局变着关，返回主页面局部变回关（O，不由此推断是全局强制还是页面状态重建）；再次局部开为1但绿箭头仍无（V）[全局关AX](E25-global-off.ax.txt)/[局部开但全局关截图](screenshots/E25-local-on-with-global-off.png)。局部开后回设置全局仍关，说明局部不会改全局偏好。恢复全局开后返回局部又关，再开则有绿箭头。可确认两层都开才显示；精确页生命周期内部原因U。
+
+在可见编号1中心（截图1280×720坐标463,544）点一次，当前仍炮二进二，未换支线（V，仅这个点）[结果](screenshots/E25-number-click-result.png)。上一着到马２进３，局部仍开，此时本步只有1项，仍画其黑马绿箭头（V）[单项](screenshots/E25-single-sibling.png)。再上一着两次到根，着法详情改为空态且无箭头/开关；下一着回第一步时局部关（V）[根](screenshots/E25-root-no-current-arrows.png)。
+
+最后下一着回原炮二进二支线末端，局部关，全局开/标准/棋子100/字号系统，分析0，未新落子/置顶/删除。[恢复截图](screenshots/E25-restored.png)/[恢复AX](E25-restored.ax.txt，过滤超长引擎历史text行保留操作状态，非完整AX)。不同屏幕/翻转/编号其它点交互/超多兄弟/跨重载仍U。截图及AX摘要见DISPLAY_EVIDENCE_MANIFEST。

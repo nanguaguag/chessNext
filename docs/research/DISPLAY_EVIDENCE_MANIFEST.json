@@ -1,6 +1,6 @@
 {
   "date": "2026-11-02 Asia/Shanghai",
-  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式",
+  "source": "https://xiangqiai.com/#/settings（E21显示与语言，E22棋盘与棋子）；操作后返回/#/；E23棋盘棋子尺寸；E24分析推荐箭头/头部样式；E25本步变着编号箭头",
   "version": "同日访客桌面IAB实际观察，站点版本号未知",
   "purpose": "研究证据，不作为产品资源，不复制站点棋谱库/代码",
   "license": "站点页面截图/AX仅研究留存，授权未核；遵用户要求暂缓许可决定",
@@ -152,6 +152,82 @@
       "path": "E24-arrows-sharp.ax.txt",
       "bytes": 2178,
       "sha256": "a1bfe5ccc19648e7e515eed6ab2c72b1bbec4ff7d90af55258e37bf3c76d9471"
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-local-on-with-global-off.png",
+      "bytes": 130048,
+      "sha256": "e935b3ec3a7b213cfa9f91792f7e79a5fd4649419ecdafa6e2023057ceb147c8",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-number-click-result.png",
+      "bytes": 130029,
+      "sha256": "9f07adad7db2261b9fd5d4c343b526072432f41ac983e9e2ba8539847ef1cb81",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-numbered-current-variations.png",
+      "bytes": 130035,
+      "sha256": "2c859b01a77269f530b95dcfd276f25bee05d1c423296daa3ee44c671e3e4e86",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-restored.png",
+      "bytes": 129425,
+      "sha256": "36004943202f0910c6c8109edbaf266eab77745fc8c4f9225e8d4ddb63681c06",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-root-no-current-arrows.png",
+      "bytes": 125229,
+      "sha256": "36926e51cae0e8dbfb3fef5e0b4b6e550b6c107f9d0f7a2f04c22a9b431c92df",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-single-sibling.png",
+      "bytes": 129198,
+      "sha256": "c92a7d4c13f9761f0fd3159c04bd214e87e4913b79081a273ede12ab0584f670",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-variation-arrows-on.png",
+      "bytes": 130068,
+      "sha256": "1a6a41f352d79d0bc8156c60a40f6a485d70bbc358733542e812dcd84125ee74",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "screenshots/E25-variation-global-off.png",
+      "bytes": 129837,
+      "sha256": "d7ef3371642d53bc754b86a6d19ecc657a75ddfa33ebd80161dc350eeb975cec",
+      "width": 65536,
+      "height": 4292542531
+    },
+    {
+      "id": "E25",
+      "path": "E25-global-off.ax.txt",
+      "bytes": 2206,
+      "sha256": "012b3fc6dc27f8d3282a6bb2f90634c99c5272714a862e9b91891f1d7360e71c"
+    },
+    {
+      "id": "E25",
+      "path": "E25-restored.ax.txt",
+      "bytes": 3539,
+      "sha256": "c7bec2c1d571df3fbd7e6a733d6ec8ef3931b86d1d8a10549a404be6eef97040"
     }
   ]
 }

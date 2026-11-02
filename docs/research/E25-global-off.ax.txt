@@ -1,0 +1,57 @@
+Browser tab: 4, Title: "象棋AI在线分析 - 皮卡鱼象棋在线", URL: "https://xiangqiai.com/#/settings/analysis".
+0 AXWebArea 象棋AI在线分析 - 皮卡鱼象棋在线, URL: xiangqiai.com/#/settings/analysis
+	1 container app
+		2 container
+			3 text 
+			4 text 设置 Esc 返回棋盘
+		5 container
+			6 link Description: 棋盘与棋子, Value: xiangqiai.com/#
+			7 text 下棋与分析
+			8 link Description: 人机对弈, Value: xiangqiai.com/#
+			9 link Description: 分析与标记, Value: xiangqiai.com/#
+			10 text 通用
+			11 link Description: 显示与语言, Value: xiangqiai.com/#
+			12 link Description: 声音与动画, Value: xiangqiai.com/#
+			13 link Description: 关于, Value: xiangqiai.com/#
+		14 heading 分析与标记, Value: 2
+			15 text 分析与标记
+		16 text 分析速度 均衡  · 5 线程 · 320 MB
+		17 slider (settable, integer) Description: 分析速度, Value: 5
+		18 text 省电
+		19 text 均衡
+		20 text 最快
+		21 text 越快，设备越热、越耗电。这台设备最多用 10 个线程。
+		22 text 同时看几条变化 1 条
+		23 同时看几条变化
+			24 radio button 1 推荐, Value: 1
+			25 radio button 2, Value: 0
+			26 radio button 3, Value: 0
+			27 radio button 5, Value: 0
+			28 radio button 自定义, Value: 0
+		29 text 只看 1 条时引擎算得最深，推荐着法最准
+		30 button 象棋规则 长将、长捉怎么判 亚洲规则 
+			31 text 象棋规则
+			32 text 长将、长捉怎么判
+			33 text 亚洲规则
+			34 text 
+		35 container
+			36 text 查询云库着法 局面变化时去云库查，结果显示在云库面板
+			37 switch 1
+		38 text 棋盘上显示
+		39 text 着法标记
+		40 switch 1
+		41 text 局势条
+		42 switch 1
+		43 text 推荐箭头
+		44 switch 1
+		45 text 变着箭头
+		46 switch 0
+		47 text 箭头样式
+		48 text 分析箭头、变着箭头的箭头头部
+		49 箭头样式
+			50 radio button 尖, Value: 0
+			51 radio button 标准, Value: 1
+			52 radio button 宽, Value: 0
+		53 link Description: 高级选项 手动设置线程和内存、最大深度、浏览器环境 , Value: xiangqiai.com/#
+
+The focused UI element is 9 link Description: 分析与标记, URL: xiangqiai.com/#

@@ -358,3 +358,11 @@ ADR-035/MOVE_GRADE_MARKER_SLICE：纯单节点评级复用v1、run+node缓存/�
 初analyze3错因缓存字段误放extension，移到Controller；首目标Material fixture漏Material且fake timer不推进卡住，Ctrl-C结束非通过；再编译因删掉extension所在import失败，补import；再目标错误/重试全页finder非唯一，限定MoveGradeControls后目标14过。首根384过1失败为旧text_size_test全页开关非唯一，改限定TextSizeDialog，不改生产字号逻辑；最终全量385通过。初/修正analyze记录和所有目标/根/native日志/tmp/chessnext-grade-{analyze-initial,analyze-final,analyze-corrected,analyze-gate,analyze-final-gate,target,target-final,target-corrected,target-verified,target-pass,full,full-final,native}.log，验证session全部已消费。新增依赖/外部资源为0，git diff --check通过。
 
 下一F32模式选择取消记忆/重新分析skip默认关（E12/E32），继续其它站点缺项，不称全部对齐。
+
+## 2026-11-02 / M3-32 / F32 → B08,B09 复盘配置恢复
+
+ADR-036/REVIEW_CONFIGURATION_SLICE：reviewMode为严格可选枚举/独立晚读合并/串行持久化，方式切换即时保存且取消保留，不启动或停止已有分析；对话框可见失败/重试，真实文件新App恢复。已有部分/完整/stale评分结果重开skip默认关，手动开仍可复用缓存，初次无结果仍默认开；skip不记为全局偏好，API默认和完整缓存键不变。其它预算/范围仍每次默认；源模式页间V/跨App是P。
+
+新增应用2/组件3共5，连既有复盘/多候选目标10/10（93046，00:04）exit0。显式官方NNUE根初390/390（91602，00:44）过，随后补帮助文案再次全量最终390/390（49975，00:42）exit0；最终flutter analyze无问题（15635，2.4秒）exit0。macOS真实NNUE完成后配置重开/取消不重算/模式文件新App恢复1/1（85476，00:11）exit0，现35未全35，最近完整32/32仍M3-29基线。core未改65/65+dart analyze沿用，OS/其它平台未验。
+
+初analyze1条curly info修加括号；首目标9过1失败是缓存复用fixture使用未验证身份FakeEngine，系统正确拒绝复用，改用已有VerifiedFake（不改生产缓存安全策略），最终10过。日志/tmp/chessnext-review-config-{analyze-initial,analyze-final,analyze-gate,target,target-final,full,full-final,native}.log，所有session已结束；无新依赖/资产，git diff --check0。下一K09统一新增入口2000节点容量与可恢复失败，继续其余全部对标缺项。

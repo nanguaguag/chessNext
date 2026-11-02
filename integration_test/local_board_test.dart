@@ -1,3 +1,4 @@
+import 'package:chess_next/features/review/review_options_dialog.dart';
 import 'package:chess_next/application/review_report.dart';
 import 'package:chess_next/features/board/move_grade_badge.dart';
 import 'package:chess_next/features/settings/analysis_markers_dialog.dart';
@@ -3037,6 +3038,106 @@ void main() {
               .value,
           isFalse,
         );
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native review configuration restores mode and resets reanalysis cache intent',
+    (tester) async {
+      final directory = await (await getApplicationSupportDirectory())
+          .createTemp('.chessnext-review-mode-');
+      Widget app() => ChessNextApp(
+        key: UniqueKey(),
+        engineFactory: openBundledEngine,
+        preferencesRepository: FilePreferencesRepository(() async => directory),
+      );
+      Future<void> tap(Finder f) async {
+        await tester.ensureVisible(f);
+        await tester.pumpAndSettle();
+        expect(f.hitTestable(), findsOneWidget);
+        await tester.tap(f);
+        await tester.pumpAndSettle();
+      }
+
+      Finder inside(Finder f) =>
+          find.descendant(of: find.byType(ReviewOptionsDialog), matching: f);
+      Finder skip() => inside(find.widgetWithText(SwitchListTile, '跳过已分析的局面'));
+      try {
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        await tap(find.text('分析整盘棋'));
+        expect(tester.widget<SwitchListTile>(skip()).value, isTrue);
+        await tap(inside(find.text('取消')));
+        var done = false;
+        final job = engine
+            .startReview(limits: ReviewLimits(depth: 4, moveTimeMs: null))
+            .whenComplete(() => done = true);
+        for (var i = 0; i < 100 && !done; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(done, isTrue);
+        await job;
+        await tester.pumpAndSettle();
+        expect(engine.review!.phase, ReviewPhase.completed);
+        final run = engine.review, tree = engine.session.tree;
+        await tap(find.text('分析整盘棋'));
+        expect(tester.widget<SwitchListTile>(skip()).value, isFalse);
+        await tap(inside(find.byType(DropdownButtonFormField<ReviewMode>)));
+        await tap(find.text('多候选').last);
+        await tap(skip());
+        await tap(inside(find.text('取消')));
+        await tap(find.text('分析整盘棋'));
+        expect(tester.widget<SwitchListTile>(skip()).value, isFalse);
+        expect(
+          tester
+              .widget<DropdownButtonFormField<ReviewMode>>(
+                inside(find.byType(DropdownButtonFormField<ReviewMode>)),
+              )
+              .initialValue,
+          ReviewMode.candidates,
+        );
+        await tap(inside(find.text('取消')));
+        expect(engine.review, same(run));
+        expect(engine.session.tree, same(tree));
+        expect(engine.enabled, isFalse);
+        final store = FilePreferencesRepository(() async => directory);
+        for (
+          var i = 0;
+          i < 50 &&
+              (await store.load())?.value.reviewMode != ReviewMode.candidates;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect((await store.load())!.value.reviewMode, ReviewMode.candidates);
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await tester.pumpWidget(app());
+        await tester.pumpAndSettle();
+        final reopened = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        expect(reopened.review, isNull);
+        expect(reopened.enabled, isFalse);
+        await tap(find.text('分析整盘棋'));
+        expect(tester.widget<SwitchListTile>(skip()).value, isTrue);
+        expect(
+          tester
+              .widget<DropdownButtonFormField<ReviewMode>>(
+                inside(find.byType(DropdownButtonFormField<ReviewMode>)),
+              )
+              .initialValue,
+          ReviewMode.candidates,
+        );
+        await tap(inside(find.text('取消')));
         expect(tester.takeException(), isNull);
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());

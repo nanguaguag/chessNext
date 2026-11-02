@@ -1,4 +1,6 @@
+import 'dart:async';
 import 'package:flutter/material.dart';
+import '../../application/preferences_controller.dart';
 import '../../application/review_models.dart';
 import '../../ports/engine_gateway.dart';
 
@@ -22,7 +24,11 @@ class ReviewOptionsDialog extends StatefulWidget {
     super.key,
     required this.threads,
     required this.hashMb,
+    this.preferences,
+    this.initialSkipExisting = true,
   });
+  final PreferencesController? preferences;
+  final bool initialSkipExisting;
   final int threads;
   final int hashMb;
   @override
@@ -34,10 +40,10 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
   final seconds = TextEditingController(text: '2');
   final nodes = TextEditingController(text: '0');
   final maximum = TextEditingController(text: '5');
-  var mode = ReviewMode.best;
+  late var mode = widget.preferences?.value.reviewMode ?? ReviewMode.best;
   final form = GlobalKey<FormState>();
   var scope = ReviewScope.line;
-  var skipExisting = true;
+  late var skipExisting = widget.initialSkipExisting;
   String? error;
   @override
   void dispose() {
@@ -54,7 +60,14 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) => widget.preferences == null
+      ? _dialog(context)
+      : ListenableBuilder(
+          listenable: widget.preferences!,
+          builder: (context, _) => _dialog(context),
+        );
+
+  Widget _dialog(BuildContext context) => AlertDialog(
     title: const Text('整谱分析'),
     content: SizedBox(
       width: 380,
@@ -75,7 +88,14 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
                     child: Text('多候选'),
                   ),
                 ],
-                onChanged: (value) => setState(() => mode = value!),
+                onChanged: (value) {
+                  if (value == null) return;
+                  setState(() => mode = value);
+                  final preferences = widget.preferences;
+                  if (preferences != null) {
+                    unawaited(preferences.setReviewMode(value));
+                  }
+                },
               ),
               Text(
                 mode == ReviewMode.best
@@ -141,6 +161,24 @@ class _ReviewOptionsDialogState extends State<ReviewOptionsDialog> {
                 value: skipExisting,
                 onChanged: (value) => setState(() => skipExisting = value),
               ),
+              Text(
+                widget.preferences == null
+                    ? '取消不会启动计算；本次任务可显式选择是否复用缓存。'
+                    : '取消不会启动计算；分析方式会保存在本机。跳过选项仅用于本次任务。',
+              ),
+              if (widget.preferences?.error != null) ...[
+                Text(
+                  widget.preferences!.error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+                TextButton(
+                  onPressed:
+                      widget.preferences!.loading || widget.preferences!.saving
+                      ? null
+                      : () => unawaited(widget.preferences!.retryPersistence()),
+                  child: const Text('重试保存分析方式'),
+                ),
+              ],
               Text('${widget.threads}线程 · ${widget.hashMb}MB · 单路最佳着法'),
               if (error != null)
                 Text(

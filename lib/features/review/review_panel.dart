@@ -25,6 +25,8 @@ class ReviewPanel extends StatelessWidget {
       builder: (_) => ReviewOptionsDialog(
         threads: engine.settings.threads,
         hashMb: engine.settings.hashMb,
+        preferences: preferences,
+        initialSkipExisting: engine.review?.results.isNotEmpty != true,
       ),
     );
     if (choice == null || !context.mounted) return;
@@ -133,7 +135,8 @@ class ReviewPanel extends StatelessWidget {
                 )
               else
                 FilledButton.tonal(
-                  onPressed: engine.factory == null
+                  onPressed:
+                      engine.factory == null || (preferences?.loading ?? false)
                       ? null
                       : () => _configure(context),
                   child: const Text('分析整盘棋'),

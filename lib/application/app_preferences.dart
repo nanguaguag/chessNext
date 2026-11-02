@@ -1,4 +1,5 @@
 import 'board_appearance.dart';
+import 'review_models.dart';
 
 enum ThemePreference { system, light, dark }
 
@@ -17,6 +18,7 @@ extension TextSizeScale on TextSizePreference {
 final class AppPreferences {
   AppPreferences({
     this.theme = ThemePreference.system,
+    this.reviewMode = ReviewMode.best,
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
     this.pieceSizePercent = 100,
@@ -50,6 +52,7 @@ final class AppPreferences {
     }
   }
   final ThemePreference theme;
+  final ReviewMode reviewMode;
   final TextSizePreference textSize;
   final bool showCoordinates;
   final int pieceSizePercent;
@@ -64,6 +67,7 @@ final class AppPreferences {
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
     ThemePreference? theme,
+    ReviewMode? reviewMode,
     TextSizePreference? textSize,
     bool? showCoordinates,
     int? pieceSizePercent,
@@ -81,6 +85,7 @@ final class AppPreferences {
     int? guideVersion,
   }) => AppPreferences(
     theme: theme ?? this.theme,
+    reviewMode: reviewMode ?? this.reviewMode,
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
@@ -99,6 +104,7 @@ final class AppPreferences {
   );
   Map<String, Object> toJson() => {
     'schema': 1,
+    if (reviewMode != ReviewMode.best) 'reviewMode': reviewMode.name,
     if (selectionStyle != SelectionStyle.lift)
       'selectionStyle': selectionStyle.name,
     if (lastMoveMarker != LastMoveMarkerStyle.halo)
@@ -120,6 +126,7 @@ final class AppPreferences {
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
+        (json.containsKey('reviewMode') && json['reviewMode'] is! String) ||
         (json.containsKey('selectionStyle') &&
             json['selectionStyle'] is! String) ||
         (json.containsKey('lastMoveMarker') &&
@@ -150,6 +157,9 @@ final class AppPreferences {
     }
     try {
       return AppPreferences(
+        reviewMode: ReviewMode.values.byName(
+          json['reviewMode'] as String? ?? 'best',
+        ),
         selectionStyle: SelectionStyle.values.byName(
           json['selectionStyle'] as String? ?? 'lift',
         ),
@@ -182,6 +192,7 @@ final class AppPreferences {
   @override
   bool operator ==(Object other) =>
       other is AppPreferences &&
+      reviewMode == other.reviewMode &&
       selectionStyle == other.selectionStyle &&
       lastMoveMarker == other.lastMoveMarker &&
       showEvaluationBar == other.showEvaluationBar &&
@@ -200,6 +211,7 @@ final class AppPreferences {
       guideVersion == other.guideVersion;
   @override
   int get hashCode => Object.hash(
+    reviewMode,
     selectionStyle,
     lastMoveMarker,
     showEvaluationBar,

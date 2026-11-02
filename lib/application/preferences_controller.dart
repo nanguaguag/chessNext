@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../ports/preferences_repository.dart';
 import 'app_preferences.dart';
 import 'board_appearance.dart';
+import 'review_models.dart';
 import 'engine_session_controller.dart';
 
 class PreferencesController extends ChangeNotifier {
@@ -82,6 +83,9 @@ class PreferencesController extends ChangeNotifier {
         final stored = loaded.value;
         value = _bounded(
           stored.copyWith(
+            reviewMode: _edited.contains('reviewMode')
+                ? previous.reviewMode
+                : null,
             selectionStyle: _edited.contains('selectionStyle')
                 ? previous.selectionStyle
                 : null,
@@ -155,6 +159,8 @@ class PreferencesController extends ChangeNotifier {
     return !_disposed && error == null;
   }
 
+  Future<void> setReviewMode(ReviewMode mode) =>
+      apply(value.copyWith(reviewMode: mode));
   Future<void> setTheme(ThemePreference theme) =>
       apply(value.copyWith(theme: theme));
   Future<void> setTextSize(TextSizePreference size) =>
@@ -189,6 +195,7 @@ class PreferencesController extends ChangeNotifier {
   }
 
   void _recordEdits(AppPreferences next) {
+    if (next.reviewMode != value.reviewMode) _edited.add('reviewMode');
     if (next.selectionStyle != value.selectionStyle) {
       _edited.add('selectionStyle');
     }

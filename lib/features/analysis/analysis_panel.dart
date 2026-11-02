@@ -1,3 +1,4 @@
+import 'pv_history_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -128,6 +129,36 @@ class AnalysisPanel extends StatelessWidget {
                     : () => _settings(context),
                 tooltip: '引擎参数',
                 icon: const Icon(Icons.tune),
+              ),
+            ],
+          ),
+          Wrap(
+            spacing: 8,
+            children: [
+              TextButton.icon(
+                key: const ValueKey('pv-history-open'),
+                onPressed: analysis.history.isEmpty
+                    ? null
+                    : () {
+                        final snapshot = analysis.history;
+                        final side = analysis.session.flipped
+                            ? Side.black
+                            : Side.red;
+                        showDialog<void>(
+                          context: context,
+                          builder: (_) =>
+                              PvHistoryDialog(entries: snapshot, side: side),
+                        );
+                      },
+                icon: const Icon(Icons.history),
+                label: Text('PV历史（${analysis.history.length}）'),
+              ),
+              IconButton(
+                tooltip: '清空本局面PV历史',
+                onPressed: analysis.history.isEmpty
+                    ? null
+                    : analysis.clearAnalysisHistory,
+                icon: const Icon(Icons.clear_all),
               ),
             ],
           ),

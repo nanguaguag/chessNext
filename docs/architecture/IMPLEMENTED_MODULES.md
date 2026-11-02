@@ -74,3 +74,5 @@ M3-24：application/board_evaluation.dart无Flutter投影原生WDL/边界/杀棋
 M3-25：LastMoveMarkerStyle偏好值/Controller合并与Scope；XiangqiBoard传当前着法及(epoch,cursorId)，LastMoveMarkers独立有限动画与Painter，共用boardSquarePoint、纯展示不持IO/引擎/文档。根/编辑器不传move，ADR-029。
 
 M3-26：SelectionStyle纯枚举与可选偏好、Controller合并/Scope/棋盘显示Dropdown；BoardSurface只改变已选非空面容/固定交点SelectedPieceFramePainter，变换不改hit test，选子与拖放仍原会话/编辑器负责。ADR-030。
+
+M3-27：纯AnalysisHistory/PvHistoryEntry拥有有界原始采样、源Position/revisions和不可变PV；EngineSessionController复用100ms flush，普通分析采样/位置变清空；AnalysisPanel捕获快照后PvHistoryDialog虚拟列表只读显示，独立于复盘持久缓存，无新IO或引擎。ADR-031。

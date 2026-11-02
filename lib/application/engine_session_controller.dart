@@ -1,3 +1,4 @@
+import 'analysis_history.dart';
 import 'dart:async';
 import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
@@ -74,6 +75,14 @@ class EngineSessionController extends ChangeNotifier {
   EngineGateway? _engine;
   Future<EngineGateway>? _opening;
   StreamSubscription<EngineInfo>? _subscription;
+  final AnalysisHistory _history = AnalysisHistory();
+  List<PvHistoryEntry> get history => _history.entries;
+  void clearAnalysisHistory() {
+    if (_disposed || history.isEmpty) return;
+    _history.clear();
+    _notify();
+  }
+
   final Map<int, EngineInfo> _infos = {};
   final Map<int, EngineInfo> _pending = {};
   List<EngineInfo> get infos => List.unmodifiable(
@@ -144,6 +153,7 @@ class EngineSessionController extends ChangeNotifier {
     _candidatesChanged();
     if (_lastRevision == session.positionRevision) return;
     _lastRevision = session.positionRevision;
+    _history.clear();
     _clear();
     _restart?.cancel();
     if (_suppressRestart) return;
@@ -220,6 +230,16 @@ class EngineSessionController extends ChangeNotifier {
     _flush ??= Timer(const Duration(milliseconds: 100), () {
       _flush = null;
       _infos.addAll(_pending);
+      for (final info in _pending.values) {
+        _history.add(
+          position: session.position,
+          epoch: session.epoch,
+          nodeId: session.tree.cursorId,
+          revision: session.revision,
+          positionRevision: session.positionRevision,
+          info: info,
+        );
+      }
       _pending.clear();
       _notify();
     });

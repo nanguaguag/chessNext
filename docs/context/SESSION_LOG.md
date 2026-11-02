@@ -336,3 +336,11 @@ SelectionStyle lift/frame可选旧默认lift、严格解析/逐字段晚到合�
 ### 2026-11-02 / E30 PV历史预览
 
 实际点击首卡PV开1/33、下一2、播放实际推进/暂停13、点首着/回0禁上一与提交，Escape后fresh AX确认主三着不变。未提交到棋盘，写谱仍U。先读只读rendered DOM定位span，无运行时/源码探测。恢复原自制谱/分析0，截图已嵌图。下一有界快照历史及只读预览。
+
+## 2026-11-02 / M3-27 / F02,F13 → B08,B17,B22 当前局面PV历史
+
+AnalysisHistory/PvHistoryEntry纯有界展示样本，64条×128步，深拷贝PV/不可变列表、源Position/epoch/nodeId/内容位置修订/原始info，按各PV最近内容去重time/nps-only，保留深度/评分/bound/WDL/token/PV变化。Controller复用100ms普通分析flush采样，无新流/引擎；停止/同位置重启保留，位置变化清空，显示清空不改搜索/谱，非持久缓存。Panel计数/清空，打开前捕获列表+方色，Dialog虚拟列表/可选择文字/源执方归一score和bound/WDL/杀棋0不判胜/截断说明。ADR-031/PV_HISTORY_SLICE。原站预算清理未知，64/128采样规则明确P；预览播放下一片，没加假入口，AI/复盘流不在本片。
+
+新增纯模型4+控制器1+组件3=8，覆盖不可变拷贝/去重/有界/坏索引/双方评分/WDL边界、停止/迟到/换位置/资料与旋转/清空不改请求、modal固定快照/最新面板继续更新/200%长PV虚拟列表滚到末端/键盘Escape。目标最终8/8（63931）、显式官方NNUE根353/353（19885，00:36）、flutter analyze0问题（10739）exit0；macOS真实NNUE新项1/1（96003，00:12）exit0：同token、固定snapshot/停止保留/旋转资料不清/清空/换位置清。当前native30未全30，上片完整27过，核心未改65沿用。OS人工视觉/其它平台未验。
+
+首3项大括号info限定dart fix修复；Panel patch格式上下文不符原子拒绝后核实际文本重应用；首目标6过2失败为未限定弹窗的最新+30误匹配、滚动500×120不足长谱末端，改限定Dialog及1500×160有界滚动，最终全通过。日志/tmp/chessnext-pv-history-{analyze-initial,target,target-final,analyze,full,native}.log，所有会话结束。下一PvPreview严格有界合法重放/worker只读棋盘与播放，不得把仅文本raw历史直接执行。

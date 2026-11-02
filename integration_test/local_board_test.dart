@@ -1,3 +1,4 @@
+import 'package:chess_next/features/analysis/pv_history_dialog.dart';
 import 'package:chess_next/features/board/last_move_markers.dart';
 import 'package:chess_next/application/board_evaluation.dart';
 import 'package:chess_next/features/analysis/evaluation_board.dart';
@@ -2487,6 +2488,84 @@ void main() {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
         await directory.delete(recursive: true);
+      }
+    },
+  );
+  testWidgets(
+    'native NNUE PV history is frozen, retained on stop and cleared by position',
+    (tester) async {
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        await tester.tap(target);
+        await tester.pumpAndSettle();
+      }
+
+      try {
+        await tester.pumpWidget(ChessNextApp(engineFactory: openBundledEngine));
+        await tester.pumpAndSettle();
+        await tap(find.text('开始分析'));
+        final engine = tester
+            .widget<AnalysisPanel>(find.byType(AnalysisPanel))
+            .analysis;
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        for (var i = 0; i < 100 && engine.history.length < 2; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.history.length, greaterThanOrEqualTo(2));
+        final token = engine.infos.first.token,
+            tree = session.tree,
+            revision = session.revision;
+        await tap(find.byKey(const ValueKey('pv-history-open')));
+        final snapshot = tester
+            .widget<PvHistoryDialog>(find.byType(PvHistoryDialog))
+            .entries;
+        expect(snapshot, isNotEmpty);
+        expect(snapshot.length, lessThanOrEqualTo(64));
+        expect(
+          snapshot.every((e) => e.info.token == token && e.info.pv.isNotEmpty),
+          isTrue,
+        );
+        for (var i = 0; i < 10; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(
+          tester.widget<PvHistoryDialog>(find.byType(PvHistoryDialog)).entries,
+          same(snapshot),
+        );
+        expect(engine.infos.every((info) => info.token == token), isTrue);
+        expect(session.tree, same(tree));
+        expect(session.revision, revision);
+        expect(session.dirty, isFalse);
+        await tap(find.text('关闭'));
+        await tap(find.text('停止分析'));
+        final retained = engine.history;
+        expect(retained, isNotEmpty);
+        session.flip();
+        session.updateMetadata(GameMetadata({'Event': '历史验证'}));
+        await tester.pumpAndSettle();
+        expect(engine.history, same(retained));
+        await tap(find.byKey(const ValueKey('pv-history-open')));
+        expect(find.byType(PvHistoryDialog), findsOneWidget);
+        await tap(find.text('关闭'));
+        await tap(find.byTooltip('清空本局面PV历史'));
+        expect(engine.history, isEmpty);
+        expect(session.tree, same(tree));
+        await tap(find.text('开始分析'));
+        for (var i = 0; i < 100 && engine.history.isEmpty; i++) {
+          await tester.pump(const Duration(milliseconds: 100));
+        }
+        expect(engine.history, isNotEmpty);
+        await tap(find.text('停止分析'));
+        session.playMove(Move.parse('h2e2'));
+        await tester.pumpAndSettle();
+        expect(engine.history, isEmpty);
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
       }
     },
   );

@@ -8,9 +8,11 @@
 
 ## 最新检查点
 
-M3-26选子样式已完成，独立中文commit见git log。显式官方NNUE根345/345（46199，00:35）与analyze0（37459）exit0；macOS新单项1/1（11998，00:13）exit0，当前29未全29，上片M3-24完整27/27（96958）过。核心未改65沿用。无待等待验证session，日志/tmp/chessnext-selection-*.log，本片初/最终analyze和所有运行测试无失败。
+M3-27 PV历史已完成，独立中文commit见git log。显式官方NNUE根353/353（19885，00:36）与analyze0问题（10739）exit0；macOS新单项1/1（96003，00:12）exit0，当前native30未全30，上片完整27/27（96958）过，核心未改65沿用。无待等待会话。日志/tmp/chessnext-pv-history-*.log，初3lint与目标两测试范围/滚动问题已修，详情SESSION_LOG。
 
-ADR-030/SELECTION_STYLE_SLICE：SelectionStyle lift旧默认/frame可选偏好，严格解析/Controller逐字段晚到合并/串行保存/重试、Scope与棋盘显示Dropdown。BoardSurface抬起仅已选非空face上移8%格距/加阴影、transformHitTests=false且位移在pieceSize缩放外；四角框固定交点/不随size缩放，空位不画/抬起，拖动反馈无selected。90格、焦点/合法目标/语义保持，无新ticker。新增7+旧编辑器/尺寸目标17、根345过；native验证真实NNUEtoken/选中不改、文件偏好新App、保存树/几何、编辑器镜像旋转拖动及取消。
+ADR-031/PV_HISTORY_SLICE：AnalysisHistory/PvHistoryEntry纯64×128展示采样，深拷贝不可变PV/list、源Position/epoch/nodeId/revisions/rawinfo，去重同token/PV最新内容（time/nps-only忽略，WDL比较数值）。Controller普通分析100ms flush采样，位置变清空，停止/同位置重启保留，资料/旋转不清，清空只展示不改搜索/谱。Panel stable key pv-history-open，onPressed外捕获snapshot+方色；Dialog虚拟列表/可选择UCI/源执方归一score/bound/WDL/mate0不判胜/截断说明。原站清理预算U，此片只读列表不包含预览或AI/复盘流；rawPV未合法重放，下一worker必须严格校验，不能直接拿它落子。
+
+M3-26 c5e7c04选子样式：SelectionStyle lift旧默认/frame，独立偏好/Controller合并/Scope/Dropdown；面容抬8%格距/阴影，transformHitTests=false且在pieceSize外；框固定交点，空位/拖动反馈无选择态。主盘编辑器共用，根345/native单1已过，ADR-030。
 
 M3-25 d3abe10落子标记根338/native单1；ADR-029/LAST_MOVE_MARKER_SLICE，current.move及(epoch,cursorId)展示身份，600ms光圈单周/系统减少动画/首次插入animateOnMount，方向评注不重启，源环/终点框，初始恢复静止，根与编辑器无旧标记。
 
@@ -26,7 +28,7 @@ AppTextScaling系统保留原TextScaler非线性，手动100/115/130覆盖；Boa
 
 ## 下一可执行
 
-B22引擎PV历史与小棋盘预览下一片。E30实际点击第一张历史的炮２平１打开预览1/33，下一步2/33，播放改暂停并实际推进，暂停13/33；点击首着1/33，上一步0/33且上一步/走到棋盘上禁用，Escape关闭后原三着谱未变。未点提交按钮，“走到棋盘上”具体写谱仍U，不能当已走通。E30证据待独立研究提交，截图及AX在research/E30*；源页已恢复/分析0。F21素材、F26评级标记/B22应用前缀、布局、声音、错题训练、其它格式、后端、历史规则、五平台等继续。
+B22小棋盘只读预览与播放下一片，历史列表首片已交付。E30实际点击第一张历史的炮２平１打开预览1/33，下一步2/33，播放改暂停并实际推进，暂停13/33；点击首着1/33，上一步0/33且上一步/走到棋盘上禁用，Escape关闭后原三着谱未变。未点提交按钮，“走到棋盘上”具体写谱仍U，不能当已走通。E30证据已6ca843e提交，截图及AX在research/E30*；源页已恢复/分析0。F21素材、F26评级标记/B22应用前缀、布局、声音、错题训练、其它格式、后端、历史规则、五平台等继续。
 
 IAB browser2/tab4 https://xiangqiai.com/#/，E19自制树正常方向、选中炮八平五/马２进３/炮二进二支线叶子，另一马八进七/马８进７主线仍在。E24分析已停止checkbox0但保留历史卡；E25恢复全局变着开/局部关/推荐开/标准/棋子100/系统字号。E25证据已commit，源站两层AND、父局面同级/单项/根/设置返回局部重置已V，编号1中央单次不导航，其它命中仍U。压缩后先cua.rewriteDocumentation再fresh AX；别重新载入。getAX在历史PV行会很长，可emit:false后截取操作段/过滤含“text 红分”的历史行，但文件注明截取/过滤。截图变更后保存并commentary嵌图；研究素材不进产品资源。
 

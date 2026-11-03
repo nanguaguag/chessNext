@@ -10,6 +10,7 @@ import '../../application/piece_image_library_controller.dart';
 import 'piece_skin_images_dialog.dart';
 import '../../application/board_skin_image_library_controller.dart';
 import 'board_skin_images_dialog.dart';
+import '../../application/board_skin_geometry.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
   const BoardDisplayDialog({
@@ -45,6 +46,110 @@ class BoardDisplayDialog extends StatelessWidget {
       y: (_skinOffsetY(preferences) + y).clamp(-8, 8),
     ),
   );
+
+  Widget _geometryControls(BuildContext context) {
+    final skin = preferences.value.boardSkin;
+    final geometry =
+        preferences.value.boardGeometries[skin] ??
+        const BoardSkinGeometry.standard();
+    Widget edge(
+      String label,
+      double value,
+      double min,
+      double max,
+      BoardSkinGeometry Function(double) update,
+    ) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('$label ${value.toStringAsFixed(1)}%'),
+        Slider(
+          key: ValueKey('board-geometry-${skin.name}-$label'),
+          value: value,
+          min: min,
+          max: max,
+          divisions: ((max - min) * 2).round().clamp(1, 196),
+          label: '${value.toStringAsFixed(1)}%',
+          semanticFormatterCallback: (v) => '${v.toStringAsFixed(1)}%',
+          onChanged: preferences.loading
+              ? null
+              : (next) => unawaited(
+                  preferences.setBoardSkinGeometry(skin, update(next)),
+                ),
+        ),
+      ],
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text('格点与边距', style: Theme.of(context).textTheme.titleSmall),
+        const Text('按画布百分比调整格网四边；所有棋子、标记和交点点击共用此几何。'),
+        edge(
+          '左边距',
+          geometry.leftPercent,
+          BoardSkinGeometry.minEdgePercent,
+          geometry.rightPercent - BoardSkinGeometry.minSpanPercent,
+          (v) => geometry.copyWith(leftPercent: v),
+        ),
+        edge(
+          '右边距',
+          geometry.rightPercent,
+          geometry.leftPercent + BoardSkinGeometry.minSpanPercent,
+          BoardSkinGeometry.maxEdgePercent,
+          (v) => geometry.copyWith(rightPercent: v),
+        ),
+        edge(
+          '上边距',
+          geometry.topPercent,
+          BoardSkinGeometry.minEdgePercent,
+          geometry.bottomPercent - BoardSkinGeometry.minSpanPercent,
+          (v) => geometry.copyWith(topPercent: v),
+        ),
+        edge(
+          '下边距',
+          geometry.bottomPercent,
+          geometry.topPercent + BoardSkinGeometry.minSpanPercent,
+          BoardSkinGeometry.maxEdgePercent,
+          (v) => geometry.copyWith(bottomPercent: v),
+        ),
+        Text('棋子缩放 ${geometry.pieceScalePercent}%'),
+        Slider(
+          key: ValueKey('board-geometry-${skin.name}-piece-scale'),
+          value: geometry.pieceScalePercent.toDouble(),
+          min: BoardSkinGeometry.minPieceScalePercent.toDouble(),
+          max: BoardSkinGeometry.maxPieceScalePercent.toDouble(),
+          divisions:
+              BoardSkinGeometry.maxPieceScalePercent -
+              BoardSkinGeometry.minPieceScalePercent,
+          label: '${geometry.pieceScalePercent}%',
+          semanticFormatterCallback: (v) => '${v.round()}%',
+          onChanged: preferences.loading
+              ? null
+              : (next) => unawaited(
+                  preferences.setBoardSkinGeometry(
+                    skin,
+                    geometry.copyWith(pieceScalePercent: next.round()),
+                  ),
+                ),
+        ),
+        const Text('棋子只改变面容尺寸，不改变格线间距或交点命中；与全局棋子尺寸、棋子样式比例相乘。'),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: preferences.loading
+                ? null
+                : () => unawaited(
+                    preferences.setBoardSkinGeometry(
+                      skin,
+                      const BoardSkinGeometry.standard(),
+                    ),
+                  ),
+            icon: const Icon(Icons.restart_alt),
+            label: const Text('格网恢复默认'),
+          ),
+        ),
+      ],
+    );
+  }
 
   Widget _soundOptions(
     BuildContext context,
@@ -120,6 +225,7 @@ class BoardDisplayDialog extends StatelessWidget {
                   label: const Text('编辑棋盘图片'),
                 ),
               ),
+              _geometryControls(context),
               const SizedBox(height: 12),
               DropdownButtonFormField<PieceSkin>(
                 key: ValueKey(preferences.value.pieceSkin),

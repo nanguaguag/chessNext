@@ -26,6 +26,7 @@ import 'features/records/move_list.dart';
 import 'features/records/variation_panel.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'application/app_preferences.dart';
+import 'application/board_skin_geometry.dart';
 import 'application/preferences_controller.dart';
 import 'ports/preferences_repository.dart';
 import 'features/settings/preferences_dialog.dart';
@@ -341,6 +342,9 @@ class _ChessNextAppState extends State<ChessNextApp>
         showCoordinates: preferences.value.showCoordinates,
         rotateOppositePieces: preferences.value.rotateOppositePieces,
         boardSkin: preferences.value.boardSkin,
+        geometry:
+            preferences.value.boardGeometries[preferences.value.boardSkin] ??
+            const BoardSkinGeometry.standard(),
         boardSkinImages: boardSkinImages.imagesFor(preferences.value.boardSkin),
         pieceSkin: preferences.value.pieceSkin,
         pieceImages: pieceImages.imagesFor(preferences.value.pieceSkin),

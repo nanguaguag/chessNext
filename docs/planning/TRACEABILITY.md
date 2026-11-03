@@ -6,6 +6,14 @@
 
 新增ADR-054项目提案P：归一化格网矩形、Square映射统一驱动绘制/标记/命中/坐标、皮肤棋子缩放80–120%与全局面容比例相乘、图片/GIF快照冻结几何，并明确本机草稿保存/应用/取消边界。源站数值单位/范围/联动/成功语义仍U。落点图旋转另切片。本轮仅审计/设计，无业务实现、测试、macOS运行或功能提交。
 
+## 2026-11-04 / M4-18 / F21 → B24 棋盘格网几何
+
+新增`BoardSkinGeometry`纯Dart不可变配置，归一化画布四边并含当前棋盘预设独立棋子面容比例80–120%/1%步进。棋盘两预设各自存储，旧偏好缺字段映射标准9×10网格；坏类型/坏范围拒绝。几何项目边界为四边1%–99%、跨度至少55%、设置滑杆半个百分点步进并可恢复默认（P）。`BoardDisplayScope`向主盘/编辑器/导出预览提供只读值；BoardSurface用统一Translate+Scale变换覆盖棋盘背景、格线、棋子、末步/选子标记、分析箭头和评级，Flutter逆变换命中回原交点；独立棋子比例与现有全局/棋子样式缩放相乘，只改面容。横向坐标轨按相同端点定位；PGN/棋树/规则/搜索不变。BoardImageSnapshot与BoardGifSnapshot冻结活动预设几何和比例。
+
+测试：`flutter test test/application/board_skin_geometry_test.dart test/application/board_image_snapshot_test.dart test/widgets/board_coordinates_test.dart --reporter compact` 14/14通过，覆盖序列化边界、预设迟到读取合并、快照、四方向坐标、变形后交点命中和设置持久化；根`flutter test --reporter compact`473通过/5跳过（官方Pikafish/NNUE环境缺失），`flutter analyze`无问题。`flutter run -d macos`构建、同步并启动PID49586/VM `127.0.0.1:58562`；CUA app窗口读取两次超时，因此实际窗口视觉验收not run。首轮专项widget测试因缺Material祖先失败，补Material后14/14通过；首轮全量输出未完整保留，随后以`/tmp/chessnext-board-geometry-root-test.log`重跑并获exit0。未引入依赖或外部资源。
+
+几何项目P已实现；源站slider真实min/max/step、四边耦合算法、棋子缩放语义和保存/使用/导出仍U。M4-19继续落点标记图旋转，按ADR-054单周完成后静止并遵循现有动画速度/系统减少动画，此时序是P而非源站证据；之后继续F21皮肤列表/导入/阴影等差距。
+
 需求→证据与模块见 FEATURE_MATRIX；需求→待办见 BACKLOG；待办→阶段见 MILESTONES。本文件定义验证分组，不代表已通过。
 
 | 测试组 | 需求 | 证据 | 验收方式 |

@@ -1,6 +1,7 @@
 import 'package:chess_next/app.dart';
 import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/application/board_appearance.dart';
+import 'package:chess_next/application/board_skin_geometry.dart';
 import 'package:chess_next/features/board/board_display_scope.dart';
 import 'package:chess_next/features/board/board_file_coordinates.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
@@ -307,4 +308,56 @@ void main() {
       }
     },
   );
+  testWidgets('custom geometry moves grid and its hit targets together', (
+    tester,
+  ) async {
+    final tapped = <Square>[];
+    final geometry = BoardSkinGeometry(
+      leftPercent: 10,
+      rightPercent: 90,
+      topPercent: 8,
+      bottomPercent: 92,
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Center(
+          child: SizedBox(
+            width: 450,
+            height: 500,
+            child: BoardDisplayScope(
+              showCoordinates: false,
+              geometry: geometry,
+              child: Material(
+                child: BoardSurface(
+                  at: Position.initial().at,
+                  onTap: tapped.add,
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    final boardOrigin = tester.getTopLeft(find.byType(BoardSurface));
+    await tester.tapAt(boardOrigin + const Offset(45, 460));
+    expect(tapped, [Square(0, 0)]);
+    expect(tester.takeException(), isNull);
+  });
+  testWidgets('board geometry control persists for the selected board skin', (
+    tester,
+  ) async {
+    desktop(tester);
+    final store = MemoryPreferencesRepository();
+    await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
+    await tester.pumpAndSettle();
+    await open(tester);
+    final slider = find.byKey(const ValueKey('board-geometry-parchment-左边距'));
+    await tester.ensureVisible(slider);
+    await tester.drag(slider, const Offset(60, 0));
+    await tester.pumpAndSettle();
+    expect(
+      store.value!.boardGeometries[BoardSkin.parchment]!.leftPercent,
+      greaterThan(100 * .5 / 9),
+    );
+  });
 }

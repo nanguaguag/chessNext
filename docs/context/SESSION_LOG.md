@@ -601,3 +601,10 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 根据E44–E47编写ADR-054提案：归一化几何矩形；Square逻辑映射统一用于格线/棋子/各标记/箭头/坐标/反向命中；项目棋子比例80–120%；PNG/GIF冻结几何；草稿保存/应用/取消边界。所有这些是P，站点数值、端点、联动与成功语义仍U；落点图旋转另切片。更新FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY、CURRENT_STATE、HANDOFF。
 
 本轮仅审计/设计，无代码修改，未运行测试，未提交功能。实际可视浏览器检查已完成；未核源站边界或动画。下一步按ADR-054实现并依用户门槛做根测试/analyze/macOS run和视觉验收，之后单独提交。
+# 2026-11-04 / M4-18 / F21,B24 棋盘格网几何
+
+实现`BoardSkinGeometry`归一化四边模型，当前棋盘预设分别持久化；棋盘预设另持80%–120%/步1%棋子面容缩放；Project bounds 1–99%、span≥55%、0.5% Slider step、恢复默认。偏好异步读取按预设键合并，未丢弃另一预设。BoardDisplayScope注入当前几何；BoardSurface统一变换全棋面层，坐标file rail用同样左右端点；触控经Transform逆变换回旧逻辑Square。BoardImageSnapshot与BoardGifSnapshot捕获并冻结几何和比例。未改棋谱、规则或引擎。
+
+验证命令：`dart format [M4-18改动Dart文件]`；专项`flutter test test/application/board_skin_geometry_test.dart test/application/board_image_snapshot_test.dart test/widgets/board_coordinates_test.dart --reporter compact` 14/14；完整`flutter test --reporter compact`通过，473 pass/5 skip，输出`/tmp/chessnext-board-geometry-root-test.log`；`flutter analyze`无问题；`flutter run -d macos` Build/Sync成功，PID49586，VM Service `127.0.0.1:58562`。flutter_tts既有SwiftPM未来兼容warning。macOS GUI窗口查询通过CUA两次超时，视觉验收未做。首轮专项widget缺Material祖先失败，补Material后通过；首轮全量输出被截断，以日志重跑确认exit0。
+
+源站slider范围/四边算法/缩放对象/保存语义仍U；几何具体值和本地映射为P。没有增加依赖/外部资源。功能代码/研究文档待提交；之后立即继续M4-19落点标记图旋转，不以此关闭F21/全站。旧进程PID44785与runner44412仍在历史交接中；本片新进程49586保留。

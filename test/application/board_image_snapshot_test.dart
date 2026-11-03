@@ -1,6 +1,7 @@
 import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/application/board_appearance.dart';
 import 'package:chess_next/application/board_image_snapshot.dart';
+import 'package:chess_next/application/board_skin_geometry.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/application/current_move_arrows.dart';
 import 'package:chess_next/application/review_report.dart';
@@ -25,6 +26,15 @@ void main() {
     final prefs = AppPreferences(
       showCoordinates: false,
       boardSkin: BoardSkin.jade,
+      boardGeometries: {
+        BoardSkin.jade: BoardSkinGeometry(
+          leftPercent: 10,
+          rightPercent: 90,
+          topPercent: 8,
+          bottomPercent: 92,
+          pieceScalePercent: 110,
+        ),
+      },
       pieceSkin: PieceSkin.squareInk,
       squareInkPieceScalePercent: 110,
       squareInkPieceOffsetX: 4,
@@ -48,6 +58,16 @@ void main() {
     expect(snapshot.mirrored, isTrue);
     expect(snapshot.showCoordinates, isFalse);
     expect(snapshot.boardSkin, BoardSkin.jade);
+    expect(
+      snapshot.geometry,
+      BoardSkinGeometry(
+        leftPercent: 10,
+        rightPercent: 90,
+        topPercent: 8,
+        bottomPercent: 92,
+        pieceScalePercent: 110,
+      ),
+    );
     expect(snapshot.pieceSkin, PieceSkin.squareInk);
     expect(snapshot.pieceSkinSizePercent, 110);
     expect(snapshot.pieceSkinOffsetXPercent, 4);

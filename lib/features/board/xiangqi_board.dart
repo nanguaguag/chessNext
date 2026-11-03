@@ -7,6 +7,7 @@ import 'variation_arrows_painter.dart';
 import 'board_arrows_painter.dart';
 import '../../application/board_appearance.dart';
 import '../../application/app_preferences.dart';
+import '../../application/board_skin_geometry.dart';
 import 'board_display_scope.dart';
 import 'board_file_coordinates.dart';
 import 'package:flutter/material.dart';
@@ -86,6 +87,7 @@ class BoardSurface extends StatefulWidget {
     this.showCoordinates,
     this.rotateOppositePieces,
     this.boardSkin,
+    this.geometry,
     this.pieceSkin,
     this.pieceImages,
     this.pieceSizePercent,
@@ -132,6 +134,7 @@ class BoardSurface extends StatefulWidget {
   final bool? showCoordinates;
   final bool? rotateOppositePieces;
   final BoardSkin? boardSkin;
+  final BoardSkinGeometry? geometry;
   final PieceSkin? pieceSkin;
   final Map<PieceImageSlot, Uint8List>? pieceImages;
   final int? pieceSizePercent;
@@ -218,6 +221,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
 
   @override
   Widget build(BuildContext context) {
+    final geometry = widget.geometry ?? BoardDisplayScope.geometryOf(context);
     final board = Focus(
       autofocus: true,
       focusNode: boardFocus,
@@ -245,136 +249,162 @@ class _BoardSurfaceState extends State<BoardSurface> {
                 color: Color(skin.boardColor),
                 borderRadius: BorderRadius.circular(20),
               ),
-              child: Stack(
-                children: [
-                  if (backgroundImage != null)
-                    Positioned.fill(
-                      child: IgnorePointer(
-                        child: ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Image.memory(
-                            backgroundImage,
-                            fit: BoxFit.fill,
-                            key: const ValueKey(
-                              'board-skin-image-boardBackground',
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  Positioned.fill(
-                    child: CustomPaint(painter: _BoardPainter(skin)),
+              child: ClipRect(
+                child: Transform.translate(
+                  offset: Offset(
+                    constraints.maxWidth *
+                        (geometry.leftPercent / 100 - .5 / 9) /
+                        ((8.5 - .5) / 9),
+                    constraints.maxHeight *
+                        (geometry.topPercent / 100 - .5 / 10) /
+                        ((9.5 - .5) / 10),
                   ),
-                  if ((widget.showAnalysisArrows ??
-                          BoardDisplayScope.analysisArrowsOf(context)) &&
-                      (widget.recommendation != null || widget.reply != null))
-                    Positioned.fill(
-                      child: Semantics(
-                        container: true,
-                        label: [
-                          if (widget.recommendation != null)
-                            '引擎推荐：${widget.recommendation!.from}至${widget.recommendation!.to}',
-                          if (widget.reply != null)
-                            '预计应着：${widget.reply!.from}至${widget.reply!.to}',
-                        ].join('；'),
-                        child: IgnorePointer(
-                          child: CustomPaint(
-                            painter: BoardArrowsPainter(
-                              recommendation: widget.recommendation,
-                              reply: widget.reply,
-                              flipped: widget.flipped,
-                              mirrored: widget.mirrored,
-                              headStyle:
-                                  widget.arrowHeadStyle ??
-                                  BoardDisplayScope.arrowHeadOf(context),
+                  child: Transform.scale(
+                    alignment: Alignment.topLeft,
+                    scaleX:
+                        (geometry.rightPercent - geometry.leftPercent) /
+                        (100 * ((8.5 - .5) / 9)),
+                    scaleY:
+                        (geometry.bottomPercent - geometry.topPercent) /
+                        (100 * ((9.5 - .5) / 10)),
+                    child: Stack(
+                      children: [
+                        if (backgroundImage != null)
+                          Positioned.fill(
+                            child: IgnorePointer(
+                              child: ClipRRect(
+                                borderRadius: BorderRadius.circular(20),
+                                child: Image.memory(
+                                  backgroundImage,
+                                  fit: BoxFit.fill,
+                                  key: const ValueKey(
+                                    'board-skin-image-boardBackground',
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
+                        Positioned.fill(
+                          child: CustomPaint(painter: _BoardPainter(skin)),
                         ),
-                      ),
-                    ),
-                  if (BoardDisplayScope.variationArrowsOf(context) &&
-                      widget.variations.isNotEmpty)
-                    Positioned.fill(
-                      child: Semantics(
-                        container: true,
-                        label:
-                            '上一局面的本步变着：${widget.variations.take(CurrentMoveArrows.maxVisible).map((a) => '${a.number} ${a.notation}').join('；')}',
-                        child: IgnorePointer(
-                          child: CustomPaint(
-                            painter: VariationArrowsPainter(
-                              arrows: widget.variations,
-                              flipped: widget.flipped,
-                              mirrored: widget.mirrored,
-                              headStyle:
-                                  widget.arrowHeadStyle ??
-                                  BoardDisplayScope.arrowHeadOf(context),
+                        if ((widget.showAnalysisArrows ??
+                                BoardDisplayScope.analysisArrowsOf(context)) &&
+                            (widget.recommendation != null ||
+                                widget.reply != null))
+                          Positioned.fill(
+                            child: Semantics(
+                              container: true,
+                              label: [
+                                if (widget.recommendation != null)
+                                  '引擎推荐：${widget.recommendation!.from}至${widget.recommendation!.to}',
+                                if (widget.reply != null)
+                                  '预计应着：${widget.reply!.from}至${widget.reply!.to}',
+                              ].join('；'),
+                              child: IgnorePointer(
+                                child: CustomPaint(
+                                  painter: BoardArrowsPainter(
+                                    recommendation: widget.recommendation,
+                                    reply: widget.reply,
+                                    flipped: widget.flipped,
+                                    mirrored: widget.mirrored,
+                                    headStyle:
+                                        widget.arrowHeadStyle ??
+                                        BoardDisplayScope.arrowHeadOf(context),
+                                  ),
+                                ),
+                              ),
                             ),
                           ),
-                        ),
-                      ),
+                        if (BoardDisplayScope.variationArrowsOf(context) &&
+                            widget.variations.isNotEmpty)
+                          Positioned.fill(
+                            child: Semantics(
+                              container: true,
+                              label:
+                                  '上一局面的本步变着：${widget.variations.take(CurrentMoveArrows.maxVisible).map((a) => '${a.number} ${a.notation}').join('；')}',
+                              child: IgnorePointer(
+                                child: CustomPaint(
+                                  painter: VariationArrowsPainter(
+                                    arrows: widget.variations,
+                                    flipped: widget.flipped,
+                                    mirrored: widget.mirrored,
+                                    headStyle:
+                                        widget.arrowHeadStyle ??
+                                        BoardDisplayScope.arrowHeadOf(context),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        for (var row = 0; row < 10; row++)
+                          for (var col = 0; col < 9; col++)
+                            _cell(
+                              Square(
+                                widget.flipped != widget.mirrored
+                                    ? 8 - col
+                                    : col,
+                                widget.flipped ? row : 9 - row,
+                              ),
+                              col,
+                              row,
+                              step,
+                            ),
+                        if (widget.lastMove != null)
+                          Positioned.fill(
+                            child: LastMoveMarkers(
+                              animateOnMount: animateMarkerOnMount,
+                              move: widget.lastMove!,
+                              identity:
+                                  widget.lastMoveIdentity ?? widget.lastMove!,
+                              style:
+                                  widget.lastMoveMarkerStyle ??
+                                  BoardDisplayScope.lastMoveMarkerOf(context),
+                              duration: BoardDisplayScope.animationSpeedOf(
+                                context,
+                              ).duration,
+                              flipped: widget.flipped,
+                              mirrored: widget.mirrored,
+                              drawSourceMarker: startMarkerImage == null,
+                              drawLandingMarker: landingMarkerImage == null,
+                            ),
+                          ),
+                        if (widget.lastMove != null) ...[
+                          if (startMarkerImage != null)
+                            _skinMarkerImage(
+                              widget.lastMove!.from,
+                              startMarkerImage,
+                              constraints.maxWidth / 9,
+                              BoardSkinImageSlot.startMarker,
+                            ),
+                          if (landingMarkerImage != null)
+                            _skinMarkerImage(
+                              widget.lastMove!.to,
+                              landingMarkerImage,
+                              constraints.maxWidth / 9,
+                              BoardSkinImageSlot.landingMarker,
+                            ),
+                        ],
+                        if (widget.selected != null &&
+                            selectionFrameImage != null)
+                          _skinMarkerImage(
+                            widget.selected!,
+                            selectionFrameImage,
+                            constraints.maxWidth / 9,
+                            BoardSkinImageSlot.selectionFrame,
+                          ),
+                        if (visibleAssessment != null)
+                          Positioned.fill(
+                            child: MoveGradeBadge(
+                              square: widget.lastMove!.to,
+                              grade: visibleAssessment!.grade,
+                              flipped: widget.flipped,
+                              mirrored: widget.mirrored,
+                            ),
+                          ),
+                      ],
                     ),
-                  for (var row = 0; row < 10; row++)
-                    for (var col = 0; col < 9; col++)
-                      _cell(
-                        Square(
-                          widget.flipped != widget.mirrored ? 8 - col : col,
-                          widget.flipped ? row : 9 - row,
-                        ),
-                        col,
-                        row,
-                        step,
-                      ),
-                  if (widget.lastMove != null)
-                    Positioned.fill(
-                      child: LastMoveMarkers(
-                        animateOnMount: animateMarkerOnMount,
-                        move: widget.lastMove!,
-                        identity: widget.lastMoveIdentity ?? widget.lastMove!,
-                        style:
-                            widget.lastMoveMarkerStyle ??
-                            BoardDisplayScope.lastMoveMarkerOf(context),
-                        duration: BoardDisplayScope.animationSpeedOf(
-                          context,
-                        ).duration,
-                        flipped: widget.flipped,
-                        mirrored: widget.mirrored,
-                        drawSourceMarker: startMarkerImage == null,
-                        drawLandingMarker: landingMarkerImage == null,
-                      ),
-                    ),
-                  if (widget.lastMove != null) ...[
-                    if (startMarkerImage != null)
-                      _skinMarkerImage(
-                        widget.lastMove!.from,
-                        startMarkerImage,
-                        constraints.maxWidth / 9,
-                        BoardSkinImageSlot.startMarker,
-                      ),
-                    if (landingMarkerImage != null)
-                      _skinMarkerImage(
-                        widget.lastMove!.to,
-                        landingMarkerImage,
-                        constraints.maxWidth / 9,
-                        BoardSkinImageSlot.landingMarker,
-                      ),
-                  ],
-                  if (widget.selected != null && selectionFrameImage != null)
-                    _skinMarkerImage(
-                      widget.selected!,
-                      selectionFrameImage,
-                      constraints.maxWidth / 9,
-                      BoardSkinImageSlot.selectionFrame,
-                    ),
-                  if (visibleAssessment != null)
-                    Positioned.fill(
-                      child: MoveGradeBadge(
-                        square: widget.lastMove!.to,
-                        grade: visibleAssessment!.grade,
-                        flipped: widget.flipped,
-                        mirrored: widget.mirrored,
-                      ),
-                    ),
-                ],
+                  ),
+                ),
               ),
             );
           },
@@ -385,6 +415,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
         ? BoardFileCoordinates(
             flipped: widget.flipped,
             mirrored: widget.mirrored,
+            geometry: geometry,
             child: board,
           )
         : board;
@@ -404,6 +435,9 @@ class _BoardSurfaceState extends State<BoardSurface> {
         BoardDisplayScope.rotateOppositePiecesOf(context);
     final pieceSkin =
         widget.pieceSkin ?? BoardDisplayScope.pieceSkinOf(context);
+    final boardPieceScale =
+        (widget.geometry ?? BoardDisplayScope.geometryOf(context))
+            .pieceScalePercent;
     final customImage = piece == null
         ? null
         : (widget.pieceImages ??
@@ -532,6 +566,8 @@ class _BoardSurfaceState extends State<BoardSurface> {
           100 *
           (widget.pieceSkinSizePercent ??
               BoardDisplayScope.pieceSkinSizeOf(context)) /
+          100 *
+          boardPieceScale /
           100,
       transformHitTests: false,
       child: face,

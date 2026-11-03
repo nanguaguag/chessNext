@@ -4,6 +4,7 @@ import '../../application/app_preferences.dart';
 import '../../ports/piece_images.dart';
 import '../../ports/board_skin_images.dart';
 import 'dart:typed_data';
+import '../../application/board_skin_geometry.dart';
 
 /// Read-only presentation data above Navigator; no controller, IO or document.
 class BoardDisplayScope extends InheritedWidget {
@@ -12,6 +13,7 @@ class BoardDisplayScope extends InheritedWidget {
     required this.showCoordinates,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.geometry = const BoardSkinGeometry.standard(),
     this.pieceSkin = PieceSkin.roundSeal,
     this.pieceImages = const {},
     this.boardSkinImages = const {},
@@ -35,6 +37,7 @@ class BoardDisplayScope extends InheritedWidget {
   final bool showCoordinates;
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
+  final BoardSkinGeometry geometry;
   final PieceSkin pieceSkin;
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;
@@ -118,6 +121,11 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.boardSkin ??
       BoardSkin.parchment;
+  static BoardSkinGeometry geometryOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.geometry ??
+      const BoardSkinGeometry.standard();
   static PieceSkin pieceSkinOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
@@ -144,6 +152,7 @@ class BoardDisplayScope extends InheritedWidget {
       showCoordinates != oldWidget.showCoordinates ||
       rotateOppositePieces != oldWidget.rotateOppositePieces ||
       boardSkin != oldWidget.boardSkin ||
+      geometry != oldWidget.geometry ||
       pieceSkin != oldWidget.pieceSkin ||
       !identical(pieceImages, oldWidget.pieceImages) ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||

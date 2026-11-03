@@ -1,5 +1,15 @@
 import 'board_appearance.dart';
+import 'board_skin_geometry.dart';
 import 'review_models.dart';
+
+bool _mapEquals<K, V>(Map<K, V> a, Map<K, V> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (final entry in a.entries) {
+    if (b[entry.key] != entry.value) return false;
+  }
+  return true;
+}
 
 enum ThemePreference { system, light, dark }
 
@@ -42,6 +52,7 @@ final class AppPreferences {
     this.showCoordinates = true,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    Map<BoardSkin, BoardSkinGeometry> boardGeometries = const {},
     this.pieceSkin = PieceSkin.roundSeal,
     this.pieceSizePercent = 100,
     this.roundSealPieceScalePercent = 100,
@@ -62,7 +73,10 @@ final class AppPreferences {
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
     this.guideVersion = 0,
-  }) {
+  }) : boardGeometries = Map.unmodifiable({
+         for (final skin in BoardSkin.values)
+           skin: boardGeometries[skin] ?? BoardSkinGeometry(),
+       }) {
     if (pieceSizePercent < 10 ||
         pieceSizePercent > 200 ||
         pieceSizePercent % 5 != 0 ||
@@ -104,6 +118,7 @@ final class AppPreferences {
   final bool showCoordinates;
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
+  final Map<BoardSkin, BoardSkinGeometry> boardGeometries;
   final PieceSkin pieceSkin;
   final int pieceSizePercent;
   final int roundSealPieceScalePercent;
@@ -133,6 +148,7 @@ final class AppPreferences {
     bool? showCoordinates,
     bool? rotateOppositePieces,
     BoardSkin? boardSkin,
+    Map<BoardSkin, BoardSkinGeometry>? boardGeometries,
     PieceSkin? pieceSkin,
     int? pieceSizePercent,
     int? roundSealPieceScalePercent,
@@ -167,6 +183,7 @@ final class AppPreferences {
     showCoordinates: showCoordinates ?? this.showCoordinates,
     rotateOppositePieces: rotateOppositePieces ?? this.rotateOppositePieces,
     boardSkin: boardSkin ?? this.boardSkin,
+    boardGeometries: boardGeometries ?? this.boardGeometries,
     pieceSkin: pieceSkin ?? this.pieceSkin,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     roundSealPieceScalePercent:
@@ -210,6 +227,14 @@ final class AppPreferences {
     if (!showCoordinates) 'showCoordinates': false,
     if (rotateOppositePieces) 'rotateOppositePieces': true,
     if (boardSkin != BoardSkin.parchment) 'boardSkin': boardSkin.name,
+    if (boardGeometries.values.any(
+      (geometry) => geometry != BoardSkinGeometry(),
+    ))
+      'boardGeometries': {
+        for (final entry in boardGeometries.entries)
+          if (entry.value != BoardSkinGeometry())
+            entry.key.name: entry.value.toJson(),
+      },
     if (pieceSkin != PieceSkin.roundSeal) 'pieceSkin': pieceSkin.name,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
     if (roundSealPieceScalePercent != 100)
@@ -269,6 +294,8 @@ final class AppPreferences {
         (json.containsKey('rotateOppositePieces') &&
             json['rotateOppositePieces'] is! bool) ||
         (json.containsKey('boardSkin') && json['boardSkin'] is! String) ||
+        (json.containsKey('boardGeometries') &&
+            json['boardGeometries'] is! Map) ||
         (json.containsKey('pieceSkin') && json['pieceSkin'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('pieceSizePercent') &&
@@ -330,6 +357,7 @@ final class AppPreferences {
         boardSkin: BoardSkin.values.byName(
           json['boardSkin'] as String? ?? 'parchment',
         ),
+        boardGeometries: _decodeBoardGeometries(json['boardGeometries']),
         pieceSkin: PieceSkin.values.byName(
           json['pieceSkin'] as String? ?? 'roundSeal',
         ),
@@ -351,6 +379,24 @@ final class AppPreferences {
       throw const FormatException('Invalid preference value');
     }
   }
+
+  static Map<BoardSkin, BoardSkinGeometry> _decodeBoardGeometries(
+    Object? value,
+  ) {
+    if (value == null) return const {};
+    final result = <BoardSkin, BoardSkinGeometry>{};
+    for (final entry in (value as Map).entries) {
+      if (entry.key is! String || entry.value is! Map) {
+        throw const FormatException('Invalid board geometry map');
+      }
+      final skin = BoardSkin.values.byName(entry.key as String);
+      result[skin] = BoardSkinGeometry.fromJson(
+        Map<String, dynamic>.from(entry.value as Map),
+      );
+    }
+    return result;
+  }
+
   @override
   bool operator ==(Object other) =>
       other is AppPreferences &&
@@ -374,6 +420,7 @@ final class AppPreferences {
       showCoordinates == other.showCoordinates &&
       rotateOppositePieces == other.rotateOppositePieces &&
       boardSkin == other.boardSkin &&
+      _mapEquals(boardGeometries, other.boardGeometries) &&
       pieceSkin == other.pieceSkin &&
       pieceSizePercent == other.pieceSizePercent &&
       roundSealPieceScalePercent == other.roundSealPieceScalePercent &&
@@ -409,6 +456,9 @@ final class AppPreferences {
     showCoordinates,
     rotateOppositePieces,
     boardSkin,
+    Object.hashAll(
+      boardGeometries.entries.map((e) => Object.hash(e.key, e.value)),
+    ),
     pieceSkin,
     pieceSizePercent,
     roundSealPieceScalePercent,

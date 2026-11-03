@@ -4,6 +4,7 @@ import 'package:xiangqi_core/xiangqi_core.dart';
 import 'app_preferences.dart';
 import 'board_appearance.dart';
 import 'board_session.dart';
+import 'board_skin_geometry.dart';
 import 'current_move_arrows.dart';
 import 'review_report.dart';
 import '../ports/piece_images.dart';
@@ -28,6 +29,7 @@ class BoardImageSnapshot {
     this.mirrored = false,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.geometry = const BoardSkinGeometry.standard(),
     this.pieceSkin = PieceSkin.roundSeal,
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
     Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
@@ -70,6 +72,9 @@ class BoardImageSnapshot {
     mirrored: session.mirrored,
     rotateOppositePieces: prefs.rotateOppositePieces,
     boardSkin: prefs.boardSkin,
+    geometry:
+        prefs.boardGeometries[prefs.boardSkin] ??
+        const BoardSkinGeometry.standard(),
     pieceSkin: prefs.pieceSkin,
     pieceImages: pieceImages,
     boardSkinImages: boardSkinImages,
@@ -93,6 +98,7 @@ class BoardImageSnapshot {
   final List<VariationArrow> variations;
   final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final BoardSkin boardSkin;
+  final BoardSkinGeometry geometry;
   final PieceSkin pieceSkin;
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;

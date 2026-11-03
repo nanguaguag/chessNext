@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../ports/preferences_repository.dart';
 import 'app_preferences.dart';
 import 'board_appearance.dart';
+import 'board_skin_geometry.dart';
 import 'review_models.dart';
 import 'engine_session_controller.dart';
 
@@ -162,6 +163,10 @@ class PreferencesController extends ChangeNotifier {
             boardSkin: _edited.contains('boardSkin')
                 ? previous.boardSkin
                 : null,
+            boardGeometries: _mergeBoardGeometries(
+              stored.boardGeometries,
+              previous.boardGeometries,
+            ),
             pieceSkin: _edited.contains('pieceSkin')
                 ? previous.pieceSkin
                 : null,
@@ -235,6 +240,24 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(rotateOppositePieces: enabled));
   Future<void> setBoardSkin(BoardSkin skin) =>
       apply(value.copyWith(boardSkin: skin));
+  Future<void> setBoardSkinGeometry(
+    BoardSkin skin,
+    BoardSkinGeometry geometry,
+  ) {
+    final next = Map<BoardSkin, BoardSkinGeometry>.from(value.boardGeometries)
+      ..[skin] = geometry;
+    return apply(value.copyWith(boardGeometries: next));
+  }
+
+  Map<BoardSkin, BoardSkinGeometry> _mergeBoardGeometries(
+    Map<BoardSkin, BoardSkinGeometry> stored,
+    Map<BoardSkin, BoardSkinGeometry> current,
+  ) => {
+    for (final skin in BoardSkin.values)
+      skin: _edited.contains('boardGeometry:${skin.name}')
+          ? current[skin] ?? BoardSkinGeometry()
+          : stored[skin] ?? BoardSkinGeometry(),
+  };
   Future<void> setPieceSkin(PieceSkin skin) =>
       apply(value.copyWith(pieceSkin: skin));
   Future<void> setPieceSize(int percent) =>
@@ -362,6 +385,11 @@ class PreferencesController extends ChangeNotifier {
       _edited.add('rotateOppositePieces');
     }
     if (next.boardSkin != value.boardSkin) _edited.add('boardSkin');
+    for (final skin in BoardSkin.values) {
+      if (next.boardGeometries[skin] != value.boardGeometries[skin]) {
+        _edited.add('boardGeometry:${skin.name}');
+      }
+    }
     if (next.pieceSkin != value.pieceSkin) _edited.add('pieceSkin');
     if (next.guideVersion != value.guideVersion) _edited.add('guideVersion');
     if (next.threads != value.threads) _edited.add('threads');

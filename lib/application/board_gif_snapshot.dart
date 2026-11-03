@@ -36,6 +36,7 @@ final class BoardGifSnapshot {
     this.boardSkin = BoardSkin.parchment,
     this.geometry = const BoardSkinGeometry.standard(),
     this.pieceSkin = PieceSkin.roundSeal,
+    this.pieceSkinShadow = const PieceSkinShadow.roundSealDefault(),
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
     Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
   }) : pieceImages = Map.unmodifiable({
@@ -86,6 +87,7 @@ final class BoardGifSnapshot {
           prefs.boardGeometries[prefs.boardSkin] ??
           const BoardSkinGeometry.standard(),
       pieceSkin: prefs.pieceSkin,
+      pieceSkinShadow: prefs.pieceSkinShadows[prefs.pieceSkin]!,
       pieceImages: pieceImages,
       boardSkinImages: boardSkinImages,
     );
@@ -97,6 +99,7 @@ final class BoardGifSnapshot {
   final BoardSkin boardSkin;
   final BoardSkinGeometry geometry;
   final PieceSkin pieceSkin;
+  final PieceSkinShadow pieceSkinShadow;
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;
   final int pieceSizePercent;

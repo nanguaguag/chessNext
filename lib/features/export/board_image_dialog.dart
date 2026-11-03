@@ -192,6 +192,7 @@ class _BoardImageDialogState extends State<BoardImageDialog> {
                                 geometry: s.geometry,
                                 boardSkinImages: s.boardSkinImages,
                                 pieceSkin: s.pieceSkin,
+                                pieceSkinShadow: s.pieceSkinShadow,
                                 pieceImages: s.pieceImages,
                                 pieceSizePercent: s.pieceSizePercent,
                                 pieceSkinSizePercent: s.pieceSkinSizePercent,

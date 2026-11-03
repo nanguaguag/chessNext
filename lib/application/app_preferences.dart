@@ -53,6 +53,7 @@ final class AppPreferences {
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
     Map<BoardSkin, BoardSkinGeometry> boardGeometries = const {},
+    Map<PieceSkin, PieceSkinShadow> pieceSkinShadows = const {},
     this.pieceSkin = PieceSkin.roundSeal,
     this.pieceSizePercent = 100,
     this.roundSealPieceScalePercent = 100,
@@ -76,6 +77,14 @@ final class AppPreferences {
   }) : boardGeometries = Map.unmodifiable({
          for (final skin in BoardSkin.values)
            skin: boardGeometries[skin] ?? BoardSkinGeometry(),
+       }),
+       pieceSkinShadows = Map.unmodifiable({
+         for (final skin in PieceSkin.values)
+           skin:
+               pieceSkinShadows[skin] ??
+               (skin == PieceSkin.roundSeal
+                   ? const PieceSkinShadow.roundSealDefault()
+                   : const PieceSkinShadow.standard()),
        }) {
     if (pieceSizePercent < 10 ||
         pieceSizePercent > 200 ||
@@ -119,6 +128,7 @@ final class AppPreferences {
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
   final Map<BoardSkin, BoardSkinGeometry> boardGeometries;
+  final Map<PieceSkin, PieceSkinShadow> pieceSkinShadows;
   final PieceSkin pieceSkin;
   final int pieceSizePercent;
   final int roundSealPieceScalePercent;
@@ -149,6 +159,7 @@ final class AppPreferences {
     bool? rotateOppositePieces,
     BoardSkin? boardSkin,
     Map<BoardSkin, BoardSkinGeometry>? boardGeometries,
+    Map<PieceSkin, PieceSkinShadow>? pieceSkinShadows,
     PieceSkin? pieceSkin,
     int? pieceSizePercent,
     int? roundSealPieceScalePercent,
@@ -184,6 +195,7 @@ final class AppPreferences {
     rotateOppositePieces: rotateOppositePieces ?? this.rotateOppositePieces,
     boardSkin: boardSkin ?? this.boardSkin,
     boardGeometries: boardGeometries ?? this.boardGeometries,
+    pieceSkinShadows: pieceSkinShadows ?? this.pieceSkinShadows,
     pieceSkin: pieceSkin ?? this.pieceSkin,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     roundSealPieceScalePercent:
@@ -233,6 +245,14 @@ final class AppPreferences {
       'boardGeometries': {
         for (final entry in boardGeometries.entries)
           if (entry.value != BoardSkinGeometry())
+            entry.key.name: entry.value.toJson(),
+      },
+    if (pieceSkinShadows.entries.any(
+      (entry) => entry.value != _defaultShadow(entry.key),
+    ))
+      'pieceSkinShadows': {
+        for (final entry in pieceSkinShadows.entries)
+          if (entry.value != _defaultShadow(entry.key))
             entry.key.name: entry.value.toJson(),
       },
     if (pieceSkin != PieceSkin.roundSeal) 'pieceSkin': pieceSkin.name,
@@ -296,6 +316,8 @@ final class AppPreferences {
         (json.containsKey('boardSkin') && json['boardSkin'] is! String) ||
         (json.containsKey('boardGeometries') &&
             json['boardGeometries'] is! Map) ||
+        (json.containsKey('pieceSkinShadows') &&
+            json['pieceSkinShadows'] is! Map) ||
         (json.containsKey('pieceSkin') && json['pieceSkin'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('pieceSizePercent') &&
@@ -358,6 +380,7 @@ final class AppPreferences {
           json['boardSkin'] as String? ?? 'parchment',
         ),
         boardGeometries: _decodeBoardGeometries(json['boardGeometries']),
+        pieceSkinShadows: _decodePieceSkinShadows(json['pieceSkinShadows']),
         pieceSkin: PieceSkin.values.byName(
           json['pieceSkin'] as String? ?? 'roundSeal',
         ),
@@ -386,11 +409,37 @@ final class AppPreferences {
     if (value == null) return const {};
     final result = <BoardSkin, BoardSkinGeometry>{};
     for (final entry in (value as Map).entries) {
-      if (entry.key is! String || entry.value is! Map) {
+      if (entry.key is! String ||
+          entry.value is! Map ||
+          (entry.value as Map).keys.any((key) => key is! String)) {
         throw const FormatException('Invalid board geometry map');
       }
       final skin = BoardSkin.values.byName(entry.key as String);
       result[skin] = BoardSkinGeometry.fromJson(
+        Map<String, dynamic>.from(entry.value as Map),
+      );
+    }
+    return result;
+  }
+
+  static PieceSkinShadow _defaultShadow(PieceSkin skin) =>
+      skin == PieceSkin.roundSeal
+      ? const PieceSkinShadow.roundSealDefault()
+      : const PieceSkinShadow.standard();
+
+  static Map<PieceSkin, PieceSkinShadow> _decodePieceSkinShadows(
+    Object? value,
+  ) {
+    if (value == null) return const {};
+    final result = <PieceSkin, PieceSkinShadow>{};
+    for (final entry in (value as Map).entries) {
+      if (entry.key is! String ||
+          entry.value is! Map ||
+          (entry.value as Map).keys.any((key) => key is! String)) {
+        throw const FormatException('Invalid piece skin shadow map');
+      }
+      final skin = PieceSkin.values.byName(entry.key as String);
+      result[skin] = PieceSkinShadow.fromJson(
         Map<String, dynamic>.from(entry.value as Map),
       );
     }
@@ -421,6 +470,7 @@ final class AppPreferences {
       rotateOppositePieces == other.rotateOppositePieces &&
       boardSkin == other.boardSkin &&
       _mapEquals(boardGeometries, other.boardGeometries) &&
+      _mapEquals(pieceSkinShadows, other.pieceSkinShadows) &&
       pieceSkin == other.pieceSkin &&
       pieceSizePercent == other.pieceSizePercent &&
       roundSealPieceScalePercent == other.roundSealPieceScalePercent &&
@@ -458,6 +508,9 @@ final class AppPreferences {
     boardSkin,
     Object.hashAll(
       boardGeometries.entries.map((e) => Object.hash(e.key, e.value)),
+    ),
+    Object.hashAll(
+      pieceSkinShadows.entries.map((e) => Object.hash(e.key, e.value)),
     ),
     pieceSkin,
     pieceSizePercent,

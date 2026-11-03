@@ -39,6 +39,15 @@ void main() {
       squareInkPieceScalePercent: 110,
       squareInkPieceOffsetX: 4,
       squareInkPieceOffsetY: -1,
+      pieceSkinShadows: {
+        PieceSkin.squareInk: PieceSkinShadow(
+          style: PieceShadowStyle.prominent,
+          angleDegrees: 200,
+          distancePercent: 8,
+          blurPercent: 5,
+          opacityPercent: 72,
+        ),
+      },
       pieceSizePercent: 135,
       arrowHead: ArrowHeadStyle.wide,
       lastMoveMarker: LastMoveMarkerStyle.box,
@@ -72,6 +81,16 @@ void main() {
     expect(snapshot.pieceSkinSizePercent, 110);
     expect(snapshot.pieceSkinOffsetXPercent, 4);
     expect(snapshot.pieceSkinOffsetYPercent, -1);
+    expect(
+      snapshot.pieceSkinShadow,
+      PieceSkinShadow(
+        style: PieceShadowStyle.prominent,
+        angleDegrees: 200,
+        distancePercent: 8,
+        blurPercent: 5,
+        opacityPercent: 72,
+      ),
+    );
     expect(snapshot.pieceSizePercent, 135);
     expect(snapshot.arrowHead, ArrowHeadStyle.wide);
     expect(snapshot.lastMoveStyle, LastMoveMarkerStyle.box);

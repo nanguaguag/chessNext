@@ -47,6 +47,127 @@ class BoardDisplayDialog extends StatelessWidget {
     ),
   );
 
+  PieceSkinShadow _shadowPreset(
+    PieceShadowStyle style,
+    PieceSkinShadow current,
+  ) => switch (style) {
+    PieceShadowStyle.none => current.copyWith(style: style),
+    PieceShadowStyle.soft => current.copyWith(
+      style: style,
+      angleDegrees: 138,
+      distancePercent: 6.7,
+      blurPercent: 2.4,
+      opacityPercent: 50,
+    ),
+    PieceShadowStyle.prominent => current.copyWith(
+      style: style,
+      angleDegrees: 138,
+      distancePercent: 9,
+      blurPercent: 5,
+      opacityPercent: 72,
+    ),
+  };
+
+  Widget _pieceShadowControls(BuildContext context) {
+    final skin = preferences.value.pieceSkin;
+    final shadow = preferences.value.pieceSkinShadows[skin]!;
+    Widget slider({
+      required String key,
+      required String label,
+      required double value,
+      required double max,
+      required int divisions,
+      required PieceSkinShadow Function(double) update,
+    }) => Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          '$label ${value.toStringAsFixed(label == '方向' ? 0 : 1)}${label == '方向' ? '°' : '%'}',
+        ),
+        Slider(
+          key: ValueKey('piece-skin-shadow-${skin.name}-$key'),
+          value: value,
+          min: 0,
+          max: max,
+          divisions: divisions,
+          label: '${value.toStringAsFixed(1)}${label == '方向' ? '°' : '%'}',
+          semanticFormatterCallback: (v) =>
+              '${v.toStringAsFixed(1)}${label == '方向' ? '°' : '%'}',
+          onChanged:
+              preferences.loading || shadow.style == PieceShadowStyle.none
+              ? null
+              : (next) => unawaited(
+                  preferences.setPieceSkinShadow(skin, update(next)),
+                ),
+        ),
+      ],
+    );
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        DropdownButtonFormField<PieceShadowStyle>(
+          key: ValueKey('piece-skin-shadow-style-${skin.name}-${shadow.style}'),
+          initialValue: shadow.style,
+          isExpanded: true,
+          decoration: const InputDecoration(labelText: '棋子阴影'),
+          items: const [
+            DropdownMenuItem(value: PieceShadowStyle.none, child: Text('无')),
+            DropdownMenuItem(value: PieceShadowStyle.soft, child: Text('柔和')),
+            DropdownMenuItem(
+              value: PieceShadowStyle.prominent,
+              child: Text('明显'),
+            ),
+          ],
+          onChanged: preferences.loading
+              ? null
+              : (style) {
+                  if (style != null) {
+                    unawaited(
+                      preferences.setPieceSkinShadow(
+                        skin,
+                        _shadowPreset(style, shadow),
+                      ),
+                    );
+                  }
+                },
+        ),
+        slider(
+          key: 'angle',
+          label: '方向',
+          value: shadow.angleDegrees.toDouble(),
+          max: 359,
+          divisions: 359,
+          update: (v) => shadow.copyWith(angleDegrees: v.round()),
+        ),
+        slider(
+          key: 'distance',
+          label: '距离',
+          value: shadow.distancePercent,
+          max: 20,
+          divisions: 200,
+          update: (v) => shadow.copyWith(distancePercent: v),
+        ),
+        slider(
+          key: 'blur',
+          label: '模糊',
+          value: shadow.blurPercent,
+          max: 20,
+          divisions: 200,
+          update: (v) => shadow.copyWith(blurPercent: v),
+        ),
+        slider(
+          key: 'opacity',
+          label: '浓淡',
+          value: shadow.opacityPercent.toDouble(),
+          max: 100,
+          divisions: 100,
+          update: (v) => shadow.copyWith(opacityPercent: v.round()),
+        ),
+        const Text('方向0°向右，90°向下；距离、模糊按棋格宽计算，值域为本机设计。'),
+      ],
+    );
+  }
+
   Widget _geometryControls(BuildContext context) {
     final skin = preferences.value.boardSkin;
     final geometry =
@@ -377,6 +498,7 @@ class BoardDisplayDialog extends StatelessWidget {
                 ),
               ),
               const Text('每次移动当前棋子样式1%格宽，最多±8%；位置仅影响棋子绘制。'),
+              _pieceShadowControls(context),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(

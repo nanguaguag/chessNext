@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'selected_piece_frame.dart';
 import 'move_grade_badge.dart';
 import '../../application/review_report.dart';
@@ -89,6 +91,7 @@ class BoardSurface extends StatefulWidget {
     this.boardSkin,
     this.geometry,
     this.pieceSkin,
+    this.pieceSkinShadow,
     this.pieceImages,
     this.pieceSizePercent,
     this.pieceSkinSizePercent,
@@ -136,6 +139,7 @@ class BoardSurface extends StatefulWidget {
   final BoardSkin? boardSkin;
   final BoardSkinGeometry? geometry;
   final PieceSkin? pieceSkin;
+  final PieceSkinShadow? pieceSkinShadow;
   final Map<PieceImageSlot, Uint8List>? pieceImages;
   final int? pieceSizePercent;
   final int? pieceSkinSizePercent;
@@ -451,6 +455,30 @@ class _BoardSurfaceState extends State<BoardSurface> {
         piece != null && rotateOppositePieces && piece.side == topSide;
     final lifted =
         selected && piece != null && selectionStyle == SelectionStyle.lift;
+    final shadow =
+        widget.pieceSkinShadow ??
+        BoardDisplayScope.pieceSkinShadowOf(context) ??
+        (pieceSkin == PieceSkin.roundSeal
+            ? const PieceSkinShadow.roundSealDefault()
+            : const PieceSkinShadow.standard());
+    final radians = shadow.angleDegrees * math.pi / 180;
+    final boxShadows = <BoxShadow>[
+      if (piece != null && shadow.style != PieceShadowStyle.none)
+        BoxShadow(
+          color: Colors.black.withValues(alpha: shadow.opacityPercent / 100),
+          blurRadius: step * shadow.blurPercent / 100,
+          offset: Offset(
+            math.cos(radians) * step * shadow.distancePercent / 100,
+            math.sin(radians) * step * shadow.distancePercent / 100,
+          ),
+        ),
+      if (lifted)
+        const BoxShadow(
+          color: Color(0x44000000),
+          blurRadius: 8,
+          offset: Offset(0, 7),
+        ),
+    ];
     final face = Container(
       margin: EdgeInsets.all(step * .06),
       decoration: BoxDecoration(
@@ -473,26 +501,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
               : Colors.transparent,
           width: selected ? 3 : 1.5,
         ),
-        boxShadow:
-            piece == null ||
-                customImage != null ||
-                pieceSkin == PieceSkin.squareInk
-            ? null
-            : lifted
-            ? const [
-                BoxShadow(
-                  color: Color(0x66000000),
-                  blurRadius: 8,
-                  offset: Offset(0, 7),
-                ),
-              ]
-            : const [
-                BoxShadow(
-                  color: Color(0x26000000),
-                  blurRadius: 3,
-                  offset: Offset(0, 2),
-                ),
-              ],
+        boxShadow: boxShadows.isEmpty ? null : boxShadows,
       ),
       child: piece == null
           ? Center(

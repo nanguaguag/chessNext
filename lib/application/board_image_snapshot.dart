@@ -31,6 +31,7 @@ class BoardImageSnapshot {
     this.boardSkin = BoardSkin.parchment,
     this.geometry = const BoardSkinGeometry.standard(),
     this.pieceSkin = PieceSkin.roundSeal,
+    this.pieceSkinShadow = const PieceSkinShadow.roundSealDefault(),
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
     Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
     Iterable<VariationArrow> variations = const [],
@@ -76,6 +77,7 @@ class BoardImageSnapshot {
         prefs.boardGeometries[prefs.boardSkin] ??
         const BoardSkinGeometry.standard(),
     pieceSkin: prefs.pieceSkin,
+    pieceSkinShadow: prefs.pieceSkinShadows[prefs.pieceSkin]!,
     pieceImages: pieceImages,
     boardSkinImages: boardSkinImages,
     showCoordinates: prefs.showCoordinates,
@@ -100,6 +102,7 @@ class BoardImageSnapshot {
   final BoardSkin boardSkin;
   final BoardSkinGeometry geometry;
   final PieceSkin pieceSkin;
+  final PieceSkinShadow pieceSkinShadow;
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;
   final int pieceSizePercent;

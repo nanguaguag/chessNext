@@ -347,6 +347,8 @@ class _ChessNextAppState extends State<ChessNextApp>
             const BoardSkinGeometry.standard(),
         boardSkinImages: boardSkinImages.imagesFor(preferences.value.boardSkin),
         pieceSkin: preferences.value.pieceSkin,
+        pieceSkinShadow:
+            preferences.value.pieceSkinShadows[preferences.value.pieceSkin],
         pieceImages: pieceImages.imagesFor(preferences.value.pieceSkin),
         pieceSizePercent: preferences.value.pieceSizePercent,
         pieceSkinSizePercent: preferences.value.pieceSkin == PieceSkin.roundSeal

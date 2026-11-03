@@ -15,6 +15,7 @@ class BoardDisplayScope extends InheritedWidget {
     this.boardSkin = BoardSkin.parchment,
     this.geometry = const BoardSkinGeometry.standard(),
     this.pieceSkin = PieceSkin.roundSeal,
+    this.pieceSkinShadow,
     this.pieceImages = const {},
     this.boardSkinImages = const {},
     this.pieceSizePercent = 100,
@@ -39,6 +40,7 @@ class BoardDisplayScope extends InheritedWidget {
   final BoardSkin boardSkin;
   final BoardSkinGeometry geometry;
   final PieceSkin pieceSkin;
+  final PieceSkinShadow? pieceSkinShadow;
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;
   final int pieceSizePercent;
@@ -131,6 +133,9 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.pieceSkin ??
       PieceSkin.roundSeal;
+  static PieceSkinShadow? pieceSkinShadowOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+      ?.pieceSkinShadow;
   static Map<PieceImageSlot, Uint8List> pieceImagesOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
@@ -154,6 +159,7 @@ class BoardDisplayScope extends InheritedWidget {
       boardSkin != oldWidget.boardSkin ||
       geometry != oldWidget.geometry ||
       pieceSkin != oldWidget.pieceSkin ||
+      pieceSkinShadow != oldWidget.pieceSkinShadow ||
       !identical(pieceImages, oldWidget.pieceImages) ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||
       showVariationArrows != oldWidget.showVariationArrows ||

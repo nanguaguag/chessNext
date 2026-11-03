@@ -369,5 +369,17 @@ void main() {
       store.value!.boardGeometries[BoardSkin.parchment]!.rotateLandingMarker,
       isTrue,
     );
+    final shadowStyle = find.byKey(
+      const ValueKey('piece-skin-shadow-style-roundSeal-PieceShadowStyle.soft'),
+    );
+    await tester.ensureVisible(shadowStyle);
+    await tester.tap(shadowStyle);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('明显').last);
+    await tester.pumpAndSettle();
+    expect(
+      store.value!.pieceSkinShadows[PieceSkin.roundSeal]!.style,
+      PieceShadowStyle.prominent,
+    );
   });
 }

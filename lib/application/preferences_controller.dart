@@ -167,6 +167,10 @@ class PreferencesController extends ChangeNotifier {
               stored.boardGeometries,
               previous.boardGeometries,
             ),
+            pieceSkinShadows: _mergePieceSkinShadows(
+              stored.pieceSkinShadows,
+              previous.pieceSkinShadows,
+            ),
             pieceSkin: _edited.contains('pieceSkin')
                 ? previous.pieceSkin
                 : null,
@@ -258,8 +262,27 @@ class PreferencesController extends ChangeNotifier {
           ? current[skin] ?? BoardSkinGeometry()
           : stored[skin] ?? BoardSkinGeometry(),
   };
+  Map<PieceSkin, PieceSkinShadow> _mergePieceSkinShadows(
+    Map<PieceSkin, PieceSkinShadow> stored,
+    Map<PieceSkin, PieceSkinShadow> current,
+  ) => {
+    for (final skin in PieceSkin.values)
+      skin: _edited.contains('pieceSkinShadow:${skin.name}')
+          ? current[skin] ?? _defaultPieceSkinShadow(skin)
+          : stored[skin] ?? _defaultPieceSkinShadow(skin),
+  };
+  PieceSkinShadow _defaultPieceSkinShadow(PieceSkin skin) =>
+      skin == PieceSkin.roundSeal
+      ? const PieceSkinShadow.roundSealDefault()
+      : const PieceSkinShadow.standard();
   Future<void> setPieceSkin(PieceSkin skin) =>
       apply(value.copyWith(pieceSkin: skin));
+  Future<void> setPieceSkinShadow(PieceSkin skin, PieceSkinShadow shadow) {
+    final next = Map<PieceSkin, PieceSkinShadow>.from(value.pieceSkinShadows)
+      ..[skin] = shadow;
+    return apply(value.copyWith(pieceSkinShadows: next));
+  }
+
   Future<void> setPieceSize(int percent) =>
       apply(value.copyWith(pieceSizePercent: percent));
   Future<void> setPieceSkinScale(PieceSkin skin, int percent) => apply(
@@ -388,6 +411,11 @@ class PreferencesController extends ChangeNotifier {
     for (final skin in BoardSkin.values) {
       if (next.boardGeometries[skin] != value.boardGeometries[skin]) {
         _edited.add('boardGeometry:${skin.name}');
+      }
+    }
+    for (final skin in PieceSkin.values) {
+      if (next.pieceSkinShadows[skin] != value.pieceSkinShadows[skin]) {
+        _edited.add('pieceSkinShadow:${skin.name}');
       }
     }
     if (next.pieceSkin != value.pieceSkin) _edited.add('pieceSkin');

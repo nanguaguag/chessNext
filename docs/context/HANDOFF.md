@@ -1,14 +1,14 @@
 # 会话交接
 
-## 2026-11-04 / B24 持续交付：M4-21多选棋子图片
+## 2026-11-04 / B24 持续交付：M4-21多选棋子图片与 E48 ZIP 说明续审
 
-持续授权仍有效：继续推进登录部分除外的已确认全站功能和设置，不在单功能后停；在线能力保留为自建可替换后端与部署方案；离线优先；无分代理。许可暂缓。当前主线：`main`，进入本片前HEAD `549d807`、ahead origin 9。M4-21代码/文档在工作树，验收完成待提交。
+持续授权仍有效：继续推进登录部分除外的已确认全站功能和设置，不在单功能后停；在线能力保留为自建可替换后端与部署方案；离线优先；无分代理。许可暂缓。当前主线：`main`，HEAD `ffbf362`，较origin ahead 11；工作树干净。M4-21功能已提交`107e372`，E48文档已提交`ffbf362`。
 
-改动：`PieceImageBatchPicker`、`NamedPieceImage`、最多14张/7 MiB读取、控制器整批预检/逐槽保存与失败重试、映射预览弹窗、设置入口及应用/Widget测试。ADR-057、DECISIONS、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY已更新。E42实际导入成功和覆盖边界仍U；本机数量/累计限制和映射交互为P。未支持ZIP、文件夹或完整皮肤清单。
+改动：`PieceImageBatchPicker`、`NamedPieceImage`、最多14张/7 MiB读取、控制器整批预检/逐槽保存与失败重试、映射预览弹窗、设置入口及应用/Widget测试。ADR-057、DECISIONS、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY已更新。E42/E48确认访客入口有ZIP/图片多选/文件夹；页面称ZIP可含多套并在下一步选择、只本机保存。但文件选择没有可见结果，未选用户文件；格式/成功/覆盖仍U。本机数量/累计限制和映射交互为P。未支持ZIP、文件夹或完整皮肤清单。
 
 实际验证：定向`flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 10/10；根`flutter test --reporter compact` 481通过/5跳过（官方Pikafish/NNUE测试环境未配置，exit0）；`flutter analyze`无问题；`flutter run -d macos` Build/Sync成功，PID56134、VM `127.0.0.1:53841`，run进程会话仍保持。插件`flutter_tts`有既有SwiftPM兼容警告；CUA窗口人工视觉验收未做。`git diff --check`通过。未加依赖/外部素材。
 
-下一步先检查当前diff和文件状态，单独提交`feat(skins): 支持批量导入棋子图片`。然后继续B24下一独立片：按现有入口优先研究安全ZIP棋子皮肤包导入（ZIP结构、清单/映射、解压预算、路径穿越/符号链接/压缩炸弹边界；参考站成功语义仍U），并继续文件夹导入、用户皮肤创建/列表搜索排序/管理和在线自建后端方案。目标仍为全站对齐（登录后功能除外），不得声称F21/全站已完成。会话结束前更新CURRENT_STATE/HANDOFF/SESSION_LOG；保留正在运行的macOS实例，不杀旧进程。
+E48记录位于`docs/research/REFERENCE_EVIDENCE.md`。本轮浏览器以访客默认设置进入皮肤选择器，观察“支持主流皮肤格式；一个压缩包里有多套，下一步可以选导哪些”和只本机保存声明；ZIP按钮没出现可确认文件选择/导入结果，后续关闭说明弹层并回列表，无文件选择。浏览器当前在棋子选择器（所有设置仍默认，未选文件、未应用）；IAB临时页不应作为后续依赖。下一片先实现本机用户棋子皮肤目录/选择/持久化，解决“多个ZIP皮肤集合”可落地模型；随后安全ZIP/文件夹导入和目录搜索/排序/重命名/删除/导出。网站在线皮肤需可替换自建后端及部署方案。不要宣称F21/全站已完成。
 
 ## 2026-11-04 / B24 持续交付：M4-20棋子阴影
 

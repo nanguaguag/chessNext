@@ -4,7 +4,7 @@
 
 基于E43观察完成预设专属位置微调：横/纵各自值域-8…8，方向键1%步进，自动对正写0；每个PieceSkin独立持久化。Render层按棋格宽比例只平移面容、关闭hit tests；不改落点、棋谱或引擎。Material3显示当前X/Y及边界disable；PNG/GIF冻结参数。专项测试偏好范围/往返/late-load、方向操作/自动对正、命中测试和快照均通过。
 
-根`flutter test --reporter compact` 466通过/5跳过；`flutter analyze`零问题；`flutter run -d macos` PID33743，VM Service `127.0.0.1:64032`。修正过一次dart assert语法错误后，dart format及专项通过。已更新ADR-052/FEATURE_MATRIX/GAPS/INTERACTION_SPEC/BACKLOG/TRACEABILITY；`git diff --check`通过后提交中文Conventional Commit，再回填hash。
+根`flutter test --reporter compact` 466通过/5跳过；`flutter analyze`零问题；`flutter run -d macos` PID33743，VM Service `127.0.0.1:64032`。修正过一次dart assert语法错误后，dart format及专项通过。已更新ADR-052/FEATURE_MATRIX/GAPS/INTERACTION_SPEC/BACKLOG/TRACEABILITY；`git diff --check`通过，提交`ff9feb1 feat(skins): 支持本机棋子位置微调`。
 
 下一步依据E43实现阴影模式与参数的有界本机设计；随后棋盘图层/标记图片、ZIP归档导入安全边界和皮肤列表管理。源站保存/使用/导出操作未测，仍为U。继续不要关闭F21或宣称全站齐全。
 

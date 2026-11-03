@@ -174,6 +174,9 @@ class PreferencesController extends ChangeNotifier {
             pieceSkin: _edited.contains('pieceSkin')
                 ? previous.pieceSkin
                 : null,
+            selectedPieceSkinId: _edited.contains('selectedPieceSkinId')
+                ? previous.selectedPieceSkinId
+                : null,
             guideVersion: _edited.contains('guideVersion')
                 ? previous.guideVersion
                 : null,
@@ -275,8 +278,11 @@ class PreferencesController extends ChangeNotifier {
       skin == PieceSkin.roundSeal
       ? const PieceSkinShadow.roundSealDefault()
       : const PieceSkinShadow.standard();
-  Future<void> setPieceSkin(PieceSkin skin) =>
-      apply(value.copyWith(pieceSkin: skin));
+  Future<void> setPieceSkin(PieceSkin skin) => apply(
+    value.copyWith(pieceSkin: skin, selectedPieceSkinId: skin.name),
+  );
+  Future<void> selectPieceSkin(PieceSkin skin, String skinId) =>
+      apply(value.copyWith(pieceSkin: skin, selectedPieceSkinId: skinId));
   Future<void> setPieceSkinShadow(PieceSkin skin, PieceSkinShadow shadow) {
     final next = Map<PieceSkin, PieceSkinShadow>.from(value.pieceSkinShadows)
       ..[skin] = shadow;
@@ -419,6 +425,9 @@ class PreferencesController extends ChangeNotifier {
       }
     }
     if (next.pieceSkin != value.pieceSkin) _edited.add('pieceSkin');
+    if (next.selectedPieceSkinId != value.selectedPieceSkinId) {
+      _edited.add('selectedPieceSkinId');
+    }
     if (next.guideVersion != value.guideVersion) _edited.add('guideVersion');
     if (next.threads != value.threads) _edited.add('threads');
     if (next.hashMb != value.hashMb) _edited.add('hashMb');

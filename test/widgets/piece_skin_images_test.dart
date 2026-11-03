@@ -181,7 +181,7 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('apply-piece-image-batch')));
     await tester.pumpAndSettle();
     final loaded = await repository.load();
-    expect(loaded[PieceSkin.roundSeal]!.keys.toSet(), {
+    expect(loaded[PieceSkin.roundSeal.name]!.keys.toSet(), {
       PieceImageSlot.redRook,
       PieceImageSlot.blackHorse,
     });

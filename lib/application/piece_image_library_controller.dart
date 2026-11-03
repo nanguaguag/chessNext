@@ -10,7 +10,7 @@ class PieceImageLibraryController extends ChangeNotifier {
 
   final PieceImagePicker picker;
   final PieceImageRepository repository;
-  Map<PieceSkin, Map<PieceImageSlot, Uint8List>> _images = const {};
+  Map<String, Map<PieceImageSlot, Uint8List>> _images = const {};
   bool loading = false;
   PieceImageSlot? busySlot;
   bool batchBusy = false;
@@ -20,17 +20,18 @@ class PieceImageLibraryController extends ChangeNotifier {
   String? error;
   bool _disposed = false;
 
-  Uint8List? imageFor(PieceSkin skin, PieceImageSlot slot) =>
-      _images[skin]?[slot];
+  static String _skinId(Object skin) =>
+      skin is PieceSkin ? skin.name : skin as String;
+  Uint8List? imageFor(Object skin, PieceImageSlot slot) =>
+      _images[_skinId(skin)]?[slot];
 
-  Map<PieceImageSlot, Uint8List> imagesFor(PieceSkin skin) =>
-      _images[skin] ?? const {};
+  Map<PieceImageSlot, Uint8List> imagesFor(Object skin) =>
+      _images[_skinId(skin)] ?? const {};
 
-  Map<PieceSkin, Map<PieceImageSlot, Uint8List>> get snapshot =>
-      Map.unmodifiable({
-        for (final entry in _images.entries)
-          entry.key: Map<PieceImageSlot, Uint8List>.unmodifiable(entry.value),
-      });
+  Map<String, Map<PieceImageSlot, Uint8List>> get snapshot => Map.unmodifiable({
+    for (final entry in _images.entries)
+      entry.key: Map<PieceImageSlot, Uint8List>.unmodifiable(entry.value),
+  });
 
   void _notify() {
     if (!_disposed) notifyListeners();
@@ -58,7 +59,8 @@ class PieceImageLibraryController extends ChangeNotifier {
     }
   }
 
-  Future<bool> replace(PieceSkin skin, PieceImageSlot slot) async {
+  Future<bool> replace(Object skin, PieceImageSlot slot) async {
+    final skinId = _skinId(skin);
     if (_disposed || loading || busySlot != null || batchBusy) return false;
     busySlot = slot;
     errorSlot = null;
@@ -68,9 +70,9 @@ class PieceImageLibraryController extends ChangeNotifier {
       final selected = await picker.pickImage();
       if (selected == null || _disposed) return false;
       PieceImageValidator.validate(selected);
-      await repository.save(skin, slot, selected.extension, selected.bytes);
+      await repository.save(skinId, slot, selected.extension, selected.bytes);
       if (_disposed) return false;
-      _setImage(skin, slot, selected.bytes);
+      _setImage(skinId, slot, selected.bytes);
       return true;
     } on PieceImageException catch (exception) {
       errorSlot = slot;
@@ -86,23 +88,24 @@ class PieceImageLibraryController extends ChangeNotifier {
     }
   }
 
-  Future<bool> reset(PieceSkin skin, PieceImageSlot slot) async {
+  Future<bool> reset(Object skin, PieceImageSlot slot) async {
+    final skinId = _skinId(skin);
     if (_disposed || loading || busySlot != null || batchBusy) return false;
     busySlot = slot;
     errorSlot = null;
     error = null;
     _notify();
     try {
-      await repository.remove(skin, slot);
+      await repository.remove(skinId, slot);
       if (_disposed) return false;
-      final next = Map<PieceSkin, Map<PieceImageSlot, Uint8List>>.from(_images);
+      final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_images);
       final skinImages = Map<PieceImageSlot, Uint8List>.from(
-        next[skin] ?? const {},
+        next[skinId] ?? const {},
       )..remove(slot);
       if (skinImages.isEmpty) {
-        next.remove(skin);
+        next.remove(skinId);
       } else {
-        next[skin] = skinImages;
+        next[skinId] = skinImages;
       }
       _images = Map.unmodifiable(next);
       return true;
@@ -155,9 +158,10 @@ class PieceImageLibraryController extends ChangeNotifier {
   }
 
   Future<int> importBatch(
-    PieceSkin skin,
+    Object skin,
     Map<PieceImageSlot, SelectedPieceImage> images,
   ) async {
+    final skinId = _skinId(skin);
     if (_disposed ||
         loading ||
         busySlot != null ||
@@ -186,9 +190,9 @@ class PieceImageLibraryController extends ChangeNotifier {
         busySlot = entry.key;
         _notify();
         final file = entry.value;
-        await repository.save(skin, entry.key, file.extension, file.bytes);
+        await repository.save(skinId, entry.key, file.extension, file.bytes);
         if (_disposed) break;
-        _setImage(skin, entry.key, file.bytes);
+        _setImage(skinId, entry.key, file.bytes);
         batchImportedSlots.add(entry.key);
         batchImportedCount++;
       }
@@ -204,14 +208,47 @@ class PieceImageLibraryController extends ChangeNotifier {
     return batchImportedSlots.length;
   }
 
-  void _setImage(PieceSkin skin, PieceImageSlot slot, Uint8List bytes) {
-    final next = Map<PieceSkin, Map<PieceImageSlot, Uint8List>>.from(_images);
+  void _setImage(String skin, PieceImageSlot slot, Uint8List bytes) {
+    final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_images);
     next[skin] = Map<PieceImageSlot, Uint8List>.from(next[skin] ?? const {})
       ..[slot] = Uint8List.fromList(bytes).asUnmodifiableView();
     _images = Map.unmodifiable({
       ...next,
       skin: Map<PieceImageSlot, Uint8List>.unmodifiable(next[skin]!),
     });
+  }
+
+  Future<bool> cloneSkinImages(String sourceId, String destinationId) async {
+    if (_disposed || loading || batchBusy || busySlot != null) return false;
+    final source = Map<PieceImageSlot, Uint8List>.from(imagesFor(sourceId));
+    try {
+      await repository.cloneSkin(sourceId, destinationId);
+      _images = Map.unmodifiable({
+        ..._images,
+        if (source.isNotEmpty) destinationId: source,
+      });
+      _notify();
+      return true;
+    } catch (_) {
+      try {
+        await repository.removeSkin(destinationId);
+      } catch (_) {}
+      return false;
+    }
+  }
+
+  Future<bool> removeSkin(String skinId) async {
+    if (_disposed || loading || batchBusy || busySlot != null) return false;
+    try {
+      await repository.removeSkin(skinId);
+      final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_images)
+        ..remove(skinId);
+      _images = Map.unmodifiable(next);
+      _notify();
+      return true;
+    } catch (_) {
+      return false;
+    }
   }
 
   @override
@@ -222,10 +259,10 @@ class PieceImageLibraryController extends ChangeNotifier {
 }
 
 class MemoryPieceImageRepository implements PieceImageRepository {
-  Map<PieceSkin, Map<PieceImageSlot, Uint8List>> _values = {};
+  Map<String, Map<PieceImageSlot, Uint8List>> _values = {};
 
   @override
-  Future<Map<PieceSkin, Map<PieceImageSlot, Uint8List>>> load() async => {
+  Future<Map<String, Map<PieceImageSlot, Uint8List>>> load() async => {
     for (final entry in _values.entries)
       entry.key: {
         for (final image in entry.value.entries)
@@ -235,20 +272,20 @@ class MemoryPieceImageRepository implements PieceImageRepository {
 
   @override
   Future<void> save(
-    PieceSkin skin,
+    String skin,
     PieceImageSlot slot,
     String extension,
     Uint8List bytes,
   ) async {
-    final next = Map<PieceSkin, Map<PieceImageSlot, Uint8List>>.from(_values);
+    final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_values);
     next[skin] = Map<PieceImageSlot, Uint8List>.from(next[skin] ?? const {})
       ..[slot] = Uint8List.fromList(bytes);
     _values = next;
   }
 
   @override
-  Future<void> remove(PieceSkin skin, PieceImageSlot slot) async {
-    final next = Map<PieceSkin, Map<PieceImageSlot, Uint8List>>.from(_values);
+  Future<void> remove(String skin, PieceImageSlot slot) async {
+    final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_values);
     final skinImages = Map<PieceImageSlot, Uint8List>.from(
       next[skin] ?? const {},
     )..remove(slot);
@@ -258,6 +295,21 @@ class MemoryPieceImageRepository implements PieceImageRepository {
       next[skin] = skinImages;
     }
     _values = next;
+  }
+
+  @override
+  Future<void> removeSkin(String skin) async {
+    _values.remove(skin);
+  }
+
+  @override
+  Future<void> cloneSkin(String sourceId, String destinationId) async {
+    _values[destinationId] = {
+      for (final entry
+          in _values[sourceId]?.entries ??
+              const <MapEntry<PieceImageSlot, Uint8List>>[])
+        entry.key: Uint8List.fromList(entry.value),
+    };
   }
 }
 

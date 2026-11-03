@@ -8,6 +8,7 @@ import 'analysis_markers_dialog.dart';
 import '../../application/audio_library_controller.dart';
 import '../../application/piece_image_library_controller.dart';
 import '../../application/board_skin_image_library_controller.dart';
+import '../../application/piece_skin_library_controller.dart';
 
 class PreferencesDialog extends StatefulWidget {
   const PreferencesDialog({
@@ -16,11 +17,13 @@ class PreferencesDialog extends StatefulWidget {
     this.audioLibrary,
     required this.pieceImages,
     required this.boardSkinImages,
+    this.pieceSkins,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController pieceImages;
   final BoardSkinImageLibraryController boardSkinImages;
+  final PieceSkinLibraryController? pieceSkins;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -126,6 +129,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                           audioLibrary: widget.audioLibrary,
                           pieceImages: widget.pieceImages,
                           boardSkinImages: widget.boardSkinImages,
+                          pieceSkins: widget.pieceSkins,
                         ),
                       ),
                       icon: const Icon(Icons.grid_on),

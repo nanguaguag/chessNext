@@ -1,6 +1,7 @@
 import 'board_appearance.dart';
 import 'board_skin_geometry.dart';
 import 'review_models.dart';
+import '../ports/piece_skin_library.dart';
 
 bool _mapEquals<K, V>(Map<K, V> a, Map<K, V> b) {
   if (identical(a, b)) return true;
@@ -55,6 +56,7 @@ final class AppPreferences {
     Map<BoardSkin, BoardSkinGeometry> boardGeometries = const {},
     Map<PieceSkin, PieceSkinShadow> pieceSkinShadows = const {},
     this.pieceSkin = PieceSkin.roundSeal,
+    this.selectedPieceSkinId = 'roundSeal',
     this.pieceSizePercent = 100,
     this.roundSealPieceScalePercent = 100,
     this.squareInkPieceScalePercent = 100,
@@ -113,6 +115,10 @@ final class AppPreferences {
         squareInkPieceOffsetY > 8) {
       throw ArgumentError('Invalid preferences');
     }
+    if (!(PieceSkin.values.any((skin) => skin.name == selectedPieceSkinId) ||
+        PieceSkinDefinition.isValidId(selectedPieceSkinId))) {
+      throw ArgumentError('Invalid selected piece skin');
+    }
   }
   final ThemePreference theme;
   final AnimationSpeed animationSpeed;
@@ -130,6 +136,7 @@ final class AppPreferences {
   final Map<BoardSkin, BoardSkinGeometry> boardGeometries;
   final Map<PieceSkin, PieceSkinShadow> pieceSkinShadows;
   final PieceSkin pieceSkin;
+  final String selectedPieceSkinId;
   final int pieceSizePercent;
   final int roundSealPieceScalePercent;
   final int squareInkPieceScalePercent;
@@ -161,6 +168,7 @@ final class AppPreferences {
     Map<BoardSkin, BoardSkinGeometry>? boardGeometries,
     Map<PieceSkin, PieceSkinShadow>? pieceSkinShadows,
     PieceSkin? pieceSkin,
+    String? selectedPieceSkinId,
     int? pieceSizePercent,
     int? roundSealPieceScalePercent,
     int? squareInkPieceScalePercent,
@@ -197,6 +205,7 @@ final class AppPreferences {
     boardGeometries: boardGeometries ?? this.boardGeometries,
     pieceSkinShadows: pieceSkinShadows ?? this.pieceSkinShadows,
     pieceSkin: pieceSkin ?? this.pieceSkin,
+    selectedPieceSkinId: selectedPieceSkinId ?? this.selectedPieceSkinId,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     roundSealPieceScalePercent:
         roundSealPieceScalePercent ?? this.roundSealPieceScalePercent,
@@ -256,6 +265,8 @@ final class AppPreferences {
             entry.key.name: entry.value.toJson(),
       },
     if (pieceSkin != PieceSkin.roundSeal) 'pieceSkin': pieceSkin.name,
+    if (selectedPieceSkinId != pieceSkin.name)
+      'selectedPieceSkinId': selectedPieceSkinId,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
     if (roundSealPieceScalePercent != 100)
       'roundSealPieceScalePercent': roundSealPieceScalePercent,
@@ -319,6 +330,8 @@ final class AppPreferences {
         (json.containsKey('pieceSkinShadows') &&
             json['pieceSkinShadows'] is! Map) ||
         (json.containsKey('pieceSkin') && json['pieceSkin'] is! String) ||
+        (json.containsKey('selectedPieceSkinId') &&
+            json['selectedPieceSkinId'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('pieceSizePercent') &&
             json['pieceSizePercent'] is! int) ||
@@ -384,6 +397,8 @@ final class AppPreferences {
         pieceSkin: PieceSkin.values.byName(
           json['pieceSkin'] as String? ?? 'roundSeal',
         ),
+        selectedPieceSkinId: json['selectedPieceSkinId'] as String? ??
+            (json['pieceSkin'] as String? ?? 'roundSeal'),
         pieceSizePercent: json['pieceSizePercent'] as int? ?? 100,
         roundSealPieceScalePercent:
             json['roundSealPieceScalePercent'] as int? ?? 100,
@@ -472,6 +487,7 @@ final class AppPreferences {
       _mapEquals(boardGeometries, other.boardGeometries) &&
       _mapEquals(pieceSkinShadows, other.pieceSkinShadows) &&
       pieceSkin == other.pieceSkin &&
+      selectedPieceSkinId == other.selectedPieceSkinId &&
       pieceSizePercent == other.pieceSizePercent &&
       roundSealPieceScalePercent == other.roundSealPieceScalePercent &&
       squareInkPieceScalePercent == other.squareInkPieceScalePercent &&
@@ -513,6 +529,7 @@ final class AppPreferences {
       pieceSkinShadows.entries.map((e) => Object.hash(e.key, e.value)),
     ),
     pieceSkin,
+    selectedPieceSkinId,
     pieceSizePercent,
     roundSealPieceScalePercent,
     squareInkPieceScalePercent,

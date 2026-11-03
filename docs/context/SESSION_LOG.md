@@ -1,5 +1,17 @@
 # 会话日志
 
+## 2026-11-04 / M4-22 / F21,B24 本机用户棋子皮肤目录
+
+持续授权要求不中途停在单功能；本轮承接未提交实现，复核AGENTS/README/CURRENT_STATE/HANDOFF/DECISIONS、技能project-onboarding/flutter-feature/quality-gate及棋盘架构/交互/证据。HEAD起点`5430f52`，此前工作树有4项已改文件与新piece skin port；无其它用户改动。
+
+实现ADR-058：应用端自定义皮肤定义/仓库端口、应用控制器、文件清单仓库、设置库管理对话框与ID选择；自定义图片以ID存放，复制当前皮肤时由文件仓库复制原图及格式清单。可新建/选择/改名/删除；内置皮肤保留。AppPreferences持久化所选ID，棋盘/编辑与PNG/GIF渲染读取对应用户图片。P边界为64套、64KiB清单、32 Unicode码点名称。自定义配置暂共享内置基础样式大小/位置/阴影。补充旧设置查找器适配字符串型ID。
+
+失败与修正：初次专项测试缺PieceSkinDefinition导入，补正；首次根测试中旧Widget测试仍按枚举型下拉查找，改为String ID后相关棋盘设置专项9/9。测试输出中仅失败项已修正并最终根测通过。一次Flutter analyze发现空安全Listenable写法提示，改为null-aware element并重新跑最终根测。
+
+验证命令：`flutter test test/application/piece_skin_library_test.dart` 3/3；`flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 10/10；`flutter test test/widgets/board_coordinates_test.dart --reporter expanded` 9/9；最终`flutter test --reporter compact`484通过/5跳过；`flutter analyze --no-pub`No issues found；`flutter run -d macos`Build/Sync成功，app PID59671、VM `127.0.0.1:59146`。5跳过需官方Pikafish/NNUE变量；flutter_tts插件提示未来SwiftPM兼容。无人工视觉验收、无新依赖/资源。
+
+E42/E48仅观察皮肤管理和ZIP/文件夹说明/入口，实际导入操作结果仍U。B24继续：逐用户大小/位置/阴影、皮肤列表搜索/排序/导出、ZIP与文件夹安全导入；在线目录仍在全站范围，采用可替换自建后端并留部署方案。用户明确要求持续推进直到全部非登录功能/设置对齐，不因单片停止。本片待中文提交后继续。F21和全站不完整。
+
 ## 2026-11-04 / M4-21 / F21,B24 本机批量棋子图片导入
 
 E42源站观察限于三个导入入口（ZIP/图片多选/文件夹），未选文件或执行导入，成功语义、结构、覆盖策略U。项目继续只实现多选增量：复用已有file_selector与PieceImageRepository，最多14张、总量7 MiB为P；每图沿用PNG/JPEG、512KiB、1024边长和1MP校验。预览映射到14个唯一槽，先整批验证，后逐槽写入。跨槽非事务；中途失败保存已成功槽状态，重试跳过已成功槽。无新增依赖和资源。

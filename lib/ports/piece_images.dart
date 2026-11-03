@@ -112,12 +112,14 @@ abstract interface class PieceImageBatchPicker {
 }
 
 abstract interface class PieceImageRepository {
-  Future<Map<PieceSkin, Map<PieceImageSlot, Uint8List>>> load();
+  Future<Map<String, Map<PieceImageSlot, Uint8List>>> load();
   Future<void> save(
-    PieceSkin skin,
+    String skinId,
     PieceImageSlot slot,
     String extension,
     Uint8List bytes,
   );
-  Future<void> remove(PieceSkin skin, PieceImageSlot slot);
+  Future<void> remove(String skinId, PieceImageSlot slot);
+  Future<void> removeSkin(String skinId);
+  Future<void> cloneSkin(String sourceId, String destinationId);
 }

@@ -1,5 +1,15 @@
 # 会话交接
 
+## 2026-11-04 / B24 持续交付：M4-22本机用户棋子皮肤目录
+
+用户最新要求持续推进，不完成一项就停止，目标为登录部分以外所有可确认功能与设置。持续业务实现/macOS运行、每功能根`flutter test`+`flutter analyze`通过后中文Conventional Commit已授权；在线能力不移出总范围，使用自建可替换后端并提供部署方案；离线优先只是顺序。无分代理。许可决策暂缓，不阻挡开发。
+
+本轮起点磁盘状态：HEAD `5430f52 docs(context): 更新批量导入交接`；此前工作树留有M4-22接口/偏好/文件图片仓库部分改动。已读取AGENTS/README/CURRENT_STATE/HANDOFF/DECISIONS与project-onboarding/flutter-feature/quality-gate及棋盘设计/证据材料。
+
+M4-22代码已完成但尚未提交：ADR-058本机皮肤目录，最多64套用户皮肤；以自定义ID/名称引用内置基底风格；复制当前图片覆盖并隔离用户图片文件夹；选择、创建、改名、删除；偏好选择持久化；渲染主盘/编辑器/PNG/GIF都取选中ID图片。逐用户大小/位置/阴影仍共享基础预设，搜索/排序/导出、ZIP/文件夹导入、在线目录未做。E42/E48源站导入成功/覆盖边界仍U。
+
+验证最终结果：`flutter test test/application/piece_skin_library_test.dart` 3/3；图片库专项10/10；棋盘偏好专项9/9；根`flutter test --reporter compact`484通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功，PID59671、VM `127.0.0.1:59146`。5项跳过需本机官方Pikafish/NNUE设置；flutter_tts有未来SwiftPM兼容warning。未做人工视觉验收。工作树在写入本交接/Session log之前包含M4-22源码测试文档改动，具体`git status`需提交前重查。根测试已完成；无后台工具任务。下一步先完成中文单独提交，然后继续B24逐用户几何与ZIP/文件夹/皮肤清单其余项；全站差距见FEATURE_GAPS/BACKLOG。不要称F21/全站完成。
+
 ## 2026-11-04 / B24 持续交付：M4-21多选棋子图片与 E48 ZIP 说明续审
 
 持续授权仍有效：继续推进登录部分除外的已确认全站功能和设置，不在单功能后停；在线能力保留为自建可替换后端与部署方案；离线优先；无分代理。许可暂缓。当前主线：`main`，HEAD `ffbf362`，较origin ahead 11；工作树干净。M4-21功能已提交`107e372`，E48文档已提交`ffbf362`。

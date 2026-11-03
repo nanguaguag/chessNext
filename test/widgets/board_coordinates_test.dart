@@ -66,7 +66,7 @@ void main() {
         (background.decoration as BoxDecoration).color,
         Color(BoardSkin.jade.boardColor),
       );
-      final pieceDropdown = find.byType(DropdownButtonFormField<PieceSkin>);
+      final pieceDropdown = find.byType(DropdownButtonFormField<String>);
       await tap(tester, pieceDropdown);
       await tap(tester, find.text('方章墨韵').last);
       expect(store.value!.pieceSkin, PieceSkin.squareInk);

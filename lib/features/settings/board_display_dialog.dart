@@ -11,6 +11,8 @@ import 'piece_skin_images_dialog.dart';
 import '../../application/board_skin_image_library_controller.dart';
 import 'board_skin_images_dialog.dart';
 import '../../application/board_skin_geometry.dart';
+import '../../application/piece_skin_library_controller.dart';
+import 'piece_skin_library_dialog.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
   const BoardDisplayDialog({
@@ -19,11 +21,13 @@ class BoardDisplayDialog extends StatelessWidget {
     this.audioLibrary,
     this.pieceImages,
     this.boardSkinImages,
+    this.pieceSkins,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController? pieceImages;
   final BoardSkinImageLibraryController? boardSkinImages;
+  final PieceSkinLibraryController? pieceSkins;
 
   int _skinOffsetX(PreferencesController preferences) =>
       preferences.value.pieceSkin == PieceSkin.roundSeal
@@ -314,7 +318,7 @@ class BoardDisplayDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: preferences,
+    listenable: Listenable.merge([preferences, ?pieceSkins]),
     builder: (context, _) => AlertDialog(
       title: const Text('棋盘显示'),
       content: SizedBox(
@@ -363,28 +367,59 @@ class BoardDisplayDialog extends StatelessWidget {
               ),
               _geometryControls(context),
               const SizedBox(height: 12),
-              DropdownButtonFormField<PieceSkin>(
-                key: ValueKey(preferences.value.pieceSkin),
-                initialValue: preferences.value.pieceSkin,
+              DropdownButtonFormField<String>(
+                key: ValueKey(preferences.value.selectedPieceSkinId),
+                initialValue: preferences.value.selectedPieceSkinId,
                 isExpanded: true,
                 decoration: const InputDecoration(labelText: '棋子皮肤'),
-                items: const [
-                  DropdownMenuItem(
-                    value: PieceSkin.roundSeal,
+                items: [
+                  const DropdownMenuItem(
+                    value: 'roundSeal',
                     child: Text('传统圆章'),
                   ),
-                  DropdownMenuItem(
-                    value: PieceSkin.squareInk,
+                  const DropdownMenuItem(
+                    value: 'squareInk',
                     child: Text('方章墨韵'),
                   ),
+                  for (final skin in pieceSkins?.profiles ?? const [])
+                    DropdownMenuItem(value: skin.id, child: Text(skin.name)),
                 ],
                 onChanged: preferences.loading
                     ? null
-                    : (skin) {
-                        if (skin != null) {
-                          unawaited(preferences.setPieceSkin(skin));
+                    : (skinId) {
+                        if (skinId == null) return;
+                        final custom = pieceSkins?.profiles
+                            .where((p) => p.id == skinId)
+                            .firstOrNull;
+                        if (custom != null) {
+                          unawaited(
+                            preferences.selectPieceSkin(
+                              custom.baseSkin,
+                              custom.id,
+                            ),
+                          );
+                        } else {
+                          unawaited(
+                            preferences.setPieceSkin(
+                              PieceSkin.values.byName(skinId),
+                            ),
+                          );
                         }
                       },
+              ),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: pieceSkins == null
+                      ? null
+                      : () => showDialog<void>(
+                          context: context,
+                          builder: (_) =>
+                              PieceSkinLibraryDialog(library: pieceSkins!),
+                        ),
+                  icon: const Icon(Icons.collections_bookmark_outlined),
+                  label: const Text('管理皮肤库'),
+                ),
               ),
               const Text('棋子样式会同步决定“随棋子皮肤”的走棋音效。'),
               Text(
@@ -507,7 +542,13 @@ class BoardDisplayDialog extends StatelessWidget {
                       : () => showDialog<void>(
                           context: context,
                           builder: (_) => PieceSkinImagesDialog(
-                            skin: preferences.value.pieceSkin,
+                            skinId: preferences.value.selectedPieceSkinId,
+                            skinLabel:
+                                pieceSkins?.selectedName ??
+                                (preferences.value.pieceSkin ==
+                                        PieceSkin.roundSeal
+                                    ? '传统圆章'
+                                    : '方章墨韵'),
                             library: pieceImages!,
                           ),
                         ),

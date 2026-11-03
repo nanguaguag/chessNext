@@ -9,18 +9,20 @@ import 'piece_skin_batch_import_dialog.dart';
 class PieceSkinImagesDialog extends StatelessWidget {
   const PieceSkinImagesDialog({
     super.key,
-    required this.skin,
+    required this.skinId,
+    required this.skinLabel,
     required this.library,
   });
 
-  final PieceSkin skin;
+  final String skinId;
+  final String skinLabel;
   final PieceImageLibraryController library;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: library,
     builder: (context, _) => AlertDialog(
-      title: Text('编辑${skin == PieceSkin.roundSeal ? '传统圆章' : '方章墨韵'}图片'),
+      title: Text('编辑$skinLabel图片'),
       content: SizedBox(
         width: 520,
         height: 520,
@@ -42,7 +44,7 @@ class PieceSkinImagesDialog extends StatelessWidget {
                         final imported = await showDialog<int>(
                           context: context,
                           builder: (_) => PieceSkinBatchImportDialog(
-                            skin: skin,
+                            skin: skinId,
                             images: images,
                             library: library,
                           ),
@@ -72,7 +74,7 @@ class PieceSkinImagesDialog extends StatelessWidget {
                 itemCount: PieceImageSlot.values.length,
                 itemBuilder: (context, index) {
                   final slot = PieceImageSlot.values[index];
-                  final bytes = library.imageFor(skin, slot);
+                  final bytes = library.imageFor(skinId, slot);
                   final busy = library.busySlot == slot;
                   return _PieceImageRow(
                     slot: slot,
@@ -83,10 +85,10 @@ class PieceSkinImagesDialog extends StatelessWidget {
                         !library.loading &&
                         library.busySlot == null &&
                         !library.batchBusy,
-                    onReplace: () => library.replace(skin, slot),
+                    onReplace: () => library.replace(skinId, slot),
                     onReset: bytes == null
                         ? null
-                        : () => library.reset(skin, slot),
+                        : () => library.reset(skinId, slot),
                   );
                 },
               ),

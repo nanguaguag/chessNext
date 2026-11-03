@@ -11,7 +11,7 @@ class PieceSkinBatchImportDialog extends StatefulWidget {
     required this.library,
   });
 
-  final PieceSkin skin;
+  final Object skin;
   final List<NamedPieceImage> images;
   final PieceImageLibraryController library;
 

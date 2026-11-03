@@ -35,7 +35,7 @@ class _FailingBatchRepository extends MemoryPieceImageRepository {
   int saves = 0;
   @override
   Future<void> save(
-    PieceSkin skin,
+    String skin,
     PieceImageSlot slot,
     String extension,
     Uint8List bytes,
@@ -126,18 +126,24 @@ void main() {
     final repository = FilePieceImageRepository(() async => temp);
     final bytes = png();
     await repository.save(
-      PieceSkin.squareInk,
+      PieceSkin.squareInk.name,
       PieceImageSlot.blackHorse,
       'png',
       bytes,
     );
     final loaded = await repository.load();
     expect(
-      loaded[PieceSkin.squareInk]![PieceImageSlot.blackHorse],
+      loaded[PieceSkin.squareInk.name]![PieceImageSlot.blackHorse],
       orderedEquals(bytes),
     );
-    await repository.remove(PieceSkin.squareInk, PieceImageSlot.blackHorse);
-    expect((await repository.load()).containsKey(PieceSkin.squareInk), isFalse);
+    await repository.remove(
+      PieceSkin.squareInk.name,
+      PieceImageSlot.blackHorse,
+    );
+    expect(
+      (await repository.load()).containsKey(PieceSkin.squareInk.name),
+      isFalse,
+    );
   });
 
   test(

@@ -2,11 +2,11 @@
 
 ## 2026-11-04 / B24 持续交付：M4-28项目皮肤包文件夹导入
 
-工作树包含未提交的M4-28代码与文档；HEAD为M4-27提交`07eb534`。已接受ADR-063：macOS目录选择只读取解压的项目schema1布局，根`skin.json`+`images/<PieceImageSlot>.<png|jpg>`，拒绝链接/未知内容/多余层级；尺寸边界复用M4-27 ZIP解码器（单图512KiB、14图/7MiB、manifest64KiB、临时ZIP8MiB）。项目P，站点文件夹格式/成功仍U。取消/失败不写数据，应用层仍走M4-27完整预检、用户确认、新ID和无覆盖导入。目录读取限制根最多2项、图片目录最多14项；系统面板尚未人工验收。
+M4-28已提交`a807155 feat(skins): 支持导入本机皮肤文件夹`。ADR-063仅接受解压的项目schema1布局，根`skin.json`+`images/<PieceImageSlot>.<png|jpg>`，拒绝链接/未知内容/多余层级；尺寸边界复用M4-27 ZIP解码器（单图512KiB、14图/7MiB、manifest64KiB、临时ZIP8MiB）。项目P，站点文件夹格式/成功仍U。取消/失败不写数据，应用层走M4-27完整预检、用户确认、新ID和无覆盖导入。目录读取限制根最多2项、图片目录最多14项；系统面板尚未人工验收。
 
-已新增端口、macOS适配器、库按钮和adapter测试。专项`flutter test test/adapters/file_selector_piece_skin_folder_picker_test.dart --reporter compact`2/2通过；`flutter analyze --no-pub`无问题。调试中先后修复了测试const factory错误、PieceImageSlot import遗漏、baseSkin类型错误、无效PNG校验和IDAT checksum；有效枚举/PNG样本后专项通过。根`flutter test --reporter compact`首次出现1个失败/5跳过，完整错误输出未留存；`flutter test --reporter expanded`复跑498通过/5跳过。`flutter analyze --no-pub`无问题。`flutter run -d macos`Build/Sync成功PID71234/VM `127.0.0.1:59893`，flutter_tts SwiftPM未来兼容warning。下一步`git diff --check`并提交M4-28。无其它后台运行任务。
+专项`flutter test test/adapters/file_selector_piece_skin_folder_picker_test.dart --reporter compact`2/2通过；`flutter analyze --no-pub`无问题。调试修复const factory、PieceImageSlot导入、baseSkin类型及无效PNG IDAT checksum。根`flutter test --reporter compact`首次出现1失败/5跳过，错误输出未留存；expanded复跑498通过/5跳过。`flutter run -d macos`Build/Sync成功PID71234/VM `127.0.0.1:59893`，flutter_tts SwiftPM未来兼容warning。代码已提交。无其它后台运行任务。
 
-F21仍未完成：在线目录/点赞作者排序、任意站点导入兼容、系统面板人工验收及全站其它差距仍待推进。持续优先离线范围，再做自建可替换在线服务和部署方案。登录相关除外。
+F21仍未完成：在线目录/点赞作者排序、任意站点导入兼容、系统面板人工验收及全站其它差距仍待推进。下一项先审计其它离线设置（B23/F28音效/动画及F27语言），再推进自建可替换在线服务和部署方案。登录相关除外。
 
 ## 2026-11-04 / B24 持续交付：M4-27项目格式皮肤ZIP导入
 

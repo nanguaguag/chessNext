@@ -7,6 +7,7 @@ class BoardDisplayScope extends InheritedWidget {
   const BoardDisplayScope({
     super.key,
     required this.showCoordinates,
+    this.rotateOppositePieces = false,
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
@@ -22,6 +23,7 @@ class BoardDisplayScope extends InheritedWidget {
              pieceSizePercent % 5 == 0,
        );
   final bool showCoordinates;
+  final bool rotateOppositePieces;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
@@ -75,6 +77,11 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.showCoordinates ??
       false;
+  static bool rotateOppositePiecesOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.rotateOppositePieces ??
+      false;
   @override
   bool updateShouldNotify(BoardDisplayScope oldWidget) =>
       showMoveGrades != oldWidget.showMoveGrades ||
@@ -82,6 +89,7 @@ class BoardDisplayScope extends InheritedWidget {
       lastMoveMarker != oldWidget.lastMoveMarker ||
       animationSpeed != oldWidget.animationSpeed ||
       showCoordinates != oldWidget.showCoordinates ||
+      rotateOppositePieces != oldWidget.rotateOppositePieces ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||
       showVariationArrows != oldWidget.showVariationArrows ||
       arrowHead != oldWidget.arrowHead ||

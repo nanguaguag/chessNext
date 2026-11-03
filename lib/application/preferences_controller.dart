@@ -136,6 +136,9 @@ class PreferencesController extends ChangeNotifier {
             showCoordinates: _edited.contains('showCoordinates')
                 ? previous.showCoordinates
                 : null,
+            rotateOppositePieces: _edited.contains('rotateOppositePieces')
+                ? previous.rotateOppositePieces
+                : null,
             guideVersion: _edited.contains('guideVersion')
                 ? previous.guideVersion
                 : null,
@@ -202,6 +205,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(textSize: size));
   Future<void> setShowCoordinates(bool visible) =>
       apply(value.copyWith(showCoordinates: visible));
+  Future<void> setRotateOppositePieces(bool enabled) =>
+      apply(value.copyWith(rotateOppositePieces: enabled));
   Future<void> setPieceSize(int percent) =>
       apply(value.copyWith(pieceSizePercent: percent));
   Future<void> setAnalysisArrows(bool visible) =>
@@ -278,6 +283,9 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.showCoordinates != value.showCoordinates) {
       _edited.add('showCoordinates');
+    }
+    if (next.rotateOppositePieces != value.rotateOppositePieces) {
+      _edited.add('rotateOppositePieces');
     }
     if (next.guideVersion != value.guideVersion) _edited.add('guideVersion');
     if (next.threads != value.threads) _edited.add('threads');

@@ -520,3 +520,11 @@ E40访客设置页：走棋音效更换弹层三项radio音效1/2/随皮肤且�
 测试：专项audio library 5/5；macOS integration 3/3，真实验证声音2生成asset按本机偏好加载；根 `flutter test --reporter compact` 446通过/5跳过（缺官方引擎环境变量）；`flutter analyze` 0问题；`flutter run -d macos`启动PID24870，VM `127.0.0.1:54576`。flutter_tts SwiftPM提示warning，不阻断。E40 AX最终截图取自会话结果，未存研究目录；可见恢复的设置状态。
 
 M4-10单独中文提交见git log。保持走棋音效1最终源站状态，F21皮肤和声学/移动动画仍缺。继续审计剩余离线范围。
+
+## 2026-11-03 / E41 + M4-11 / F21 → B24 对面棋子朝向
+
+E41桌面访客页审计见REFERENCE_EVIDENCE；观察上方棋子180°设置与皮肤库/棋子和棋盘编辑器字段，退出未保存草稿并确认回到设置页。没有应用站点偏好、导入资源或修改棋谱。未知留在B24。
+
+M4-11增加默认关闭的`rotateOppositePieces`本地偏好、异步设置读取字段合并和BoardDisplayScope传播；主棋盘/局面编辑/PNG/GIF快照统一。按实际视觉上方阵营翻转字形。增加偏好兼容/非法值/异步竞态与Widget翻转方向测试。首次定向Widget运行因测试树未包Material暴露InkWell祖先断言，补Material后相关测试通过（8/8）。全量`flutter test --reporter compact`450通过/5跳过，flutter analyze无问题。`flutter run -d macos`构建成功，提示前台open返回1后仍完成文件同步并显示VM `127.0.0.1:56207`（PID26430）；flutter_tts SwiftPM未来兼容warning仍存在。
+
+下一步更新决策/交付追踪、检查`git diff --check`，将此功能单独中文提交；随后继续B24皮肤边界审计与实现，F21不关闭。

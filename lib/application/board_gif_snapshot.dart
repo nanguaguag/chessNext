@@ -24,6 +24,7 @@ final class BoardGifSnapshot {
     required this.arrowHead,
     this.flipped = false,
     this.mirrored = false,
+    this.rotateOppositePieces = false,
   }) : frames = List.unmodifiable(frames) {
     if (this.frames.isEmpty || this.frames.length > maxFrames) {
       throw BoardGifCapacityException(this.frames.length);
@@ -44,12 +45,13 @@ final class BoardGifSnapshot {
       arrowHead: prefs.arrowHead,
       flipped: session.flipped,
       mirrored: session.mirrored,
+      rotateOppositePieces: prefs.rotateOppositePieces,
     );
   }
 
   static const maxFrames = 64;
   final List<BoardGifFrame> frames;
-  final bool flipped, mirrored, showCoordinates;
+  final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final int pieceSizePercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;

@@ -121,8 +121,8 @@ void main() {
               ?.findAncestorWidgetOfExactType<Slider>()
               ?.key ==
           const ValueKey('piece-size-slider');
-      // The board display dialog now has three additional event sound switches.
-      for (var i = 0; i < 16 && !focused(); i++) {
+      // Reach the piece size slider after the event sound and orientation switches.
+      for (var i = 0; i < 20 && !focused(); i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pumpAndSettle();
       }

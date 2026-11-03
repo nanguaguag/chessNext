@@ -222,6 +222,17 @@ class BoardDisplayDialog extends StatelessWidget {
                     : (value) =>
                           unawaited(preferences.setShowCoordinates(value)),
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('对面一方的棋子倒置'),
+                subtitle: const Text('上方那一方的棋子转180°，面对面摆棋时更顺眼。'),
+                value: preferences.value.rotateOppositePieces,
+                onChanged: preferences.loading
+                    ? null
+                    : (enabled) => unawaited(
+                        preferences.setRotateOppositePieces(enabled),
+                      ),
+              ),
               const Text('实时应用到主棋盘与局面编辑器并保存在本机。翻转或镜像时，路数随棋盘方向变化。'),
               if (preferences.loading || preferences.saving)
                 const LinearProgressIndicator(),

@@ -213,6 +213,7 @@ class _BoardGifDialogState extends State<BoardGifDialog> {
                   height: 500,
                   child: BoardDisplayScope(
                     showCoordinates: snapshot.showCoordinates,
+                    rotateOppositePieces: snapshot.rotateOppositePieces,
                     pieceSizePercent: snapshot.pieceSizePercent,
                     arrowHead: snapshot.arrowHead,
                     lastMoveMarker: snapshot.lastMoveStyle,

@@ -108,3 +108,11 @@ Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0，官方latest同日复核P
 ## 2026-11-03 / M4-06 最终交接
 
 根 flutter test 438通过/5跳过，flutter analyze0；macOS integration_test/audio_feedback_test.dart 1/1，加载两条本机WAV。最新 flutter run -d macos 启动PID13873，VM Service 127.0.0.1:63861；Computer Use窗口/人工听感未验。依赖audioplayers 6.8.1；macOS插件有不阻断Swift并发warning。M4-06实现/验证完成，提交见git log。下一继续E37后剩余音效事件/自定义本地WAV/MP3导入/试听和着法朗读，按B23拆片；不要把目前两种短提示音说成F28完成。
+
+## 2026-11-03 / M4-11 交接
+
+E41补审F21：棋盘/棋子设置有上方一方180°开关；皮肤库有搜索/排序/我的/新建/导入/在线入口；编辑器可见棋子尺寸/位置/阴影/逐子图片及棋盘格点/位置/缩放/图像设置。棋子和棋盘空编辑草稿已各自安全丢弃，最终回设置页无修改。导入格式成功、各控件边界、保存/应用/导出、在线服务仍U。详情REFERENCE_EVIDENCE E41、B24。
+
+M4-11已实现本机持久化`rotateOppositePieces`偏好，默认关闭；主盘/局面编辑/PNG/GIF快照共用。视觉上方阵营随棋盘旋转变化，只有棋子字形旋转。测试覆盖朝向正反、旧schema、坏数据、延迟读取合并。`flutter test --reporter compact` 450通过/5跳过；`flutter analyze`无问题；`flutter run -d macos`构建完成并连VM `127.0.0.1:56207`（PID26430），日志曾提示`Failed to foreground app; open returned 1`后仍成功sync/提供VM服务，记为已启动但前台提示异常。提交之前状态由当前git确认。
+
+下一步继续B24：先审计参考站棋子导入/皮肤编辑器保存应用边界，之后将独立的本机皮肤数据模型/选择与用户原创素材创建按增量实现。在线皮肤属于用户选定的自建可替换后端，需后续设计部署方案。F21/全站未完成。

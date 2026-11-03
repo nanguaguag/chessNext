@@ -110,4 +110,42 @@ void main() {
       session.dispose();
     }
   });
+  test('opposite piece orientation is backward compatible and persisted', () {
+    final legacy = AppPreferences().toJson();
+    expect(legacy.containsKey('rotateOppositePieces'), isFalse);
+    expect(AppPreferences.fromJson(legacy).rotateOppositePieces, isFalse);
+    final rotated = AppPreferences(rotateOppositePieces: true);
+    expect(AppPreferences.fromJson(rotated.toJson()), rotated);
+    expect(
+      rotated.copyWith(theme: ThemePreference.dark).rotateOppositePieces,
+      isTrue,
+    );
+    expect(
+      () => AppPreferences.fromJson({...legacy, 'rotateOppositePieces': 'yes'}),
+      throwsFormatException,
+    );
+  });
+  test('orientation edited during settings load is not overwritten', () async {
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final store = DelayedMarkerPreferences();
+    final preferences = PreferencesController(engine, store);
+    store.value = AppPreferences(showCoordinates: false);
+    try {
+      final loading = preferences.initialize();
+      final saving = preferences.setRotateOppositePieces(true);
+      store.gate.complete();
+      await loading;
+      await saving;
+      await preferences.flush();
+      expect(preferences.value.rotateOppositePieces, isTrue);
+      expect(preferences.value.showCoordinates, isFalse);
+      expect(store.value, preferences.value);
+      expect(session.dirty, isFalse);
+    } finally {
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
 }

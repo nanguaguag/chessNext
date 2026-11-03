@@ -308,6 +308,7 @@ class _ChessNextAppState extends State<ChessNextApp>
         lastMoveMarker: preferences.value.lastMoveMarker,
         animationSpeed: preferences.value.animationSpeed,
         showCoordinates: preferences.value.showCoordinates,
+        rotateOppositePieces: preferences.value.rotateOppositePieces,
         pieceSizePercent: preferences.value.pieceSizePercent,
         showAnalysisArrows: preferences.value.showAnalysisArrows,
         showVariationArrows: preferences.value.showVariationArrows,

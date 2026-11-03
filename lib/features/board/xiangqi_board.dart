@@ -82,6 +82,7 @@ class BoardSurface extends StatefulWidget {
     this.flipped = false,
     this.mirrored = false,
     this.showCoordinates,
+    this.rotateOppositePieces,
     this.pieceSizePercent,
     this.showAnalysisArrows,
     this.arrowHeadStyle,
@@ -113,6 +114,7 @@ class BoardSurface extends StatefulWidget {
   final bool flipped;
   final bool mirrored;
   final bool? showCoordinates;
+  final bool? rotateOppositePieces;
   final int? pieceSizePercent;
   final bool? showAnalysisArrows;
   final ArrowHeadStyle? arrowHeadStyle;
@@ -324,6 +326,12 @@ class _BoardSurfaceState extends State<BoardSurface> {
   }) {
     final selectionStyle =
         widget.selectionStyle ?? BoardDisplayScope.selectionStyleOf(context);
+    final rotateOppositePieces =
+        widget.rotateOppositePieces ??
+        BoardDisplayScope.rotateOppositePiecesOf(context);
+    final topSide = widget.flipped ? Side.red : Side.black;
+    final rotateGlyph =
+        piece != null && rotateOppositePieces && piece.side == topSide;
     final lifted =
         selected && piece != null && selectionStyle == SelectionStyle.lift;
     final face = Container(
@@ -379,15 +387,18 @@ class _BoardSurfaceState extends State<BoardSurface> {
               children: [
                 Padding(
                   padding: const EdgeInsets.all(4),
-                  child: FittedBox(
-                    child: Text(
-                      pieceName(piece),
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.w600,
-                        color: piece.side == Side.red
-                            ? const Color(0xffa12f29)
-                            : const Color(0xff26362d),
+                  child: RotatedBox(
+                    quarterTurns: rotateGlyph ? 2 : 0,
+                    child: FittedBox(
+                      child: Text(
+                        pieceName(piece),
+                        style: TextStyle(
+                          fontSize: 28,
+                          fontWeight: FontWeight.w600,
+                          color: piece.side == Side.red
+                              ? const Color(0xffa12f29)
+                              : const Color(0xff26362d),
+                        ),
                       ),
                     ),
                   ),

@@ -451,3 +451,9 @@ E40 V证据：源站走棋事件可选音效1/2/随棋子皮肤且分别试听�
 单元 `flutter test test/audio_library_test.dart --reporter expanded` 5/5（原测试扩展，覆盖持久化重开/损坏默认、方案切换/试听及自定义边界）；macOS集成 `flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 3/3（5事件、三种走棋预览、自定义路径和实际持久化sound2资源加载）；根 `flutter test --reporter compact` 446通过/5跳过；`flutter analyze` 无问题；普通 `flutter run -d macos`成功启动PID24870，VM Service `127.0.0.1:54576`。五项跳过需官方Pikafish执行文件和NNUE环境。无新增依赖；新增音效2由既有生成器创建，SHA登记LICENSING。
 
 剩余：F21完整棋子皮肤并接入对应声音、项目素材声学可接受性、源站试听听感/导入结果、Linux/Web语音能力与棋子位移动画映射；F28未完整对齐。
+
+## 2026-11-03 / M4-11 / F21 → B08,B20,B24 对面棋子朝向
+
+E41观察棋盘设置的对面一方棋子倒置开关，初始关闭，说明上方一方旋转180°；并审计到棋子/棋盘皮肤库和新建编辑入口。项目新增默认关闭的`rotateOppositePieces`偏好，向主棋盘、局面编辑器和PNG/GIF快照传播。依视觉上方阵营翻转字形，不变换框、命中区或其它标记。覆盖旧schema1、坏类型、持久化、延迟读取合并及正反棋盘视图Widget测试。
+
+其余皮肤列表/导入/编辑器/在线库仍在B24，不能由此关闭F21。全量测试、analyze及`flutter run -d macos`结果按本次实际终端记录。

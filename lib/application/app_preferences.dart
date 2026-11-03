@@ -40,6 +40,7 @@ final class AppPreferences {
     this.reviewMode = ReviewMode.best,
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
+    this.rotateOppositePieces = false,
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
@@ -81,6 +82,7 @@ final class AppPreferences {
   final ReviewMode reviewMode;
   final TextSizePreference textSize;
   final bool showCoordinates;
+  final bool rotateOppositePieces;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
@@ -103,6 +105,7 @@ final class AppPreferences {
     ReviewMode? reviewMode,
     TextSizePreference? textSize,
     bool? showCoordinates,
+    bool? rotateOppositePieces,
     int? pieceSizePercent,
     bool? showAnalysisArrows,
     bool? showVariationArrows,
@@ -128,6 +131,7 @@ final class AppPreferences {
     reviewMode: reviewMode ?? this.reviewMode,
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
+    rotateOppositePieces: rotateOppositePieces ?? this.rotateOppositePieces,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
     showVariationArrows: showVariationArrows ?? this.showVariationArrows,
@@ -160,6 +164,7 @@ final class AppPreferences {
     if (speakMoves) 'speakMoves': true,
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
+    if (rotateOppositePieces) 'rotateOppositePieces': true,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
     if (!showAnalysisArrows) 'showAnalysisArrows': false,
     if (!showVariationArrows) 'showVariationArrows': false,
@@ -203,6 +208,8 @@ final class AppPreferences {
         (json.containsKey('speakMoves') && json['speakMoves'] is! bool) ||
         (json.containsKey('showCoordinates') &&
             json['showCoordinates'] is! bool) ||
+        (json.containsKey('rotateOppositePieces') &&
+            json['rotateOppositePieces'] is! bool) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('pieceSizePercent') &&
             json['pieceSizePercent'] is! int) ||
@@ -247,6 +254,7 @@ final class AppPreferences {
         ),
         threads: json['threads'] as int,
         showCoordinates: json['showCoordinates'] as bool? ?? true,
+        rotateOppositePieces: json['rotateOppositePieces'] as bool? ?? false,
         pieceSizePercent: json['pieceSizePercent'] as int? ?? 100,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
@@ -278,6 +286,7 @@ final class AppPreferences {
       speakMoves == other.speakMoves &&
       textSize == other.textSize &&
       showCoordinates == other.showCoordinates &&
+      rotateOppositePieces == other.rotateOppositePieces &&
       pieceSizePercent == other.pieceSizePercent &&
       threads == other.threads &&
       hashMb == other.hashMb &&
@@ -304,6 +313,7 @@ final class AppPreferences {
     speakMoves,
     textSize,
     showCoordinates,
+    rotateOppositePieces,
     pieceSizePercent,
     threads,
     hashMb,

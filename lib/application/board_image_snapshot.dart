@@ -19,6 +19,7 @@ class BoardImageSnapshot {
     this.reply,
     this.flipped = false,
     this.mirrored = false,
+    this.rotateOppositePieces = false,
     Iterable<VariationArrow> variations = const [],
   }) : variations = List.unmodifiable(
          variations.take(CurrentMoveArrows.maxVisible),
@@ -46,6 +47,7 @@ class BoardImageSnapshot {
         : const [],
     flipped: session.flipped,
     mirrored: session.mirrored,
+    rotateOppositePieces: prefs.rotateOppositePieces,
     showCoordinates: prefs.showCoordinates,
     pieceSizePercent: prefs.pieceSizePercent,
     lastMoveStyle: prefs.lastMoveMarker,
@@ -55,7 +57,7 @@ class BoardImageSnapshot {
   final Move? lastMove, recommendation, reply;
   final MoveAssessment? assessment;
   final List<VariationArrow> variations;
-  final bool flipped, mirrored, showCoordinates;
+  final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final int pieceSizePercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;

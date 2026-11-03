@@ -6,7 +6,9 @@
 
 根`flutter test --reporter compact` 466通过/5跳过；`flutter analyze`零问题；`flutter run -d macos` PID33743，VM Service `127.0.0.1:64032`。修正过一次dart assert语法错误后，dart format及专项通过。已更新ADR-052/FEATURE_MATRIX/GAPS/INTERACTION_SPEC/BACKLOG/TRACEABILITY；`git diff --check`通过，提交`ff9feb1 feat(skins): 支持本机棋子位置微调`。
 
-下一步依据E43实现阴影模式与参数的有界本机设计；随后棋盘图层/标记图片、ZIP归档导入安全边界和皮肤列表管理。源站保存/使用/导出操作未测，仍为U。继续不要关闭F21或宣称全站齐全。
+E44已继续审计棋盘新建编辑页：格子/图片两个tab、两个格点slider、左上/右下marker及棋子缩放；左stepper点加号后33→33.5、右边点同步465→约465.02；图片层有棋盘/起点/落点/选中框替换和落点图旋转开关。保存/使用/导出没点，全部结果U；草稿按提示放弃后完整确认设置默认不变。
+
+下一步按E44先设计并实现本机BoardSkin棋盘背景/标记图层覆盖，确保主盘和PNG/GIF共用；再逐项实现格点几何/棋子缩放、阴影、ZIP导入与本机皮肤库管理。源站保存/使用/导出操作未测，仍为U。继续不要关闭F21或宣称全站齐全。
 
 ## 2026-11-03 / M4-15 交接（待提交）
 

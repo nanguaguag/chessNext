@@ -1,8 +1,14 @@
 # 当前状态
 
-## 最新交付 M4-27（2026-11-04）
+## 最新交付 M4-28（2026-11-04）
 
-B24/F21项目皮肤包安全导入（ADR-062）：仅导入M4-26项目schema1单皮肤ZIP；macOS读取上限8 MiB，中心目录最多15项，清单64 KiB，图片最多14槽/总7 MiB/单张512 KiB；拒绝重复目录项/槽、目录/软链接、路径穿越、未知项、未引用文件、越界尺寸、摘要错误和坏图。完整校验后让用户确认，以新ID安装，不覆盖重名，库满64拒绝；成功后自动选用。专项13/13；根`flutter test --reporter compact`496通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync启动PID69107/VM `127.0.0.1:56731`。站点实际导入格式/行为仍U，本机没有人工操作系统选择面板。代码与交接待中文单独提交。下一项推进非ZIP文件夹导入或其它本机设置，F21/全站未完成。
+B24/F21项目schema1皮肤包文件夹导入（ADR-063）：macOS选择已解压目录，仅接受根`skin.json`及`images/<槽位>.png|jpg`，拒绝未知条目、链接和额外层级；单文件≤512 KiB、最多14图/累计7 MiB、清单≤64 KiB/临时ZIP≤8 MiB，复用M4-27完整验证/确认/新增流程。格式为项目P，站点文件夹格式仍U。专项2/2；最终根`flutter test --reporter expanded`498通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync启动PID71234/VM `127.0.0.1:59893`。首次紧凑根测试出现1次失败，未能复现，expanded复跑全通过。当前代码文档待提交。
+
+M4-27已提交`07eb534 feat(skins): 安全导入本机皮肤包`。最终根测试496通过/5跳过、analyze无问题；macOS Build/Sync PID69107/VM `127.0.0.1:56731`。文件选择面板未人工验收。
+
+## M4-27（2026-11-04）
+
+B24/F21项目皮肤包ZIP安全导入（ADR-062）。仅接受本机schema1单皮肤包。详见`07eb534`；根496通过/5跳过，analyze无问题，macOS Build/Sync PID69107/VM `127.0.0.1:56731`。站点ZIP行为仍U。
 
 ## M4-26（2026-11-04）
 

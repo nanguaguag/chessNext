@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-04 / B24 持续交付：M4-28项目皮肤包文件夹导入
+
+工作树包含未提交的M4-28代码与文档；HEAD为M4-27提交`07eb534`。已接受ADR-063：macOS目录选择只读取解压的项目schema1布局，根`skin.json`+`images/<PieceImageSlot>.<png|jpg>`，拒绝链接/未知内容/多余层级；尺寸边界复用M4-27 ZIP解码器（单图512KiB、14图/7MiB、manifest64KiB、临时ZIP8MiB）。项目P，站点文件夹格式/成功仍U。取消/失败不写数据，应用层仍走M4-27完整预检、用户确认、新ID和无覆盖导入。目录读取限制根最多2项、图片目录最多14项；系统面板尚未人工验收。
+
+已新增端口、macOS适配器、库按钮和adapter测试。专项`flutter test test/adapters/file_selector_piece_skin_folder_picker_test.dart --reporter compact`2/2通过；`flutter analyze --no-pub`无问题。调试中先后修复了测试const factory错误、PieceImageSlot import遗漏、baseSkin类型错误、无效PNG校验和IDAT checksum；有效枚举/PNG样本后专项通过。根`flutter test --reporter compact`首次出现1个失败/5跳过，完整错误输出未留存；`flutter test --reporter expanded`复跑498通过/5跳过。`flutter analyze --no-pub`无问题。`flutter run -d macos`Build/Sync成功PID71234/VM `127.0.0.1:59893`，flutter_tts SwiftPM未来兼容warning。下一步`git diff --check`并提交M4-28。无其它后台运行任务。
+
+F21仍未完成：在线目录/点赞作者排序、任意站点导入兼容、系统面板人工验收及全站其它差距仍待推进。持续优先离线范围，再做自建可替换在线服务和部署方案。登录相关除外。
+
 ## 2026-11-04 / B24 持续交付：M4-27项目格式皮肤ZIP导入
 
 M4-27代码及门槛完成，待独立中文提交。ADR-062仅接受M4-26项目schema1单皮肤ZIP，不宣称支持站点任意格式。系统选择流读≤8 MiB；解码前后检查≤15中心项、固定白名单路径、无重复项/软链接/目录/路径穿越、清单≤64 KiB、图片总展开≤7 MiB/单图≤512 KiB、槽位唯一/全部引用、SHA-256和真实PNG/JPEG解码。全包确认前不落盘；用户确认后新ID、不覆盖重名/超过64拒绝；先存图片后持久化目录，目录失败时清理图片，清理失败有可能残留不可见孤儿文件夹。成功选用该皮肤。选文件器目前仅主入口macOS注入。

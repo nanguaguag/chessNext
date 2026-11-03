@@ -4,6 +4,7 @@ import 'adapters/platform/macos_image_clipboard.dart';
 import 'adapters/platform/macos_gif_file_exporter.dart';
 import 'adapters/platform/macos_piece_skin_package_exporter.dart';
 import 'adapters/platform/file_selector_piece_skin_package_picker.dart';
+import 'adapters/platform/file_selector_piece_skin_folder_picker.dart';
 import 'adapters/platform/file_selector_record_picker.dart';
 import 'adapters/storage/file_recent_reading_repository.dart';
 import 'adapters/storage/file_review_cache_repository.dart';
@@ -42,6 +43,9 @@ void main() {
           : null,
       pieceSkinPackagePicker: Platform.isMacOS
           ? FileSelectorPieceSkinPackagePicker()
+          : null,
+      pieceSkinFolderPicker: Platform.isMacOS
+          ? FileSelectorPieceSkinFolderPicker()
           : null,
       recentReadingRepository: FileRecentReadingRepository(
         getApplicationSupportDirectory,

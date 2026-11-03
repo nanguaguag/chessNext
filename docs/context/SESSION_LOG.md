@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-04 / M4-28 / F21,B24 项目皮肤包文件夹导入
+
+依ADR-063增加macOS文件夹选择器、端口、皮肤库入口。仅支持解压项目schema1布局：`skin.json`和`images/<槽位>.png|jpg`，严格限制层级、类型、符号链接、文件数和字节；读取后打包为内存ZIP并交给M4-27严格解码，UI复用其确认、新ID、重名/容量拒绝和自动选用闭环。源站目录实际格式/导入成功仍U。未增加依赖。
+
+专项`flutter test test/adapters/file_selector_piece_skin_folder_picker_test.dart --reporter compact`2/2通过；最终根`flutter test --reporter expanded`498通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID71234/VM `127.0.0.1:59893`。首次compact根测试显示1失败/5跳过，但其输出未完整保留，expanded复跑全部通过，原因未明，记录为一次未复现失败。flutter_tts SwiftPM警告仍在。初次专项发现const factory、漏导PieceImageSlot、baseSkin类型错误及无效PNG IDAT checksum，均已修复。本片待提交。
+
 ## 2026-11-04 / M4-27 / F21,B24 项目格式皮肤ZIP导入
 
 M4-26独立导出已提交`dfec26c`。E42/E48实际导入成功仍U，本片按ADR-062仅构建自有schema1单皮肤包的导入闭环，不把它说成通用站点格式。

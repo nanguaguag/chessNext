@@ -15,6 +15,8 @@
 - [总计划](docs/planning/MASTER_PLAN.md) / [里程碑](docs/planning/MILESTONES.md) / [待办](docs/planning/BACKLOG.md) / [测试](docs/planning/TEST_STRATEGY.md)
 - [许可调查](docs/legal/LICENSING.md)
 
+棋子皮肤本机包ZIP和解压文件夹支持项目schema 1；不代表兼容站点的未知包格式，范围见ADR-062/063。
+
 [通信验证与重跑](docs/engine/COMMUNICATION_VALIDATION.md)；诊断工程在 research/spikes/flutter_engine_probe/，不等同生产架构。根目录 lib/、test/ 已有应用边界API和Flutter契约测试；integration_test/已有macOS实际引擎/存储/编辑验证；native/后续补移动集成。尚未选择项目许可证；开源发布前必须完成许可决策。
 
 开发验证：根目录提供Flutter应用、领域契约与组件测试，执行`flutter test`、`flutter analyze`；`bash tools/check.sh`还会验证纯Dart规则包和真实引擎诊断工程，后者需先配置.local官方制品。功能通过后按中文Conventional Commits独立提交。

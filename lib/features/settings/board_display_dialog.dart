@@ -6,15 +6,19 @@ import '../../application/app_preferences.dart';
 import '../../application/audio_library_controller.dart';
 import '../../ports/audio_feedback.dart';
 import 'audio_options_dialog.dart';
+import '../../application/piece_image_library_controller.dart';
+import 'piece_skin_images_dialog.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
   const BoardDisplayDialog({
     super.key,
     required this.preferences,
     this.audioLibrary,
+    this.pieceImages,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
+  final PieceImageLibraryController? pieceImages;
 
   Widget _soundOptions(
     BuildContext context,
@@ -99,6 +103,22 @@ class BoardDisplayDialog extends StatelessWidget {
                       },
               ),
               const Text('棋子样式会同步决定“随棋子皮肤”的走棋音效。'),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: pieceImages == null || pieceImages!.loading
+                      ? null
+                      : () => showDialog<void>(
+                          context: context,
+                          builder: (_) => PieceSkinImagesDialog(
+                            skin: preferences.value.pieceSkin,
+                            library: pieceImages!,
+                          ),
+                        ),
+                  icon: const Icon(Icons.image_outlined),
+                  label: const Text('编辑棋子图片'),
+                ),
+              ),
               const SizedBox(height: 12),
               DropdownButtonFormField<LastMoveMarkerStyle>(
                 key: ValueKey(preferences.value.lastMoveMarker),

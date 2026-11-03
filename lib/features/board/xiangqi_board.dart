@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/board_session.dart';
+import '../../ports/piece_images.dart';
 
 String pieceName(Piece piece) => switch ((piece.side, piece.type)) {
   (Side.red, PieceType.general) => '帅',
@@ -85,6 +86,7 @@ class BoardSurface extends StatefulWidget {
     this.rotateOppositePieces,
     this.boardSkin,
     this.pieceSkin,
+    this.pieceImages,
     this.pieceSizePercent,
     this.showAnalysisArrows,
     this.arrowHeadStyle,
@@ -119,6 +121,7 @@ class BoardSurface extends StatefulWidget {
   final bool? rotateOppositePieces;
   final BoardSkin? boardSkin;
   final PieceSkin? pieceSkin;
+  final Map<PieceImageSlot, Uint8List>? pieceImages;
   final int? pieceSizePercent;
   final bool? showAnalysisArrows;
   final ArrowHeadStyle? arrowHeadStyle;
@@ -338,6 +341,12 @@ class _BoardSurfaceState extends State<BoardSurface> {
         BoardDisplayScope.rotateOppositePiecesOf(context);
     final pieceSkin =
         widget.pieceSkin ?? BoardDisplayScope.pieceSkinOf(context);
+    final customImage = piece == null
+        ? null
+        : (widget.pieceImages ??
+              BoardDisplayScope.pieceImagesOf(
+                context,
+              ))[PieceImageSlotInfo.forPiece(piece)!];
     final topSide = widget.flipped ? Side.red : Side.black;
     final rotateGlyph =
         piece != null && rotateOppositePieces && piece.side == topSide;
@@ -354,18 +363,21 @@ class _BoardSurfaceState extends State<BoardSurface> {
             : null,
         color: selected
             ? const Color(0xffc6d8b2)
-            : piece != null
+            : piece != null && customImage == null
             ? Color(pieceSkin.faceColor)
             : null,
         border: Border.all(
           color: selected || focused
               ? const Color(0xff3c624a)
-              : piece != null
+              : piece != null && customImage == null
               ? Color(pieceSkin.borderColor)
               : Colors.transparent,
           width: selected ? 3 : 1.5,
         ),
-        boxShadow: piece == null || pieceSkin == PieceSkin.squareInk
+        boxShadow:
+            piece == null ||
+                customImage != null ||
+                pieceSkin == PieceSkin.squareInk
             ? null
             : lifted
             ? const [
@@ -403,18 +415,37 @@ class _BoardSurfaceState extends State<BoardSurface> {
                   padding: const EdgeInsets.all(4),
                   child: RotatedBox(
                     quarterTurns: rotateGlyph ? 2 : 0,
-                    child: FittedBox(
-                      child: Text(
-                        pieceName(piece),
-                        style: TextStyle(
-                          fontSize: 28,
-                          fontWeight: FontWeight.w600,
-                          color: piece.side == Side.red
-                              ? const Color(0xffa12f29)
-                              : const Color(0xff26362d),
-                        ),
-                      ),
-                    ),
+                    child: customImage == null
+                        ? FittedBox(
+                            child: Text(
+                              pieceName(piece),
+                              style: TextStyle(
+                                fontSize: 28,
+                                fontWeight: FontWeight.w600,
+                                color: piece.side == Side.red
+                                    ? const Color(0xffa12f29)
+                                    : const Color(0xff26362d),
+                              ),
+                            ),
+                          )
+                        : Image.memory(
+                            customImage,
+                            fit: BoxFit.contain,
+                            gaplessPlayback: true,
+                            filterQuality: FilterQuality.medium,
+                            errorBuilder: (_, _, _) => FittedBox(
+                              child: Text(
+                                pieceName(piece),
+                                style: TextStyle(
+                                  fontSize: 28,
+                                  fontWeight: FontWeight.w600,
+                                  color: piece.side == Side.red
+                                      ? const Color(0xffa12f29)
+                                      : const Color(0xff26362d),
+                                ),
+                              ),
+                            ),
+                          ),
                   ),
                 ),
                 if (target)

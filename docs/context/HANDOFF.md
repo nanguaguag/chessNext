@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-03 / M4-14 交接（待提交）
+
+M4-14完成F21单棋子图片替换。实现`PieceImagePicker`、`PieceImageRepository`、`PieceImageLibraryController`及PNG/JPEG校验，本机支持目录存储；每种PieceSkin分别保存红黑14个棋子槽位。Material3弹窗可预览当前图、逐项替换/恢复。512 KiB、1024×1024、1MP。图像进入主盘、编辑器及PNG/GIF快照；导入取消不改变原值，读取损坏覆盖时回退默认图。格式/尺寸/Controller/file repository 4项、棋盘映射Widget1项定向通过。
+
+根`flutter test --reporter compact` 461通过/5跳过；`flutter analyze`零问题；`flutter run -d macos`构建并运行PID31311，VM Service `127.0.0.1:61522`。已登记ADR-050、B24/traceability/feature matrix/gaps/design；尚需查`git diff --check`并提交功能。新需求仍是逐增量门槛。
+
+下一步先继续E41后续的参考站皮肤编辑器边界审计（尺寸/位置/阴影以及保存/应用/取消，恢复页面初始状态），并实现不依赖在线服务的本机单项；批量ZIP导入先定义归档路径/解压上限/失败原子性。源站只记录观察和已操作结果，绝不复制皮肤资源。F21/全站仍未完成。
+
 ## 2026-11-03 / M4-10 交接
 
 E40补证：源站走棋音效有音效1/2/随棋子皮肤方案和独立试听；音效2选择退出弹层后仍保留，之后恢复音效1；吃子选择器只有默认音效和试听。最终回到声音设置主页，五音效开关全开、着法朗读关、动画标准、无弹层，棋谱无修改。

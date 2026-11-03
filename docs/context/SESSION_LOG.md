@@ -540,3 +540,8 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 应用本机PieceSkin枚举传统圆章/方章墨韵，schema1兼容偏好及读设置竞态。圆章保留既有样式，方章为柔角方形/淡色边框；BoardDisplayScope统一推主盘/编辑器，PNG/GIF snapshot捕获。音频port可接收已解析的MoveSoundChoice，BoardFeedbackController把持久化followPieceSkin+roundSeal解析为sound1，squareInk解析为sound2；显式方案不变，音频adapter的自定义文件优先。试听传入当前PieceSkin解析，当前状态摘要提供实际皮肤名。添加对应状态/异步读合并/应用渲染/快照/试听/音频选择测试。
 
 定向`board_feedback_test`/`audio_library_test`/设置/快照/皮肤相关widget全过；期间一次首轮编译因新fake repository缺`dart:typed_data`导入失败，补导入后目标测试通过。根`flutter test --reporter compact`456通过/5跳过；`flutter analyze`无问题；macOS音频集成`flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded`3/3；`flutter run -d macos`构建同步，PID29670 VM `127.0.0.1:60040`。flutter_tts SwiftPM未来兼容提示仍有。提交后继续本机皮肤图片导入/编辑切片。
+## 2026-11-03 / M4-14 / F21 → B24 单棋子图像覆盖
+
+用户图片适配新增14类PieceImageSlot，允许每个圆章/方章预设有独立覆盖。Picker过滤PNG/JPG/JPEG并有界读取；领域校验扩展、PNG/JPEG签名/尺寸与真实解码；最大512KiB/1024边长/1MP。FilePieceImageRepository按预设目录写入图片和schema1受限清单，检查符号链接目录，暂存后移动；加载跳过失效素材，恢复默认删除安全匹配清单记录。Material3逐槽缩略图替换/恢复。BoardSurface读当前图像，图片/GIF快照freeze bytes。
+
+专项`flutter test test/application/piece_image_library_test.dart --reporter expanded` 4/4，`flutter test test/widgets/piece_skin_images_test.dart --reporter expanded` 1/1。根`flutter test --reporter compact` 461 pass/5 skip（官方引擎fixture env缺失），`flutter analyze`0问题。`flutter run -d macos` Build succeeded、VM Service `127.0.0.1:61522`、PID31311；插件既有flutter_tts SwiftPM未来兼容提示。未做macOS文件选择器实际交互，只验证真实应用已运行；Android/iOS/Windows/Linux/web平台选择/存储未验。未增加依赖或外部图像。网页导入成功仍U；ZIP/多选/文件夹、编辑几何、棋盘图片和完整列表仍未实现。待查diff、commit，B24继续。命令：`dart format ...`、两专项flutter test、`flutter test --reporter compact`、`flutter analyze`、`flutter run -d macos`。

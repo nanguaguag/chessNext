@@ -1,3 +1,7 @@
+import '../ports/piece_images.dart' show PieceSkin;
+
+export '../ports/piece_images.dart' show PieceSkin;
+
 /// Stable storage values. Drawing geometry belongs to the presentation layer.
 enum ArrowHeadStyle { sharp, standard, wide }
 
@@ -6,8 +10,6 @@ enum LastMoveMarkerStyle { halo, box }
 enum SelectionStyle { lift, frame }
 
 enum BoardSkin { parchment, jade }
-
-enum PieceSkin { roundSeal, squareInk }
 
 extension BoardSkinPalette on BoardSkin {
   int get boardColor => switch (this) {

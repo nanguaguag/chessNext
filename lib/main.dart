@@ -17,6 +17,8 @@ import 'adapters/audio/audioplayers_feedback.dart';
 import 'adapters/speech/flutter_tts_move_speech.dart';
 import 'adapters/platform/file_selector_audio_picker.dart';
 import 'adapters/storage/file_audio_override_repository.dart';
+import 'adapters/platform/file_selector_piece_image_picker.dart';
+import 'adapters/storage/file_piece_image_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -43,6 +45,10 @@ void main() {
       moveSpeech: FlutterTtsMoveSpeech(),
       audioFilePicker: FileSelectorAudioPicker(),
       audioOverrides: audioOverrides,
+      pieceImagePicker: FileSelectorPieceImagePicker(),
+      pieceImageRepository: FilePieceImageRepository(
+        getApplicationSupportDirectory,
+      ),
       engineFactory: openBundledEngine,
       reviewCache: FileReviewCacheRepository(getApplicationSupportDirectory),
       deviceThreads: Platform.numberOfProcessors,

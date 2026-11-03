@@ -1,7 +1,10 @@
+import 'dart:typed_data';
+
 import 'package:xiangqi_core/xiangqi_core.dart';
 import 'app_preferences.dart';
 import 'board_appearance.dart';
 import 'board_session.dart';
+import '../ports/piece_images.dart';
 
 final class BoardGifCapacityException implements Exception {
   const BoardGifCapacityException(this.frames);
@@ -27,13 +30,22 @@ final class BoardGifSnapshot {
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
     this.pieceSkin = PieceSkin.roundSeal,
-  }) : frames = List.unmodifiable(frames) {
+    Map<PieceImageSlot, Uint8List> pieceImages = const {},
+  }) : pieceImages = Map.unmodifiable({
+         for (final entry in pieceImages.entries)
+           entry.key: Uint8List.fromList(entry.value).asUnmodifiableView(),
+       }),
+       frames = List.unmodifiable(frames) {
     if (this.frames.isEmpty || this.frames.length > maxFrames) {
       throw BoardGifCapacityException(this.frames.length);
     }
   }
 
-  factory BoardGifSnapshot.capture(BoardSession session, AppPreferences prefs) {
+  factory BoardGifSnapshot.capture(
+    BoardSession session,
+    AppPreferences prefs, {
+    Map<PieceImageSlot, Uint8List> pieceImages = const {},
+  }) {
     final nodes = session.tree.currentLine;
     if (nodes.length > maxFrames) throw BoardGifCapacityException(nodes.length);
     return BoardGifSnapshot(
@@ -50,6 +62,7 @@ final class BoardGifSnapshot {
       rotateOppositePieces: prefs.rotateOppositePieces,
       boardSkin: prefs.boardSkin,
       pieceSkin: prefs.pieceSkin,
+      pieceImages: pieceImages,
     );
   }
 
@@ -58,6 +71,7 @@ final class BoardGifSnapshot {
   final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final BoardSkin boardSkin;
   final PieceSkin pieceSkin;
+  final Map<PieceImageSlot, Uint8List> pieceImages;
   final int pieceSizePercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;

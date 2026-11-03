@@ -54,6 +54,8 @@ import 'ports/audio_feedback.dart';
 import 'ports/move_speech.dart';
 import 'application/audio_library_controller.dart';
 import 'ports/audio_library.dart';
+import 'application/piece_image_library_controller.dart';
+import 'ports/piece_images.dart';
 
 class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
@@ -71,6 +73,8 @@ class ChessNextApp extends StatefulWidget {
     this.moveSpeech,
     this.audioFilePicker,
     this.audioOverrides,
+    this.pieceImagePicker,
+    this.pieceImageRepository,
     this.gifExporter,
     this.engineFactory,
     this.reviewCache,
@@ -88,6 +92,8 @@ class ChessNextApp extends StatefulWidget {
   final MoveSpeechPort? moveSpeech;
   final AudioFilePicker? audioFilePicker;
   final AudioOverrideRepository? audioOverrides;
+  final PieceImagePicker? pieceImagePicker;
+  final PieceImageRepository? pieceImageRepository;
   final GifFileExporter? gifExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
@@ -108,6 +114,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final PreferencesController preferences;
   late final BoardFeedbackController boardFeedback;
   late final AudioLibraryController? audioLibrary;
+  late final PieceImageLibraryController pieceImages;
   late final EngineSessionController analysis;
   BoardGifSettings gifSettings = BoardGifSettings();
   @override
@@ -147,6 +154,12 @@ class _ChessNextAppState extends State<ChessNextApp>
             audio,
           );
     if (audioLibrary != null) unawaited(audioLibrary!.initialize());
+    pieceImages = PieceImageLibraryController(
+      widget.pieceImagePicker ?? const CancelPieceImagePicker(),
+      widget.pieceImageRepository ?? MemoryPieceImageRepository(),
+    );
+    pieceImages.addListener(_preferencesChanged);
+    unawaited(pieceImages.initialize());
     boardFeedback = BoardFeedbackController(
       session,
       preferences,
@@ -273,6 +286,8 @@ class _ChessNextAppState extends State<ChessNextApp>
     preferences.removeListener(_preferencesChanged);
     unawaited(boardFeedback.dispose());
     audioLibrary?.dispose();
+    pieceImages.removeListener(_preferencesChanged);
+    pieceImages.dispose();
     unawaited(preferences.flush());
     preferences.dispose();
     analysis.dispose();
@@ -312,6 +327,7 @@ class _ChessNextAppState extends State<ChessNextApp>
         rotateOppositePieces: preferences.value.rotateOppositePieces,
         boardSkin: preferences.value.boardSkin,
         pieceSkin: preferences.value.pieceSkin,
+        pieceImages: pieceImages.imagesFor(preferences.value.pieceSkin),
         pieceSizePercent: preferences.value.pieceSizePercent,
         showAnalysisArrows: preferences.value.showAnalysisArrows,
         showVariationArrows: preferences.value.showVariationArrows,
@@ -324,6 +340,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       drafts: drafts,
       preferences: preferences,
       audioLibrary: audioLibrary,
+      pieceImages: pieceImages,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       filePicker: widget.filePicker,
       fileExporter: widget.fileExporter,
@@ -365,9 +382,11 @@ class _BoardPage extends StatelessWidget {
     this.drafts,
     required this.preferences,
     this.audioLibrary,
+    required this.pieceImages,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
+  final PieceImageLibraryController pieceImages;
   final DraftController? drafts;
   final TextClipboard clipboard;
   final RecordFilePicker? filePicker;
@@ -593,6 +612,7 @@ class _BoardPage extends StatelessWidget {
       assessment: analysis.currentMoveAssessment,
       recommendation: analysis.recommended,
       reply: analysis.reply,
+      pieceImages: pieceImages.imagesFor(preferences.value.pieceSkin),
     );
     await showDialog<void>(
       context: context,
@@ -607,7 +627,11 @@ class _BoardPage extends StatelessWidget {
   Future<void> _exportGif(BuildContext context) async {
     BoardGifSnapshot snapshot;
     try {
-      snapshot = BoardGifSnapshot.capture(session, preferences.value);
+      snapshot = BoardGifSnapshot.capture(
+        session,
+        preferences.value,
+        pieceImages: pieceImages.imagesFor(preferences.value.pieceSkin),
+      );
     } on BoardGifCapacityException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('所选线路有${error.frames}帧，GIF最多支持64帧；请缩短线路后重试。')),
@@ -684,6 +708,7 @@ class _BoardPage extends StatelessWidget {
                 builder: (_) => PreferencesDialog(
                   preferences: preferences,
                   audioLibrary: audioLibrary,
+                  pieceImages: pieceImages,
                 ),
               );
             },

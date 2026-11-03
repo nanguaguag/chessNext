@@ -1,9 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:xiangqi_core/xiangqi_core.dart';
 import 'app_preferences.dart';
 import 'board_appearance.dart';
 import 'board_session.dart';
 import 'current_move_arrows.dart';
 import 'review_report.dart';
+import '../ports/piece_images.dart';
 
 /// Only immutable values cross the modal boundary; no live session is retained.
 class BoardImageSnapshot {
@@ -22,8 +25,13 @@ class BoardImageSnapshot {
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
     this.pieceSkin = PieceSkin.roundSeal,
+    Map<PieceImageSlot, Uint8List> pieceImages = const {},
     Iterable<VariationArrow> variations = const [],
-  }) : variations = List.unmodifiable(
+  }) : pieceImages = Map.unmodifiable({
+         for (final entry in pieceImages.entries)
+           entry.key: Uint8List.fromList(entry.value).asUnmodifiableView(),
+       }),
+       variations = List.unmodifiable(
          variations.take(CurrentMoveArrows.maxVisible),
        ) {
     if (pieceSizePercent < 10 ||
@@ -38,6 +46,7 @@ class BoardImageSnapshot {
     MoveAssessment? assessment,
     Move? recommendation,
     Move? reply,
+    Map<PieceImageSlot, Uint8List> pieceImages = const {},
   }) => BoardImageSnapshot(
     position: session.position,
     lastMove: session.tree.current.move,
@@ -52,6 +61,7 @@ class BoardImageSnapshot {
     rotateOppositePieces: prefs.rotateOppositePieces,
     boardSkin: prefs.boardSkin,
     pieceSkin: prefs.pieceSkin,
+    pieceImages: pieceImages,
     showCoordinates: prefs.showCoordinates,
     pieceSizePercent: prefs.pieceSizePercent,
     lastMoveStyle: prefs.lastMoveMarker,
@@ -64,6 +74,7 @@ class BoardImageSnapshot {
   final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final BoardSkin boardSkin;
   final PieceSkin pieceSkin;
+  final Map<PieceImageSlot, Uint8List> pieceImages;
   final int pieceSizePercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;

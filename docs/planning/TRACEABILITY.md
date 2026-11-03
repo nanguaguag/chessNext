@@ -471,3 +471,9 @@ E41/E42审计确认源站棋盘/棋子皮肤库与各自编辑入口；E37/E40�
 应用层读取持久化`MoveSoundChoice`；followPieceSkin + roundSeal解析sound1、squareInk解析sound2，再经AudioFeedbackPort传递已解析值，Audioplayers适配器优先检查自定义路径。试听层解析相同关系，弹窗当前状态摘要显示具体预设。显式sound1/sound2不跟皮肤变化。
 
 验证：偏好旧schema/未知类型/延迟设置读取合并；界面切换和棋子外观形状、重开恢复；图片/GIF快照捕获；BoardFeedbackController跟随sound2；预览映射测试。macOS音频集成 `flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 3/3通过；根全量测试、analyze、macOS `flutter run -d macos`结果追加本记录。图片级自定义皮肤、导入、编辑器、在线服务仍待，F21未完成。
+
+## 2026-11-03 / M4-14 / F21 → B24 单棋子图片替换
+
+根据E41可观察到的14个红黑棋子替换入口，先交付本机单图替换切片；E41未验证网页选择器导入成功，故此处格式/容量是项目设计P，不写成源站边界。新增独立图片选择器/仓库端口、扩展名与PNG/JPEG签名/解码校验，限512 KiB、1024边长及1MP，清单文件名受限、拒绝符号链接目录；用户取消不改原图，损坏本机素材在加载时忽略。按棋子槽位Material3预览、替换和恢复默认。用户图只在本机应用支持目录，不上传或复制源站素材。应用展示及PNG/GIF快照均采用已冻结的所选棋子皮肤图。
+
+验证：`test/application/piece_image_library_test.dart` 4项覆盖格式/尺寸拒绝、替换失败保留旧图、恢复默认、本机仓库往返；`test/widgets/piece_skin_images_test.dart`验证只替换黑车槽位。根 `flutter test --reporter compact` 461通过/5跳过（5项依赖显式官方Pikafish与NNUE环境）；`flutter analyze`无问题；`flutter run -d macos`构建启动成功，VM Service `127.0.0.1:61522`（PID31311）。无新增依赖或外部资源。ZIP/文件夹、多选导入、图片编辑几何、棋盘背景图片/编辑和跨平台真实选择器仍待实现与验证；不能关闭F21。提交见git log。

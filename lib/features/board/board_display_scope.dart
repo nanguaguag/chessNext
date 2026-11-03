@@ -1,6 +1,8 @@
 import 'package:flutter/widgets.dart';
 import '../../application/board_appearance.dart';
 import '../../application/app_preferences.dart';
+import '../../ports/piece_images.dart';
+import 'dart:typed_data';
 
 /// Read-only presentation data above Navigator; no controller, IO or document.
 class BoardDisplayScope extends InheritedWidget {
@@ -10,6 +12,7 @@ class BoardDisplayScope extends InheritedWidget {
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
     this.pieceSkin = PieceSkin.roundSeal,
+    this.pieceImages = const {},
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
@@ -28,6 +31,7 @@ class BoardDisplayScope extends InheritedWidget {
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
   final PieceSkin pieceSkin;
+  final Map<PieceImageSlot, Uint8List> pieceImages;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
@@ -96,6 +100,11 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.pieceSkin ??
       PieceSkin.roundSeal;
+  static Map<PieceImageSlot, Uint8List> pieceImagesOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.pieceImages ??
+      const {};
   @override
   bool updateShouldNotify(BoardDisplayScope oldWidget) =>
       showMoveGrades != oldWidget.showMoveGrades ||
@@ -106,6 +115,7 @@ class BoardDisplayScope extends InheritedWidget {
       rotateOppositePieces != oldWidget.rotateOppositePieces ||
       boardSkin != oldWidget.boardSkin ||
       pieceSkin != oldWidget.pieceSkin ||
+      !identical(pieceImages, oldWidget.pieceImages) ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||
       showVariationArrows != oldWidget.showVariationArrows ||
       arrowHead != oldWidget.arrowHead ||

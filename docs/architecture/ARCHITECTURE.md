@@ -78,3 +78,5 @@ M4-08由BoardFeedbackController按已提交节点的父局面计算ChineseNotati
 `AudioOptionsDialog` 经 `AudioLibraryController` 调用 `AudioFilePicker`、`AudioOverrideRepository`，不直接访问文件系统；播放器仍通过独立 `AudioFeedbackPort` 查询 overrides 并使用 `DeviceFileSource`。默认素材由应用bundle资产提供。存储适配器仅使用 application support 受控子目录和严格清单文件名，临时目录完成写入后替换清单。WAV/MP3验证留在纯Dart应用层；文件选择适配器在读取时也限制512KiB。新设置不可达时音效维持默认。
 
 M4-10只给走棋事件添加独立 `MoveSoundChoice` 偏好；走棋系统音效在有自定义文件时先使用用户文件，否则读取持久化预设；其它事件仍走各自音效。`AudioSoundPreviewPort`负责试听指定预设，不暂时改写当前值。随皮肤暂映射当前默认皮肤，待F21完成后才能接入皮肤资源。
+
+M4-14的棋子图片流程采用`PieceImagePicker`/`PieceImageRepository` ports，由`PieceImageLibraryController`串接校验和本地持久化；UI只读控制器状态，图像解析/业务失败类型不依赖Flutter。选图后先执行容量、PNG/JPEG头部尺寸及真实解码校验，再由仓库写入每皮肤独立目录和受限JSON清单。`BoardDisplayScope`仅提供当前皮肤只读图片；PNG/GIF快照复制bytes并冻结，避免偏好之后变动影响导出。当前限制512 KiB、1024边长及1MP，批量归档导入另行设计。

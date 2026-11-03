@@ -562,3 +562,18 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 ## 2026-11-03 / E44 / F21 棋盘皮肤编辑器审计
 
 桌面IAB访客从默认`#/settings/board`选择棋盘→新建`#/settings/skins/edit/new?type=board`。格子/图片两tab；格子页两个“左上格点”“右下格点”slider初始50，提示拖动两个蓝点对准左上/右下格点；步进器起始左33/上33/右465/下519，点左加号一次观察左33.5、右约465.02联动，具体单位与算法不明；棋子缩放初值100。图片页四图层棋盘/起点/落点/选中框默认用默认、替换可用、重置默认disabled；开关“落点标记旋转”默认off，并描述自皮肤图像旋转。导出/使用/保存全未点。按返回收到草稿丢弃确认，确认后full AX仍显示设置默认棋盘/棋子、全局100、坐标on、倒置off；无棋谱变化。没有选图、上传/点赞、保存/应用。
+
+
+## 2026-11-04 / M4-17 棋盘图片图层
+
+实现`BoardSkinImageSlot`四槽、`BoardSkinImageRepository`接口与File实现、控制器、Material 3编辑对话框。主棋盘背景绘图位于格网底层，起点/落点可替代默认末步标记，选中框显示在棋面之上；BoardImageSnapshot/BoardGifSnapshot及导出对话框冻结并传递棋盘图片。`main.dart`注入本机文件仓库与既有文件选择器。未实现E44旋转开关和网格几何。
+
+实际命令：
+- `dart format ...`：通过；
+- `flutter test test/application/board_skin_image_library_test.dart test/widgets/board_skin_image_layers_test.dart --reporter expanded`：3/3通过；
+- 初次`flutter test --reporter compact`：468通过/5跳过/1失败，`piece_size_test.dart`旧Tab循环20次未抵达slider；将预算改为40后该专项5/5通过；最终全量469通过/5跳过；
+- `flutter analyze`：无问题；
+- `flutter run -d macos`：Build成功、同步成功、VM `127.0.0.1:50487`，PID44785；日志`Failed to foreground app; open returned 1`，前台显示未验证；
+- `git diff --check`：通过。
+
+未加依赖或外部资源。验证日志`/tmp/chessnext-m4-17-test.log`（首次失败）和`/tmp/chessnext-m4-17-test-final.log`。功能已提交`c7e3151 feat(skins): 支持本机棋盘图片图层`。

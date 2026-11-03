@@ -168,7 +168,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                         ),
                       ),
                       icon: const Icon(Icons.play_circle_outline),
-                      label: const Text('棋谱播放'),
+                      label: const Text('棋谱与操作'),
                     ),
                   ],
                 ),

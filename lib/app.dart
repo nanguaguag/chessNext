@@ -262,6 +262,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   void _preferencesChanged() {
     if (mounted) {
       recordPlayback.setInterval(preferences.value.recordPlaybackIntervalMs);
+      if (!preferences.value.showRecordPlaybackButton) recordPlayback.stop();
       setState(() {});
     }
   }
@@ -1068,34 +1069,40 @@ class _BoardPage extends StatelessWidget {
                         color: Theme.of(context).colorScheme.error,
                       ),
                     ),
-                  const Padding(
-                    padding: EdgeInsets.symmetric(vertical: 20),
-                    child: Divider(),
-                  ),
-                  Text('着法记录', style: Theme.of(context).textTheme.titleMedium),
-                  const SizedBox(height: 12),
-                  if (!session.hasMoves) const Text('尚无着法，选择棋子开始对局。'),
-                  MoveList(
-                    session: session,
-                    onNavigate: analysis.navigateToNode,
-                  ),
-                  const SizedBox(height: 16),
+                  if (preferences.value.showMoveList) ...[
+                    const Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20),
+                      child: Divider(),
+                    ),
+                    Text(
+                      '着法记录',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    const SizedBox(height: 12),
+                    if (!session.hasMoves) const Text('尚无着法，选择棋子开始对局。'),
+                    MoveList(
+                      session: session,
+                      onNavigate: analysis.navigateToNode,
+                    ),
+                    const SizedBox(height: 16),
+                  ],
                   Wrap(
                     spacing: 4,
                     children: [
-                      IconButton(
-                        onPressed: recordPlayback.playing
-                            ? recordPlayback.stop
-                            : recordPlayback.canPlay
-                            ? recordPlayback.start
-                            : null,
-                        tooltip: recordPlayback.playing ? '暂停播放' : '播放棋谱',
-                        icon: Icon(
-                          recordPlayback.playing
-                              ? Icons.pause
-                              : Icons.play_arrow,
+                      if (preferences.value.showRecordPlaybackButton)
+                        IconButton(
+                          onPressed: recordPlayback.playing
+                              ? recordPlayback.stop
+                              : recordPlayback.canPlay
+                              ? recordPlayback.start
+                              : null,
+                          tooltip: recordPlayback.playing ? '暂停播放' : '播放棋谱',
+                          icon: Icon(
+                            recordPlayback.playing
+                                ? Icons.pause
+                                : Icons.play_arrow,
+                          ),
                         ),
-                      ),
                       IconButton(
                         onPressed: session.canUndo
                             ? () =>

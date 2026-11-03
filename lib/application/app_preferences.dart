@@ -85,6 +85,8 @@ final class AppPreferences {
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
     this.recordPlaybackIntervalMs = 2000,
+    this.showMoveList = true,
+    this.showRecordPlaybackButton = true,
     this.guideVersion = 0,
     List<SidePanel> sidePanelOrder = defaultSidePanelOrder,
     List<SidePanel> visibleSidePanels = defaultSidePanelOrder,
@@ -182,6 +184,7 @@ final class AppPreferences {
       thinkTimeMs,
       recordPlaybackIntervalMs,
       guideVersion;
+  final bool showMoveList, showRecordPlaybackButton;
   final List<SidePanel> sidePanelOrder;
   final List<SidePanel> visibleSidePanels;
   AppPreferences copyWith({
@@ -221,6 +224,8 @@ final class AppPreferences {
     int? multiPv,
     int? thinkTimeMs,
     int? recordPlaybackIntervalMs,
+    bool? showMoveList,
+    bool? showRecordPlaybackButton,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
     List<SidePanel>? visibleSidePanels,
@@ -264,6 +269,9 @@ final class AppPreferences {
     thinkTimeMs: thinkTimeMs ?? this.thinkTimeMs,
     recordPlaybackIntervalMs:
         recordPlaybackIntervalMs ?? this.recordPlaybackIntervalMs,
+    showMoveList: showMoveList ?? this.showMoveList,
+    showRecordPlaybackButton:
+        showRecordPlaybackButton ?? this.showRecordPlaybackButton,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
     visibleSidePanels: visibleSidePanels ?? this.visibleSidePanels,
@@ -331,6 +339,8 @@ final class AppPreferences {
     'thinkTimeMs': thinkTimeMs,
     if (recordPlaybackIntervalMs != 2000)
       'recordPlaybackIntervalMs': recordPlaybackIntervalMs,
+    if (!showMoveList) 'showMoveList': false,
+    if (!showRecordPlaybackButton) 'showRecordPlaybackButton': false,
     if (guideVersion != 0) 'guideVersion': guideVersion,
     if (!_listEquals(sidePanelOrder, defaultSidePanelOrder))
       'sidePanelOrder': sidePanelOrder.map((panel) => panel.name).toList(),
@@ -383,6 +393,9 @@ final class AppPreferences {
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('recordPlaybackIntervalMs') &&
             json['recordPlaybackIntervalMs'] is! int) ||
+        (json.containsKey('showMoveList') && json['showMoveList'] is! bool) ||
+        (json.containsKey('showRecordPlaybackButton') &&
+            json['showRecordPlaybackButton'] is! bool) ||
         (json.containsKey('sidePanelOrder') &&
             (json['sidePanelOrder'] is! List ||
                 (json['sidePanelOrder'] as List).any(
@@ -474,6 +487,9 @@ final class AppPreferences {
         thinkTimeMs: json['thinkTimeMs'] as int,
         recordPlaybackIntervalMs:
             json['recordPlaybackIntervalMs'] as int? ?? 2000,
+        showMoveList: json['showMoveList'] as bool? ?? true,
+        showRecordPlaybackButton:
+            json['showRecordPlaybackButton'] as bool? ?? true,
         guideVersion: json['guideVersion'] as int? ?? 0,
         sidePanelOrder:
             (json['sidePanelOrder'] as List?)
@@ -574,6 +590,8 @@ final class AppPreferences {
       thinkTimeMs == other.thinkTimeMs &&
       guideVersion == other.guideVersion &&
       recordPlaybackIntervalMs == other.recordPlaybackIntervalMs &&
+      showMoveList == other.showMoveList &&
+      showRecordPlaybackButton == other.showRecordPlaybackButton &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
       _listEquals(visibleSidePanels, other.visibleSidePanels);
   @override
@@ -619,6 +637,8 @@ final class AppPreferences {
     thinkTimeMs,
     guideVersion,
     recordPlaybackIntervalMs,
+    showMoveList,
+    showRecordPlaybackButton,
     Object.hashAll(sidePanelOrder),
     Object.hashAll(visibleSidePanels),
   ]);

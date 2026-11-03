@@ -196,6 +196,13 @@ class PreferencesController extends ChangeNotifier {
                 _edited.contains('recordPlaybackIntervalMs')
                 ? previous.recordPlaybackIntervalMs
                 : null,
+            showMoveList: _edited.contains('showMoveList')
+                ? previous.showMoveList
+                : null,
+            showRecordPlaybackButton:
+                _edited.contains('showRecordPlaybackButton')
+                ? previous.showRecordPlaybackButton
+                : null,
           ),
         );
         _persisted = stored;
@@ -235,6 +242,10 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(reviewMode: mode));
   Future<void> setRecordPlaybackInterval(int milliseconds) =>
       apply(value.copyWith(recordPlaybackIntervalMs: milliseconds));
+  Future<void> setShowMoveList(bool visible) =>
+      apply(value.copyWith(showMoveList: visible));
+  Future<void> setShowRecordPlaybackButton(bool visible) =>
+      apply(value.copyWith(showRecordPlaybackButton: visible));
   Future<void> setSidePanelOrder(List<SidePanel> order) =>
       apply(value.copyWith(sidePanelOrder: order));
   Future<void> setSidePanelVisibility(SidePanel panel, bool visible) {
@@ -462,6 +473,10 @@ class PreferencesController extends ChangeNotifier {
     if (next.thinkTimeMs != value.thinkTimeMs) _edited.add('thinkTimeMs');
     if (next.recordPlaybackIntervalMs != value.recordPlaybackIntervalMs) {
       _edited.add('recordPlaybackIntervalMs');
+    }
+    if (next.showMoveList != value.showMoveList) _edited.add('showMoveList');
+    if (next.showRecordPlaybackButton != value.showRecordPlaybackButton) {
+      _edited.add('showRecordPlaybackButton');
     }
   }
 

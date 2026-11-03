@@ -16,7 +16,7 @@ class RecordPlaybackSettingsDialog extends StatelessWidget {
       final value = preferences.value.recordPlaybackIntervalMs;
       final isPreset = presets.contains(value);
       return AlertDialog(
-        title: const Text('棋谱播放'),
+        title: const Text('棋谱与操作'),
         content: SizedBox(
           width: 420,
           child: Column(
@@ -56,6 +56,19 @@ class RecordPlaybackSettingsDialog extends StatelessWidget {
                 ),
               ),
               const Text('项目自定义范围为0.5–30秒，步进0.1秒。'),
+              const Divider(height: 24),
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('显示棋谱栏'),
+                value: preferences.value.showMoveList,
+                onChanged: preferences.setShowMoveList,
+              ),
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('显示播放按钮'),
+                value: preferences.value.showRecordPlaybackButton,
+                onChanged: preferences.setShowRecordPlaybackButton,
+              ),
               if (preferences.error case final error?)
                 Padding(
                   padding: const EdgeInsets.only(top: 8),

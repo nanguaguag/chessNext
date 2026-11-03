@@ -1,6 +1,7 @@
 import 'package:chess_next/app.dart';
 import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
+import 'package:chess_next/features/records/move_list.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -31,10 +32,30 @@ void main() {
     await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
     await tester.pumpAndSettle();
     await tap(tester, find.byTooltip('应用设置'));
-    await tap(tester, find.text('棋谱播放'));
+    await tap(tester, find.text('棋谱与操作'));
     await tap(tester, find.text('0.5秒'));
     expect(store.value?.recordPlaybackIntervalMs, 500);
     await tap(tester, find.text('关闭'));
+  });
+
+  testWidgets('move list and playback button visibility persist and apply', (
+    tester,
+  ) async {
+    desktop(tester);
+    final store = MemoryPreferencesRepository();
+    await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
+    await tester.pumpAndSettle();
+    await tap(tester, find.byTooltip('应用设置'));
+    await tap(tester, find.text('棋谱与操作'));
+    await tap(tester, find.text('显示棋谱栏'));
+    expect(find.byType(MoveList), findsNothing);
+    expect(store.value?.showMoveList, isFalse);
+
+    await tap(tester, find.text('显示播放按钮'));
+    expect(find.byTooltip('播放棋谱'), findsNothing);
+    expect(store.value?.showRecordPlaybackButton, isFalse);
+    await tap(tester, find.text('关闭'));
+    await tap(tester, find.text('取消'));
   });
 
   testWidgets(

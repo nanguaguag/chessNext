@@ -558,3 +558,7 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 ## 2026-11-04 / M4-32 / F20,B25 棋谱定时播放与步时
 
 `AppPreferences.recordPlaybackIntervalMs`严格限制500–30000ms、100ms步进，旧偏好默认2000ms；设置预设0.5/1/2/3秒及自定义滑杆即时持久化。`RecordPlaybackController`由单次Timer驱动，沿当前选定线路导航，末尾自动停止；外部游标/内容/epoch变化停止，播放导航不改内容revision/dirty。专项与根测试、分析、macOS实际运行结果见CURRENT_STATE/SESSION_LOG；E50具体源站起点、循环、自定义范围仍U，项目行为P。
+
+## 2026-11-04 / M4-33 / F20,B25 棋谱栏和播放按钮显隐
+
+`AppPreferences.showMoveList/showRecordPlaybackButton`独立持久化，旧偏好默认可见，设置开关即时生效。隐藏棋谱栏时只收起标题、空态和着法列表；保留其它导航控制。隐藏播放按钮立即停播，并从导航行移除播放入口。专项/根测试、分析与macOS实际运行证据见CURRENT_STATE/SESSION_LOG；源站开关联动及“棋谱栏”准确覆盖范围仍U，项目语义P。

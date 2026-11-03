@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-04 / M4-26 / F21,B24 本机用户皮肤ZIP导出
+
+M4-25已提交`1589a60`。E43只确认编辑页存在导出入口、并未实际操作；源站成功/格式仍U。M4-26定义ADR-061本机迁移备份包：固定`skin.json`清单schema1、槽位固定内部文件名、sha256；PNG/JPEG复用受限真实解码校验，最大14图/7MiB源文件/8MiB ZIP。archive 4.6.0已从transitive调整为direct，MIT来源/hash沿用LICENSING已记录值。导出UI对用户皮肤显示；macOS file_selector保存面板后通过新`writeZipAtomic`原子写入，Swift检查PK签名及8MiB上限；其它平台端口不注入、按钮disabled。
+
+专项codec/平台测试4项通过；根`flutter test --reporter compact`492通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID67175/VM `127.0.0.1:54273`。flutter_tts SwiftPM未来兼容warning；未人工操作保存面板或视觉验收。日志`/tmp/chessnext-m426-final-test.log`。代码、ADR/DECISIONS、矩阵/缺口/规格/追踪/README/许可/交接待单独中文提交。下一安全ZIP与文件夹导入后在线皮肤目录和自建后端部署。F21/全站未完成。
+
 ## 2026-11-04 / M4-25 / F21,B24 用户皮肤独立阴影
 
 M4-24已独立提交`f59a884 feat(skins): 增加本机皮肤库搜索排序`。继续参考E43与ADR-056：用户皮肤原来继承基础预设阴影；本片新增ADR-060，将平台无关`PieceSkinShadow`值对象移入ports，让用户定义可选保存其JSON。旧自定义目录缺字段时仍使用基础预设阴影。新建用户皮肤从当前用户项或内置预设继承当前阴影；设置只更新当前用户项。App BoardDisplayScope主盘/编辑读取该值，图片/GIF快照显式冻结。内置预设继续使用AppPreferences原字段，不迁移其存储。

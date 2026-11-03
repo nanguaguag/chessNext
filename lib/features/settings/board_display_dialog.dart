@@ -13,6 +13,7 @@ import 'board_skin_images_dialog.dart';
 import '../../application/board_skin_geometry.dart';
 import '../../application/piece_skin_library_controller.dart';
 import '../../ports/piece_skin_library.dart';
+import '../../ports/piece_skin_package_exporter.dart';
 import 'piece_skin_library_dialog.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
@@ -23,12 +24,14 @@ class BoardDisplayDialog extends StatelessWidget {
     this.pieceImages,
     this.boardSkinImages,
     this.pieceSkins,
+    this.pieceSkinPackageExporter,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController? pieceImages;
   final BoardSkinImageLibraryController? boardSkinImages;
   final PieceSkinLibraryController? pieceSkins;
+  final PieceSkinPackageExporter? pieceSkinPackageExporter;
 
   PieceSkinDefinition? _activeProfile(PreferencesController preferences) =>
       pieceSkins?.definitionFor(preferences.value.selectedPieceSkinId);
@@ -403,7 +406,7 @@ class BoardDisplayDialog extends StatelessWidget {
                           }
                         },
                 ),
-                const Text('图片覆盖仅保存在本机；ZIP和多套皮肤导入仍待实现。'),
+                const Text('图片覆盖仅保存在本机；用户皮肤支持ZIP导出，ZIP和文件夹导入仍待实现。'),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(
@@ -470,8 +473,10 @@ class BoardDisplayDialog extends StatelessWidget {
                         ? null
                         : () => showDialog<void>(
                             context: context,
-                            builder: (_) =>
-                                PieceSkinLibraryDialog(library: pieceSkins!),
+                            builder: (_) => PieceSkinLibraryDialog(
+                              library: pieceSkins!,
+                              exporter: pieceSkinPackageExporter,
+                            ),
                           ),
                     icon: const Icon(Icons.collections_bookmark_outlined),
                     label: const Text('管理皮肤库'),

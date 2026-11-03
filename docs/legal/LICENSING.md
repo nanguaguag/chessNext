@@ -35,6 +35,8 @@ file_selector1.1.0及实际解析的平台/传递依赖见[文件选择登记](F
 
 2026-11-03 显式登记动态图编码依赖：[`image` 4.12.0](https://pub.dev/packages/image/versions/4.12.0)，MIT，pubspec.lock归档SHA256 `89ed75b2f8231fe676808c5564f9590d728024ded7ac782a7ed8474f1c95b72a`，本机LICENSE SHA256 `f3c17da84e0780e1c334325c73098257c32221d62498ed55ef3c1361904925aa`；传递依赖`archive` 4.6.0 MIT，归档SHA `de5ac590b8155e4e676088d714bd41ea620449a6adc0f7950c5073874b287ddb`、LICENSE SHA `32f97d332eae7453ec4079858e6f1d74be85beeb6d3881068b47d02a379cccea`；`posix` 6.5.4 MIT，归档SHA `613646d076944f3acc125830af935b48d4b8a57a388691547bbfd25b434f4d63`、LICENSE SHA `aaf6271abd048deb3125828613f1797b7556472de6c7acd7103bd43e9cb6a84b`。完整传递依赖许可/SBOM仍属发行前工作。
 
+2026-11-04：`archive` 4.6.0现为ZIP皮肤包直接依赖（此前由image传递引入），MIT；版本、pub归档SHA与LICENSE SHA如上。无新归档资源。
+
 ## 2026-11-03 M4-06 本机音效
 
 本项目原创WAV由 tool/generate_sound_assets.dart 经 lib/adapters/audio/tone_wave.dart 可重复生成，非参考站素材。select.wav SHA256 9d88d1cd189f795fba055aa3456d5ae4995cb3995d533db5fc9a385d0956ccbe；move.wav SHA256 4f4b1aab580d79ea0929e2b677eebe4fc03e8653a7d8d73c3f9ccbd33e41938e；capture.wav SHA256 0ce428bbe41b57c4c829a7d092f3caef17250c8062d5006ced20b43e0b5009a4；check.wav SHA256 eb59c23c531d319b090949c9c17b82a77b90f4d3e49a72679cac2a40782d7373；mate.wav SHA256 d720793b24428b809ea6ec1e965eac8fceafeacaeaea34ace315c61aedfa1a3b。均为短PCM合成提示音。

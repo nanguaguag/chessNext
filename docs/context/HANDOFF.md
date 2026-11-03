@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-04 / B24 持续交付：M4-26本机用户皮肤ZIP导出
+
+M4-26实现和门槛完成，待独立中文提交。ADR-061定义`skin.json` schema1及`images/<slot>.<ext>`固定路径、SHA-256清单。图片复用PNG/JPEG真实解码限制，最多14张/7 MiB原图累计/8 MiB最终ZIP；macOS系统保存位置，原生`writeZipAtomic`校验ZIP签名/大小后原子写。导出不含其它皮肤/账户/棋谱。`archive` 4.6.0从传递依赖改直接依赖，MIT许可已有归档和LICENSE SHA记录。
+
+目标专项编码/适配器4项通过；全量`flutter test --reporter compact`492通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID67175/VM `127.0.0.1:54273`。5跳过依赖官方引擎/NNUE配置，flutter_tts SwiftPM未来warning；未实际操作系统保存面板/人工视觉检查。日志`/tmp/chessnext-m426-final-test.log`。
+
+检查diff并提交M4-26。下一项B24安全ZIP/文件夹导入：处理路径穿越、symlink、解压总字节/文件数/压缩比、重复槽/皮肤和失败原子性；E42/E48成功边界U，项目约束需标P。之后在线目录和自建后端部署设计。F21/全站开放。
+
 ## 2026-11-04 / B24 持续交付：M4-25用户皮肤独立阴影
 
 M4-25已提交`1589a60 feat(skins): 支持用户皮肤独立阴影`。ADR-060将平台无关PieceSkinShadow值对象放ports，用户皮肤定义可选保存阴影JSON；旧目录缺字段时仍回退到内置基础皮肤阴影，新建复制当前活动皮肤或内置预设参数。设置对用户项写目录，对内置项继续写AppPreferences；BoardDisplayScope、棋盘/编辑和PNG/GIF快照均带用户阴影值。范围沿用ADR-056项目P，E43端点/算法仍U。

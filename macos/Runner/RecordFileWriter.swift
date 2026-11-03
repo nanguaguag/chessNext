@@ -13,6 +13,7 @@ final class RecordFileWriter {
     channel.setMethodCallHandler { [weak self] call, result in
       guard call.method == "writeAtomic" ||
               call.method == "writePngAtomic" ||
+              call.method == "writeZipAtomic" ||
               call.method == "writeGifAtomic" else {
         result(FlutterMethodNotImplemented)
         return
@@ -26,16 +27,19 @@ final class RecordFileWriter {
         return
       }
       let isPng = call.method == "writePngAtomic"
+      let isZip = call.method == "writeZipAtomic"
       let isGif = call.method == "writeGifAtomic"
       let valid = isPng
         ? Self.isBoundedPng(bytes.data)
+        : isZip
+          ? Self.isBoundedZip(bytes.data)
         : isGif
           ? Self.isBoundedGif(bytes.data)
           : bytes.data.count <= 256000 && String(data: bytes.data, encoding: .utf8) != nil
       guard valid else {
         result(FlutterError(
           code: "invalid_export",
-          message: isPng ? "Invalid PNG export" : isGif ? "Invalid GIF export" : "Invalid text export",
+            message: isPng ? "Invalid PNG export" : isZip ? "Invalid ZIP export" : isGif ? "Invalid GIF export" : "Invalid text export",
           details: nil
         ))
         return
@@ -62,7 +66,7 @@ final class RecordFileWriter {
           DispatchQueue.main.async {
             result(FlutterError(
               code: "write_failed",
-              message: isPng ? "PNG export failed" : isGif ? "GIF export failed" : "Text export failed",
+              message: isPng ? "PNG export failed" : isZip ? "ZIP export failed" : isGif ? "GIF export failed" : "Text export failed",
               details: nil
             ))
           }
@@ -95,6 +99,11 @@ final class RecordFileWriter {
     guard data.count >= 14, data.count <= 12 * 1024 * 1024 else { return false }
     let header = String(data: data.prefix(6), encoding: .ascii)
     return header == "GIF87a" || header == "GIF89a"
+  }
+
+  private static func isBoundedZip(_ data: Data) -> Bool {
+    data.count >= 22 && data.count <= 8 * 1024 * 1024 &&
+      data[0] == 0x50 && data[1] == 0x4b && data[2] == 0x03 && data[3] == 0x04
   }
 
   private static func isDecodableGif(_ data: Data) -> Bool {

@@ -2,10 +2,18 @@ import 'package:flutter/material.dart';
 import '../../application/piece_skin_library_controller.dart';
 import '../../ports/piece_images.dart';
 import '../../ports/piece_skin_library.dart';
+import '../../application/piece_skin_package_codec.dart';
+import '../../ports/piece_skin_package_exporter.dart';
+import '../../ports/record_file_exporter.dart';
 
 class PieceSkinLibraryDialog extends StatefulWidget {
-  const PieceSkinLibraryDialog({super.key, required this.library});
+  const PieceSkinLibraryDialog({
+    super.key,
+    required this.library,
+    this.exporter,
+  });
   final PieceSkinLibraryController library;
+  final PieceSkinPackageExporter? exporter;
 
   @override
   State<PieceSkinLibraryDialog> createState() => _PieceSkinLibraryDialogState();
@@ -150,6 +158,15 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
                         spacing: 0,
                         children: [
                           IconButton(
+                            tooltip: '导出${profile.name}',
+                            onPressed:
+                                widget.library.loading ||
+                                    widget.exporter == null
+                                ? null
+                                : () => _export(context, profile),
+                            icon: const Icon(Icons.download_outlined),
+                          ),
+                          IconButton(
                             tooltip: '重命名${profile.name}',
                             onPressed: widget.library.loading
                                 ? null
@@ -243,5 +260,36 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
         profiles = profiles.reversed.toList();
     }
     return profiles;
+  }
+
+  Future<void> _export(
+    BuildContext context,
+    PieceSkinDefinition profile,
+  ) async {
+    try {
+      final bytes = PieceSkinPackageCodec.encode(
+        profile,
+        widget.library.images.imagesFor(profile.id),
+      );
+      final safeName = profile.name
+          .replaceAll(RegExp(r'[^\p{L}\p{N}_-]+', unicode: true), '-')
+          .replaceAll(RegExp(r'^-+|-+$'), '');
+      final result = await widget.exporter!.saveZip(
+        suggestedName: safeName.isEmpty ? 'xiangqi-skin' : safeName,
+        bytes: bytes,
+        cancellation: FileExportCancellation(),
+      );
+      if (!context.mounted || result == RecordFileExportResult.cancelled) {
+        return;
+      }
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(const SnackBar(content: Text('棋子皮肤包已导出。')));
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(const SnackBar(content: Text('皮肤包导出失败，请检查本机存储后重试。')));
+    }
   }
 }

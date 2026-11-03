@@ -5,6 +5,7 @@ version: 0.1.0+1
 environment:
   sdk: ^3.12.2
 dependencies:
+  archive: ^4.6.0
   audioplayers: ^6.8.1
   crypto: ^3.0.8
   file_selector: 1.1.0

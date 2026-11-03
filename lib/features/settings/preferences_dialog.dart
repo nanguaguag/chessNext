@@ -9,6 +9,7 @@ import '../../application/audio_library_controller.dart';
 import '../../application/piece_image_library_controller.dart';
 import '../../application/board_skin_image_library_controller.dart';
 import '../../application/piece_skin_library_controller.dart';
+import '../../ports/piece_skin_package_exporter.dart';
 
 class PreferencesDialog extends StatefulWidget {
   const PreferencesDialog({
@@ -18,12 +19,14 @@ class PreferencesDialog extends StatefulWidget {
     required this.pieceImages,
     required this.boardSkinImages,
     this.pieceSkins,
+    this.pieceSkinPackageExporter,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController pieceImages;
   final BoardSkinImageLibraryController boardSkinImages;
   final PieceSkinLibraryController? pieceSkins;
+  final PieceSkinPackageExporter? pieceSkinPackageExporter;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -130,6 +133,8 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                           pieceImages: widget.pieceImages,
                           boardSkinImages: widget.boardSkinImages,
                           pieceSkins: widget.pieceSkins,
+                          pieceSkinPackageExporter:
+                              widget.pieceSkinPackageExporter,
                         ),
                       ),
                       icon: const Icon(Icons.grid_on),

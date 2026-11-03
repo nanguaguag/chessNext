@@ -4,6 +4,7 @@ import 'ports/record_file_exporter.dart';
 import 'ports/png_file_exporter.dart';
 import 'ports/image_clipboard.dart';
 import 'ports/gif_file_exporter.dart';
+import 'ports/piece_skin_package_exporter.dart';
 import 'application/board_image_snapshot.dart';
 import 'application/board_gif_snapshot.dart';
 import 'features/export/board_image_dialog.dart';
@@ -81,6 +82,7 @@ class ChessNextApp extends StatefulWidget {
     this.pieceImagePicker,
     this.pieceImageRepository,
     this.pieceSkinLibraryRepository,
+    this.pieceSkinPackageExporter,
     this.boardSkinImagePicker,
     this.boardSkinImageRepository,
     this.gifExporter,
@@ -103,6 +105,7 @@ class ChessNextApp extends StatefulWidget {
   final PieceImagePicker? pieceImagePicker;
   final PieceImageRepository? pieceImageRepository;
   final PieceSkinLibraryRepository? pieceSkinLibraryRepository;
+  final PieceSkinPackageExporter? pieceSkinPackageExporter;
   final PieceImagePicker? boardSkinImagePicker;
   final BoardSkinImageRepository? boardSkinImageRepository;
   final GifFileExporter? gifExporter;
@@ -404,6 +407,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       audioLibrary: audioLibrary,
       pieceImages: pieceImages,
       pieceSkins: pieceSkins,
+      pieceSkinPackageExporter: widget.pieceSkinPackageExporter,
       boardSkinImages: boardSkinImages,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       filePicker: widget.filePicker,
@@ -448,12 +452,14 @@ class _BoardPage extends StatelessWidget {
     this.audioLibrary,
     required this.pieceImages,
     required this.pieceSkins,
+    this.pieceSkinPackageExporter,
     required this.boardSkinImages,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController pieceImages;
   final PieceSkinLibraryController pieceSkins;
+  final PieceSkinPackageExporter? pieceSkinPackageExporter;
   final BoardSkinImageLibraryController boardSkinImages;
   final DraftController? drafts;
   final TextClipboard clipboard;
@@ -806,6 +812,7 @@ class _BoardPage extends StatelessWidget {
                   audioLibrary: audioLibrary,
                   pieceImages: pieceImages,
                   pieceSkins: pieceSkins,
+                  pieceSkinPackageExporter: pieceSkinPackageExporter,
                   boardSkinImages: boardSkinImages,
                 ),
               );

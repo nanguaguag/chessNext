@@ -49,6 +49,8 @@ import 'application/library_controller.dart';
 import 'ports/game_repository.dart';
 import 'features/library/library_dialog.dart';
 import 'features/board/xiangqi_board.dart';
+import 'application/board_feedback_controller.dart';
+import 'ports/audio_feedback.dart';
 
 class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
@@ -62,6 +64,7 @@ class ChessNextApp extends StatefulWidget {
     this.fileExporter,
     this.pngExporter,
     this.imageClipboard,
+    this.audioFeedback,
     this.gifExporter,
     this.engineFactory,
     this.reviewCache,
@@ -75,6 +78,7 @@ class ChessNextApp extends StatefulWidget {
   final RecordFileExporter? fileExporter;
   final PngFileExporter? pngExporter;
   final ImageClipboard? imageClipboard;
+  final AudioFeedbackPort? audioFeedback;
   final GifFileExporter? gifExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
@@ -93,6 +97,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final RecentReadingController readings;
   late final DraftController? drafts;
   late final PreferencesController preferences;
+  late final BoardFeedbackController boardFeedback;
   late final EngineSessionController analysis;
   BoardGifSettings gifSettings = BoardGifSettings();
   @override
@@ -121,6 +126,11 @@ class _ChessNextAppState extends State<ChessNextApp>
     preferences = PreferencesController(
       analysis,
       widget.preferencesRepository ?? MemoryPreferencesRepository(),
+    );
+    boardFeedback = BoardFeedbackController(
+      session,
+      preferences,
+      widget.audioFeedback ?? const SilentAudioFeedback(),
     );
     preferences.addListener(_preferencesChanged);
     unawaited(_initializePreferences());
@@ -239,6 +249,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     preferences.removeListener(_preferencesChanged);
+    unawaited(boardFeedback.dispose());
     unawaited(preferences.flush());
     preferences.dispose();
     analysis.dispose();

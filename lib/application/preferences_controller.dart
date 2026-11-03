@@ -111,6 +111,12 @@ class PreferencesController extends ChangeNotifier {
             animationSpeed: _edited.contains('animationSpeed')
                 ? previous.animationSpeed
                 : null,
+            playMoveSound: _edited.contains('playMoveSound')
+                ? previous.playMoveSound
+                : null,
+            playSelectionSound: _edited.contains('playSelectionSound')
+                ? previous.playSelectionSound
+                : null,
             textSize: _edited.contains('textSize') ? previous.textSize : null,
             pieceSizePercent: _edited.contains('pieceSizePercent')
                 ? previous.pieceSizePercent
@@ -168,6 +174,10 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(theme: theme));
   Future<void> setAnimationSpeed(AnimationSpeed speed) =>
       apply(value.copyWith(animationSpeed: speed));
+  Future<void> setPlayMoveSound(bool enabled) =>
+      apply(value.copyWith(playMoveSound: enabled));
+  Future<void> setPlaySelectionSound(bool enabled) =>
+      apply(value.copyWith(playSelectionSound: enabled));
   Future<void> setTextSize(TextSizePreference size) =>
       apply(value.copyWith(textSize: size));
   Future<void> setShowCoordinates(bool visible) =>
@@ -225,6 +235,12 @@ class PreferencesController extends ChangeNotifier {
     if (next.theme != value.theme) _edited.add('theme');
     if (next.animationSpeed != value.animationSpeed) {
       _edited.add('animationSpeed');
+    }
+    if (next.playMoveSound != value.playMoveSound) {
+      _edited.add('playMoveSound');
+    }
+    if (next.playSelectionSound != value.playSelectionSound) {
+      _edited.add('playSelectionSound');
     }
     if (next.textSize != value.textSize) _edited.add('textSize');
     if (next.pieceSizePercent != value.pieceSizePercent) {

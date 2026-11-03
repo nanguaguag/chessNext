@@ -8,6 +8,7 @@ import 'package:chess_next/features/board/last_move_markers.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/features/settings/board_display_dialog.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
+import 'package:chess_next/ports/audio_feedback.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -22,6 +23,14 @@ class MarkerStore extends MemoryPreferencesRepository {
     if (fail) throw StateError('disk');
     await super.save(value);
   }
+}
+
+class MarkerAudio implements AudioFeedbackPort {
+  final events = <AudioFeedbackKind>[];
+  @override
+  Future<void> play(AudioFeedbackKind kind) async => events.add(kind);
+  @override
+  Future<void> dispose() async {}
 }
 
 void main() {
@@ -125,6 +134,34 @@ void main() {
     expect(painter(tester).phase, 1);
     await tester.pump(const Duration(milliseconds: 100));
     expect(painter(tester).phase, 1);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+  testWidgets('app routes offline selection and move feedback to its port', (
+    tester,
+  ) async {
+    desktop(tester);
+    final store = MarkerStore();
+    final audio = MarkerAudio();
+    await tester.pumpWidget(
+      ChessNextApp(preferencesRepository: store, audioFeedback: audio),
+    );
+    await tester.pumpAndSettle();
+    final session = tester
+        .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+        .session;
+    final move = session.legalMoves.first;
+    session.tap(move.from);
+    await tester.pump();
+    expect(audio.events, [AudioFeedbackKind.select]);
+    session.tap(move.to);
+    await tester.pump();
+    await tester.pump(Duration.zero);
+    expect(audio.events, [AudioFeedbackKind.select, AudioFeedbackKind.move]);
+    expect(session.tree.current.move, move);
+
+    await settings(tester);
+    await tap(tester, find.widgetWithText(SwitchListTile, '选子音效'));
+    expect(store.value?.playSelectionSound, isFalse);
     await tester.pumpWidget(const SizedBox.shrink());
   });
   testWidgets(

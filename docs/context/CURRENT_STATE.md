@@ -26,12 +26,12 @@
 
 ## 最新验证
 
-M4-05最终根 flutter test 433通过、5项需PIKAFISH_EXECUTABLE/NETWORK的原生引擎用例跳过；flutter analyze 无问题（4.3秒）。相关偏好/组件用例10/10通过。flutter run -d macos第二次构建启动成功，VM Service 127.0.0.1:60592；工具前置窗口失败，CUA窗口读取超时，人工视觉未验。M4-04此前显式官方NNUE根435/435/analyze0和macOS native 1/1记录保留于SESSION_LOG。macOS真实450×540 Flutter双帧渲染、GIF2/3秒、ImageIO逐帧解码/原子写入及坏GIF不覆盖1/1通过。`flutter run -d macos`生产main已构建启动（App PID20951；工具前台报open返回1但VM service已启动）。现41原生相关项未全41，最近完整32/32仍M3-29，core67沿用；系统保存面板人工交互/其它平台未验。
+M4-06：根 flutter test 438通过、5项因未配置官方Pikafish环境变量跳过；flutter analyze0。macOS integration_test/audio_feedback_test.dart 1/1，真实加载本机WAV并启动播放器。最新 flutter run -d macos 构建启动PID13873，VM Service 127.0.0.1:63861可用。macOS插件编译出现非阻断Swift并发隔离warning；人工听感/视觉及其它平台未验。历史M4-04 GIF原生测试与Pikafish显式NNUE数据见SESSION_LOG。
 
 生产main有文件导入/仅macOS文件导出；当前Debug/Release user-selected.read-write+sandbox，实际Debug签名已核，Release实际构建签名未验。系统Open/Save面板/外部授权/精确scope释放、真实OS焦点/最小化/人工视觉未验，Computer Use桌面权限未授不绕过；native fixture只保持framework-resumed，raw[]不是OS验证。Android/iOS/Windows/Linux运行与移动FFI仍未验/未实现。
 
 ## 下一步与环境
 
-E35证据已复核110项。M4-04 / F11 GIF预览和macOS保存已交付，提交见git log。F28声音动画已完成E36初审（入口/默认/开关和更换选项及动画档位可见，操作边界见B23）；M4-05已完成本机动画速度→末步光圈映射，见ADR-042和TRACEABILITY；下一继续B23音效/朗读及真实动画范围审计，仍有F21素材、布局/工作区/语言、错题/题库、其它文件格式/GIF系统分享/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
+E35证据已复核110项。M4-04 / F11 GIF预览和macOS保存已交付，提交见git log。F28声音动画已完成E36初审（入口/默认/开关和更换选项及动画档位可见，操作边界见B23）；M4-05/M4-06已完成动画光圈速度与选子/走棋本机提示音；F28其余事件音/自定义音效/着法朗读及真实动画范围审计继续按B23推进，仍有F21素材、布局/工作区/语言、错题/题库、其它文件格式/GIF系统分享/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest复核仍Pikafish2026-09-06 commit4c17cee，lock/NNUE校验见engine/pikafish.lock.json，.local忽略不提交。普通用户旧窗口不关闭/热重启；native测试覆盖build入口，最终审查前需重建普通main。

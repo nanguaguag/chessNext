@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'adapters/storage/file_game_repository.dart';
 import 'app.dart';
+import 'adapters/audio/audioplayers_feedback.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -32,6 +33,7 @@ void main() {
       preferencesRepository: FilePreferencesRepository(
         getApplicationSupportDirectory,
       ),
+      audioFeedback: AudioplayersFeedback(),
       engineFactory: openBundledEngine,
       reviewCache: FileReviewCacheRepository(getApplicationSupportDirectory),
       deviceThreads: Platform.numberOfProcessors,

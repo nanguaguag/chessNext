@@ -34,3 +34,9 @@ file_selector1.1.0及实际解析的平台/传递依赖见[文件选择登记](F
 2026-11-02 E35研究GIF：Agent自制棋树/标题，通过公开动态图预览与下载取得；GIF及截图含参考站木纹、棋子和排版，只在docs/research留作功能范围证据，不作为产品素材、编码fixture或视觉基线。产品动态图必须由项目原创棋盘绘制，SHA/帧数据/来源见samples/E35-manifest.json；许可决定仍按用户要求暂缓。
 
 2026-11-03 显式登记动态图编码依赖：[`image` 4.12.0](https://pub.dev/packages/image/versions/4.12.0)，MIT，pubspec.lock归档SHA256 `89ed75b2f8231fe676808c5564f9590d728024ded7ac782a7ed8474f1c95b72a`，本机LICENSE SHA256 `f3c17da84e0780e1c334325c73098257c32221d62498ed55ef3c1361904925aa`；传递依赖`archive` 4.6.0 MIT，归档SHA `de5ac590b8155e4e676088d714bd41ea620449a6adc0f7950c5073874b287ddb`、LICENSE SHA `32f97d332eae7453ec4079858e6f1d74be85beeb6d3881068b47d02a379cccea`；`posix` 6.5.4 MIT，归档SHA `613646d076944f3acc125830af935b48d4b8a57a388691547bbfd25b434f4d63`、LICENSE SHA `aaf6271abd048deb3125828613f1797b7556472de6c7acd7103bd43e9cb6a84b`。完整传递依赖许可/SBOM仍属发行前工作。
+
+## 2026-11-03 M4-06 本机音效
+
+本项目原创WAV由 tool/generate_sound_assets.dart 经 lib/adapters/audio/tone_wave.dart 可重复生成，非参考站素材。assets/audio/select.wav SHA256 9d88d1cd189f795fba055aa3456d5ae4995cb3995d533db5fc9a385d0956ccbe；assets/audio/move.wav SHA256 4f4b1aab580d79ea0929e2b677eebe4fc03e8653a7d8d73c3f9ccbd33e41938e。项目音效为短PCM合成提示音。
+
+新增 audioplayers 6.8.1（https://pub.dev/packages/audioplayers/versions/6.8.1），pub.dev标注MIT，直接归档SHA256 2ba4bb2944baacbdd5372ff8254a8e7feb8c10d7739545e392f5605a8f618745；解析 audioplayers_android 5.3.0、audioplayers_darwin 6.5.0、audioplayers_linux 4.3.0、audioplayers_web 5.3.0、audioplayers_windows 4.4.1 和 platform interface，确切锁定版本/归档摘要见pubspec.lock。macOS构建出现插件Swift 6隔离警告（当前是warning），需要未来升级/发行复核；本片只在macOS实际集成验证。此登记不等于全部传递依赖SBOM完成。

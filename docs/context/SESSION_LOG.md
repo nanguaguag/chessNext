@@ -476,3 +476,13 @@ E36 实际参考站检查见REFERENCE_EVIDENCE；menu→设置→声音与动画
 业务增量实现偏好动画速度并影响现有光圈；时长为项目提案，详ADR-042。新增单测和组件用例。首轮目标编译失败原因缺少偏好extension import，补后通过；组件测试误调用iOS pageBack，改走对话框明确关闭，无失败语义弱化。
 
 最终质量门：最初全量 flutter test 433通过、5跳过；修正仅在设置时改变动画速度会错误重播当前光圈后，目标10/10/analyze0，再运行最终根 flutter test 433通过/5跳过，最终 flutter analyze 无问题（4.3秒）。5跳过为引擎测试需PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK环境变量，非失败。macOS flutter run -d macos 第二次构建成功，应用PID9741，VM Service 127.0.0.1:60592可用；Flutter提示无法前置窗口，CUA读取AX超时，视觉验收明确not-run。无需原生集成测试：本片无native改动。git diff --check通过；commit前再检查。运行进程及实际结果是交付，不因前置失败称run未启动。
+
+## 2026-11-03 / M4-06 / F28 → B23 本机选子与走棋音效
+
+新增AudioFeedbackPort、应用层BoardFeedbackController、audioplayers平台适配器、默认开启的独立选子/走棋偏好与设置开关。合法位置变化/己方选中时按开关播放本机原创短音，非法输入/选择取消/新文档不播；副作用异常不影响棋谱。WAV按tool/generate_sound_assets.dart从PCM生成并作为bundle assets，无音效网络请求。依赖pub.dev audioplayers 6.8.1，MIT，transitive平台版本与lock摘要见licensing。macOS Xcode构建期间该插件有Swift6 actor隔离warning，现非错误；列入发行复核。
+
+E37实际打开走棋方案：音效1/2/随棋子皮肤与试听、本地WAV/MP3/512KiB/5秒自定义入口。只把2→1恢复选择为V，不导入/试听；站点任何声音素材未复用。
+
+本片目标纯Dart4过、应用组件另覆盖端口映射/设置保存；真实macOS integration起初BytesSource在沙箱临时路径缺目录而失败，按插件源码检查后改AssetSource；随后修复无用FramePositionUpdater引发integration_test悬空动画回调，再次实际macOS插件两种资源均1/1通过。初始失败保留，不计通过。待根全量flutter test/analyze/最终根macOS run。
+
+M4-06最终验证：针对生成器import修复后，根目录 flutter test --reporter compact 438 passed / 5 skipped；跳过为缺PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK的上游实机用例。最终flutter analyze无issues。macOS集成1/1已通过；提交见git log。生产flutter run -d macos最终PID13873，VM Service 127.0.0.1:63861。git diff --check随后复核。Xcode构建给audioplayers_darwin Swift6 actor isolation warnings但exit0，人工听觉/主窗口视觉not-run，非macOS目标not-run。

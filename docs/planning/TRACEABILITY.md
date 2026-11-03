@@ -418,3 +418,9 @@ ADR-042/BOARD_GIF_SLICE：`BoardGifSnapshot`冻结根到`currentLine`末端（�
 ## 2026-11-03 / M4-05 / F28 → B23 动画速度本机偏好
 
 E36 确认参考设置选项存在并恢复标准。实现AnimationSpeed兼容schema1偏好、晚读字段合并/序列化和设置Controller；Material3分段控件提供关/快/标准/慢，按项目提案0/300/600/1200ms控制既有末步光圈，下一个位置变化生效，系统减少动画优先。不影响棋谱、搜索。测试覆盖旧设置默认、四值typed round-trip、非法枚举、读设置竞态、Mac测试器UI关闭不旋转及写回。其余棋子动效/声音/朗读仍B23，F28未完成。
+
+## 2026-11-03 / M4-06 / F28 → B23 本机选子与走棋音效
+
+E36/E37确认默认走棋、选子开关和走棋方案选择器边界；原站音源未采集。项目使用pub.dev audioplayers 6.8.1（MIT）平台适配器，通过AssetSource读取本项目生成器创建的两段短PCM WAV；原生端口不暴露给Widget，应用监听BoardSession选择/位置修订并按版本化本机开关播放。新文档根替换静音，读取/对弈落子/导航的位置变化可播放；非法/选择取消不播放；音频异常捕获，不阻止合法棋步。WAV源代码tool/generate_sound_assets.dart，可重复生成；资产SHA见docs/legal/LICENSING.md。
+
+目标：纯Dart PCM头及确定字节/开关类型往返/异步音效失败隔离/新谱静音；组件验证app→port连接与设置保存；macOS integration_test/audio_feedback_test.dart使用真实plugin加载bundle资产并成功启动两类短音，1/1。后续未验Android/iOS/Windows/Linux/网页音频、听觉可接受度；内容仍属合成tone，不代表原站音效。F28余将军/吃子/绝杀音效/方案、自定义文件、系统朗读及声音时序仍未齐。

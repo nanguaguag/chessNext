@@ -69,3 +69,5 @@ UI 是状态投影，唯一会话协调器提交命令。一次导入或新局�
 纯Dart领域已在 packages/xiangqi_core 独立包实施，对应上文规划lib/domain/xiangqi的规则职责；生产Flutter应用后续通过path依赖使用，不复制规则代码。接口采用不可变Position/Move/Square，play负责合法性，FEN解析与编辑语义校验分层。当前legalMoves为无历史的棋盘合法性，不能作为完整规则profile裁决替代。
 
 M4-05 增加的 AnimationSpeed 是本机展示偏好，不进入规则/棋谱/引擎端口；Composition root 将不可变值注入 BoardDisplayScope，最后一步标记按新局面变化使用时长。四档时长属于项目映射且仅覆盖光圈，见 ADR-042。
+
+M4-06的BoardFeedbackController是BoardSession与AudioFeedbackPort间的应用层事件翻译；偏好开关驱动，不向规则、GameTree或UCI发送音频依赖。生产root仅注入AudioplayersFeedback，组件/领域测试用静音或fake端口。播放器异常是可选副作用并隔离，不改变已提交着法。见ADR-043。

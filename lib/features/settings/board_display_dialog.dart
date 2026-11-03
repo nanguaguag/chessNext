@@ -64,6 +64,26 @@ class BoardDisplayDialog extends StatelessWidget {
               ),
               const Text('控制落子光圈旋转一周的时长：关、300毫秒、600毫秒或1200毫秒。系统减少动画时始终静止。'),
               const SizedBox(height: 12),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('走棋音效'),
+                subtitle: const Text('落子后播放本机离线音效'),
+                value: preferences.value.playMoveSound,
+                onChanged: preferences.loading
+                    ? null
+                    : (enabled) =>
+                          unawaited(preferences.setPlayMoveSound(enabled)),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('选子音效'),
+                subtitle: const Text('选中己方棋子时播放本机离线音效'),
+                value: preferences.value.playSelectionSound,
+                onChanged: preferences.loading
+                    ? null
+                    : (enabled) =>
+                          unawaited(preferences.setPlaySelectionSound(enabled)),
+              ),
               DropdownButtonFormField<SelectionStyle>(
                 key: ValueKey(preferences.value.selectionStyle),
                 initialValue: preferences.value.selectionStyle,

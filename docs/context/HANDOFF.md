@@ -66,3 +66,7 @@ Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0，官方latest同日复核P
 
 
 2026-11-03 本轮续审：E36访问 https://xiangqiai.com/#/settings/sound，确认5类音效入口/默认及更多音效、着法朗读说明、动画档位；切快再恢复标准，未触发声音/更换/朗读。研究记FEATURE_MATRIX/REFERENCE_EVIDENCE/BACKLOG(B23)。CUA结束留在设置页。M4-05已实现本机动画速度并影响末步光圈，ADR-042；其余音效/语音/棋子移动动画均未完成。最终根test 433过/5跳过（官方NNUE环境未设），analyze0；macOS flutter run -d macos构建启动/VM Service成功，但工具无法前置窗口且Computer Use读取超时，视觉未验。验证后提交待做，运行进程由第二次flutter run会话启动（服务127.0.0.1:60592）。下一按B23审计音效开关实际行为/素材更换和语音平台边界，优先一个音频功能一提交。
+
+## 2026-11-03 / M4-06 最终交接
+
+根 flutter test 438通过/5跳过，flutter analyze0；macOS integration_test/audio_feedback_test.dart 1/1，加载两条本机WAV。最新 flutter run -d macos 启动PID13873，VM Service 127.0.0.1:63861；Computer Use窗口/人工听感未验。依赖audioplayers 6.8.1；macOS插件有不阻断Swift并发warning。M4-06实现/验证完成，提交见git log。下一继续E37后剩余音效事件/自定义本地WAV/MP3导入/试听和着法朗读，按B23拆片；不要把目前两种短提示音说成F28完成。

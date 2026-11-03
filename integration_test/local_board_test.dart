@@ -18,6 +18,8 @@ import 'package:chess_next/features/board/board_file_coordinates.dart';
 import 'dart:convert';
 import 'package:chess_next/adapters/platform/macos_png_file_exporter.dart';
 import 'package:chess_next/ports/png_file_exporter.dart';
+import 'package:chess_next/adapters/platform/macos_gif_file_exporter.dart';
+import 'package:image/image.dart' as image;
 import 'package:chess_next/adapters/platform/macos_image_clipboard.dart';
 import 'package:chess_next/adapters/platform/macos_record_file_exporter.dart';
 import 'package:chess_next/ports/record_file_exporter.dart';
@@ -3728,6 +3730,103 @@ void main() {
       } finally {
         await tester.pumpWidget(const SizedBox.shrink());
         await tester.pumpAndSettle();
+      }
+    },
+  );
+  testWidgets(
+    'native GIF export renders frozen selected line with exact replacement delays',
+    (tester) async {
+      final directory = await (await getApplicationDocumentsDirectory())
+          .createTemp('.chessnext-gif-export-');
+      final files = <File>[];
+      final exporter = MacOsGifFileExporter(
+        chooser: (_) async {
+          final file = File('${directory.path}/line-${files.length}.gif');
+          files.add(file);
+          return file.path;
+        },
+      );
+      Future<void> tap(Finder target) async {
+        await tester.ensureVisible(target);
+        await tester.pumpAndSettle();
+        expect(target.hitTestable(), findsOneWidget);
+        await tester.tap(target);
+        await tester.pump();
+      }
+
+      try {
+        await tester.pumpWidget(
+          ChessNextApp(key: UniqueKey(), gifExporter: exporter),
+        );
+        await tester.pumpAndSettle();
+        final session = tester
+            .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+            .session;
+        expect(session.playMove(Move.parse('h2e2')), isTrue);
+        await tester.pump();
+        final frozenTree = session.tree, frozenRevision = session.revision;
+        await tap(find.text('导出动态图'));
+        expect(session.playMove(Move.parse('b9c7')), isTrue);
+        session.mirror();
+        await tester.pump();
+        await tap(find.text('生成预览'));
+        for (
+          var i = 0;
+          i < 1200 && find.text('GIF预览已生成，可保存到本机。').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(find.text('GIF预览已生成，可保存到本机。'), findsOneWidget);
+        await tap(find.text('保存GIF'));
+        for (
+          var i = 0;
+          i < 200 && find.text('GIF文件已保存').evaluate().isEmpty;
+          i++
+        ) {
+          await tester.pump(const Duration(milliseconds: 50));
+        }
+        expect(find.text('GIF文件已保存'), findsOneWidget);
+        expect(files, hasLength(1));
+        final bytes = await files.single.readAsBytes();
+        final gif = image.decodeGif(bytes)!;
+        expect(gif.width, 450);
+        expect(gif.height, 540);
+        expect(gif.numFrames, 2);
+        expect(gif.frames.map((frame) => frame.frameDuration), [2000, 3000]);
+        expect(session.tree, isNot(same(frozenTree)));
+        expect(session.revision, frozenRevision + 1);
+        final good = Uint8List.fromList(bytes);
+        await expectLater(
+          MacOsGifFileExporter.channel.invokeMethod<void>('writeGifAtomic', {
+            'path': files.single.path,
+            'bytes': Uint8List.fromList([
+              ...'GIF89a'.codeUnits,
+              1,
+              0,
+              1,
+              0,
+              0,
+              0,
+              0,
+              0,
+            ]),
+          }),
+          throwsA(
+            isA<PlatformException>().having(
+              (error) => error.code,
+              'code',
+              'write_failed',
+            ),
+          ),
+        );
+        expect(await files.single.readAsBytes(), orderedEquals(good));
+        await tap(find.text('关闭'));
+        expect(tester.takeException(), isNull);
+      } finally {
+        await tester.pumpWidget(const SizedBox.shrink());
+        await tester.pumpAndSettle();
+        await directory.delete(recursive: true);
       }
     },
   );

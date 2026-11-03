@@ -11,7 +11,9 @@ final class RecordFileWriter {
   init(messenger: FlutterBinaryMessenger) {
     channel = FlutterMethodChannel(name: "dev.chessnext/record-file-writer", binaryMessenger: messenger)
     channel.setMethodCallHandler { [weak self] call, result in
-      guard call.method == "writeAtomic" || call.method == "writePngAtomic" else {
+      guard call.method == "writeAtomic" ||
+              call.method == "writePngAtomic" ||
+              call.method == "writeGifAtomic" else {
         result(FlutterMethodNotImplemented)
         return
       }
@@ -24,12 +26,16 @@ final class RecordFileWriter {
         return
       }
       let isPng = call.method == "writePngAtomic"
-      guard isPng
-              ? Self.isBoundedPng(bytes.data)
-              : bytes.data.count <= 256000 && String(data: bytes.data, encoding: .utf8) != nil else {
+      let isGif = call.method == "writeGifAtomic"
+      let valid = isPng
+        ? Self.isBoundedPng(bytes.data)
+        : isGif
+          ? Self.isBoundedGif(bytes.data)
+          : bytes.data.count <= 256000 && String(data: bytes.data, encoding: .utf8) != nil
+      guard valid else {
         result(FlutterError(
           code: "invalid_export",
-          message: isPng ? "Invalid PNG export" : "Invalid text export",
+          message: isPng ? "Invalid PNG export" : isGif ? "Invalid GIF export" : "Invalid text export",
           details: nil
         ))
         return
@@ -39,6 +45,9 @@ final class RecordFileWriter {
       self.queue.async {
         do {
           if isPng && !Self.isDecodablePng(data) {
+            throw CocoaError(.fileWriteInapplicableStringEncoding)
+          }
+          if isGif && !Self.isDecodableGif(data) {
             throw CocoaError(.fileWriteInapplicableStringEncoding)
           }
           let attributes = try? FileManager.default.attributesOfItem(atPath: path)
@@ -53,7 +62,7 @@ final class RecordFileWriter {
           DispatchQueue.main.async {
             result(FlutterError(
               code: "write_failed",
-              message: isPng ? "PNG export failed" : "Text export failed",
+              message: isPng ? "PNG export failed" : isGif ? "GIF export failed" : "Text export failed",
               details: nil
             ))
           }
@@ -80,5 +89,31 @@ final class RecordFileWriter {
     let height = image.height
     return width > 0 && height > 0 && width <= 4096 && height <= 4096 &&
       width * height <= 4_000_000
+  }
+
+  private static func isBoundedGif(_ data: Data) -> Bool {
+    guard data.count >= 14, data.count <= 12 * 1024 * 1024 else { return false }
+    let header = String(data: data.prefix(6), encoding: .ascii)
+    return header == "GIF87a" || header == "GIF89a"
+  }
+
+  private static func isDecodableGif(_ data: Data) -> Bool {
+    guard let source = CGImageSourceCreateWithData(data as CFData, nil) else { return false }
+    let count = CGImageSourceGetCount(source)
+    guard count > 0, count <= 64 else { return false }
+    for index in 0..<count {
+      guard let image = CGImageSourceCreateImageAtIndex(source, index, nil),
+            image.width > 0, image.height > 0,
+            image.width <= 1024, image.height <= 1024,
+            let properties = CGImageSourceCopyPropertiesAtIndex(source, index, nil)
+              as? [CFString: Any],
+            let gif = properties[kCGImagePropertyGIFDictionary] as? [CFString: Any] else {
+        return false
+      }
+      let delay = (gif[kCGImagePropertyGIFUnclampedDelayTime] as? NSNumber)?.doubleValue ??
+        (gif[kCGImagePropertyGIFDelayTime] as? NSNumber)?.doubleValue ?? 0
+      if delay < 0.19 || delay > 30.01 { return false }
+    }
+    return true
   }
 }

@@ -96,3 +96,5 @@ M3-35 / ADR-039：RecordTextExchange.exportText.includeFuture默认true仅PGN使
 M4-02 / ADR-040：BoardImageSnapshot仅持打开时Position、末步、可靠评级、有效箭头、双方向和显示偏好；BoardImageDialog用固定RepaintBoundary异步编码PNG，UI只调用PngFileExporter。MacOsPngFileExporter拥有chooser/cancellation映射，原生RecordFileWriter以独立writePngAtomic路径执行8MB/尺寸门槛、ImageIO实际解码、regular目标检查和Foundation原子写；文字UTF8/256KB协议保持独立。其它平台未注入writer，仍可预览但明确禁保存。
 
 M4-03 / ADR-041：ImageClipboard与TextClipboard分离，接收已有PngImage及独立取消令牌；BoardImageDialog保存/复制共享缓存但UI不接触平台。MacOsImageClipboard经独立MethodChannel交ImageClipboardBridge，原生ImageIO解码后在主线程声明PNG NSPasteboard类型、写入并读回核对。生产使用general pasteboard；native fixture使用命名pasteboard保护用户剪贴板。其它平台未注入并明确禁复制。
+
+M4-04 / ADR-042：BoardGifSnapshot冻结根到当前所选线路末端、方向和显示偏好，最多64帧，超限不截断。BoardGifDialog逐帧原创BoardSurface渲染并在后台Isolate用image 4.12.0编码；首末帧停留替代对应步时，预览缓存后交独立GifFileExporter。macOS chooser后经RecordFileWriter.writeGifAtomic，12MiB/64帧/1024边长和0.2–30秒边界检查、ImageIO逐帧解码、Foundation atomic；其它平台不注入保存适配器。系统分享、长线路分段/其它平台未实现。

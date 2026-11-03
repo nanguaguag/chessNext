@@ -32,3 +32,5 @@ file_selector1.1.0及实际解析的平台/传递依赖见[文件选择登记](F
 2026-11-02 E34研究PNG：Agent自制棋步，通过公开保存图片/复制图片得出；图片含参考站木纹/棋子外观，只在docs/research/samples留证据，不作为产品素材或引擎测试资源。产品PNG仅用项目原创Flutter绘制；SHA/来源见samples/E34-manifest.json，许可决定仍按用户要求暂缓。
 
 2026-11-02 E35研究GIF：Agent自制棋树/标题，通过公开动态图预览与下载取得；GIF及截图含参考站木纹、棋子和排版，只在docs/research留作功能范围证据，不作为产品素材、编码fixture或视觉基线。产品动态图必须由项目原创棋盘绘制，SHA/帧数据/来源见samples/E35-manifest.json；许可决定仍按用户要求暂缓。
+
+2026-11-03 显式登记动态图编码依赖：[`image` 4.12.0](https://pub.dev/packages/image/versions/4.12.0)，MIT，pubspec.lock归档SHA256 `89ed75b2f8231fe676808c5564f9590d728024ded7ac782a7ed8474f1c95b72a`，本机LICENSE SHA256 `f3c17da84e0780e1c334325c73098257c32221d62498ed55ef3c1361904925aa`；传递依赖`archive` 4.6.0 MIT，归档SHA `de5ac590b8155e4e676088d714bd41ea620449a6adc0f7950c5073874b287ddb`、LICENSE SHA `32f97d332eae7453ec4079858e6f1d74be85beeb6d3881068b47d02a379cccea`；`posix` 6.5.4 MIT，归档SHA `613646d076944f3acc125830af935b48d4b8a57a388691547bbfd25b434f4d63`、LICENSE SHA `aaf6271abd048deb3125828613f1797b7556472de6c7acd7103bd43e9cb6a84b`。完整传递依赖许可/SBOM仍属发行前工作。

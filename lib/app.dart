@@ -3,8 +3,11 @@ import 'features/analysis/evaluation_board.dart';
 import 'ports/record_file_exporter.dart';
 import 'ports/png_file_exporter.dart';
 import 'ports/image_clipboard.dart';
+import 'ports/gif_file_exporter.dart';
 import 'application/board_image_snapshot.dart';
+import 'application/board_gif_snapshot.dart';
 import 'features/export/board_image_dialog.dart';
+import 'features/export/board_gif_dialog.dart';
 import 'features/settings/app_text_scaling.dart';
 import 'features/board/board_display_scope.dart';
 import 'features/transfer/import_file_dialog.dart';
@@ -59,6 +62,7 @@ class ChessNextApp extends StatefulWidget {
     this.fileExporter,
     this.pngExporter,
     this.imageClipboard,
+    this.gifExporter,
     this.engineFactory,
     this.reviewCache,
     this.deviceThreads = 1,
@@ -71,6 +75,7 @@ class ChessNextApp extends StatefulWidget {
   final RecordFileExporter? fileExporter;
   final PngFileExporter? pngExporter;
   final ImageClipboard? imageClipboard;
+  final GifFileExporter? gifExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
   final int deviceThreads;
@@ -89,6 +94,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final DraftController? drafts;
   late final PreferencesController preferences;
   late final EngineSessionController analysis;
+  BoardGifSettings gifSettings = BoardGifSettings();
   @override
   void initState() {
     super.initState();
@@ -284,6 +290,9 @@ class _ChessNextAppState extends State<ChessNextApp>
       fileExporter: widget.fileExporter,
       pngExporter: widget.pngExporter,
       imageClipboard: widget.imageClipboard,
+      gifExporter: widget.gifExporter,
+      gifSettings: gifSettings,
+      onGifSettingsChanged: (value) => setState(() => gifSettings = value),
       session: session,
       library: library,
       readings: readings,
@@ -306,6 +315,9 @@ class _BoardPage extends StatelessWidget {
     this.fileExporter,
     this.pngExporter,
     this.imageClipboard,
+    this.gifExporter,
+    required this.gifSettings,
+    required this.onGifSettingsChanged,
     required this.toggleTheme,
     required this.showGuide,
     required this.library,
@@ -321,6 +333,9 @@ class _BoardPage extends StatelessWidget {
   final RecordFileExporter? fileExporter;
   final PngFileExporter? pngExporter;
   final ImageClipboard? imageClipboard;
+  final GifFileExporter? gifExporter;
+  final BoardGifSettings gifSettings;
+  final ValueChanged<BoardGifSettings> onGifSettingsChanged;
   final BoardSession session;
   final VoidCallback toggleTheme;
   final Future<void> Function() showGuide;
@@ -548,6 +563,27 @@ class _BoardPage extends StatelessWidget {
     );
   }
 
+  Future<void> _exportGif(BuildContext context) async {
+    BoardGifSnapshot snapshot;
+    try {
+      snapshot = BoardGifSnapshot.capture(session, preferences.value);
+    } on BoardGifCapacityException catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('所选线路有${error.frames}帧，GIF最多支持64帧；请缩短线路后重试。')),
+      );
+      return;
+    }
+    await showDialog<void>(
+      context: context,
+      builder: (_) => BoardGifDialog(
+        snapshot: snapshot,
+        initialSettings: gifSettings,
+        onSettingsChanged: onGifSettingsChanged,
+        exporter: gifExporter,
+      ),
+    );
+  }
+
   Future<void> _restoreDraft(BuildContext context) async {
     await analysis.disable();
     if (!context.mounted || drafts?.pending == null) return;
@@ -763,6 +799,11 @@ class _BoardPage extends StatelessWidget {
                         onPressed: () => _exportImage(context),
                         icon: const Icon(Icons.image_outlined),
                         label: const Text('导出图片'),
+                      ),
+                      OutlinedButton.icon(
+                        onPressed: () => _exportGif(context),
+                        icon: const Icon(Icons.gif_box_outlined),
+                        label: const Text('导出动态图'),
                       ),
                       OutlinedButton.icon(
                         onPressed: library.busy ? null : () => _edit(context),

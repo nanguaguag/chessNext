@@ -1,6 +1,7 @@
 import 'adapters/platform/macos_record_file_exporter.dart';
 import 'adapters/platform/macos_png_file_exporter.dart';
 import 'adapters/platform/macos_image_clipboard.dart';
+import 'adapters/platform/macos_gif_file_exporter.dart';
 import 'adapters/platform/file_selector_record_picker.dart';
 import 'adapters/storage/file_recent_reading_repository.dart';
 import 'adapters/storage/file_review_cache_repository.dart';
@@ -22,6 +23,7 @@ void main() {
       fileExporter: Platform.isMacOS ? MacOsRecordFileExporter() : null,
       pngExporter: Platform.isMacOS ? MacOsPngFileExporter() : null,
       imageClipboard: Platform.isMacOS ? MacOsImageClipboard() : null,
+      gifExporter: Platform.isMacOS ? MacOsGifFileExporter() : null,
       recentReadingRepository: FileRecentReadingRepository(
         getApplicationSupportDirectory,
       ),

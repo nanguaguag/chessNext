@@ -408,3 +408,9 @@ ADR-040/BOARD_PNG_SLICE：BoardImageSnapshot冻结Position/末步/可靠评级/�
 ADR-041/BOARD_PNG_CLIPBOARD_SLICE：新增ImageClipboard/ImageCopyCancellation，与文字TextClipboard和文件端口分离；BoardImageDialog保存/复制共享首次PngImage缓存，busy互斥、关闭可取消迟到生成、平台失败重试不重画。MacOsImageClipboard经独立通道调用ImageClipboardBridge，ImageIO实际解码后声明`.png`、写NSPasteboard并读回字节核对；生产general，native测试固定命名pasteboard保护用户数据。无能力平台禁用并解释，GIF未实现。
 
 新增适配器4+组件2=6，连相关目标11/11通过；macOS真实Flutter渲染900×1000、命名NSPasteboard写入读回、正常/镜像字节变化及坏PNG拒绝1/1（00:04）exit0。最终显式官方NNUE根flutter test **425/425**（session85147，00:55）与flutter analyze无问题（2.0秒）exit0；现40原生未全40，完整32/32仍M3-29，core67沿用。命名pasteboard验证不等于人工跨应用general粘贴，其它平台未验，无新依赖或素材。
+
+## 2026-11-03 / M4-04 / F11 → B11,B19 棋谱GIF预览与macOS保存
+
+ADR-042/BOARD_GIF_SLICE：`BoardGifSnapshot`冻结根到`currentLine`末端（含阅读点后未来）、不含兄弟变化，并冻结方向/显示偏好；最多64帧，超限不截断。`BoardGifSettings`以0.1秒整数保存，步时0.2–10秒、首尾0.2–30秒，首末分别替代对应帧时长；标题最多60字符。逐帧捕获450×540原创Flutter棋盘，`image 4.12.0`在独立Isolate编码；`GifFileExporter`与PNG/文字分离。macOS `writeGifAtomic`限12MiB/64帧/1024边长，用ImageIO逐帧解码并核时长后Foundation atomic。系统分享/其它平台未实现。
+
+新目标10/10，显式官方NNUE根`flutter test --reporter expanded` **435/435**（约01:08）及`flutter analyze` **0问题**（2.4秒）exit0。macOS原生单项1/1（00:05）：实际450×540双帧渲染、2/3秒替代时长、ImageIO逐帧解码/原子保存、坏GIF拒绝且原文件不变。`flutter run -d macos`普通main构建并启动，PID20951/VM service可达；桌面工具前台报`open returned 1`，未能实际点按普通窗口。core未改沿用67/67。系统保存面板人工交互、其他平台未验；依赖image 4.12.0等登记于LICENSING。

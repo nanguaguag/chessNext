@@ -4,6 +4,8 @@
 
 ## 当前检查点
 
+M4-04 / F11 GIF预览+macOS保存已实现，工作树待提交。冻结所选完整线路及方向/显示偏好，最多64帧，首末帧替代时长；原创450×540逐帧、image4.12.0 Isolate编码、12MiB门槛、macOS ImageIO逐帧校验与Foundation atomic。目标10/10、根NNUE435/435、analyze0，macOS实际双帧/2与3秒/原子文件/坏GIF不覆盖1/1。`flutter run -d macos`构建启动，open返回1后VM service出现。随后CUA getApp超时且被中断，人工入口/视觉未验；run session中断后需fresh检查应用状态。
+
 E35 / F11动态图审计已完成，提交见git log及后续补证工作树。自制5着所选线路在当前读到第3着时生成根+5着共6帧，明确包含两步未来、不含另一保存变化；实际GIF89a 500×600。区别时长0.3/0.2…/0.4确认首尾替代对应帧步时，空标题可生成。确认先到预览，下载按钮才触发文件；系统Web Share只验证打开与Escape取消。步时0.2–10秒、首尾0.2–30秒实际钳制。110项manifest已核，参考GIF/截图只在docs研究，不能进产品。最终表单恢复空标题/2.0/2.0/3.0，主谱/分析状态未改、无弹层。
 
 M4-03 / F11 PNG图片复制已完成，本次功能提交见git log。ImageClipboard与TextClipboard/文件端口分离；Dialog保存复制共享首次PngImage、busy互斥、平台失败复用缓存重试、关闭取消迟到生成。MacOsImageClipboard独立MethodChannel；ImageClipboardBridge ImageIO实际解码后声明PNG NSPasteboard并读回核对。生产general，集成使用命名pasteboard避免覆盖用户剪贴板。ADR-041/BOARD_PNG_CLIPBOARD_SLICE。
@@ -36,7 +38,7 @@ M3-31 / F26,B08,B18当前着本机评级徽标完成，提交见git log。Review
 
 ## 下一可执行
 
-下一M4-04 / F11,B11,B19：先写动态图切片设计/ADR，固定不可变根+所选线路快照、原创帧绘制、步时/首尾停留、帧数/像素/总时长/编码字节预算及失败模型；再实现预览和macOS GIF文件保存。系统外发分享、超长谱策略与其它平台另片，不能用E35参考GIF作产品fixture或视觉资源。
+下一提交M4-04本地改动（测试/分析/原生已过），再继续全站功能审计与增量实现；近期候选F28声音/动画设置实测。系统分享与其它平台GIF另片。
 
 M4-03实际使用独立通道而非RecordFileWriter通道；native命名pasteboard由原生写后立即读回相同PNG字节，避免污染general。生产general分支代码相同但未做人工跨应用粘贴，因此不能扩大为系统剪贴板全验收。
 

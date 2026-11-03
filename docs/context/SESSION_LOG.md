@@ -464,3 +464,7 @@ ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默
 实际IAB公开生成层首次空标题、共6步、步时2.0秒、高级首尾2.0/3.0；步时0.2–10、首尾0.2–30实际越界钳制与边界按钮禁用。用自制标题和三项0.2确认后先到预览，确认本身监听download120秒超时（不计失败）；fresh DOM确认预览完成，再点下载取得GIF89a 500×600、6帧每帧20厘秒/总1.2秒。逐帧/tmp检查是根+所选5着，含当前阅读点后两未来，不含另一保存变化，底部标题/步数与移动箭头。系统分享打开后动作禁用，Escape取消恢复；未实际外发。
 
 成功生成后同页重开保留标题和0.2三项；跨重载未测。补空标题及0.2/0.3/0.4样本，实际delay为30/20/20/20/20/40厘秒，证实首尾替代而非叠加，空标题可生成。结束前恢复空标题/2.0/2.0/3.0并取消，关闭全部层，原谱/读点/未来/另一变化/分析关闭保留。新增9项证据，DISPLAY_EVIDENCE_MANIFEST共110项，实际SHA/bytes/MIME/尺寸与GIF帧数据核对。参考GIF/截图含站点外观，仅研究不进产品。无业务修改，不重复Flutter门槛；上一功能根425/analyze0/native相关1、core67沿用。下一M4-04先定原创帧快照/编码资源预算，再实现GIF预览与macOS保存，分享另片。
+
+## 2026-11-03 / M4-04 / F11 棋谱动态图
+
+新增冻结所选完整线路快照、64帧/12MiB门槛、首末替代时长、Material预览/重试/设置、image4.12.0 Isolate编码、GifFileExporter/macOS ImageIO逐帧校验与Foundation atomic。目标10/10；显式官方NNUE根435/435+analyze0；macOS真实单项1/1（450×540双帧、2/3秒、GIF解码/原子文件、坏GIF不覆盖）。`flutter run -d macos`普通main构建启动；工具open返回1但VM service显示，CUA检查超时并被用户打断，人工入口/视觉未验。依赖/架构/帮助/README/追踪已更新。当前改动待提交。工具run session中断后应用状态需fresh检查。

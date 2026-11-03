@@ -40,6 +40,23 @@ void main() {
       }
     },
   );
+  test('animation timing preference is backward compatible and typed', () {
+    final old = AppPreferences().toJson();
+    expect(old.containsKey('animationSpeed'), isFalse);
+    expect(
+      AppPreferences.fromJson(old).animationSpeed,
+      AnimationSpeed.standard,
+    );
+    for (final speed in AnimationSpeed.values) {
+      final value = AppPreferences(animationSpeed: speed);
+      expect(AppPreferences.fromJson(value.toJson()), value);
+      expect(value.copyWith(theme: ThemePreference.dark).animationSpeed, speed);
+    }
+    expect(
+      () => AppPreferences.fromJson({...old, 'animationSpeed': 'instant'}),
+      throwsFormatException,
+    );
+  });
   test(
     'explicit marker choice survives a late settings read independently',
     () async {
@@ -70,4 +87,27 @@ void main() {
       }
     },
   );
+  test('animation speed edited during loading is not overwritten', () async {
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final store = DelayedMarkerPreferences();
+    final preferences = PreferencesController(engine, store);
+    store.value = AppPreferences(pieceSizePercent: 150);
+    try {
+      final loading = preferences.initialize();
+      final saving = preferences.setAnimationSpeed(AnimationSpeed.slow);
+      store.gate.complete();
+      await loading;
+      await saving;
+      await preferences.flush();
+      expect(preferences.value.animationSpeed, AnimationSpeed.slow);
+      expect(preferences.value.pieceSizePercent, 150);
+      expect(store.value, preferences.value);
+      expect(session.dirty, isFalse);
+    } finally {
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
 }

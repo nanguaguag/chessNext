@@ -103,6 +103,30 @@ void main() {
       }
     },
   );
+  testWidgets('animation speed controls next move and persists locally', (
+    tester,
+  ) async {
+    desktop(tester);
+    final store = MarkerStore();
+    await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
+    await tester.pumpAndSettle();
+    await settings(tester);
+    final off = find.descendant(
+      of: find.byKey(const ValueKey('animation-speed')),
+      matching: find.text('关'),
+    );
+    await tap(tester, off);
+    expect(store.value?.animationSpeed, AnimationSpeed.off);
+    await tap(tester, find.text('关闭'));
+    await tap(tester, find.text('取消'));
+    await tap(tester, find.byKey(const ValueKey('square-h2')));
+    await tester.tap(find.byKey(const ValueKey('square-e2')));
+    await tester.pump();
+    expect(painter(tester).phase, 1);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(painter(tester).phase, 1);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
   testWidgets(
     'halo completes a finite turn, orientation does not restart it, reduced motion stops immediately',
     (tester) async {

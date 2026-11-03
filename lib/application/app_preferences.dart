@@ -3,6 +3,18 @@ import 'review_models.dart';
 
 enum ThemePreference { system, light, dark }
 
+/// Project timing choices; the reference site does not expose numeric durations.
+enum AnimationSpeed { off, fast, standard, slow }
+
+extension AnimationSpeedTiming on AnimationSpeed {
+  Duration get duration => switch (this) {
+    AnimationSpeed.off => Duration.zero,
+    AnimationSpeed.fast => const Duration(milliseconds: 300),
+    AnimationSpeed.standard => const Duration(milliseconds: 600),
+    AnimationSpeed.slow => const Duration(milliseconds: 1200),
+  };
+}
+
 enum TextSizePreference { system, standard, large, extraLarge }
 
 extension TextSizeScale on TextSizePreference {
@@ -18,6 +30,7 @@ extension TextSizeScale on TextSizePreference {
 final class AppPreferences {
   AppPreferences({
     this.theme = ThemePreference.system,
+    this.animationSpeed = AnimationSpeed.standard,
     this.reviewMode = ReviewMode.best,
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
@@ -52,6 +65,7 @@ final class AppPreferences {
     }
   }
   final ThemePreference theme;
+  final AnimationSpeed animationSpeed;
   final ReviewMode reviewMode;
   final TextSizePreference textSize;
   final bool showCoordinates;
@@ -67,6 +81,7 @@ final class AppPreferences {
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   AppPreferences copyWith({
     ThemePreference? theme,
+    AnimationSpeed? animationSpeed,
     ReviewMode? reviewMode,
     TextSizePreference? textSize,
     bool? showCoordinates,
@@ -85,6 +100,7 @@ final class AppPreferences {
     int? guideVersion,
   }) => AppPreferences(
     theme: theme ?? this.theme,
+    animationSpeed: animationSpeed ?? this.animationSpeed,
     reviewMode: reviewMode ?? this.reviewMode,
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
@@ -110,6 +126,8 @@ final class AppPreferences {
     if (lastMoveMarker != LastMoveMarkerStyle.halo)
       'lastMoveMarker': lastMoveMarker.name,
     'theme': theme.name,
+    if (animationSpeed != AnimationSpeed.standard)
+      'animationSpeed': animationSpeed.name,
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
@@ -142,6 +160,8 @@ final class AppPreferences {
         (json.containsKey('arrowHead') && json['arrowHead'] is! String) ||
         json['theme'] is! String ||
         (json.containsKey('textSize') && json['textSize'] is! String) ||
+        (json.containsKey('animationSpeed') &&
+            json['animationSpeed'] is! String) ||
         (json.containsKey('showCoordinates') &&
             json['showCoordinates'] is! bool) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
@@ -174,6 +194,9 @@ final class AppPreferences {
           json['arrowHead'] as String? ?? 'standard',
         ),
         theme: ThemePreference.values.byName(json['theme'] as String),
+        animationSpeed: AnimationSpeed.values.byName(
+          json['animationSpeed'] as String? ?? 'standard',
+        ),
         textSize: TextSizePreference.values.byName(
           json['textSize'] as String? ?? 'system',
         ),
@@ -201,6 +224,7 @@ final class AppPreferences {
       showAnalysisArrows == other.showAnalysisArrows &&
       arrowHead == other.arrowHead &&
       theme == other.theme &&
+      animationSpeed == other.animationSpeed &&
       textSize == other.textSize &&
       showCoordinates == other.showCoordinates &&
       pieceSizePercent == other.pieceSizePercent &&
@@ -220,6 +244,7 @@ final class AppPreferences {
     showAnalysisArrows,
     arrowHead,
     theme,
+    animationSpeed,
     textSize,
     showCoordinates,
     pieceSizePercent,

@@ -414,3 +414,7 @@ ADR-041/BOARD_PNG_CLIPBOARD_SLICE：新增ImageClipboard/ImageCopyCancellation�
 ADR-042/BOARD_GIF_SLICE：`BoardGifSnapshot`冻结根到`currentLine`末端（含阅读点后未来）、不含兄弟变化，并冻结方向/显示偏好；最多64帧，超限不截断。`BoardGifSettings`以0.1秒整数保存，步时0.2–10秒、首尾0.2–30秒，首末分别替代对应帧时长；标题最多60字符。逐帧捕获450×540原创Flutter棋盘，`image 4.12.0`在独立Isolate编码；`GifFileExporter`与PNG/文字分离。macOS `writeGifAtomic`限12MiB/64帧/1024边长，用ImageIO逐帧解码并核时长后Foundation atomic。系统分享/其它平台未实现。
 
 新目标10/10，显式官方NNUE根`flutter test --reporter expanded` **435/435**（约01:08）及`flutter analyze` **0问题**（2.4秒）exit0。macOS原生单项1/1（00:05）：实际450×540双帧渲染、2/3秒替代时长、ImageIO逐帧解码/原子保存、坏GIF拒绝且原文件不变。`flutter run -d macos`普通main构建并启动，PID20951/VM service可达；桌面工具前台报`open returned 1`，未能实际点按普通窗口。core未改沿用67/67。系统保存面板人工交互、其他平台未验；依赖image 4.12.0等登记于LICENSING。
+
+## 2026-11-03 / M4-05 / F28 → B23 动画速度本机偏好
+
+E36 确认参考设置选项存在并恢复标准。实现AnimationSpeed兼容schema1偏好、晚读字段合并/序列化和设置Controller；Material3分段控件提供关/快/标准/慢，按项目提案0/300/600/1200ms控制既有末步光圈，下一个位置变化生效，系统减少动画优先。不影响棋谱、搜索。测试覆盖旧设置默认、四值typed round-trip、非法枚举、读设置竞态、Mac测试器UI关闭不旋转及写回。其余棋子动效/声音/朗读仍B23，F28未完成。

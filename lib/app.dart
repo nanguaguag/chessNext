@@ -273,6 +273,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       child: BoardDisplayScope(
         selectionStyle: preferences.value.selectionStyle,
         lastMoveMarker: preferences.value.lastMoveMarker,
+        animationSpeed: preferences.value.animationSpeed,
         showCoordinates: preferences.value.showCoordinates,
         pieceSizePercent: preferences.value.pieceSizePercent,
         showAnalysisArrows: preferences.value.showAnalysisArrows,

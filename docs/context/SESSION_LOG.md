@@ -468,3 +468,11 @@ ADR-039/PGN_SELECTED_LINE_SLICE：RecordTextExchange.exportText.includeFuture默
 ## 2026-11-03 / M4-04 / F11 棋谱动态图
 
 新增冻结所选完整线路快照、64帧/12MiB门槛、首末替代时长、Material预览/重试/设置、image4.12.0 Isolate编码、GifFileExporter/macOS ImageIO逐帧校验与Foundation atomic。目标10/10；显式官方NNUE根435/435+analyze0；macOS真实单项1/1（450×540双帧、2/3秒、GIF解码/原子文件、坏GIF不覆盖）。`flutter run -d macos`普通main构建启动；工具open返回1但VM service显示，CUA检查超时并被用户打断，人工入口/视觉未验。依赖/架构/帮助/README/追踪已更新。当前改动待提交。工具run session中断后应用状态需fresh检查。
+
+## 2026-11-03 / E36+M4-05 / F28声音动画续审及光圈动画速度
+
+E36 实际参考站检查见REFERENCE_EVIDENCE；menu→设置→声音与动画，走棋/选子/将军/吃子/绝杀开关及更换、独立着法朗读、动画四档已观察；快档可切换后恢复标准并复核。未播放或更换声音、未触发走棋/吃子/将军/绝杀/朗读，明确记U；B23列出剩余取证与切片。
+
+业务增量实现偏好动画速度并影响现有光圈；时长为项目提案，详ADR-042。新增单测和组件用例。首轮目标编译失败原因缺少偏好extension import，补后通过；组件测试误调用iOS pageBack，改走对话框明确关闭，无失败语义弱化。
+
+最终质量门：最初全量 flutter test 433通过、5跳过；修正仅在设置时改变动画速度会错误重播当前光圈后，目标10/10/analyze0，再运行最终根 flutter test 433通过/5跳过，最终 flutter analyze 无问题（4.3秒）。5跳过为引擎测试需PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK环境变量，非失败。macOS flutter run -d macos 第二次构建成功，应用PID9741，VM Service 127.0.0.1:60592可用；Flutter提示无法前置窗口，CUA读取AX超时，视觉验收明确not-run。无需原生集成测试：本片无native改动。git diff --check通过；commit前再检查。运行进程及实际结果是交付，不因前置失败称run未启动。

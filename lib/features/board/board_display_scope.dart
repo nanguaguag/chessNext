@@ -1,5 +1,6 @@
 import 'package:flutter/widgets.dart';
 import '../../application/board_appearance.dart';
+import '../../application/app_preferences.dart';
 
 /// Read-only presentation data above Navigator; no controller, IO or document.
 class BoardDisplayScope extends InheritedWidget {
@@ -12,6 +13,7 @@ class BoardDisplayScope extends InheritedWidget {
     this.showMoveGrades = true,
     this.arrowHead = ArrowHeadStyle.standard,
     this.lastMoveMarker = LastMoveMarkerStyle.halo,
+    this.animationSpeed = AnimationSpeed.standard,
     this.selectionStyle = SelectionStyle.lift,
     required super.child,
   }) : assert(
@@ -36,6 +38,12 @@ class BoardDisplayScope extends InheritedWidget {
       true;
   final ArrowHeadStyle arrowHead;
   final LastMoveMarkerStyle lastMoveMarker;
+  final AnimationSpeed animationSpeed;
+  static AnimationSpeed animationSpeedOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.animationSpeed ??
+      AnimationSpeed.standard;
   final SelectionStyle selectionStyle;
   static SelectionStyle selectionStyleOf(BuildContext context) =>
       context
@@ -72,6 +80,7 @@ class BoardDisplayScope extends InheritedWidget {
       showMoveGrades != oldWidget.showMoveGrades ||
       selectionStyle != oldWidget.selectionStyle ||
       lastMoveMarker != oldWidget.lastMoveMarker ||
+      animationSpeed != oldWidget.animationSpeed ||
       showCoordinates != oldWidget.showCoordinates ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||
       showVariationArrows != oldWidget.showVariationArrows ||

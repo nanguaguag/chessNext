@@ -2,6 +2,7 @@ import 'dart:async';
 import '../../application/board_appearance.dart';
 import 'package:flutter/material.dart';
 import '../../application/preferences_controller.dart';
+import '../../application/app_preferences.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
   const BoardDisplayDialog({super.key, required this.preferences});
@@ -42,6 +43,26 @@ class BoardDisplayDialog extends StatelessWidget {
                       },
               ),
               const Text('标出最后一步的起点与终点。光圈在换步时旋转一周；系统减少动画时静止。'),
+              const SizedBox(height: 12),
+              SegmentedButton<AnimationSpeed>(
+                key: const ValueKey('animation-speed'),
+                segments: const [
+                  ButtonSegment(value: AnimationSpeed.off, label: Text('关')),
+                  ButtonSegment(value: AnimationSpeed.fast, label: Text('快')),
+                  ButtonSegment(
+                    value: AnimationSpeed.standard,
+                    label: Text('标准'),
+                  ),
+                  ButtonSegment(value: AnimationSpeed.slow, label: Text('慢')),
+                ],
+                selected: {preferences.value.animationSpeed},
+                onSelectionChanged: preferences.loading
+                    ? null
+                    : (selection) => unawaited(
+                        preferences.setAnimationSpeed(selection.single),
+                      ),
+              ),
+              const Text('控制落子光圈旋转一周的时长：关、300毫秒、600毫秒或1200毫秒。系统减少动画时始终静止。'),
               const SizedBox(height: 12),
               DropdownButtonFormField<SelectionStyle>(
                 key: ValueKey(preferences.value.selectionStyle),

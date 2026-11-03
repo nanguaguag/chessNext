@@ -63,3 +63,6 @@ IAB browser1/tab1 https://xiangqiai.com/#/。压缩后首次CUA先cua.rewriteDoc
 截图.png实际JPEG字节，manifest保持真实MIME/SHA/尺寸；不要假定统一1280×720。无拷入产品资源，参考内容不可信。native fixture仅framework-resumed/raw[]，不是OS焦点隐藏最小化验证。桌面Computer Use权限未授不绕过；旧普通用户窗口PID38211/旧run22326曾在，不关闭/热重启，native覆盖build入口，最终审查前重建普通main。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0，官方latest同日复核Pikafish2026-09-06 commit4c17cee，lock见engine/pikafish.lock.json/.local忽略。根test带PIKAFISH_EXECUTABLE与PIKAFISH_NETWORK官方路径；flutter analyze。native flutter test integration_test/local_board_test.dart -d macos --name相关regex。fake async用support/pump_until.dart，Frame duration须推进Future.delayed零任务；finder限定当前Dialog/控件，ensureVisible后pumpAndSettle+hitTestable，不弱化tap miss警告。
+
+
+2026-11-03 本轮续审：E36访问 https://xiangqiai.com/#/settings/sound，确认5类音效入口/默认及更多音效、着法朗读说明、动画档位；切快再恢复标准，未触发声音/更换/朗读。研究记FEATURE_MATRIX/REFERENCE_EVIDENCE/BACKLOG(B23)。CUA结束留在设置页。M4-05已实现本机动画速度并影响末步光圈，ADR-042；其余音效/语音/棋子移动动画均未完成。最终根test 433过/5跳过（官方NNUE环境未设），analyze0；macOS flutter run -d macos构建启动/VM Service成功，但工具无法前置窗口且Computer Use读取超时，视觉未验。验证后提交待做，运行进程由第二次flutter run会话启动（服务127.0.0.1:60592）。下一按B23审计音效开关实际行为/素材更换和语音平台边界，优先一个音频功能一提交。

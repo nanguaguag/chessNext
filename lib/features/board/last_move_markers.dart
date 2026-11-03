@@ -12,6 +12,7 @@ class LastMoveMarkers extends StatefulWidget {
     required this.identity,
     required this.style,
     this.animateOnMount = false,
+    this.duration = const Duration(milliseconds: 600),
     this.flipped = false,
     this.mirrored = false,
   });
@@ -19,6 +20,7 @@ class LastMoveMarkers extends StatefulWidget {
   final Object identity;
   final LastMoveMarkerStyle style;
   final bool animateOnMount;
+  final Duration duration;
   final bool flipped, mirrored;
   @override
   State<LastMoveMarkers> createState() => _LastMoveMarkersState();
@@ -41,7 +43,9 @@ class _LastMoveMarkersState extends State<LastMoveMarkers>
       rotation.value = 1;
     } else if (!motionInitialized &&
         widget.animateOnMount &&
-        widget.style == LastMoveMarkerStyle.halo) {
+        widget.style == LastMoveMarkerStyle.halo &&
+        widget.duration > Duration.zero) {
+      rotation.duration = widget.duration;
       rotation.forward(from: 0);
     }
     motionInitialized = true;
@@ -50,10 +54,21 @@ class _LastMoveMarkersState extends State<LastMoveMarkers>
   @override
   void didUpdateWidget(covariant LastMoveMarkers oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.duration != oldWidget.duration) {
+      rotation.duration = widget.duration > Duration.zero
+          ? widget.duration
+          : const Duration(milliseconds: 1);
+      if (widget.duration == Duration.zero || reducedMotion) {
+        rotation.value = 1;
+      }
+    }
     if (widget.style != oldWidget.style ||
         widget.identity != oldWidget.identity ||
         widget.move != oldWidget.move) {
-      if (widget.style == LastMoveMarkerStyle.halo && !reducedMotion) {
+      if (widget.style == LastMoveMarkerStyle.halo &&
+          !reducedMotion &&
+          widget.duration > Duration.zero) {
+        rotation.duration = widget.duration;
         rotation.forward(from: 0);
       } else {
         rotation.value = 1;

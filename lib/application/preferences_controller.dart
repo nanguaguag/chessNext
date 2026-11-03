@@ -108,6 +108,9 @@ class PreferencesController extends ChangeNotifier {
                 ? previous.arrowHead
                 : null,
             theme: _edited.contains('theme') ? previous.theme : null,
+            animationSpeed: _edited.contains('animationSpeed')
+                ? previous.animationSpeed
+                : null,
             textSize: _edited.contains('textSize') ? previous.textSize : null,
             pieceSizePercent: _edited.contains('pieceSizePercent')
                 ? previous.pieceSizePercent
@@ -163,6 +166,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(reviewMode: mode));
   Future<void> setTheme(ThemePreference theme) =>
       apply(value.copyWith(theme: theme));
+  Future<void> setAnimationSpeed(AnimationSpeed speed) =>
+      apply(value.copyWith(animationSpeed: speed));
   Future<void> setTextSize(TextSizePreference size) =>
       apply(value.copyWith(textSize: size));
   Future<void> setShowCoordinates(bool visible) =>
@@ -218,6 +223,9 @@ class PreferencesController extends ChangeNotifier {
       _edited.add('arrowHead');
     }
     if (next.theme != value.theme) _edited.add('theme');
+    if (next.animationSpeed != value.animationSpeed) {
+      _edited.add('animationSpeed');
+    }
     if (next.textSize != value.textSize) _edited.add('textSize');
     if (next.pieceSizePercent != value.pieceSizePercent) {
       _edited.add('pieceSizePercent');

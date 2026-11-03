@@ -6,6 +6,7 @@ import '../../application/current_move_arrows.dart';
 import 'variation_arrows_painter.dart';
 import 'board_arrows_painter.dart';
 import '../../application/board_appearance.dart';
+import '../../application/app_preferences.dart';
 import 'board_display_scope.dart';
 import 'board_file_coordinates.dart';
 import 'package:flutter/material.dart';
@@ -282,6 +283,9 @@ class _BoardSurfaceState extends State<BoardSurface> {
                         style:
                             widget.lastMoveMarkerStyle ??
                             BoardDisplayScope.lastMoveMarkerOf(context),
+                        duration: BoardDisplayScope.animationSpeedOf(
+                          context,
+                        ).duration,
                         flipped: widget.flipped,
                         mirrored: widget.mirrored,
                       ),

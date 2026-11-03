@@ -36,6 +36,7 @@ final class AppPreferences {
     this.playCaptureSound = true,
     this.playCheckSound = true,
     this.playMateSound = true,
+    this.speakMoves = false,
     this.reviewMode = ReviewMode.best,
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
@@ -76,6 +77,7 @@ final class AppPreferences {
   final bool playCaptureSound;
   final bool playCheckSound;
   final bool playMateSound;
+  final bool speakMoves;
   final ReviewMode reviewMode;
   final TextSizePreference textSize;
   final bool showCoordinates;
@@ -97,6 +99,7 @@ final class AppPreferences {
     bool? playCaptureSound,
     bool? playCheckSound,
     bool? playMateSound,
+    bool? speakMoves,
     ReviewMode? reviewMode,
     TextSizePreference? textSize,
     bool? showCoordinates,
@@ -121,6 +124,7 @@ final class AppPreferences {
     playCaptureSound: playCaptureSound ?? this.playCaptureSound,
     playCheckSound: playCheckSound ?? this.playCheckSound,
     playMateSound: playMateSound ?? this.playMateSound,
+    speakMoves: speakMoves ?? this.speakMoves,
     reviewMode: reviewMode ?? this.reviewMode,
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
@@ -153,6 +157,7 @@ final class AppPreferences {
     if (!playCaptureSound) 'playCaptureSound': false,
     if (!playCheckSound) 'playCheckSound': false,
     if (!playMateSound) 'playMateSound': false,
+    if (speakMoves) 'speakMoves': true,
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
@@ -195,6 +200,7 @@ final class AppPreferences {
         (json.containsKey('playCheckSound') &&
             json['playCheckSound'] is! bool) ||
         (json.containsKey('playMateSound') && json['playMateSound'] is! bool) ||
+        (json.containsKey('speakMoves') && json['speakMoves'] is! bool) ||
         (json.containsKey('showCoordinates') &&
             json['showCoordinates'] is! bool) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
@@ -235,6 +241,7 @@ final class AppPreferences {
         playCaptureSound: json['playCaptureSound'] as bool? ?? true,
         playCheckSound: json['playCheckSound'] as bool? ?? true,
         playMateSound: json['playMateSound'] as bool? ?? true,
+        speakMoves: json['speakMoves'] as bool? ?? false,
         textSize: TextSizePreference.values.byName(
           json['textSize'] as String? ?? 'system',
         ),
@@ -268,6 +275,7 @@ final class AppPreferences {
       playCaptureSound == other.playCaptureSound &&
       playCheckSound == other.playCheckSound &&
       playMateSound == other.playMateSound &&
+      speakMoves == other.speakMoves &&
       textSize == other.textSize &&
       showCoordinates == other.showCoordinates &&
       pieceSizePercent == other.pieceSizePercent &&
@@ -293,6 +301,7 @@ final class AppPreferences {
     playCaptureSound,
     playCheckSound,
     playMateSound,
+    speakMoves,
     textSize,
     showCoordinates,
     pieceSizePercent,

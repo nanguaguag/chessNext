@@ -1,13 +1,19 @@
 import 'dart:async';
 
 import '../ports/audio_feedback.dart';
+import '../ports/move_speech.dart';
 import 'board_session.dart';
 import 'preferences_controller.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 
 /// Turns committed board/selection state changes into optional local feedback.
 class BoardFeedbackController {
-  BoardFeedbackController(this.session, this.preferences, this.audio) {
+  BoardFeedbackController(
+    this.session,
+    this.preferences,
+    this.audio, [
+    this.speech = const SilentMoveSpeech(),
+  ]) {
     _epoch = session.epoch;
     _positionRevision = session.positionRevision;
     _selected = session.selected;
@@ -17,6 +23,7 @@ class BoardFeedbackController {
   final BoardSession session;
   final PreferencesController preferences;
   final AudioFeedbackPort audio;
+  final MoveSpeechPort speech;
   late int _epoch;
   late int _positionRevision;
   Square? _selected;
@@ -35,8 +42,10 @@ class BoardFeedbackController {
           : session.tree.node(node.parentId!);
       if (move != null && parent != null) {
         final prefs = preferences.value;
-        final kind =
-            session.outcome.status == BoardStatus.checkmate
+        if (prefs.speakMoves) {
+          unawaited(_speak(ChineseNotation.format(parent.position, move)));
+        }
+        final kind = session.outcome.status == BoardStatus.checkmate
             ? (prefs.playMateSound ? AudioFeedbackKind.mate : null)
             : node.position.isInCheck(node.position.turn)
             ? (prefs.playCheckSound ? AudioFeedbackKind.check : null)
@@ -68,10 +77,19 @@ class BoardFeedbackController {
     }
   }
 
+  Future<void> _speak(String notation) async {
+    try {
+      await speech.speak(notation);
+    } catch (_) {
+      // A missing system voice must never affect board state.
+    }
+  }
+
   Future<void> dispose() async {
     if (_disposed) return;
     _disposed = true;
     session.removeListener(_changed);
     await audio.dispose();
+    await speech.dispose();
   }
 }

@@ -26,13 +26,13 @@
 
 ## 最新验证
 
-M4-06：根 flutter test 438通过、5项因未配置官方Pikafish环境变量跳过；flutter analyze0。macOS integration_test/audio_feedback_test.dart 1/1，真实加载本机WAV并启动播放器。最新 flutter run -d macos 构建启动PID13873，VM Service 127.0.0.1:63861可用。macOS插件编译出现非阻断Swift并发隔离warning；人工听感/视觉及其它平台未验。历史M4-04 GIF原生测试与Pikafish显式NNUE数据见SESSION_LOG。
+M4-08：根 `flutter test --reporter compact` 441通过/5跳过（仅未配置官方Pikafish环境）；`flutter analyze` 无问题。专项应用/组件14/14；macOS integration_test/audio_feedback_test.dart 1/1，五条声音asset及TTS通道请求成功。普通 `flutter run -d macos` 构建启动PID19009，VM Service `127.0.0.1:50874`。flutter_tts暂不支持Swift Package Manager（Flutter未来可能升级为错误）并有AVSpeechSynth枚举warning。未能人工确认语音听感/主窗口视觉，Linux/Web与其他系统未验。历史引擎实机测试见SESSION_LOG。
 
 生产main有文件导入/仅macOS文件导出；当前Debug/Release user-selected.read-write+sandbox，实际Debug签名已核，Release实际构建签名未验。系统Open/Save面板/外部授权/精确scope释放、真实OS焦点/最小化/人工视觉未验，Computer Use桌面权限未授不绕过；native fixture只保持framework-resumed，raw[]不是OS验证。Android/iOS/Windows/Linux运行与移动FFI仍未验/未实现。
 
 ## 下一步与环境
 
-E35证据已复核110项；E38补审F28事件更换弹层。M4-04 / F11 GIF预览和macOS保存已交付，提交见git log。M4-05/M4-06/M4-07分别交付项目光圈速度、选子/走棋及吃子/将军/将死本机合成提示音。F28仍缺音色选择/试听/自定义文件导入、系统着法朗读、真实棋子移动动画范围审计；全站仍有F21素材、布局/工作区/语言、错题/题库、其它文件格式/GIF系统分享/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
+E35证据已复核110项；E38/E39补审F28更换弹层和独立音效开关。M4-04 / F11 GIF预览和macOS保存已交付，提交见git log。M4-05/M4-06/M4-07/M4-08分别交付项目光圈速度、选子/走棋及吃子/将军/将死本机合成提示音、中文系统TTS独立开关。F28仍缺音色选择/试听/自定义文件导入、Linux语音适配与实际语音音色核验、真实棋子移动动画范围审计；全站仍有F21素材、布局/工作区/语言、错题/题库、其它文件格式/GIF系统分享/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
 
 M4-07验证：根 `flutter test --reporter compact` 440 passed/5 skipped，5项需未配置的官方 Pikafish 环境；`flutter analyze` 无问题；专项13/13；macOS integration音频1/1；普通 `flutter run -d macos` 已启动 PID16653，VM Service `127.0.0.1:49641`。Xcode构建可能有既有audioplayers Swift并发warning；主窗口人工视觉/听感和其它平台未验。详 `TRACEABILITY.md` 与本轮 `SESSION_LOG.md`。
 

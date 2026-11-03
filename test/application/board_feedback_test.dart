@@ -5,6 +5,7 @@ import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/ports/audio_feedback.dart';
+import 'package:chess_next/ports/move_speech.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -18,6 +19,16 @@ class FakeAudio implements AudioFeedbackPort {
     events.add(kind);
     if (fail) throw StateError('audio device unavailable');
   }
+
+  @override
+  Future<void> dispose() async {}
+}
+
+class FakeSpeech implements MoveSpeechPort {
+  final utterances = <String>[];
+
+  @override
+  Future<void> speak(String notation) async => utterances.add(notation);
 
   @override
   Future<void> dispose() async {}
@@ -121,6 +132,7 @@ void main() {
     expect(AppPreferences.fromJson(old).playCaptureSound, isTrue);
     expect(AppPreferences.fromJson(old).playCheckSound, isTrue);
     expect(AppPreferences.fromJson(old).playMateSound, isTrue);
+    expect(AppPreferences.fromJson(old).speakMoves, isFalse);
     final muted = AppPreferences(
       playMoveSound: false,
       playSelectionSound: true,
@@ -134,6 +146,48 @@ void main() {
       throwsFormatException,
     );
   });
+
+  test(
+    'move speech is independent and uses the committed Chinese notation',
+    () async {
+      final session = BoardSession();
+      final engine = EngineSessionController(session, null);
+      final preferences = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      final audio = FakeAudio();
+      final speech = FakeSpeech();
+      await preferences.initialize();
+      final feedback = BoardFeedbackController(
+        session,
+        preferences,
+        audio,
+        speech,
+      );
+      try {
+        await preferences.setSpeakMoves(true);
+        await preferences.setPlayMoveSound(false);
+        final move = session.legalMoves.first;
+        session.playMove(move);
+        await Future<void>.delayed(Duration.zero);
+        expect(speech.utterances, [
+          ChineseNotation.format(Position.initial(), move),
+        ]);
+        expect(audio.events, isEmpty);
+        await preferences.setSpeakMoves(false);
+        session.undo();
+        session.playMove(move);
+        await Future<void>.delayed(Duration.zero);
+        expect(speech.utterances, hasLength(1));
+      } finally {
+        await feedback.dispose();
+        preferences.dispose();
+        engine.dispose();
+        session.dispose();
+      }
+    },
+  );
 
   test(
     'capture has a distinct event when it does not also give check',

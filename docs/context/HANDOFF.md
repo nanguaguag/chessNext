@@ -1,5 +1,15 @@
 # 会话交接
 
+## 2026-11-03 / M4-08 交接
+
+用户授权持续审计和实现至参考功能对齐；每功能根目录`flutter test`、`flutter analyze`通过后单独中文Conventional Commit。在线使用自建可替换后端并提供部署方案，当前仍优先离线。上一M4-07提交 `7444c64`；该提交后工作树干净再开始本片。
+
+M4-08 / F28/B23完成独立系统TTS：偏好`AppPreferences.speakMoves`默认false，切换与走棋音效独立；节点位置变更时由BoardFeedbackController计算父局面ChineseNotation，经MoveSpeechPort发给flutter_tts 4.2.5 adapter。适配器只使用已安装中文voice，Android跳过network_required，串行等待播放；没有中文voice或接口异常静默，Web/Linux不调用（插件不声明Linux）。源站E39仅确认五类音效开关互相独立，并未触发棋步/验证朗读声学行为；源站到底对导航读谱是否朗读仍U。macOS integration发起查voice/说话请求1/1，但不把这写成所有设备都可发声。文件/架构/证据/未知见 `TRACEABILITY.md`、`ADR-044`、`FEATURE_GAPS.md`。
+
+实际验证：专项应用/组件14/14；根`flutter test --reporter compact` 441通过/5跳过（官方Pikafish env未设）；`flutter analyze`无问题；`flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 1/1；`flutter run -d macos` PID19009，VM service `127.0.0.1:50874`。flutter_tts暂不支持Swift Package Manager并有AVSpeechSynth未来case warning；人工听感/视觉、Linux/Web和其它OS未验。会话仍有`flutter run`前台进程，勿停用户旧窗口。无其它后台任务。
+
+提交前补查`git diff --check`、lock/归档license、`CURRENT_STATE`和本hand-off；单独commit中文消息 `feat(audio): 增加离线着法语音朗读`。之后继续B23：音效方案/试听/本地自定义文件导入，或继续审计F21。
+
 ## 2026-11-03 / M4-07 交接
 
 当前用户授权持续审计并实现；每功能根 `flutter test` + `flutter analyze` 通过后单独中文Conventional Commit，用户要求功能全部对齐后再停。线上采用自建可替换后端并提供部署方案；本轮仅继续离线F28，不扩到云能力。先读AGENTS/README/CURRENT_STATE/DECISIONS；检查时工作树从干净提交 `964fcd7` 起。

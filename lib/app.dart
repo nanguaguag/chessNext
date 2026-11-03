@@ -51,6 +51,7 @@ import 'features/library/library_dialog.dart';
 import 'features/board/xiangqi_board.dart';
 import 'application/board_feedback_controller.dart';
 import 'ports/audio_feedback.dart';
+import 'ports/move_speech.dart';
 
 class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
@@ -65,6 +66,7 @@ class ChessNextApp extends StatefulWidget {
     this.pngExporter,
     this.imageClipboard,
     this.audioFeedback,
+    this.moveSpeech,
     this.gifExporter,
     this.engineFactory,
     this.reviewCache,
@@ -79,6 +81,7 @@ class ChessNextApp extends StatefulWidget {
   final PngFileExporter? pngExporter;
   final ImageClipboard? imageClipboard;
   final AudioFeedbackPort? audioFeedback;
+  final MoveSpeechPort? moveSpeech;
   final GifFileExporter? gifExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
@@ -131,6 +134,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       session,
       preferences,
       widget.audioFeedback ?? const SilentAudioFeedback(),
+      widget.moveSpeech ?? const SilentMoveSpeech(),
     );
     preferences.addListener(_preferencesChanged);
     unawaited(_initializePreferences());

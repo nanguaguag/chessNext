@@ -21,7 +21,7 @@ flowchart TD
 | lib/domain/game_tree | GameDocument、GameNode、分支、注释、标签、游标 | 视图坐标、native |
 | lib/application/session | 模式、脏状态、命令、撤销、positionRevision | Widget、具体适配器 |
 | lib/application/analysis | 搜索调度、分数归一化、MultiPV、复盘任务 | FFI 细节 |
-| lib/ports | EngineGateway、GameRepository、BookService、RecognitionService、SyncService、PlatformFiles | 插件实现 |
+| lib/ports | EngineGateway、GameRepository、MoveSpeechPort、AudioFeedbackPort、BookService、RecognitionService、SyncService、PlatformFiles | 插件实现 |
 | lib/adapters/engine | Process/FFI、UCI 编解码、崩溃恢复 | UI |
 | lib/adapters/storage | SQLite候选、schema迁移、事务、草稿 | Widget |
 | lib/adapters/online | 认证、超时、缓存、重试、服务 DTO | UI |
@@ -71,3 +71,5 @@ UI 是状态投影，唯一会话协调器提交命令。一次导入或新局�
 M4-05 增加的 AnimationSpeed 是本机展示偏好，不进入规则/棋谱/引擎端口；Composition root 将不可变值注入 BoardDisplayScope，最后一步标记按新局面变化使用时长。四档时长属于项目映射且仅覆盖光圈，见 ADR-042。
 
 M4-06的BoardFeedbackController是BoardSession与AudioFeedbackPort间的应用层事件翻译；偏好开关驱动，不向规则、GameTree或UCI发送音频依赖。生产root仅注入AudioplayersFeedback，组件/领域测试用静音或fake端口。播放器异常是可选副作用并隔离，不改变已提交着法。见ADR-043。
+
+M4-08由BoardFeedbackController按已提交节点的父局面计算ChineseNotation，并通过独立MoveSpeechPort请求系统朗读，不复用AudioFeedbackPort或走棋音效开关。FlutterTtsMoveSpeech只在官方插件已声明的平台并发现已安装中文voice时播报；Android跳过标记联网语音，Linux/Web保持静音。可用性/异常不影响棋局。见ADR-044。

@@ -156,6 +156,16 @@ class BoardDisplayDialog extends StatelessWidget {
                             unawaited(preferences.setPieceSize(value.round())),
                 ),
               ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('着法朗读'),
+                subtitle: const Text('使用本机已安装的中文系统语音，独立于走棋音效；无离线中文语音时不朗读'),
+                value: preferences.value.speakMoves,
+                onChanged: preferences.loading
+                    ? null
+                    : (enabled) =>
+                          unawaited(preferences.setSpeakMoves(enabled)),
+              ),
               const Wrap(
                 spacing: 16,
                 children: [Text('10%'), Text('100%'), Text('200%')],

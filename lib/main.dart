@@ -14,6 +14,7 @@ import 'package:path_provider/path_provider.dart';
 import 'adapters/storage/file_game_repository.dart';
 import 'app.dart';
 import 'adapters/audio/audioplayers_feedback.dart';
+import 'adapters/speech/flutter_tts_move_speech.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -34,6 +35,7 @@ void main() {
         getApplicationSupportDirectory,
       ),
       audioFeedback: AudioplayersFeedback(),
+      moveSpeech: FlutterTtsMoveSpeech(),
       engineFactory: openBundledEngine,
       reviewCache: FileReviewCacheRepository(getApplicationSupportDirectory),
       deviceThreads: Platform.numberOfProcessors,

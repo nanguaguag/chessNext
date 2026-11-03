@@ -10,6 +10,7 @@ dependencies:
   file_selector: 1.1.0
   flutter:
     sdk: flutter
+  flutter_tts: ^4.2.5
   image: 4.12.0
   path_provider: ^2.1.6
   xiangqi_core:

@@ -126,6 +126,9 @@ class PreferencesController extends ChangeNotifier {
             playMateSound: _edited.contains('playMateSound')
                 ? previous.playMateSound
                 : null,
+            speakMoves: _edited.contains('speakMoves')
+                ? previous.speakMoves
+                : null,
             textSize: _edited.contains('textSize') ? previous.textSize : null,
             pieceSizePercent: _edited.contains('pieceSizePercent')
                 ? previous.pieceSizePercent
@@ -193,6 +196,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(playCheckSound: enabled));
   Future<void> setPlayMateSound(bool enabled) =>
       apply(value.copyWith(playMateSound: enabled));
+  Future<void> setSpeakMoves(bool enabled) =>
+      apply(value.copyWith(speakMoves: enabled));
   Future<void> setTextSize(TextSizePreference size) =>
       apply(value.copyWith(textSize: size));
   Future<void> setShowCoordinates(bool visible) =>
@@ -266,6 +271,7 @@ class PreferencesController extends ChangeNotifier {
     if (next.playMateSound != value.playMateSound) {
       _edited.add('playMateSound');
     }
+    if (next.speakMoves != value.speakMoves) _edited.add('speakMoves');
     if (next.textSize != value.textSize) _edited.add('textSize');
     if (next.pieceSizePercent != value.pieceSizePercent) {
       _edited.add('pieceSizePercent');

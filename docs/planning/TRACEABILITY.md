@@ -430,3 +430,9 @@ E36/E37确认默认走棋、选子开关和走棋方案选择器边界；原站�
 新增吃子/将军/将死本机开关、独立WAV及播放器，五种音效偏好保持旧schema默认兼容。BoardFeedbackController基于提交后父子局面分类，互斥优先级将死>将军>吃子>普通落子；特殊开关关闭回退普通走棋开关；选子独立。优先级是P，E38只确认参考站逐事件更换器独立，源站组合语义仍U。音效全部原创合成，不复制网站资源。
 
 专项 `flutter test test/application/board_feedback_test.dart test/widgets/last_move_markers_test.dart` 13/13；macOS `flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 1/1实际加载并启动五条WAV；根 `flutter test --reporter compact` 440 passed/5 skipped（缺官方引擎环境），`flutter analyze` 无问题。普通 `flutter run -d macos` 构建启动PID16653，VM Service 127.0.0.1:49641。根首轮曾被既有piece-size键盘测试Tab上限挡住，新增三个可访问开关后将有限遍历数从10调整到16，单项和全量复测均通过；失败已保留在本轮日志。移动/Windows/Linux/Web、将死实局声音、听感未验；试听/自定义导入/系统朗读未实现。
+
+## 2026-11-03 / M4-08 / F28 → B23 系统语音朗读着法
+
+E39五个音效开关各自关开状态独立并恢复原值，未触发棋步；站点语音仍off。实现默认false的`speakMoves` schema1偏好、PreferencesController、独立Material开关与MoveSpeechPort。提交节点的父局面生成ChineseNotation，独立于声音偏好；flutter_tts 4.2.5平台适配器过滤Android联网voice，仅在存在已装中文voice时串行朗读，无voice/API异常不影响落子。插件未声明Linux，Web不启用；系统语言包依OS预先安装和设置，不能保证全部机型都可用。E39只是开关验证，源站实际播报触发/音色和历史导航读法仍未知。
+
+专项应用/组件测试14/14；macOS集成音效/TTS端口1/1（尝试查询voice并请求中文着法，若系统无voice静默返回）；根 `flutter test --reporter compact` 441 pass/5 skipped（Pikafish环境未配置），`flutter analyze` no issues。普通 `flutter run -d macos` PID19009，VM Service `127.0.0.1:50874`。插件警告：暂不支持Swift Package Manager且可能在未来Flutter升级成为error；AVSpeechSynth枚举future cases warning。无人工听感或其它OS验证；依赖/归档许可在LICENSING。

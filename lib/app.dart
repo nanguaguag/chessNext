@@ -1166,18 +1166,19 @@ class _BoardPage extends StatelessWidget {
                 ),
               panel,
               const SizedBox(height: 12),
-              for (final panel in preferences.value.sidePanelOrder) ...[
-                switch (panel) {
-                  SidePanel.play => PlayPanel(engine: analysis),
-                  SidePanel.analysis => AnalysisPanel(analysis: analysis),
-                  SidePanel.review => ReviewPanel(
-                    engine: analysis,
-                    preferences: preferences,
-                  ),
-                  SidePanel.candidates => CandidatePanel(engine: analysis),
-                },
-                const SizedBox(height: 12),
-              ],
+              for (final panel in preferences.value.sidePanelOrder)
+                if (preferences.value.visibleSidePanels.contains(panel)) ...[
+                  switch (panel) {
+                    SidePanel.play => PlayPanel(engine: analysis),
+                    SidePanel.analysis => AnalysisPanel(analysis: analysis),
+                    SidePanel.review => ReviewPanel(
+                      engine: analysis,
+                      preferences: preferences,
+                    ),
+                    SidePanel.candidates => CandidatePanel(engine: analysis),
+                  },
+                  const SizedBox(height: 12),
+                ],
             ],
           );
           return Center(

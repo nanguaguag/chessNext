@@ -550,3 +550,7 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 ## 2026-11-04 / M4-30 / F20,B25 本机侧栏重排
 
 `AppPreferences.sidePanelOrder`为四项完整且唯一的`SidePanel`排列；省略字段兼容当前默认顺序，未知/重复/缺失解码失败。`PreferencesController`提供即时持久化并将初始化中的编辑合并进迟到读取。Material3拖动列表写入偏好，主界面实时按偏好顺序构造Play/Analysis/Review/Candidate卡片。项目映射属P，不改文档或分析状态；不实现源站其余操作选项。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID77791、VM `127.0.0.1:51219`。CUA `getApp("chessNext")`超时，人工窗口视觉验收未做。
+
+## 2026-11-04 / M4-31 / F20,B25 本机侧栏显隐
+
+`AppPreferences.visibleSidePanels`保存四种本机侧栏卡片的可见子集，缺字段默认全开，空集合允许，重复/未知值拒绝。设置页同一个拖动列表中提供独立Switch，PreferencesController实时写入，App按启用集合不构造隐藏卡片；顶层AppBar设置入口保持可用。异步读取字段合并覆盖已测。源站E50项目面板映射仍P/U。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID78894、VM `127.0.0.1:51984`。CUA窗口超时，人工视觉验收未做。

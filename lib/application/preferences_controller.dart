@@ -183,6 +183,9 @@ class PreferencesController extends ChangeNotifier {
             sidePanelOrder: _edited.contains('sidePanelOrder')
                 ? previous.sidePanelOrder
                 : null,
+            visibleSidePanels: _edited.contains('visibleSidePanels')
+                ? previous.visibleSidePanels
+                : null,
             threads: _edited.contains('threads') ? previous.threads : null,
             hashMb: _edited.contains('hashMb') ? previous.hashMb : null,
             multiPv: _edited.contains('multiPv') ? previous.multiPv : null,
@@ -228,6 +231,14 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(reviewMode: mode));
   Future<void> setSidePanelOrder(List<SidePanel> order) =>
       apply(value.copyWith(sidePanelOrder: order));
+  Future<void> setSidePanelVisibility(SidePanel panel, bool visible) {
+    final panels = [...value.visibleSidePanels];
+    if (visible && !panels.contains(panel)) panels.add(panel);
+    if (!visible) panels.remove(panel);
+    final ordered = value.sidePanelOrder.where(panels.contains).toList();
+    return apply(value.copyWith(visibleSidePanels: ordered));
+  }
+
   Future<void> setTheme(ThemePreference theme) =>
       apply(value.copyWith(theme: theme));
   Future<void> setAnimationSpeed(AnimationSpeed speed) =>
@@ -435,6 +446,9 @@ class PreferencesController extends ChangeNotifier {
     if (next.guideVersion != value.guideVersion) _edited.add('guideVersion');
     if (!listEquals(next.sidePanelOrder, value.sidePanelOrder)) {
       _edited.add('sidePanelOrder');
+    }
+    if (!listEquals(next.visibleSidePanels, value.visibleSidePanels)) {
+      _edited.add('visibleSidePanels');
     }
     if (next.threads != value.threads) _edited.add('threads');
     if (next.hashMb != value.hashMb) _edited.add('hashMb');

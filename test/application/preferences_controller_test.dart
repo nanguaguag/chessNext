@@ -91,15 +91,29 @@ void main() {
         ],
       );
       expect(AppPreferences.fromJson(changed.toJson()), changed);
+      final hidden = AppPreferences().copyWith(
+        visibleSidePanels: const [SidePanel.play, SidePanel.review],
+      );
+      expect(AppPreferences.fromJson(hidden.toJson()), hidden);
+      expect(
+        () => AppPreferences(
+          visibleSidePanels: const [SidePanel.play, SidePanel.play],
+        ),
+        throwsArgumentError,
+      );
       for (final invalid in [
         ['analysis'],
         ['analysis', 'analysis', 'review', 'candidates'],
         ['analysis', 'play', 'review', 'unknown'],
+        ['visibleSidePanels', 'play', 'play'],
       ]) {
         expect(
           () => AppPreferences.fromJson({
             ...AppPreferences().toJson(),
-            'sidePanelOrder': invalid,
+            if (invalid.first == 'visibleSidePanels')
+              'visibleSidePanels': invalid.skip(1).toList()
+            else
+              'sidePanelOrder': invalid,
           }),
           throwsFormatException,
         );
@@ -124,6 +138,10 @@ void main() {
         SidePanel.analysis,
         SidePanel.review,
       ]);
+      final hidingReview = preferences.setSidePanelVisibility(
+        SidePanel.review,
+        false,
+      );
       await engine.setThinkTime(3000);
       var finished = false;
       final exiting = preferences.flush().then((_) => finished = true);
@@ -133,10 +151,15 @@ void main() {
       await reading;
       await choosing;
       await choosingPanels;
+      await hidingReview;
       await exiting;
       await preferences.flush();
       expect(preferences.value.theme, ThemePreference.light);
       expect(preferences.value.sidePanelOrder.first, SidePanel.candidates);
+      expect(
+        preferences.value.visibleSidePanels,
+        isNot(contains(SidePanel.review)),
+      );
       expect(preferences.value.thinkTimeMs, 3000);
       expect(preferences.value.hashMb, 128);
       expect(engine.settings.multiPv, 3);

@@ -1,4 +1,5 @@
 import 'package:chess_next/app.dart';
+import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/features/play/play_panel.dart';
 import 'package:chess_next/features/analysis/analysis_panel.dart';
 import 'package:chess_next/features/review/review_panel.dart';
@@ -26,7 +27,7 @@ void main() {
 
     await tester.tap(find.byTooltip('应用设置'));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('侧栏顺序'));
+    await tester.tap(find.text('侧栏面板'));
     await tester.pumpAndSettle();
 
     final list = tester.widget<ReorderableListView>(
@@ -36,8 +37,6 @@ void main() {
     await tester.pumpAndSettle();
     expect(store.value?.sidePanelOrder.first.name, 'candidates');
 
-    await tester.tap(find.text('关闭'));
-    await tester.pump(const Duration(milliseconds: 500));
     expect(
       tester.getTopLeft(find.byType(CandidatePanel)).dy,
       lessThan(tester.getTopLeft(find.byType(PlayPanel)).dy),
@@ -46,5 +45,22 @@ void main() {
       tester.getTopLeft(find.byType(AnalysisPanel)).dy,
       lessThan(tester.getTopLeft(find.byType(ReviewPanel)).dy),
     );
+
+    final reviewRow = find.ancestor(
+      of: find.text('棋谱复盘'),
+      matching: find.byType(ListTile),
+    );
+    final reviewSwitch = find.descendant(
+      of: reviewRow,
+      matching: find.byType(Switch),
+    );
+    await tester.ensureVisible(reviewSwitch);
+    await tester.pumpAndSettle();
+    await tester.tap(reviewSwitch);
+    await tester.pumpAndSettle();
+    expect(store.value?.visibleSidePanels, isNot(contains(SidePanel.review)));
+    await tester.tap(find.text('关闭'));
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.byType(ReviewPanel), findsNothing);
   });
 }

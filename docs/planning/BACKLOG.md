@@ -267,3 +267,5 @@ M4-28 / F21,B24：macOS选择解压的项目schema1单皮肤文件夹，固定�
 - 登录后的设置同步按用户范围排除；皮肤目录等其他在线能力仍使用可替换后端并提供自建部署方案。
 
 M4-30 / F20,B25：按ADR-065为本机四类侧栏卡片提供拖动排序，偏好校验必须是恰好四项且唯一，持久化旧值兼容与读写竞态沿用PreferencesController；布局按实时顺序重建，不修改棋树/分析。参考站实际面板映射仍U，项目分组为P。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID77791、VM `127.0.0.1:51219`。CUA `getApp("chessNext")`超时，人工窗口视觉验收未做。
+
+M4-31 / F20,B25：按ADR-066在同一Material3侧栏面板设置中提供四卡片独立显隐；全部隐藏时仍可从AppBar设置恢复。偏好支持空列表/去重/坏值拒绝、旧schema默认全开和异步迟到读取合并。适配项目卡片，不冒充源站面板映射。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID78894、VM `127.0.0.1:51984`。CUA窗口超时，人工视觉验收未做。

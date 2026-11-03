@@ -86,6 +86,7 @@ final class AppPreferences {
     this.thinkTimeMs = 1000,
     this.guideVersion = 0,
     List<SidePanel> sidePanelOrder = defaultSidePanelOrder,
+    List<SidePanel> visibleSidePanels = defaultSidePanelOrder,
   }) : boardGeometries = Map.unmodifiable({
          for (final skin in BoardSkin.values)
            skin: boardGeometries[skin] ?? BoardSkinGeometry(),
@@ -98,7 +99,8 @@ final class AppPreferences {
                    ? const PieceSkinShadow.roundSealDefault()
                    : const PieceSkinShadow.standard()),
        }),
-       sidePanelOrder = List.unmodifiable(sidePanelOrder) {
+       sidePanelOrder = List.unmodifiable(sidePanelOrder),
+       visibleSidePanels = List.unmodifiable(visibleSidePanels) {
     if (pieceSizePercent < 10 ||
         pieceSizePercent > 200 ||
         pieceSizePercent % 5 != 0 ||
@@ -135,6 +137,10 @@ final class AppPreferences {
         !this.sidePanelOrder.toSet().containsAll(SidePanel.values)) {
       throw ArgumentError('Invalid side panel order');
     }
+    if (this.visibleSidePanels.toSet().length !=
+        this.visibleSidePanels.length) {
+      throw ArgumentError('Invalid visible side panels');
+    }
   }
   final ThemePreference theme;
   final AnimationSpeed animationSpeed;
@@ -168,6 +174,7 @@ final class AppPreferences {
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
   final List<SidePanel> sidePanelOrder;
+  final List<SidePanel> visibleSidePanels;
   AppPreferences copyWith({
     ThemePreference? theme,
     AnimationSpeed? animationSpeed,
@@ -206,6 +213,7 @@ final class AppPreferences {
     int? thinkTimeMs,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
+    List<SidePanel>? visibleSidePanels,
   }) => AppPreferences(
     theme: theme ?? this.theme,
     animationSpeed: animationSpeed ?? this.animationSpeed,
@@ -246,6 +254,7 @@ final class AppPreferences {
     thinkTimeMs: thinkTimeMs ?? this.thinkTimeMs,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
+    visibleSidePanels: visibleSidePanels ?? this.visibleSidePanels,
   );
   Map<String, Object> toJson() => {
     'schema': 1,
@@ -311,6 +320,10 @@ final class AppPreferences {
     if (guideVersion != 0) 'guideVersion': guideVersion,
     if (!_listEquals(sidePanelOrder, defaultSidePanelOrder))
       'sidePanelOrder': sidePanelOrder.map((panel) => panel.name).toList(),
+    if (!_listEquals(visibleSidePanels, defaultSidePanelOrder))
+      'visibleSidePanels': visibleSidePanels
+          .map((panel) => panel.name)
+          .toList(),
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
@@ -357,6 +370,11 @@ final class AppPreferences {
         (json.containsKey('sidePanelOrder') &&
             (json['sidePanelOrder'] is! List ||
                 (json['sidePanelOrder'] as List).any(
+                  (item) => item is! String,
+                ))) ||
+        (json.containsKey('visibleSidePanels') &&
+            (json['visibleSidePanels'] is! List ||
+                (json['visibleSidePanels'] as List).any(
                   (item) => item is! String,
                 ))) ||
         (json.containsKey('pieceSizePercent') &&
@@ -441,6 +459,11 @@ final class AppPreferences {
         guideVersion: json['guideVersion'] as int? ?? 0,
         sidePanelOrder:
             (json['sidePanelOrder'] as List?)
+                ?.map((item) => SidePanel.values.byName(item as String))
+                .toList() ??
+            defaultSidePanelOrder,
+        visibleSidePanels:
+            (json['visibleSidePanels'] as List?)
                 ?.map((item) => SidePanel.values.byName(item as String))
                 .toList() ??
             defaultSidePanelOrder,
@@ -532,7 +555,8 @@ final class AppPreferences {
       multiPv == other.multiPv &&
       thinkTimeMs == other.thinkTimeMs &&
       guideVersion == other.guideVersion &&
-      _listEquals(sidePanelOrder, other.sidePanelOrder);
+      _listEquals(sidePanelOrder, other.sidePanelOrder) &&
+      _listEquals(visibleSidePanels, other.visibleSidePanels);
   @override
   int get hashCode => Object.hashAll([
     reviewMode,
@@ -576,6 +600,7 @@ final class AppPreferences {
     thinkTimeMs,
     guideVersion,
     Object.hashAll(sidePanelOrder),
+    Object.hashAll(visibleSidePanels),
   ]);
 }
 

@@ -157,7 +157,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                         ),
                       ),
                       icon: const Icon(Icons.view_sidebar_outlined),
-                      label: const Text('侧栏顺序'),
+                      label: const Text('侧栏面板'),
                     ),
                   ],
                 ),

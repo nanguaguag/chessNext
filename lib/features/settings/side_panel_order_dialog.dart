@@ -35,47 +35,56 @@ class _SidePanelOrderDialogState extends State<SidePanelOrderDialog> {
   }
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-    title: const Text('侧栏顺序'),
-    content: SizedBox(
-      width: 360,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const Text('拖动调整主界面侧栏顺序；顺序保存在本机。'),
-          const SizedBox(height: 12),
-          Flexible(
-            child: ReorderableListView.builder(
-              shrinkWrap: true,
-              buildDefaultDragHandles: false,
-              itemCount: order.length,
-              onReorderItem: reorder,
-              itemBuilder: (context, index) {
-                final panel = order[index];
-                return ListTile(
-                  key: ValueKey(panel),
-                  title: Text(label(panel)),
-                  trailing: ReorderableDragStartListener(
-                    index: index,
-                    child: const Icon(Icons.drag_handle),
-                  ),
-                );
-              },
+  Widget build(BuildContext context) => ListenableBuilder(
+    listenable: widget.preferences,
+    builder: (context, _) => AlertDialog(
+      title: const Text('侧栏面板'),
+      content: SizedBox(
+        width: 360,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            const Text('拖动调整顺序，开关控制主界面侧栏显示；设置保存在本机。'),
+            const SizedBox(height: 12),
+            Flexible(
+              child: ReorderableListView.builder(
+                shrinkWrap: true,
+                buildDefaultDragHandles: false,
+                itemCount: order.length,
+                onReorderItem: reorder,
+                itemBuilder: (context, index) {
+                  final panel = order[index];
+                  return ListTile(
+                    key: ValueKey(panel),
+                    title: Text(label(panel)),
+                    leading: ReorderableDragStartListener(
+                      index: index,
+                      child: const Icon(Icons.drag_handle),
+                    ),
+                    trailing: Switch(
+                      value: widget.preferences.value.visibleSidePanels
+                          .contains(panel),
+                      onChanged: (visible) => widget.preferences
+                          .setSidePanelVisibility(panel, visible),
+                    ),
+                  );
+                },
+              ),
             ),
-          ),
-          if (widget.preferences.error case final error?)
-            Text(
-              error,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
-            ),
-        ],
+            if (widget.preferences.error case final error?)
+              Text(
+                error,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+          ],
+        ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('关闭'),
+        ),
+      ],
     ),
-    actions: [
-      TextButton(
-        onPressed: () => Navigator.pop(context),
-        child: const Text('关闭'),
-      ),
-    ],
   );
 }

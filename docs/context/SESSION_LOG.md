@@ -527,4 +527,4 @@ E41桌面访客页审计见REFERENCE_EVIDENCE；观察上方棋子180°设置与
 
 M4-11增加默认关闭的`rotateOppositePieces`本地偏好、异步设置读取字段合并和BoardDisplayScope传播；主棋盘/局面编辑/PNG/GIF快照统一。按实际视觉上方阵营翻转字形。增加偏好兼容/非法值/异步竞态与Widget翻转方向测试。首次定向Widget运行因测试树未包Material暴露InkWell祖先断言，补Material后相关测试通过（8/8）。全量`flutter test --reporter compact`450通过/5跳过，flutter analyze无问题。`flutter run -d macos`构建成功，提示前台open返回1后仍完成文件同步并显示VM `127.0.0.1:56207`（PID26430）；flutter_tts SwiftPM未来兼容warning仍存在。
 
-下一步更新决策/交付追踪、检查`git diff --check`，将此功能单独中文提交；随后继续B24皮肤边界审计与实现，F21不关闭。
+M4-11单独提交为`eb44677 feat(board): 支持对面棋子翻转显示`，之后继续B24皮肤边界审计与实现，F21不关闭。

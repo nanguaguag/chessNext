@@ -592,3 +592,12 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 ## 2026-11-04 / 新会话交接准备
 
 复核README、CURRENT_STATE、HANDOFF、DECISIONS、session-handoff Skill和git状态；HEAD `90ad321`，功能/研究文档已提交，工作树干净。根验证沿用M4-17最终结果：469通过/5跳过，analyze0；macOS run为Build/Sync/VM成功但前台返回`open returned 1`。当前仍有Debug app PID44785与Flutter run runner PID44412，保留运行以满足用户此前macOS运行请求，未终止；E45/E46浏览器草稿已安全放弃。临时审计IAB tab清理操作返回浏览器控制错误，但后续项目不依赖该tab，页面状态已回设置首页。
+# 2026-11-04 / B24 棋盘格点、边距、缩放审计与设计
+
+按AGENTS恢复：读AGENTS、README、CURRENT_STATE、HANDOFF、DECISIONS、project-onboarding与feature-audit技能、B24/F21矩阵/缺口/证据、ADR-053和棋盘实现。HEAD进入时`a8c6559`，工作树干净，main ahead 5。
+
+参考页面URL `https://xiangqiai.com/#/settings/skins/edit/new?type=board`。空白草稿显示格点50/50、四边33/33/465/519、棋子缩放100%；截图确认两蓝点对应棋盘交点。未调整几何或点保存/应用/导出。返回后确认丢弃，最终回设置默认页：默认棋子/棋盘、100%、坐标开、对面倒置关。没有棋谱变化。
+
+根据E44–E47编写ADR-054提案：归一化几何矩形；Square逻辑映射统一用于格线/棋子/各标记/箭头/坐标/反向命中；项目棋子比例80–120%；PNG/GIF冻结几何；草稿保存/应用/取消边界。所有这些是P，站点数值、端点、联动与成功语义仍U；落点图旋转另切片。更新FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY、CURRENT_STATE、HANDOFF。
+
+本轮仅审计/设计，无代码修改，未运行测试，未提交功能。实际可视浏览器检查已完成；未核源站边界或动画。下一步按ADR-054实现并依用户门槛做根测试/analyze/macOS run和视觉验收，之后单独提交。

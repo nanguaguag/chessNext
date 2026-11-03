@@ -1,6 +1,10 @@
 # 会话交接
 
-截至2026-11-04 Asia/Shanghai，HEAD `90ad321`，工作树干净。授权持续本地离线功能开发和macOS运行；每个功能根目录`flutter test`、`flutter analyze`通过后单独中文Conventional Commit。登录后功能仍按用户决定不做；其余在线能力保留在总范围，后续采用自建可替换后端并交部署方案。未授权分代理；许可决定暂缓，不阻挡开发。现运行macOS Debug app PID44785，`flutter run -d macos` runner PID44412；用户若要停止可在原运行终端按q，接手agent不应误杀进程。最后全量根测试469通过/5跳过（官方引擎环境缺失），analyze通过；本交接后仅文档编辑，不涉及代码测试。浏览器临时编辑草稿已丢弃并恢复默认；不要依赖tab或聊天记忆。
+## 2026-11-04 / B24 棋盘几何设计交接
+
+按ADR-054推进F21/B24棋盘几何单切片：先核对棋盘绘制、Square命中、坐标框、图片/GIF快照全部共用的几何入口，再实现归一化格网几何及本机皮肤编辑/保存/应用/取消。验收覆盖边界、旧偏好、翻转/镜像、所有标记命中和快照冻结；根目录`flutter test`、`flutter analyze`通过后实际`flutter run -d macos`并做视觉验收，再单独中文提交。ADR-054是项目P，不能写成源站规格；旋转动画仍独立，源站行为U。E44–E47、当前设计提案及本轮无代码状态见SESSION_LOG。
+
+截至2026-11-04 Asia/Shanghai，HEAD为本次文档提交，工作树干净，较`origin/main` ahead 6。授权持续本地离线功能开发和macOS运行；每个功能根目录`flutter test`、`flutter analyze`通过后单独中文Conventional Commit。登录后功能仍按用户决定不做；其余在线能力保留在总范围，后续采用自建可替换后端并交部署方案。未授权分代理；许可决定暂缓，不阻挡开发。现运行macOS Debug app PID44785，`flutter run -d macos` runner PID44412；用户若要停止可在原运行终端按q，接手agent不应误杀进程。最后全量根测试469通过/5跳过（官方引擎环境缺失），analyze通过；本交接后仅文档编辑，不涉及代码测试。浏览器临时编辑草稿已丢弃并恢复默认；不要依赖tab或聊天记忆。
 
 ## 2026-11-04 / M4-17 棋盘图片图层
 

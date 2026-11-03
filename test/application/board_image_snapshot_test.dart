@@ -60,6 +60,7 @@ void main() {
       pieceSkinSizePercent: 117,
       pieceSkinOffsetXPercent: -3,
       pieceSkinOffsetYPercent: 2,
+      pieceSkinShadow: const PieceSkinShadow.standard(),
     );
 
     expect(snapshot.position, same(session.position));
@@ -84,16 +85,7 @@ void main() {
     expect(snapshot.pieceSkinSizePercent, 117);
     expect(snapshot.pieceSkinOffsetXPercent, -3);
     expect(snapshot.pieceSkinOffsetYPercent, 2);
-    expect(
-      snapshot.pieceSkinShadow,
-      PieceSkinShadow(
-        style: PieceShadowStyle.prominent,
-        angleDegrees: 200,
-        distancePercent: 8,
-        blurPercent: 5,
-        opacityPercent: 72,
-      ),
-    );
+    expect(snapshot.pieceSkinShadow, const PieceSkinShadow.standard());
     expect(snapshot.pieceSizePercent, 135);
     expect(snapshot.arrowHead, ArrowHeadStyle.wide);
     expect(snapshot.lastMoveStyle, LastMoveMarkerStyle.box);

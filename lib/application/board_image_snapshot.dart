@@ -61,6 +61,7 @@ class BoardImageSnapshot {
     int? pieceSkinSizePercent,
     int? pieceSkinOffsetXPercent,
     int? pieceSkinOffsetYPercent,
+    PieceSkinShadow? pieceSkinShadow,
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
     Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
   }) => BoardImageSnapshot(
@@ -80,7 +81,8 @@ class BoardImageSnapshot {
         prefs.boardGeometries[prefs.boardSkin] ??
         const BoardSkinGeometry.standard(),
     pieceSkin: prefs.pieceSkin,
-    pieceSkinShadow: prefs.pieceSkinShadows[prefs.pieceSkin]!,
+    pieceSkinShadow:
+        pieceSkinShadow ?? prefs.pieceSkinShadows[prefs.pieceSkin]!,
     pieceImages: pieceImages,
     boardSkinImages: boardSkinImages,
     showCoordinates: prefs.showCoordinates,

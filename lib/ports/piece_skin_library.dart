@@ -1,4 +1,5 @@
 import 'piece_images.dart' show PieceSkin;
+import 'piece_skin_shadow.dart';
 
 final class PieceSkinDefinition {
   factory PieceSkinDefinition({
@@ -8,6 +9,7 @@ final class PieceSkinDefinition {
     int scalePercent = 100,
     int offsetXPercent = 0,
     int offsetYPercent = 0,
+    PieceSkinShadow? shadow,
   }) {
     final normalizedName = name.trim();
     if (!isValidId(id) ||
@@ -29,6 +31,7 @@ final class PieceSkinDefinition {
       scalePercent: scalePercent,
       offsetXPercent: offsetXPercent,
       offsetYPercent: offsetYPercent,
+      shadow: shadow,
     );
   }
 
@@ -39,6 +42,7 @@ final class PieceSkinDefinition {
     required this.scalePercent,
     required this.offsetXPercent,
     required this.offsetYPercent,
+    required this.shadow,
   });
 
   static const maxNameRunes = 32;
@@ -51,12 +55,15 @@ final class PieceSkinDefinition {
   final int scalePercent;
   final int offsetXPercent;
   final int offsetYPercent;
+  final PieceSkinShadow? shadow;
 
   PieceSkinDefinition copyWith({
     String? name,
     int? scalePercent,
     int? offsetXPercent,
     int? offsetYPercent,
+    PieceSkinShadow? shadow,
+    bool clearShadow = false,
   }) => PieceSkinDefinition(
     id: id,
     name: name ?? this.name,
@@ -64,6 +71,7 @@ final class PieceSkinDefinition {
     scalePercent: scalePercent ?? this.scalePercent,
     offsetXPercent: offsetXPercent ?? this.offsetXPercent,
     offsetYPercent: offsetYPercent ?? this.offsetYPercent,
+    shadow: clearShadow ? null : shadow ?? this.shadow,
   );
 
   Map<String, Object> toJson() => {
@@ -73,6 +81,7 @@ final class PieceSkinDefinition {
     if (scalePercent != 100) 'scalePercent': scalePercent,
     if (offsetXPercent != 0) 'offsetXPercent': offsetXPercent,
     if (offsetYPercent != 0) 'offsetYPercent': offsetYPercent,
+    if (shadow != null) 'shadow': shadow!.toJson(),
   };
 
   factory PieceSkinDefinition.fromJson(Map<String, dynamic> json) {
@@ -83,6 +92,7 @@ final class PieceSkinDefinition {
           'scalePercent',
           'offsetXPercent',
           'offsetYPercent',
+          'shadow',
         }).isNotEmpty ||
         json['id'] is! String ||
         json['name'] is! String ||
@@ -91,7 +101,8 @@ final class PieceSkinDefinition {
         (json.containsKey('offsetXPercent') &&
             json['offsetXPercent'] is! int) ||
         (json.containsKey('offsetYPercent') &&
-            json['offsetYPercent'] is! int)) {
+            json['offsetYPercent'] is! int) ||
+        (json.containsKey('shadow') && json['shadow'] is! Map)) {
       throw const FormatException('Invalid piece skin definition');
     }
     try {
@@ -102,6 +113,11 @@ final class PieceSkinDefinition {
         scalePercent: json['scalePercent'] as int? ?? 100,
         offsetXPercent: json['offsetXPercent'] as int? ?? 0,
         offsetYPercent: json['offsetYPercent'] as int? ?? 0,
+        shadow: json['shadow'] == null
+            ? null
+            : PieceSkinShadow.fromJson(
+                Map<String, dynamic>.from(json['shadow'] as Map),
+              ),
       );
     } on ArgumentError {
       throw const FormatException('Invalid piece skin definition');
@@ -116,7 +132,8 @@ final class PieceSkinDefinition {
       baseSkin == other.baseSkin &&
       scalePercent == other.scalePercent &&
       offsetXPercent == other.offsetXPercent &&
-      offsetYPercent == other.offsetYPercent;
+      offsetYPercent == other.offsetYPercent &&
+      shadow == other.shadow;
 
   @override
   int get hashCode => Object.hash(
@@ -126,6 +143,7 @@ final class PieceSkinDefinition {
     scalePercent,
     offsetXPercent,
     offsetYPercent,
+    shadow,
   );
 }
 

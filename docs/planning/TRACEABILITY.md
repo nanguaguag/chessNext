@@ -541,3 +541,4 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 
 最终专项 `flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 10/10通过；根`flutter test --reporter compact` 481通过/5跳过(exit0，5项需官方引擎/NNUE环境)；`flutter analyze`无问题；`flutter run -d macos` Build/Sync成功PID56134、VM `127.0.0.1:53841`。`git diff --check`通过。CUA窗口视觉和macOS文件选择器人工交互not run。ZIP、文件夹、库管理、跨平台选择器及网页实际导入边界仍未验。
 | M4-24 | F21/B24 本机皮肤库搜索、排序和选择 | `flutter test --reporter compact` 488通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID64446/VM 127.0.0.1:49993 | E42源站显式回车搜索/五类排序可追溯；本机实现默认/名称/最近创建。点赞/作者需在线元数据；人工视觉验收未做 |
+| M4-25 | F21/B24 用户皮肤独立阴影 | `flutter test --reporter compact` 488通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID65664/VM 127.0.0.1:51711 | 控件值域沿用ADR-056项目P；E43源站精确端点和算法U；人工视觉验收未做 |

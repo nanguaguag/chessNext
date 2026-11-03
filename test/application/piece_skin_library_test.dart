@@ -8,6 +8,7 @@ import 'package:chess_next/application/piece_skin_library_controller.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/ports/piece_images.dart';
 import 'package:chess_next/ports/piece_skin_library.dart';
+import 'package:chess_next/ports/piece_skin_shadow.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -43,6 +44,7 @@ void main() {
         scalePercent: 118,
         offsetXPercent: -7,
         offsetYPercent: 5,
+        shadow: const PieceSkinShadow.standard(),
       );
       expect(PieceSkinDefinition.fromJson(profile.toJson()), profile);
       expect(
@@ -104,11 +106,19 @@ void main() {
         scalePercent: 117,
         offsetXPercent: -3,
         offsetYPercent: 2,
+        shadow: PieceSkinShadow(
+          style: PieceShadowStyle.prominent,
+          angleDegrees: 210,
+        ),
       ),
       isTrue,
     );
     expect(library.definitionFor(created.id)!.scalePercent, 117);
     expect(library.definitionFor(created.id)!.offsetXPercent, -3);
+    expect(
+      library.definitionFor(created.id)!.shadow!.style,
+      PieceShadowStyle.prominent,
+    );
     final restoredEngine = EngineSessionController(BoardSession(), null);
     final restoredPreferences = PreferencesController(
       restoredEngine,

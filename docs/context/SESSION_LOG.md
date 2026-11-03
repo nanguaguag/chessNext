@@ -1,12 +1,18 @@
 # 会话日志
 
+## 2026-11-04 / M4-25 / F21,B24 用户皮肤独立阴影
+
+M4-24已独立提交`f59a884 feat(skins): 增加本机皮肤库搜索排序`。继续参考E43与ADR-056：用户皮肤原来继承基础预设阴影；本片新增ADR-060，将平台无关`PieceSkinShadow`值对象移入ports，让用户定义可选保存其JSON。旧自定义目录缺字段时仍使用基础预设阴影。新建用户皮肤从当前用户项或内置预设继承当前阴影；设置只更新当前用户项。App BoardDisplayScope主盘/编辑读取该值，图片/GIF快照显式冻结。内置预设继续使用AppPreferences原字段，不迁移其存储。
+
+专项`flutter test test/application/piece_skin_library_test.dart test/application/piece_skin_shadow_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`22/22；根`flutter test --reporter compact`488通过/5跳过（官方Pikafish/NNUE环境缺少）；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID65664/VM `127.0.0.1:51711`。flutter_tts有SwiftPM未来兼容warning，无人工视觉验收。日志`/tmp/chessnext-m425-final-test.log`。代码与ADR/决策/矩阵/缺口/交互/追踪/README/交接待单独提交；下一逐项处理用户皮肤包导出/安全ZIP与文件夹导入和在线目录+部署。F21/全站不完整。
+
 ## 2026-11-04 / M4-24 / F21,B24 本机皮肤库搜索排序和选择
 
 承接持续对齐授权，先读取AGENTS、README、CURRENT_STATE、HANDOFF、DECISIONS、flutter-feature/feature-audit/quality-gate/session-handoff技能及B24/E42。M4-23已按`c3b9dd2`提交。E42确认搜索输入后回车才筛选，源站有默认/赞最多/名称/作者/最新导入五类排序；本机没有点赞和作者元数据，不生成假值。
 
 本机目录新增名称搜索（显式提交、清空恢复）、默认/名称/最近创建排序；点击条目实际持久化选择并关闭。首轮目标测试编译失败：调用`selectPieceSkin`缺第二个ID参数；修正后目标`flutter test test/application/piece_skin_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`11/11通过。中途`flutter analyze --no-pub`发现curly-braces风格info，补块后最终根测试再次通过、分析无问题。最终`flutter test --reporter compact`488通过/5跳过；5跳过依赖本机官方Pikafish/NNUE环境。`flutter analyze --no-pub` No issues found。`flutter run -d macos` Build/Sync成功，app PID64446、VM `127.0.0.1:49993`；flutter_tts SwiftPM未来兼容warning。未做人工视觉验收。根测试日志`/tmp/chessnext-m424-final-test.log`。
 
-M4-24源码和追踪/缺口/交接文档待独立中文提交。下一独立功能M4-25逐用户阴影：用户皮肤现仅独立大小/位置，阴影仍写基础PieceSkin偏好；需检查application/port分层后决定可序列化模型，贯穿设置/BoardDisplayScope/图片与GIF快照，F21保持开放。无后台验证命令。
+M4-24源码和追踪/缺口/交接文档已独立提交`f59a884 feat(skins): 增加本机皮肤库搜索排序`。下一M4-25阴影实现见日志顶部。
 
 ## 2026-11-04 / M4-23 / F21,B24 用户皮肤大小和位置
 

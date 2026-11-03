@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-04 / B24 持续交付：M4-25用户皮肤独立阴影
+
+M4-25源码与门槛完成，待中文独立提交。ADR-060将平台无关PieceSkinShadow值对象放ports，用户皮肤定义可选保存阴影JSON；旧目录缺字段时仍回退到内置基础皮肤阴影，新建复制当前活动皮肤或内置预设参数。设置对用户项写目录，对内置项继续写AppPreferences；BoardDisplayScope、棋盘/编辑和PNG/GIF快照均带用户阴影值。范围沿用ADR-056项目P，E43端点/算法仍U。
+
+专项`flutter test test/application/piece_skin_library_test.dart test/application/piece_skin_shadow_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`22/22；根`flutter test --reporter compact`488通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID65664、VM `127.0.0.1:51711`。跳过为本机缺官方引擎/NNUE配置；flutter_tts SwiftPM未来warning；未人工视觉验收。日志`/tmp/chessnext-m425-final-test.log`。
+
+先提交M4-25独立中文commit。下一步继续B24用户皮肤包导出、ZIP/文件夹安全导入，再设计在线皮肤目录自建可替换后端和部署方案。F21/全站仍开放。
+
 ## 2026-11-04 / B24 持续交付：M4-24皮肤库搜索/排序/选择
 
 M4-24代码/专项/全量验证完成，待独立提交。皮肤库支持回车提交名称搜索、默认/名称/最近创建排序、点击条目持久化选择并关闭。E42确认源站回车行为和五种排序入口；点赞/作者排序因本机皮肤无对应数据，仍缺，不伪造。首次专项编译错误（selectPieceSkin需传皮肤和ID）已修复；最终目标专项11/11、根`flutter test --reporter compact`488通过/5跳过、`flutter analyze --no-pub`无问题、`flutter run -d macos`Build/Sync启动PID64446/VM `127.0.0.1:49993`。flutter_tts提示SwiftPM未来兼容；未做窗口视觉验收。日志`/tmp/chessnext-m424-final-test.log`。
@@ -28,7 +36,7 @@ M4-22验证：根`flutter test`484通过/5跳过，analyze通过，macOS Debug P
 
 ## 2026-11-04 / B24 持续交付：M4-21多选棋子图片与 E48 ZIP 说明续审
 
-持续授权仍有效：继续推进登录部分除外的已确认全站功能和设置，不在单功能后停；在线能力保留为自建可替换后端与部署方案；离线优先；无分代理。许可暂缓。当前主线：`main`，HEAD `ffbf362`，较origin ahead 11；工作树干净。M4-21功能已提交`107e372`，E48文档已提交`ffbf362`。
+持续授权仍有效：继续推进登录部分除外的已确认全站功能和设置，不在单功能后停；在线能力保留为自建可替换后端与部署方案；离线优先；无分代理。许可暂缓。M4-24/M4-25分别见本交接顶部；验证后M4-25待提交。
 
 改动：`PieceImageBatchPicker`、`NamedPieceImage`、最多14张/7 MiB读取、控制器整批预检/逐槽保存与失败重试、映射预览弹窗、设置入口及应用/Widget测试。ADR-057、DECISIONS、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY已更新。E42/E48确认访客入口有ZIP/图片多选/文件夹；页面称ZIP可含多套并在下一步选择、只本机保存。但文件选择没有可见结果，未选用户文件；格式/成功/覆盖仍U。本机数量/累计限制和映射交互为P。未支持ZIP、文件夹或完整皮肤清单。
 

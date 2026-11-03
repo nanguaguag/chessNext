@@ -77,6 +77,16 @@ class BoardDisplayDialog extends StatelessWidget {
           );
   }
 
+  Future<void> _setShadow(
+    PreferencesController preferences,
+    PieceSkinShadow shadow,
+  ) {
+    final profile = _activeProfile(preferences);
+    return profile == null
+        ? preferences.setPieceSkinShadow(preferences.value.pieceSkin, shadow)
+        : pieceSkins!.updateAppearance(profile.id, shadow: shadow);
+  }
+
   void _moveSkinPiece(
     PreferencesController preferences, {
     int x = 0,
@@ -112,7 +122,9 @@ class BoardDisplayDialog extends StatelessWidget {
 
   Widget _pieceShadowControls(BuildContext context) {
     final skin = preferences.value.pieceSkin;
-    final shadow = preferences.value.pieceSkinShadows[skin]!;
+    final profile = _activeProfile(preferences);
+    final shadow = profile?.shadow ?? preferences.value.pieceSkinShadows[skin]!;
+    final shadowKey = profile?.id ?? skin.name;
     Widget slider({
       required String key,
       required String label,
@@ -127,7 +139,7 @@ class BoardDisplayDialog extends StatelessWidget {
           '$label ${value.toStringAsFixed(label == '方向' ? 0 : 1)}${label == '方向' ? '°' : '%'}',
         ),
         Slider(
-          key: ValueKey('piece-skin-shadow-${skin.name}-$key'),
+          key: ValueKey('piece-skin-shadow-$shadowKey-$key'),
           value: value,
           min: 0,
           max: max,
@@ -136,11 +148,11 @@ class BoardDisplayDialog extends StatelessWidget {
           semanticFormatterCallback: (v) =>
               '${v.toStringAsFixed(1)}${label == '方向' ? '°' : '%'}',
           onChanged:
-              preferences.loading || shadow.style == PieceShadowStyle.none
+              preferences.loading ||
+                  (profile != null && (pieceSkins?.loading ?? false)) ||
+                  shadow.style == PieceShadowStyle.none
               ? null
-              : (next) => unawaited(
-                  preferences.setPieceSkinShadow(skin, update(next)),
-                ),
+              : (next) => unawaited(_setShadow(preferences, update(next))),
         ),
       ],
     );
@@ -148,7 +160,7 @@ class BoardDisplayDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         DropdownButtonFormField<PieceShadowStyle>(
-          key: ValueKey('piece-skin-shadow-style-${skin.name}-${shadow.style}'),
+          key: ValueKey('piece-skin-shadow-style-$shadowKey-${shadow.style}'),
           initialValue: shadow.style,
           isExpanded: true,
           decoration: const InputDecoration(labelText: '棋子阴影'),
@@ -160,15 +172,14 @@ class BoardDisplayDialog extends StatelessWidget {
               child: Text('明显'),
             ),
           ],
-          onChanged: preferences.loading
+          onChanged:
+              preferences.loading ||
+                  (profile != null && (pieceSkins?.loading ?? false))
               ? null
               : (style) {
                   if (style != null) {
                     unawaited(
-                      preferences.setPieceSkinShadow(
-                        skin,
-                        _shadowPreset(style, shadow),
-                      ),
+                      _setShadow(preferences, _shadowPreset(style, shadow)),
                     );
                   }
                 },

@@ -362,6 +362,9 @@ class _ChessNextAppState extends State<ChessNextApp>
         boardSkinImages: boardSkinImages.imagesFor(preferences.value.boardSkin),
         pieceSkin: preferences.value.pieceSkin,
         pieceSkinShadow:
+            pieceSkins
+                .definitionFor(preferences.value.selectedPieceSkinId)
+                ?.shadow ??
             preferences.value.pieceSkinShadows[preferences.value.pieceSkin],
         pieceImages: pieceImages.imagesFor(
           preferences.value.selectedPieceSkinId,
@@ -683,6 +686,9 @@ class _BoardPage extends StatelessWidget {
       pieceSkinOffsetYPercent: pieceSkins
           .definitionFor(preferences.value.selectedPieceSkinId)
           ?.offsetYPercent,
+      pieceSkinShadow: pieceSkins
+          .definitionFor(preferences.value.selectedPieceSkinId)
+          ?.shadow,
       assessment: analysis.currentMoveAssessment,
       recommendation: analysis.recommended,
       reply: analysis.reply,
@@ -714,6 +720,9 @@ class _BoardPage extends StatelessWidget {
         pieceSkinOffsetYPercent: pieceSkins
             .definitionFor(preferences.value.selectedPieceSkinId)
             ?.offsetYPercent,
+        pieceSkinShadow: pieceSkins
+            .definitionFor(preferences.value.selectedPieceSkinId)
+            ?.shadow,
         pieceImages: pieceImages.imagesFor(
           preferences.value.selectedPieceSkinId,
         ),

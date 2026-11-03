@@ -40,6 +40,7 @@ void main() {
       pieceSkinSizePercent: 117,
       pieceSkinOffsetXPercent: -4,
       pieceSkinOffsetYPercent: 6,
+      pieceSkinShadow: const PieceSkinShadow.standard(),
     );
     expect(snapshot.frames.map((frame) => frame.move?.toString()), [
       null,
@@ -53,16 +54,7 @@ void main() {
     expect(snapshot.pieceSkinSizePercent, 117);
     expect(snapshot.pieceSkinOffsetXPercent, -4);
     expect(snapshot.pieceSkinOffsetYPercent, 6);
-    expect(
-      snapshot.pieceSkinShadow,
-      PieceSkinShadow(
-        style: PieceShadowStyle.soft,
-        angleDegrees: 120,
-        distancePercent: 5,
-        blurPercent: 3,
-        opacityPercent: 45,
-      ),
-    );
+    expect(snapshot.pieceSkinShadow, const PieceSkinShadow.standard());
     session.playVariation('n2', Move.parse('b0c2'));
     expect(snapshot.frames.length, 4);
     expect(snapshot.frames.last.move, Move.parse('h0g2'));

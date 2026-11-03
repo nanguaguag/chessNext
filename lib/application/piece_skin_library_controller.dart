@@ -2,6 +2,7 @@ import 'dart:math';
 import 'package:flutter/foundation.dart';
 import '../ports/piece_images.dart';
 import '../ports/piece_skin_library.dart';
+import '../ports/piece_skin_shadow.dart';
 import 'piece_image_library_controller.dart';
 import 'preferences_controller.dart';
 
@@ -79,6 +80,8 @@ class PieceSkinLibraryController extends ChangeNotifier {
     int? scalePercent,
     int? offsetXPercent,
     int? offsetYPercent,
+    PieceSkinShadow? shadow,
+    bool clearShadow = false,
   }) {
     final profile = definitionFor(id);
     if (profile == null || loading) return Future.value(false);
@@ -86,6 +89,8 @@ class PieceSkinLibraryController extends ChangeNotifier {
       scalePercent: scalePercent,
       offsetXPercent: offsetXPercent,
       offsetYPercent: offsetYPercent,
+      shadow: shadow,
+      clearShadow: clearShadow,
     );
     return _save(
       profiles.map((item) => item.id == id ? updated : item).toList(),
@@ -133,6 +138,8 @@ class PieceSkinLibraryController extends ChangeNotifier {
           (base == PieceSkin.roundSeal
               ? preferences.value.roundSealPieceOffsetY
               : preferences.value.squareInkPieceOffsetY);
+      final shadow =
+          active?.shadow ?? preferences.value.pieceSkinShadows[base]!;
       final next = [
         ...profiles,
         PieceSkinDefinition(
@@ -142,6 +149,7 @@ class PieceSkinLibraryController extends ChangeNotifier {
           scalePercent: scalePercent,
           offsetXPercent: offsetXPercent,
           offsetYPercent: offsetYPercent,
+          shadow: shadow,
         ),
       ];
       await repository.save(next);

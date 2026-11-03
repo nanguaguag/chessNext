@@ -15,6 +15,8 @@ class LastMoveMarkers extends StatefulWidget {
     this.duration = const Duration(milliseconds: 600),
     this.flipped = false,
     this.mirrored = false,
+    this.drawSourceMarker = true,
+    this.drawLandingMarker = true,
   });
   final Move move;
   final Object identity;
@@ -22,6 +24,7 @@ class LastMoveMarkers extends StatefulWidget {
   final bool animateOnMount;
   final Duration duration;
   final bool flipped, mirrored;
+  final bool drawSourceMarker, drawLandingMarker;
   @override
   State<LastMoveMarkers> createState() => _LastMoveMarkersState();
 }
@@ -97,6 +100,8 @@ class _LastMoveMarkersState extends State<LastMoveMarkers>
             phase: rotation.value,
             flipped: widget.flipped,
             mirrored: widget.mirrored,
+            drawSourceMarker: widget.drawSourceMarker,
+            drawLandingMarker: widget.drawLandingMarker,
           ),
         ),
       ),
@@ -111,21 +116,30 @@ class LastMoveMarkersPainter extends CustomPainter {
     this.phase = 1,
     this.flipped = false,
     this.mirrored = false,
+    this.drawSourceMarker = true,
+    this.drawLandingMarker = true,
   });
   final Move move;
   final LastMoveMarkerStyle style;
   final double phase;
   final bool flipped, mirrored;
+  final bool drawSourceMarker, drawLandingMarker;
   @override
   void paint(Canvas canvas, Size size) {
     final step = size.width / 9;
     if (step <= 0 || !step.isFinite) return;
     Offset point(Square square) =>
         boardSquarePoint(square, size, flipped: flipped, mirrored: mirrored);
-    final path = Path()
-      ..addOval(Rect.fromCircle(center: point(move.from), radius: step * .14));
+    final path = Path();
+    if (drawSourceMarker) {
+      path.addOval(
+        Rect.fromCircle(center: point(move.from), radius: step * .14),
+      );
+    }
     final end = point(move.to);
-    if (style == LastMoveMarkerStyle.halo) {
+    if (!drawLandingMarker) {
+      // The skin artwork owns the destination layer.
+    } else if (style == LastMoveMarkerStyle.halo) {
       final rect = Rect.fromCircle(center: end, radius: step * .45);
       for (var i = 0; i < 4; i++) {
         path.addArc(rect, phase * 2 * math.pi + i * math.pi / 2, math.pi / 3);
@@ -164,5 +178,7 @@ class LastMoveMarkersPainter extends CustomPainter {
       style != old.style ||
       phase != old.phase ||
       flipped != old.flipped ||
-      mirrored != old.mirrored;
+      mirrored != old.mirrored ||
+      drawSourceMarker != old.drawSourceMarker ||
+      drawLandingMarker != old.drawLandingMarker;
 }

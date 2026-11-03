@@ -14,6 +14,7 @@ import 'package:flutter/services.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/board_session.dart';
 import '../../ports/piece_images.dart';
+import '../../ports/board_skin_images.dart';
 
 String pieceName(Piece piece) => switch ((piece.side, piece.type)) {
   (Side.red, PieceType.general) => '帅',
@@ -229,6 +230,15 @@ class _BoardSurfaceState extends State<BoardSurface> {
             final step = constraints.maxWidth / 9;
             final skin =
                 widget.boardSkin ?? BoardDisplayScope.boardSkinOf(context);
+            final boardImages = BoardDisplayScope.boardSkinImagesOf(context);
+            final backgroundImage =
+                boardImages[BoardSkinImageSlot.boardBackground];
+            final startMarkerImage =
+                boardImages[BoardSkinImageSlot.startMarker];
+            final landingMarkerImage =
+                boardImages[BoardSkinImageSlot.landingMarker];
+            final selectionFrameImage =
+                boardImages[BoardSkinImageSlot.selectionFrame];
             return DecoratedBox(
               key: const ValueKey('board-skin-background'),
               decoration: BoxDecoration(
@@ -237,6 +247,21 @@ class _BoardSurfaceState extends State<BoardSurface> {
               ),
               child: Stack(
                 children: [
+                  if (backgroundImage != null)
+                    Positioned.fill(
+                      child: IgnorePointer(
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(20),
+                          child: Image.memory(
+                            backgroundImage,
+                            fit: BoxFit.fill,
+                            key: const ValueKey(
+                              'board-skin-image-boardBackground',
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
                   Positioned.fill(
                     child: CustomPaint(painter: _BoardPainter(skin)),
                   ),
@@ -313,7 +338,32 @@ class _BoardSurfaceState extends State<BoardSurface> {
                         ).duration,
                         flipped: widget.flipped,
                         mirrored: widget.mirrored,
+                        drawSourceMarker: startMarkerImage == null,
+                        drawLandingMarker: landingMarkerImage == null,
                       ),
+                    ),
+                  if (widget.lastMove != null) ...[
+                    if (startMarkerImage != null)
+                      _skinMarkerImage(
+                        widget.lastMove!.from,
+                        startMarkerImage,
+                        constraints.maxWidth / 9,
+                        BoardSkinImageSlot.startMarker,
+                      ),
+                    if (landingMarkerImage != null)
+                      _skinMarkerImage(
+                        widget.lastMove!.to,
+                        landingMarkerImage,
+                        constraints.maxWidth / 9,
+                        BoardSkinImageSlot.landingMarker,
+                      ),
+                  ],
+                  if (widget.selected != null && selectionFrameImage != null)
+                    _skinMarkerImage(
+                      widget.selected!,
+                      selectionFrameImage,
+                      constraints.maxWidth / 9,
+                      BoardSkinImageSlot.selectionFrame,
                     ),
                   if (visibleAssessment != null)
                     Positioned.fill(
@@ -597,6 +647,35 @@ class _BoardSurfaceState extends State<BoardSurface> {
       width: step,
       height: step,
       child: tile,
+    );
+  }
+
+  Widget _skinMarkerImage(
+    Square square,
+    Uint8List image,
+    double step,
+    BoardSkinImageSlot slot,
+  ) {
+    final center = boardSquarePoint(
+      square,
+      Size(step * 9, step * 10),
+      flipped: widget.flipped,
+      mirrored: widget.mirrored,
+    );
+    return Positioned(
+      left: center.dx - step / 2,
+      top: center.dy - step / 2,
+      width: step,
+      height: step,
+      child: IgnorePointer(
+        child: ExcludeSemantics(
+          child: Image.memory(
+            image,
+            fit: BoxFit.contain,
+            key: ValueKey('board-skin-image-${slot.name}'),
+          ),
+        ),
+      ),
     );
   }
 }

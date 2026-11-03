@@ -8,6 +8,8 @@ import '../../ports/audio_feedback.dart';
 import 'audio_options_dialog.dart';
 import '../../application/piece_image_library_controller.dart';
 import 'piece_skin_images_dialog.dart';
+import '../../application/board_skin_image_library_controller.dart';
+import 'board_skin_images_dialog.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
   const BoardDisplayDialog({
@@ -15,10 +17,12 @@ class BoardDisplayDialog extends StatelessWidget {
     required this.preferences,
     this.audioLibrary,
     this.pieceImages,
+    this.boardSkinImages,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController? pieceImages;
+  final BoardSkinImageLibraryController? boardSkinImages;
 
   int _skinOffsetX(PreferencesController preferences) =>
       preferences.value.pieceSkin == PieceSkin.roundSeal
@@ -99,7 +103,23 @@ class BoardDisplayDialog extends StatelessWidget {
                         }
                       },
               ),
-              const Text('原创配色，只保存在本机；皮肤图片导入与编辑仍待实现。'),
+              const Text('图片覆盖仅保存在本机；ZIP和多套皮肤导入仍待实现。'),
+              Align(
+                alignment: Alignment.centerRight,
+                child: TextButton.icon(
+                  onPressed: boardSkinImages == null || boardSkinImages!.loading
+                      ? null
+                      : () => showDialog<void>(
+                          context: context,
+                          builder: (_) => BoardSkinImagesDialog(
+                            skin: preferences.value.boardSkin,
+                            library: boardSkinImages!,
+                          ),
+                        ),
+                  icon: const Icon(Icons.wallpaper_outlined),
+                  label: const Text('编辑棋盘图片'),
+                ),
+              ),
               const SizedBox(height: 12),
               DropdownButtonFormField<PieceSkin>(
                 key: ValueKey(preferences.value.pieceSkin),

@@ -7,6 +7,7 @@ import 'board_session.dart';
 import 'current_move_arrows.dart';
 import 'review_report.dart';
 import '../ports/piece_images.dart';
+import '../ports/board_skin_images.dart';
 
 /// Only immutable values cross the modal boundary; no live session is retained.
 class BoardImageSnapshot {
@@ -29,6 +30,7 @@ class BoardImageSnapshot {
     this.boardSkin = BoardSkin.parchment,
     this.pieceSkin = PieceSkin.roundSeal,
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
+    Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
     Iterable<VariationArrow> variations = const [],
   }) : pieceImages = Map.unmodifiable({
          for (final entry in pieceImages.entries)
@@ -36,7 +38,11 @@ class BoardImageSnapshot {
        }),
        variations = List.unmodifiable(
          variations.take(CurrentMoveArrows.maxVisible),
-       ) {
+       ),
+       boardSkinImages = Map.unmodifiable({
+         for (final entry in boardSkinImages.entries)
+           entry.key: Uint8List.fromList(entry.value).asUnmodifiableView(),
+       }) {
     if (pieceSizePercent < 10 ||
         pieceSizePercent > 200 ||
         pieceSizePercent % 5 != 0) {
@@ -50,6 +56,7 @@ class BoardImageSnapshot {
     Move? recommendation,
     Move? reply,
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
+    Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
   }) => BoardImageSnapshot(
     position: session.position,
     lastMove: session.tree.current.move,
@@ -65,6 +72,7 @@ class BoardImageSnapshot {
     boardSkin: prefs.boardSkin,
     pieceSkin: prefs.pieceSkin,
     pieceImages: pieceImages,
+    boardSkinImages: boardSkinImages,
     showCoordinates: prefs.showCoordinates,
     pieceSizePercent: prefs.pieceSizePercent,
     pieceSkinSizePercent: prefs.pieceSkin == PieceSkin.roundSeal
@@ -87,6 +95,7 @@ class BoardImageSnapshot {
   final BoardSkin boardSkin;
   final PieceSkin pieceSkin;
   final Map<PieceImageSlot, Uint8List> pieceImages;
+  final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;
   final int pieceSizePercent;
   final int pieceSkinSizePercent;
   final int pieceSkinOffsetXPercent, pieceSkinOffsetYPercent;

@@ -122,7 +122,7 @@ void main() {
               ?.key ==
           const ValueKey('piece-size-slider');
       // Reach the piece size slider after the event sound and orientation switches.
-      for (var i = 0; i < 20 && !focused(); i++) {
+      for (var i = 0; i < 40 && !focused(); i++) {
         await tester.sendKeyEvent(LogicalKeyboardKey.tab);
         await tester.pumpAndSettle();
       }

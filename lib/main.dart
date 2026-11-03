@@ -19,6 +19,7 @@ import 'adapters/platform/file_selector_audio_picker.dart';
 import 'adapters/storage/file_audio_override_repository.dart';
 import 'adapters/platform/file_selector_piece_image_picker.dart';
 import 'adapters/storage/file_piece_image_repository.dart';
+import 'adapters/storage/file_board_skin_image_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -47,6 +48,10 @@ void main() {
       audioOverrides: audioOverrides,
       pieceImagePicker: FileSelectorPieceImagePicker(),
       pieceImageRepository: FilePieceImageRepository(
+        getApplicationSupportDirectory,
+      ),
+      boardSkinImagePicker: FileSelectorPieceImagePicker(),
+      boardSkinImageRepository: FileBoardSkinImageRepository(
         getApplicationSupportDirectory,
       ),
       engineFactory: openBundledEngine,

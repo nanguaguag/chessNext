@@ -2,6 +2,7 @@ import 'package:flutter/widgets.dart';
 import '../../application/board_appearance.dart';
 import '../../application/app_preferences.dart';
 import '../../ports/piece_images.dart';
+import '../../ports/board_skin_images.dart';
 import 'dart:typed_data';
 
 /// Read-only presentation data above Navigator; no controller, IO or document.
@@ -13,6 +14,7 @@ class BoardDisplayScope extends InheritedWidget {
     this.boardSkin = BoardSkin.parchment,
     this.pieceSkin = PieceSkin.roundSeal,
     this.pieceImages = const {},
+    this.boardSkinImages = const {},
     this.pieceSizePercent = 100,
     this.pieceSkinSizePercent = 100,
     this.pieceSkinOffsetXPercent = 0,
@@ -35,6 +37,7 @@ class BoardDisplayScope extends InheritedWidget {
   final BoardSkin boardSkin;
   final PieceSkin pieceSkin;
   final Map<PieceImageSlot, Uint8List> pieceImages;
+  final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;
   final int pieceSizePercent;
   final int pieceSkinSizePercent;
   final int pieceSkinOffsetXPercent, pieceSkinOffsetYPercent;
@@ -125,6 +128,13 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.pieceImages ??
       const {};
+  static Map<BoardSkinImageSlot, Uint8List> boardSkinImagesOf(
+    BuildContext context,
+  ) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.boardSkinImages ??
+      const {};
   @override
   bool updateShouldNotify(BoardDisplayScope oldWidget) =>
       showMoveGrades != oldWidget.showMoveGrades ||
@@ -142,5 +152,6 @@ class BoardDisplayScope extends InheritedWidget {
       pieceSizePercent != oldWidget.pieceSizePercent ||
       pieceSkinSizePercent != oldWidget.pieceSkinSizePercent ||
       pieceSkinOffsetXPercent != oldWidget.pieceSkinOffsetXPercent ||
-      pieceSkinOffsetYPercent != oldWidget.pieceSkinOffsetYPercent;
+      pieceSkinOffsetYPercent != oldWidget.pieceSkinOffsetYPercent ||
+      !identical(boardSkinImages, oldWidget.boardSkinImages);
 }

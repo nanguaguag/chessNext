@@ -489,3 +489,12 @@ E41/E42审计确认源站棋盘/棋子皮肤库与各自编辑入口；E37/E40�
 E43观察到上/下/左/右步进、自动对正、偏移后归零可用；按一次右键可见“右1”，未验证网页实际步长单位及边界。项目为每种PieceSkin分别增加横/纵偏移本机偏好，单位为棋格宽百分比，默认0、每按钮1%、范围±8%（P）。Material3方向键在边界禁用；中心自动对正把两轴归零。对所有棋子面容作视觉平移，`transformHitTests:false`保持逻辑格、点击与拖放不变；PNG/GIF快照冻结两轴值。
 
 专项偏好/边界/延迟读取、位置按钮即时持久化/归零、平移命中测试、PNG/GIF捕获通过。全量`flutter test --reporter compact`466通过/5跳过；`flutter analyze`0问题；`flutter run -d macos`成功构建启动，VM `127.0.0.1:64032` PID33743。首次`dart format`因assert条件语法错误中止，修正为组合断言后格式与专项通过，见SESSION_LOG。此处不代表完成源站位置单位/视觉精确度；棋子阴影和棋盘编辑仍待。
+
+
+## 2026-11-04 / M4-17 / F21 → B24 本机棋盘图片图层
+
+按E44新建四种 `BoardSkinImageSlot`：棋盘背景、起点标记、落点标记、选中框。独立应用端口/控制器/文件仓库支持逐槽替换与恢复；重用既有PNG/JPEG有界读取/尺寸解码校验规则（512 KiB、1024边长、1MP），图片在本机应用支持目录存储。文件仓库限制manifest schema/文件名，并检查符号链接目录；损坏清单/图片不阻断默认棋盘加载。Material 3棋盘显示设置增加编辑图片入口，图片预览/错误态/逐槽恢复；取消选择不更改现有值。主盘和编辑器从BoardDisplayScope绘制同一套图层；自定义起点/落点覆盖对应默认末步记号。PNG/GIF快照捕获本机图像字节。
+
+定向 `flutter test test/application/board_skin_image_library_test.dart test/widgets/board_skin_image_layers_test.dart --reporter expanded` 3/3通过。第一次全量测试 468通过/5跳过/1失败，失败为现有键盘遍历测试Tab预算20不足；新入口添加了焦点节点后将该用例遍历预算扩至40，专项通过。最终根 `flutter test --reporter compact` 469通过/5跳过（5项需配置官方Pikafish/NNUE环境），`flutter analyze`无问题，`git diff --check`通过。`flutter run -d macos` Build成功并同步、VM Service `127.0.0.1:50487`（PID44785）；Flutter报告`Failed to foreground app; open returned 1`，但app已构建、同步且VM可连接，前台人工视觉未验证。插件 `flutter_tts`仍有Swift Package Manager兼容警告。
+
+本片为本机项目设计P，不证明网页替换、保存、应用成功，E44旋转与几何边界仍U。无新依赖或外部资源；F21未完成。

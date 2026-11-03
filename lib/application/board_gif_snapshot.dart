@@ -5,6 +5,7 @@ import 'app_preferences.dart';
 import 'board_appearance.dart';
 import 'board_session.dart';
 import '../ports/piece_images.dart';
+import '../ports/board_skin_images.dart';
 
 final class BoardGifCapacityException implements Exception {
   const BoardGifCapacityException(this.frames);
@@ -34,8 +35,13 @@ final class BoardGifSnapshot {
     this.boardSkin = BoardSkin.parchment,
     this.pieceSkin = PieceSkin.roundSeal,
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
+    Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
   }) : pieceImages = Map.unmodifiable({
          for (final entry in pieceImages.entries)
+           entry.key: Uint8List.fromList(entry.value).asUnmodifiableView(),
+       }),
+       boardSkinImages = Map.unmodifiable({
+         for (final entry in boardSkinImages.entries)
            entry.key: Uint8List.fromList(entry.value).asUnmodifiableView(),
        }),
        frames = List.unmodifiable(frames) {
@@ -48,6 +54,7 @@ final class BoardGifSnapshot {
     BoardSession session,
     AppPreferences prefs, {
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
+    Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
   }) {
     final nodes = session.tree.currentLine;
     if (nodes.length > maxFrames) throw BoardGifCapacityException(nodes.length);
@@ -75,6 +82,7 @@ final class BoardGifSnapshot {
       boardSkin: prefs.boardSkin,
       pieceSkin: prefs.pieceSkin,
       pieceImages: pieceImages,
+      boardSkinImages: boardSkinImages,
     );
   }
 
@@ -84,6 +92,7 @@ final class BoardGifSnapshot {
   final BoardSkin boardSkin;
   final PieceSkin pieceSkin;
   final Map<PieceImageSlot, Uint8List> pieceImages;
+  final Map<BoardSkinImageSlot, Uint8List> boardSkinImages;
   final int pieceSizePercent;
   final int pieceSkinSizePercent;
   final int pieceSkinOffsetXPercent, pieceSkinOffsetYPercent;

@@ -215,6 +215,7 @@ class _BoardGifDialogState extends State<BoardGifDialog> {
                     showCoordinates: snapshot.showCoordinates,
                     rotateOppositePieces: snapshot.rotateOppositePieces,
                     boardSkin: snapshot.boardSkin,
+                    boardSkinImages: snapshot.boardSkinImages,
                     pieceSkin: snapshot.pieceSkin,
                     pieceImages: snapshot.pieceImages,
                     pieceSizePercent: snapshot.pieceSizePercent,

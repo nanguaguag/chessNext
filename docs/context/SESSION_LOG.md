@@ -4,7 +4,7 @@
 
 M4-24已独立提交`f59a884 feat(skins): 增加本机皮肤库搜索排序`。继续参考E43与ADR-056：用户皮肤原来继承基础预设阴影；本片新增ADR-060，将平台无关`PieceSkinShadow`值对象移入ports，让用户定义可选保存其JSON。旧自定义目录缺字段时仍使用基础预设阴影。新建用户皮肤从当前用户项或内置预设继承当前阴影；设置只更新当前用户项。App BoardDisplayScope主盘/编辑读取该值，图片/GIF快照显式冻结。内置预设继续使用AppPreferences原字段，不迁移其存储。
 
-专项`flutter test test/application/piece_skin_library_test.dart test/application/piece_skin_shadow_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`22/22；根`flutter test --reporter compact`488通过/5跳过（官方Pikafish/NNUE环境缺少）；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID65664/VM `127.0.0.1:51711`。flutter_tts有SwiftPM未来兼容warning，无人工视觉验收。日志`/tmp/chessnext-m425-final-test.log`。代码与ADR/决策/矩阵/缺口/交互/追踪/README/交接待单独提交；下一逐项处理用户皮肤包导出/安全ZIP与文件夹导入和在线目录+部署。F21/全站不完整。
+专项`flutter test test/application/piece_skin_library_test.dart test/application/piece_skin_shadow_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`22/22；根`flutter test --reporter compact`488通过/5跳过（官方Pikafish/NNUE环境缺少）；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID65664/VM `127.0.0.1:51711`。flutter_tts有SwiftPM未来兼容warning，无人工视觉验收。日志`/tmp/chessnext-m425-final-test.log`。代码与ADR/决策/矩阵/缺口/交互/追踪/README/交接已提交`1589a60 feat(skins): 支持用户皮肤独立阴影`；下一逐项处理用户皮肤包导出/安全ZIP与文件夹导入和在线目录+部署。F21/全站不完整。
 
 ## 2026-11-04 / M4-24 / F21,B24 本机皮肤库搜索排序和选择
 

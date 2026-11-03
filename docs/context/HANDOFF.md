@@ -2,17 +2,17 @@
 
 ## 2026-11-04 / B24 持续交付：M4-25用户皮肤独立阴影
 
-M4-25源码与门槛完成，待中文独立提交。ADR-060将平台无关PieceSkinShadow值对象放ports，用户皮肤定义可选保存阴影JSON；旧目录缺字段时仍回退到内置基础皮肤阴影，新建复制当前活动皮肤或内置预设参数。设置对用户项写目录，对内置项继续写AppPreferences；BoardDisplayScope、棋盘/编辑和PNG/GIF快照均带用户阴影值。范围沿用ADR-056项目P，E43端点/算法仍U。
+M4-25已提交`1589a60 feat(skins): 支持用户皮肤独立阴影`。ADR-060将平台无关PieceSkinShadow值对象放ports，用户皮肤定义可选保存阴影JSON；旧目录缺字段时仍回退到内置基础皮肤阴影，新建复制当前活动皮肤或内置预设参数。设置对用户项写目录，对内置项继续写AppPreferences；BoardDisplayScope、棋盘/编辑和PNG/GIF快照均带用户阴影值。范围沿用ADR-056项目P，E43端点/算法仍U。
 
 专项`flutter test test/application/piece_skin_library_test.dart test/application/piece_skin_shadow_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`22/22；根`flutter test --reporter compact`488通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID65664、VM `127.0.0.1:51711`。跳过为本机缺官方引擎/NNUE配置；flutter_tts SwiftPM未来warning；未人工视觉验收。日志`/tmp/chessnext-m425-final-test.log`。
 
-先提交M4-25独立中文commit。下一步继续B24用户皮肤包导出、ZIP/文件夹安全导入，再设计在线皮肤目录自建可替换后端和部署方案。F21/全站仍开放。
+下一步继续B24用户皮肤包导出、ZIP/文件夹安全导入，再设计在线皮肤目录自建可替换后端和部署方案。F21/全站仍开放。
 
 ## 2026-11-04 / B24 持续交付：M4-24皮肤库搜索/排序/选择
 
-M4-24代码/专项/全量验证完成，待独立提交。皮肤库支持回车提交名称搜索、默认/名称/最近创建排序、点击条目持久化选择并关闭。E42确认源站回车行为和五种排序入口；点赞/作者排序因本机皮肤无对应数据，仍缺，不伪造。首次专项编译错误（selectPieceSkin需传皮肤和ID）已修复；最终目标专项11/11、根`flutter test --reporter compact`488通过/5跳过、`flutter analyze --no-pub`无问题、`flutter run -d macos`Build/Sync启动PID64446/VM `127.0.0.1:49993`。flutter_tts提示SwiftPM未来兼容；未做窗口视觉验收。日志`/tmp/chessnext-m424-final-test.log`。
+M4-24已提交`f59a884 feat(skins): 增加本机皮肤库搜索排序`。皮肤库支持回车提交名称搜索、默认/名称/最近创建排序、点击条目持久化选择并关闭。E42确认源站回车行为和五种排序入口；点赞/作者排序因本机皮肤无对应数据，仍缺，不伪造。首次专项编译错误（selectPieceSkin需传皮肤和ID）已修复；最终目标专项11/11、根`flutter test --reporter compact`488通过/5跳过、`flutter analyze --no-pub`无问题、`flutter run -d macos`Build/Sync启动PID64446/VM `127.0.0.1:49993`。flutter_tts提示SwiftPM未来兼容；未做窗口视觉验收。日志`/tmp/chessnext-m424-final-test.log`。
 
-先检查`git diff --check`与工作树，提交M4-24中文独立提交。下一切片M4-25：把M4-20阴影参数扩展为每个用户皮肤独立设置，并贯穿主盘/编辑器/PNG/GIF；读取flutter-feature和quality-gate，检查阴影模型/快照/设置测试及M4-20 ADR。F21/全站未完成。
+M4-24下一切片M4-25阴影已独立完成，详本交接顶部。F21/全站未完成。
 
 ## 2026-11-04 / B24 持续交付：M4-23用户皮肤大小/位置
 

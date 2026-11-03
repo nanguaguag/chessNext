@@ -32,6 +32,8 @@ M4-06：根 flutter test 438通过、5项因未配置官方Pikafish环境变量�
 
 ## 下一步与环境
 
-E35证据已复核110项。M4-04 / F11 GIF预览和macOS保存已交付，提交见git log。F28声音动画已完成E36初审（入口/默认/开关和更换选项及动画档位可见，操作边界见B23）；M4-05/M4-06已完成动画光圈速度与选子/走棋本机提示音；F28其余事件音/自定义音效/着法朗读及真实动画范围审计继续按B23推进，仍有F21素材、布局/工作区/语言、错题/题库、其它文件格式/GIF系统分享/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
+E35证据已复核110项；E38补审F28事件更换弹层。M4-04 / F11 GIF预览和macOS保存已交付，提交见git log。M4-05/M4-06/M4-07分别交付项目光圈速度、选子/走棋及吃子/将军/将死本机合成提示音。F28仍缺音色选择/试听/自定义文件导入、系统着法朗读、真实棋子移动动画范围审计；全站仍有F21素材、布局/工作区/语言、错题/题库、其它文件格式/GIF系统分享/OCR、完整历史规则、五平台引擎、在线自建后端+部署待做，详FEATURE_GAPS/BACKLOG。站点未知不能凭入口推断成功。
+
+M4-07验证：根 `flutter test --reporter compact` 440 passed/5 skipped，5项需未配置的官方 Pikafish 环境；`flutter analyze` 无问题；专项13/13；macOS integration音频1/1；普通 `flutter run -d macos` 已启动 PID16653，VM Service `127.0.0.1:49641`。Xcode构建可能有既有audioplayers Swift并发warning；主窗口人工视觉/听感和其它平台未验。详 `TRACEABILITY.md` 与本轮 `SESSION_LOG.md`。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest复核仍Pikafish2026-09-06 commit4c17cee，lock/NNUE校验见engine/pikafish.lock.json，.local忽略不提交。普通用户旧窗口不关闭/热重启；native测试覆盖build入口，最终审查前需重建普通main。

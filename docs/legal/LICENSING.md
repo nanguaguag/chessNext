@@ -37,6 +37,6 @@ file_selector1.1.0及实际解析的平台/传递依赖见[文件选择登记](F
 
 ## 2026-11-03 M4-06 本机音效
 
-本项目原创WAV由 tool/generate_sound_assets.dart 经 lib/adapters/audio/tone_wave.dart 可重复生成，非参考站素材。assets/audio/select.wav SHA256 9d88d1cd189f795fba055aa3456d5ae4995cb3995d533db5fc9a385d0956ccbe；assets/audio/move.wav SHA256 4f4b1aab580d79ea0929e2b677eebe4fc03e8653a7d8d73c3f9ccbd33e41938e。项目音效为短PCM合成提示音。
+本项目原创WAV由 tool/generate_sound_assets.dart 经 lib/adapters/audio/tone_wave.dart 可重复生成，非参考站素材。select.wav SHA256 9d88d1cd189f795fba055aa3456d5ae4995cb3995d533db5fc9a385d0956ccbe；move.wav SHA256 4f4b1aab580d79ea0929e2b677eebe4fc03e8653a7d8d73c3f9ccbd33e41938e；capture.wav SHA256 0ce428bbe41b57c4c829a7d092f3caef17250c8062d5006ced20b43e0b5009a4；check.wav SHA256 eb59c23c531d319b090949c9c17b82a77b90f4d3e49a72679cac2a40782d7373；mate.wav SHA256 d720793b24428b809ea6ec1e965eac8fceafeacaeaea34ace315c61aedfa1a3b。均为短PCM合成提示音。
 
 新增 audioplayers 6.8.1（https://pub.dev/packages/audioplayers/versions/6.8.1），pub.dev标注MIT，直接归档SHA256 2ba4bb2944baacbdd5372ff8254a8e7feb8c10d7739545e392f5605a8f618745；解析 audioplayers_android 5.3.0、audioplayers_darwin 6.5.0、audioplayers_linux 4.3.0、audioplayers_web 5.3.0、audioplayers_windows 4.4.1 和 platform interface，确切锁定版本/归档摘要见pubspec.lock。macOS构建出现插件Swift 6隔离警告（当前是warning），需要未来升级/发行复核；本片只在macOS实际集成验证。此登记不等于全部传递依赖SBOM完成。

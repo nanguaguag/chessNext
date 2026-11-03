@@ -486,3 +486,11 @@ E37实际打开走棋方案：音效1/2/随棋子皮肤与试听、本地WAV/MP3
 本片目标纯Dart4过、应用组件另覆盖端口映射/设置保存；真实macOS integration起初BytesSource在沙箱临时路径缺目录而失败，按插件源码检查后改AssetSource；随后修复无用FramePositionUpdater引发integration_test悬空动画回调，再次实际macOS插件两种资源均1/1通过。初始失败保留，不计通过。待根全量flutter test/analyze/最终根macOS run。
 
 M4-06最终验证：针对生成器import修复后，根目录 flutter test --reporter compact 438 passed / 5 skipped；跳过为缺PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK的上游实机用例。最终flutter analyze无issues。macOS集成1/1已通过；提交见git log。生产flutter run -d macos最终PID13873，VM Service 127.0.0.1:63861。git diff --check随后复核。Xcode构建给audioplayers_darwin Swift6 actor isolation warnings但exit0，人工听觉/主窗口视觉not-run，非macOS目标not-run。
+
+## 2026-11-03 / M4-07 / F28 → B23 事件提示音分类
+
+E38在xiangqiai.com/#/settings/sound分别打开将军/吃子/绝杀更换弹层；各有默认选择/试听、本事件独立更换说明和WAV/MP3 512KiB/5秒自定义文件声明。导入按钮未出现可观察文件选择状态，未选用户文件；结果记录U，不认为成功。E38不操作开关/谱面，无素材复制。
+
+新增AudioFeedbackKind.capture/check/mate及独立播放器/WAV，AppPreferences三个默认true布尔值向前兼容schema1，Material3三独立Switch。事件从父节点和已提交子局面识别；互斥优先级将死>将军>吃子>普通落子是P，特殊开关关闭回退普通走棋开关。原创音源由generator确定性生成并SHA记入LICENSING。piece-size已有焦点遍历测试曾因新增开关多Tab stop失败，扩展合理扫描边界后单测通过。
+
+专项 `flutter test --reporter expanded test/application/board_feedback_test.dart test/widgets/last_move_markers_test.dart` 13/13；macOS integration 1/1加载五个音源；根 `flutter test --reporter compact` 440 passed/5 skipped（仅官方Pikafish环境缺省），`flutter analyze`无问题。普通 `flutter run -d macos`成功，PID16653/VM Service 127.0.0.1:49641。主窗口视觉/音质听感与其它目标未验。首轮根测试失败piece_size_test keyboard focus测试的期望，非隐藏；加大Tab有限遍历到16后单测与重跑全量通过。需commit前校验资产SHA/差异。

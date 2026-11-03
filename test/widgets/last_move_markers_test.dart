@@ -162,6 +162,12 @@ void main() {
     await settings(tester);
     await tap(tester, find.widgetWithText(SwitchListTile, '选子音效'));
     expect(store.value?.playSelectionSound, isFalse);
+    await tap(tester, find.widgetWithText(SwitchListTile, '吃子音效'));
+    await tap(tester, find.widgetWithText(SwitchListTile, '将军音效'));
+    await tap(tester, find.widgetWithText(SwitchListTile, '绝杀音效'));
+    expect(store.value?.playCaptureSound, isFalse);
+    expect(store.value?.playCheckSound, isFalse);
+    expect(store.value?.playMateSound, isFalse);
     await tester.pumpWidget(const SizedBox.shrink());
   });
   testWidgets(

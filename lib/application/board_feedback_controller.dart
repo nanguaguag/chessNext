@@ -28,9 +28,25 @@ class BoardFeedbackController {
     final revision = session.positionRevision;
     final selected = session.selected;
     if (epoch == _epoch && revision != _positionRevision) {
-      final move = session.tree.current.move;
-      if (move != null && preferences.value.playMoveSound) {
-        unawaited(_play(AudioFeedbackKind.move));
+      final node = session.tree.current;
+      final move = node.move;
+      final parent = node.parentId == null
+          ? null
+          : session.tree.node(node.parentId!);
+      if (move != null && parent != null) {
+        final prefs = preferences.value;
+        final kind =
+            session.outcome.status == BoardStatus.checkmate
+            ? (prefs.playMateSound ? AudioFeedbackKind.mate : null)
+            : node.position.isInCheck(node.position.turn)
+            ? (prefs.playCheckSound ? AudioFeedbackKind.check : null)
+            : parent.position.at(move.to) != null
+            ? (prefs.playCaptureSound ? AudioFeedbackKind.capture : null)
+            : null;
+        final fallback = kind == null && prefs.playMoveSound
+            ? AudioFeedbackKind.move
+            : kind;
+        if (fallback != null) unawaited(_play(fallback));
       }
     } else if (epoch == _epoch &&
         revision == _positionRevision &&

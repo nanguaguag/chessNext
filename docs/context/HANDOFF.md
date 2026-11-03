@@ -1,5 +1,15 @@
 # 会话交接
 
+## 2026-11-03 / M4-07 交接
+
+当前用户授权持续审计并实现；每功能根 `flutter test` + `flutter analyze` 通过后单独中文Conventional Commit，用户要求功能全部对齐后再停。线上采用自建可替换后端并提供部署方案；本轮仅继续离线F28，不扩到云能力。先读AGENTS/README/CURRENT_STATE/DECISIONS；检查时工作树从干净提交 `964fcd7` 起。
+
+M4-07为F28/B23新增吃子/将军/将死事件偏好、原创WAV、分类播放及设置开关；源站事件组合优先级未知，项目决策按将死>将军>吃子>普通落子，特殊开关关时普通走棋开关接管。E38补证将军/吃子/绝杀的更换弹层均显示默认试听和独立本机导入说明；没有成功展示文件选择状态，不能称导入成功。素材哈希/决策见LICENSING和ADR-043。新增3素材；修改端口、Controller、audioplayers adapter、preferences/settings、测试、功能矩阵/证据/差距/待办/追踪/许可/决策。
+
+验证实际通过：专项Dart+组件13/13；macOS `flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 1/1加载五条本机WAV；根 `flutter test --reporter compact` 440通过/5跳过（PIKAFISH环境未设）；`flutter analyze` 无问题；普通 `flutter run -d macos` 构建运行PID16653，VM Service `127.0.0.1:49641`。全量首跑既有键盘焦点遍历因设置多三个Switch失败，piece-size测试Tab上限由10扩至16，单项及全量复验通过。需保留初失败记录。Xcode可能打印既有Swift6 warning；其它平台、人工听感/视觉未验。flutter run会话仍运行，不要关闭用户旧窗口。没有其它后台任务。
+
+先检查 `git diff --check`、`git status`、生成器重跑后校验wav哈希，再单独提交：`feat(audio): 增加吃子将军与将死提示音`。随后按B23下一片审计/实现音效选择器或自定义本地导入；不要宣称F28完成。
+
 2026-11-02 Asia/Shanghai。先AGENTS/README/CURRENT_STATE/DECISIONS、git status/log与所涉模块文档。用户授权持续实现、每功能完整flutter test+flutter analyze后中文Conventional Commit、实际macOS运行；在线自建可替换后端+部署方案。许可决定暂缓不阻挡，保留来源；没有分代理授权。不能以局部完成结束全站审查。
 
 ## 当前检查点

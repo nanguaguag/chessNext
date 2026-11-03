@@ -13,6 +13,9 @@ void main() {
     addTearDown(audio.dispose);
     await audio.play(AudioFeedbackKind.select);
     await audio.play(AudioFeedbackKind.move);
+    await audio.play(AudioFeedbackKind.capture);
+    await audio.play(AudioFeedbackKind.check);
+    await audio.play(AudioFeedbackKind.mate);
     expect(tester.takeException(), isNull);
   });
 }

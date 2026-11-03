@@ -117,6 +117,15 @@ class PreferencesController extends ChangeNotifier {
             playSelectionSound: _edited.contains('playSelectionSound')
                 ? previous.playSelectionSound
                 : null,
+            playCaptureSound: _edited.contains('playCaptureSound')
+                ? previous.playCaptureSound
+                : null,
+            playCheckSound: _edited.contains('playCheckSound')
+                ? previous.playCheckSound
+                : null,
+            playMateSound: _edited.contains('playMateSound')
+                ? previous.playMateSound
+                : null,
             textSize: _edited.contains('textSize') ? previous.textSize : null,
             pieceSizePercent: _edited.contains('pieceSizePercent')
                 ? previous.pieceSizePercent
@@ -178,6 +187,12 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(playMoveSound: enabled));
   Future<void> setPlaySelectionSound(bool enabled) =>
       apply(value.copyWith(playSelectionSound: enabled));
+  Future<void> setPlayCaptureSound(bool enabled) =>
+      apply(value.copyWith(playCaptureSound: enabled));
+  Future<void> setPlayCheckSound(bool enabled) =>
+      apply(value.copyWith(playCheckSound: enabled));
+  Future<void> setPlayMateSound(bool enabled) =>
+      apply(value.copyWith(playMateSound: enabled));
   Future<void> setTextSize(TextSizePreference size) =>
       apply(value.copyWith(textSize: size));
   Future<void> setShowCoordinates(bool visible) =>
@@ -241,6 +256,15 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.playSelectionSound != value.playSelectionSound) {
       _edited.add('playSelectionSound');
+    }
+    if (next.playCaptureSound != value.playCaptureSound) {
+      _edited.add('playCaptureSound');
+    }
+    if (next.playCheckSound != value.playCheckSound) {
+      _edited.add('playCheckSound');
+    }
+    if (next.playMateSound != value.playMateSound) {
+      _edited.add('playMateSound');
     }
     if (next.textSize != value.textSize) _edited.add('textSize');
     if (next.pieceSizePercent != value.pieceSizePercent) {

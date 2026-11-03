@@ -76,6 +76,36 @@ class BoardDisplayDialog extends StatelessWidget {
               ),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
+                title: const Text('吃子音效'),
+                subtitle: const Text('吃掉对方棋子时播放本机离线音效'),
+                value: preferences.value.playCaptureSound,
+                onChanged: preferences.loading
+                    ? null
+                    : (enabled) =>
+                          unawaited(preferences.setPlayCaptureSound(enabled)),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('将军音效'),
+                subtitle: const Text('将军时播放；将死提示优先'),
+                value: preferences.value.playCheckSound,
+                onChanged: preferences.loading
+                    ? null
+                    : (enabled) =>
+                          unawaited(preferences.setPlayCheckSound(enabled)),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
+                title: const Text('绝杀音效'),
+                subtitle: const Text('将死时播放；与普通走棋音效互斥'),
+                value: preferences.value.playMateSound,
+                onChanged: preferences.loading
+                    ? null
+                    : (enabled) =>
+                          unawaited(preferences.setPlayMateSound(enabled)),
+              ),
+              SwitchListTile(
+                contentPadding: EdgeInsets.zero,
                 title: const Text('选子音效'),
                 subtitle: const Text('选中己方棋子时播放本机离线音效'),
                 value: preferences.value.playSelectionSound,

@@ -1,4 +1,4 @@
-enum AudioFeedbackKind { select, move }
+enum AudioFeedbackKind { select, move, capture, check, mate }
 
 /// Offline, best-effort presentation feedback. Failures never reject a move.
 abstract interface class AudioFeedbackPort {

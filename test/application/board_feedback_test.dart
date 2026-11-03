@@ -32,6 +32,11 @@ void main() {
     expect(String.fromCharCodes(select.sublist(36, 40)), 'data');
     expect(select.length, 44 + 22050 * 45 ~/ 1000);
     expect(move.length, 44 + 22050 * 75 ~/ 1000);
+    for (final frequency in [660, 740, 980]) {
+      final special = toneWave(frequency: frequency, durationMs: 90);
+      expect(String.fromCharCodes(special.take(4)), 'RIFF');
+      expect(special.length, lessThan(44 + 22050));
+    }
     expect(select, isNot(move));
     for (final byte in select.skip(44)) {
       expect(byte, inInclusiveRange(0, 255));
@@ -113,9 +118,15 @@ void main() {
     expect(old.containsKey('playMoveSound'), isFalse);
     expect(old.containsKey('playSelectionSound'), isFalse);
     expect(AppPreferences.fromJson(old).playMoveSound, isTrue);
+    expect(AppPreferences.fromJson(old).playCaptureSound, isTrue);
+    expect(AppPreferences.fromJson(old).playCheckSound, isTrue);
+    expect(AppPreferences.fromJson(old).playMateSound, isTrue);
     final muted = AppPreferences(
       playMoveSound: false,
       playSelectionSound: true,
+      playCaptureSound: false,
+      playCheckSound: true,
+      playMateSound: false,
     );
     expect(AppPreferences.fromJson(muted.toJson()), muted);
     expect(
@@ -123,4 +134,63 @@ void main() {
       throwsFormatException,
     );
   });
+
+  test(
+    'capture has a distinct event when it does not also give check',
+    () async {
+      final session = BoardSession(
+        initial: Position.fromFen('4k4/9/9/9/9/9/9/p8/R8/3K5 w - - 0 1'),
+      );
+      final engine = EngineSessionController(session, null);
+      final preferences = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      final audio = FakeAudio();
+      await preferences.initialize();
+      final feedback = BoardFeedbackController(session, preferences, audio);
+      try {
+        expect(session.playMove(Move.parse('a1a2')), isTrue);
+        await Future<void>.delayed(Duration.zero);
+        expect(audio.events, [AudioFeedbackKind.capture]);
+      } finally {
+        await feedback.dispose();
+        preferences.dispose();
+        engine.dispose();
+        session.dispose();
+      }
+    },
+  );
+
+  test(
+    'check has a dedicated event and can fall back to ordinary move',
+    () async {
+      final session = BoardSession(
+        initial: Position.fromFen('4k4/3R5/9/9/9/9/9/9/9/3K5 w - - 0 1'),
+      );
+      final engine = EngineSessionController(session, null);
+      final preferences = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      final audio = FakeAudio();
+      await preferences.initialize();
+      final feedback = BoardFeedbackController(session, preferences, audio);
+      try {
+        expect(session.playMove(Move.parse('d8e8')), isTrue);
+        await Future<void>.delayed(Duration.zero);
+        expect(audio.events, [AudioFeedbackKind.check]);
+        await preferences.setPlayCheckSound(false);
+        session.undo();
+        session.playMove(Move.parse('d8e8'));
+        await Future<void>.delayed(Duration.zero);
+        expect(audio.events.last, AudioFeedbackKind.move);
+      } finally {
+        await feedback.dispose();
+        preferences.dispose();
+        engine.dispose();
+        session.dispose();
+      }
+    },
+  );
 }

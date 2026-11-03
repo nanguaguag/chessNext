@@ -33,6 +33,9 @@ final class AppPreferences {
     this.animationSpeed = AnimationSpeed.standard,
     this.playMoveSound = true,
     this.playSelectionSound = true,
+    this.playCaptureSound = true,
+    this.playCheckSound = true,
+    this.playMateSound = true,
     this.reviewMode = ReviewMode.best,
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
@@ -70,6 +73,9 @@ final class AppPreferences {
   final AnimationSpeed animationSpeed;
   final bool playMoveSound;
   final bool playSelectionSound;
+  final bool playCaptureSound;
+  final bool playCheckSound;
+  final bool playMateSound;
   final ReviewMode reviewMode;
   final TextSizePreference textSize;
   final bool showCoordinates;
@@ -88,6 +94,9 @@ final class AppPreferences {
     AnimationSpeed? animationSpeed,
     bool? playMoveSound,
     bool? playSelectionSound,
+    bool? playCaptureSound,
+    bool? playCheckSound,
+    bool? playMateSound,
     ReviewMode? reviewMode,
     TextSizePreference? textSize,
     bool? showCoordinates,
@@ -109,6 +118,9 @@ final class AppPreferences {
     animationSpeed: animationSpeed ?? this.animationSpeed,
     playMoveSound: playMoveSound ?? this.playMoveSound,
     playSelectionSound: playSelectionSound ?? this.playSelectionSound,
+    playCaptureSound: playCaptureSound ?? this.playCaptureSound,
+    playCheckSound: playCheckSound ?? this.playCheckSound,
+    playMateSound: playMateSound ?? this.playMateSound,
     reviewMode: reviewMode ?? this.reviewMode,
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
@@ -138,6 +150,9 @@ final class AppPreferences {
       'animationSpeed': animationSpeed.name,
     if (!playMoveSound) 'playMoveSound': false,
     if (!playSelectionSound) 'playSelectionSound': false,
+    if (!playCaptureSound) 'playCaptureSound': false,
+    if (!playCheckSound) 'playCheckSound': false,
+    if (!playMateSound) 'playMateSound': false,
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
@@ -175,6 +190,11 @@ final class AppPreferences {
         (json.containsKey('playMoveSound') && json['playMoveSound'] is! bool) ||
         (json.containsKey('playSelectionSound') &&
             json['playSelectionSound'] is! bool) ||
+        (json.containsKey('playCaptureSound') &&
+            json['playCaptureSound'] is! bool) ||
+        (json.containsKey('playCheckSound') &&
+            json['playCheckSound'] is! bool) ||
+        (json.containsKey('playMateSound') && json['playMateSound'] is! bool) ||
         (json.containsKey('showCoordinates') &&
             json['showCoordinates'] is! bool) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
@@ -212,6 +232,9 @@ final class AppPreferences {
         ),
         playMoveSound: json['playMoveSound'] as bool? ?? true,
         playSelectionSound: json['playSelectionSound'] as bool? ?? true,
+        playCaptureSound: json['playCaptureSound'] as bool? ?? true,
+        playCheckSound: json['playCheckSound'] as bool? ?? true,
+        playMateSound: json['playMateSound'] as bool? ?? true,
         textSize: TextSizePreference.values.byName(
           json['textSize'] as String? ?? 'system',
         ),
@@ -242,6 +265,9 @@ final class AppPreferences {
       animationSpeed == other.animationSpeed &&
       playMoveSound == other.playMoveSound &&
       playSelectionSound == other.playSelectionSound &&
+      playCaptureSound == other.playCaptureSound &&
+      playCheckSound == other.playCheckSound &&
+      playMateSound == other.playMateSound &&
       textSize == other.textSize &&
       showCoordinates == other.showCoordinates &&
       pieceSizePercent == other.pieceSizePercent &&
@@ -251,7 +277,7 @@ final class AppPreferences {
       thinkTimeMs == other.thinkTimeMs &&
       guideVersion == other.guideVersion;
   @override
-  int get hashCode => Object.hash(
+  int get hashCode => Object.hashAll([
     reviewMode,
     selectionStyle,
     lastMoveMarker,
@@ -264,6 +290,9 @@ final class AppPreferences {
     animationSpeed,
     playMoveSound,
     playSelectionSound,
+    playCaptureSound,
+    playCheckSound,
+    playMateSound,
     textSize,
     showCoordinates,
     pieceSizePercent,
@@ -272,5 +301,5 @@ final class AppPreferences {
     multiPv,
     thinkTimeMs,
     guideVersion,
-  );
+  ]);
 }

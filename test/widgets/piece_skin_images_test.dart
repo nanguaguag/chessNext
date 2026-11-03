@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:chess_next/features/board/xiangqi_board.dart';
+import 'package:chess_next/features/board/board_display_scope.dart';
 import 'package:chess_next/ports/piece_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -46,5 +47,33 @@ void main() {
       ),
       findsNothing,
     );
+  });
+
+  testWidgets('skin-specific scale combines with global size', (tester) async {
+    final position = Position.initial();
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Center(
+            child: SizedBox(
+              width: 450,
+              child: BoardDisplayScope(
+                showCoordinates: true,
+                pieceSizePercent: 150,
+                pieceSkinSizePercent: 110,
+                child: BoardSurface(at: position.at, onTap: (_) {}),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    final transform = tester.widget<Transform>(
+      find.descendant(
+        of: find.byKey(const ValueKey('square-a9')),
+        matching: find.byKey(const ValueKey('piece-size')),
+      ),
+    );
+    expect(transform.transform.storage[0], closeTo(1.65, 0.001));
   });
 }

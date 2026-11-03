@@ -329,6 +329,9 @@ class _ChessNextAppState extends State<ChessNextApp>
         pieceSkin: preferences.value.pieceSkin,
         pieceImages: pieceImages.imagesFor(preferences.value.pieceSkin),
         pieceSizePercent: preferences.value.pieceSizePercent,
+        pieceSkinSizePercent: preferences.value.pieceSkin == PieceSkin.roundSeal
+            ? preferences.value.roundSealPieceScalePercent
+            : preferences.value.squareInkPieceScalePercent,
         showAnalysisArrows: preferences.value.showAnalysisArrows,
         showVariationArrows: preferences.value.showVariationArrows,
         showMoveGrades: preferences.value.showMoveGrades,

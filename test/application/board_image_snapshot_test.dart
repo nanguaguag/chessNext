@@ -26,6 +26,7 @@ void main() {
       showCoordinates: false,
       boardSkin: BoardSkin.jade,
       pieceSkin: PieceSkin.squareInk,
+      squareInkPieceScalePercent: 110,
       pieceSizePercent: 135,
       arrowHead: ArrowHeadStyle.wide,
       lastMoveMarker: LastMoveMarkerStyle.box,
@@ -46,6 +47,7 @@ void main() {
     expect(snapshot.showCoordinates, isFalse);
     expect(snapshot.boardSkin, BoardSkin.jade);
     expect(snapshot.pieceSkin, PieceSkin.squareInk);
+    expect(snapshot.pieceSkinSizePercent, 110);
     expect(snapshot.pieceSizePercent, 135);
     expect(snapshot.arrowHead, ArrowHeadStyle.wide);
     expect(snapshot.lastMoveStyle, LastMoveMarkerStyle.box);

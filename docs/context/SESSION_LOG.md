@@ -545,3 +545,12 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 用户图片适配新增14类PieceImageSlot，允许每个圆章/方章预设有独立覆盖。Picker过滤PNG/JPG/JPEG并有界读取；领域校验扩展、PNG/JPEG签名/尺寸与真实解码；最大512KiB/1024边长/1MP。FilePieceImageRepository按预设目录写入图片和schema1受限清单，检查符号链接目录，暂存后移动；加载跳过失效素材，恢复默认删除安全匹配清单记录。Material3逐槽缩略图替换/恢复。BoardSurface读当前图像，图片/GIF快照freeze bytes。
 
 专项`flutter test test/application/piece_image_library_test.dart --reporter expanded` 4/4，`flutter test test/widgets/piece_skin_images_test.dart --reporter expanded` 1/1。根`flutter test --reporter compact` 461 pass/5 skip（官方引擎fixture env缺失），`flutter analyze`0问题。`flutter run -d macos` Build succeeded、VM Service `127.0.0.1:61522`、PID31311；插件既有flutter_tts SwiftPM未来兼容提示。未做macOS文件选择器实际交互，只验证真实应用已运行；Android/iOS/Windows/Linux/web平台选择/存储未验。未增加依赖或外部图像。网页导入成功仍U；ZIP/多选/文件夹、编辑几何、棋盘图片和完整列表仍未实现。`git diff --check`通过，功能提交`a755228 feat(skins): 支持本机替换棋子图片`。命令：`dart format ...`、两专项flutter test、`flutter test --reporter compact`、`flutter analyze`、`flutter run -d macos`。
+## 2026-11-03 / E43 / F21 续审
+
+桌面IAB访客从默认`#/settings/board`→棋子选择器→新建；无账号/谱数据。大小tab初始50；滑杆左侧操作为20.5，最右侧为70（当前只据AX数值，最小值精确边界不明）。位置页方向键右移一次显示“右1”、归零从disabled变enabled，点自动对正。阴影默认“无”，切换“柔和”后显示方向138°、距离6.7%、模糊2.4%、浓淡50%。图片页14阵营/子类槽位各见“用默认”、替换、禁用恢复默认。保存、使用、导出未点，行为仍U。返回提示“放弃修改/改动还没保存，返回会丢掉”，确认后返回设置页；后续full AX确认设置为默认棋/盘、100%、坐标开、倒置关，无谱修改。没有选择图片、点赞、在线应用或上传。
+
+## 2026-11-03 / M4-15 / F21 → B24 本机棋子皮肤独立缩放
+
+两个`AppPreferences`字段`roundSealPieceScalePercent`/`squareInkPieceScalePercent`，默认100、80–120整数；旧schema缺值取100，未知/越界拒绝。设置页当前皮肤下显示Material3 slider。可视比例=全局棋子比例×皮肤比例；新增BoardDisplayScope只读字段且纳入通知，BoardSurface Transform不影响hit test；PNG/GIF snapshot捕获当前比例。
+
+目标`flutter test test/application/piece_skin_scale_test.dart test/application/board_gif_test.dart test/application/board_image_snapshot_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded` 12/12通过。首次目标运行 `PieceSkin` import遗漏而编译失败；补`board_appearance.dart`后通过；初analyze指出fake_engine unused import，删除。根`flutter test --reporter compact`464通过/5跳过（Pikafish official harness环境未配置）；`flutter analyze`无问题。`flutter run -d macos`构建启动 PID32670，VM Service `127.0.0.1:63024`。没有新增依赖/图像。下一项按当前计划位置/对齐编辑。E43端点未核全，M4-15的80–120是P。

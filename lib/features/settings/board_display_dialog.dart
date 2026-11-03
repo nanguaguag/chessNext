@@ -103,6 +103,34 @@ class BoardDisplayDialog extends StatelessWidget {
                       },
               ),
               const Text('棋子样式会同步决定“随棋子皮肤”的走棋音效。'),
+              Text(
+                '当前棋子样式大小：${preferences.value.pieceSkin == PieceSkin.roundSeal ? preferences.value.roundSealPieceScalePercent : preferences.value.squareInkPieceScalePercent}%',
+              ),
+              Slider(
+                key: ValueKey(
+                  'piece-skin-size-${preferences.value.pieceSkin.name}',
+                ),
+                value:
+                    (preferences.value.pieceSkin == PieceSkin.roundSeal
+                            ? preferences.value.roundSealPieceScalePercent
+                            : preferences.value.squareInkPieceScalePercent)
+                        .toDouble(),
+                min: 80,
+                max: 120,
+                divisions: 40,
+                label:
+                    '${preferences.value.pieceSkin == PieceSkin.roundSeal ? preferences.value.roundSealPieceScalePercent : preferences.value.squareInkPieceScalePercent}%',
+                semanticFormatterCallback: (value) => '${value.round()}%',
+                onChanged: preferences.loading
+                    ? null
+                    : (value) => unawaited(
+                        preferences.setPieceSkinScale(
+                          preferences.value.pieceSkin,
+                          value.round(),
+                        ),
+                      ),
+              ),
+              const Text('大小只对当前棋子样式生效，并与下方全局棋子大小相乘；默认100%，范围80%–120%。'),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(

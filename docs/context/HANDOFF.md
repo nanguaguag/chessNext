@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-03 / M4-15 交接（待提交）
+
+网页E43已核对新建棋子编辑器：大小初值50、最右观察70、左侧附近20.5；位置四方向步进/自动对正/归零；阴影无/柔和/明显和四个参数字段。仅操作了位置右移后自动对正、选择柔和，然后按返回确认放弃草稿。页面恢复到设置页默认棋盘/棋子/100%/坐标开/倒置关，无用户棋谱更改。保存/使用/导出按钮未点，结果为U。E43已记录。
+
+M4-15实现两个 PieceSkin 独立大小偏好80–120%、1%步进、默认100%，与现有全局棋子大小相乘。迁入AppPreferences schema1可选字段，Controller支持异步读取时并发修改保留；BoardDisplayScope传当前皮肤比例；PNG/GIF快照冻结比例。专项通过；根464通过/5跳过，analyze0；macOS run PID32670 / VM `127.0.0.1:63024`。首次目标测试因测试文件漏导入PieceSkin失败、随后analyze报unused import；补导入后通过，记录SESSION_LOG。
+
+`git diff --check`后单独提交`feat(skins): 支持本机预设棋子缩放`，再写入提交哈希。M4-15范围是项目P，源站精确最小值未知。后续B24优先设计/实现本机每皮肤位置偏移，归零/自动对正保持边界明确；阴影参数与原图/布局作用模型、棋盘图片、ZIP导入另片。全站对标未完成。
+
 ## 2026-11-03 / M4-14 交接
 
 M4-14完成F21单棋子图片替换。实现`PieceImagePicker`、`PieceImageRepository`、`PieceImageLibraryController`及PNG/JPEG校验，本机支持目录存储；每种PieceSkin分别保存红黑14个棋子槽位。Material3弹窗可预览当前图、逐项替换/恢复。512 KiB、1024×1024、1MP。图像进入主盘、编辑器及PNG/GIF快照；导入取消不改变原值，读取损坏覆盖时回退默认图。格式/尺寸/Controller/file repository 4项、棋盘映射Widget1项定向通过。

@@ -88,6 +88,7 @@ class BoardSurface extends StatefulWidget {
     this.pieceSkin,
     this.pieceImages,
     this.pieceSizePercent,
+    this.pieceSkinSizePercent,
     this.showAnalysisArrows,
     this.arrowHeadStyle,
     this.variations = const [],
@@ -102,6 +103,8 @@ class BoardSurface extends StatefulWidget {
              (pieceSizePercent >= 10 &&
                  pieceSizePercent <= 200 &&
                  pieceSizePercent % 5 == 0),
+         pieceSkinSizePercent == null ||
+             (pieceSkinSizePercent >= 80 && pieceSkinSizePercent <= 120),
        );
   final Piece? Function(Square) at;
   final ValueChanged<Square> onTap;
@@ -123,6 +126,7 @@ class BoardSurface extends StatefulWidget {
   final PieceSkin? pieceSkin;
   final Map<PieceImageSlot, Uint8List>? pieceImages;
   final int? pieceSizePercent;
+  final int? pieceSkinSizePercent;
   final bool? showAnalysisArrows;
   final ArrowHeadStyle? arrowHeadStyle;
   final List<VariationArrow> variations;
@@ -466,6 +470,9 @@ class _BoardSurfaceState extends State<BoardSurface> {
       key: const ValueKey('piece-size'),
       scale:
           (widget.pieceSizePercent ?? BoardDisplayScope.pieceSizeOf(context)) /
+          100 *
+          (widget.pieceSkinSizePercent ??
+              BoardDisplayScope.pieceSkinSizeOf(context)) /
           100,
       transformHitTests: false,
       child: face,

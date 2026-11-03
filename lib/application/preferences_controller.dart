@@ -133,6 +133,14 @@ class PreferencesController extends ChangeNotifier {
             pieceSizePercent: _edited.contains('pieceSizePercent')
                 ? previous.pieceSizePercent
                 : null,
+            roundSealPieceScalePercent:
+                _edited.contains('roundSealPieceScalePercent')
+                ? previous.roundSealPieceScalePercent
+                : null,
+            squareInkPieceScalePercent:
+                _edited.contains('squareInkPieceScalePercent')
+                ? previous.squareInkPieceScalePercent
+                : null,
             showCoordinates: _edited.contains('showCoordinates')
                 ? previous.showCoordinates
                 : null,
@@ -219,6 +227,16 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(pieceSkin: skin));
   Future<void> setPieceSize(int percent) =>
       apply(value.copyWith(pieceSizePercent: percent));
+  Future<void> setPieceSkinScale(PieceSkin skin, int percent) => apply(
+    value.copyWith(
+      roundSealPieceScalePercent: skin == PieceSkin.roundSeal
+          ? percent
+          : value.roundSealPieceScalePercent,
+      squareInkPieceScalePercent: skin == PieceSkin.squareInk
+          ? percent
+          : value.squareInkPieceScalePercent,
+    ),
+  );
   Future<void> setAnalysisArrows(bool visible) =>
       apply(value.copyWith(showAnalysisArrows: visible));
   Future<void> setVariationArrows(bool visible) =>
@@ -290,6 +308,12 @@ class PreferencesController extends ChangeNotifier {
     if (next.textSize != value.textSize) _edited.add('textSize');
     if (next.pieceSizePercent != value.pieceSizePercent) {
       _edited.add('pieceSizePercent');
+    }
+    if (next.roundSealPieceScalePercent != value.roundSealPieceScalePercent) {
+      _edited.add('roundSealPieceScalePercent');
+    }
+    if (next.squareInkPieceScalePercent != value.squareInkPieceScalePercent) {
+      _edited.add('squareInkPieceScalePercent');
     }
     if (next.showCoordinates != value.showCoordinates) {
       _edited.add('showCoordinates');

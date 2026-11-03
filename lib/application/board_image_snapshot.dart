@@ -14,6 +14,7 @@ class BoardImageSnapshot {
     required this.position,
     required this.showCoordinates,
     required this.pieceSizePercent,
+    this.pieceSkinSizePercent = 100,
     required this.lastMoveStyle,
     required this.arrowHead,
     this.lastMove,
@@ -64,6 +65,9 @@ class BoardImageSnapshot {
     pieceImages: pieceImages,
     showCoordinates: prefs.showCoordinates,
     pieceSizePercent: prefs.pieceSizePercent,
+    pieceSkinSizePercent: prefs.pieceSkin == PieceSkin.roundSeal
+        ? prefs.roundSealPieceScalePercent
+        : prefs.squareInkPieceScalePercent,
     lastMoveStyle: prefs.lastMoveMarker,
     arrowHead: prefs.arrowHead,
   );
@@ -76,6 +80,7 @@ class BoardImageSnapshot {
   final PieceSkin pieceSkin;
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final int pieceSizePercent;
+  final int pieceSkinSizePercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;
 }

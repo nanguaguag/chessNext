@@ -44,6 +44,8 @@ final class AppPreferences {
     this.boardSkin = BoardSkin.parchment,
     this.pieceSkin = PieceSkin.roundSeal,
     this.pieceSizePercent = 100,
+    this.roundSealPieceScalePercent = 100,
+    this.squareInkPieceScalePercent = 100,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
     this.showEvaluationBar = true,
@@ -69,7 +71,11 @@ final class AppPreferences {
         thinkTimeMs < 50 ||
         thinkTimeMs > 600000 ||
         guideVersion < 0 ||
-        guideVersion > 1000000) {
+        guideVersion > 1000000 ||
+        roundSealPieceScalePercent < 80 ||
+        roundSealPieceScalePercent > 120 ||
+        squareInkPieceScalePercent < 80 ||
+        squareInkPieceScalePercent > 120) {
       throw ArgumentError('Invalid preferences');
     }
   }
@@ -88,6 +94,8 @@ final class AppPreferences {
   final BoardSkin boardSkin;
   final PieceSkin pieceSkin;
   final int pieceSizePercent;
+  final int roundSealPieceScalePercent;
+  final int squareInkPieceScalePercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
   final bool showEvaluationBar;
@@ -113,6 +121,8 @@ final class AppPreferences {
     BoardSkin? boardSkin,
     PieceSkin? pieceSkin,
     int? pieceSizePercent,
+    int? roundSealPieceScalePercent,
+    int? squareInkPieceScalePercent,
     bool? showAnalysisArrows,
     bool? showVariationArrows,
     bool? showEvaluationBar,
@@ -141,6 +151,10 @@ final class AppPreferences {
     boardSkin: boardSkin ?? this.boardSkin,
     pieceSkin: pieceSkin ?? this.pieceSkin,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
+    roundSealPieceScalePercent:
+        roundSealPieceScalePercent ?? this.roundSealPieceScalePercent,
+    squareInkPieceScalePercent:
+        squareInkPieceScalePercent ?? this.squareInkPieceScalePercent,
     showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
     showVariationArrows: showVariationArrows ?? this.showVariationArrows,
     showEvaluationBar: showEvaluationBar ?? this.showEvaluationBar,
@@ -176,6 +190,10 @@ final class AppPreferences {
     if (boardSkin != BoardSkin.parchment) 'boardSkin': boardSkin.name,
     if (pieceSkin != PieceSkin.roundSeal) 'pieceSkin': pieceSkin.name,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
+    if (roundSealPieceScalePercent != 100)
+      'roundSealPieceScalePercent': roundSealPieceScalePercent,
+    if (squareInkPieceScalePercent != 100)
+      'squareInkPieceScalePercent': squareInkPieceScalePercent,
     if (!showAnalysisArrows) 'showAnalysisArrows': false,
     if (!showVariationArrows) 'showVariationArrows': false,
     if (!showEvaluationBar) 'showEvaluationBar': false,
@@ -225,6 +243,10 @@ final class AppPreferences {
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('pieceSizePercent') &&
             json['pieceSizePercent'] is! int) ||
+        (json.containsKey('roundSealPieceScalePercent') &&
+            json['roundSealPieceScalePercent'] is! int) ||
+        (json.containsKey('squareInkPieceScalePercent') &&
+            json['squareInkPieceScalePercent'] is! int) ||
         ![
           'threads',
           'hashMb',
@@ -274,6 +296,10 @@ final class AppPreferences {
           json['pieceSkin'] as String? ?? 'roundSeal',
         ),
         pieceSizePercent: json['pieceSizePercent'] as int? ?? 100,
+        roundSealPieceScalePercent:
+            json['roundSealPieceScalePercent'] as int? ?? 100,
+        squareInkPieceScalePercent:
+            json['squareInkPieceScalePercent'] as int? ?? 100,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
@@ -308,6 +334,8 @@ final class AppPreferences {
       boardSkin == other.boardSkin &&
       pieceSkin == other.pieceSkin &&
       pieceSizePercent == other.pieceSizePercent &&
+      roundSealPieceScalePercent == other.roundSealPieceScalePercent &&
+      squareInkPieceScalePercent == other.squareInkPieceScalePercent &&
       threads == other.threads &&
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
@@ -337,6 +365,8 @@ final class AppPreferences {
     boardSkin,
     pieceSkin,
     pieceSizePercent,
+    roundSealPieceScalePercent,
+    squareInkPieceScalePercent,
     threads,
     hashMb,
     multiPv,

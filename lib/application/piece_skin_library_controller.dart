@@ -59,6 +59,21 @@ class PieceSkinLibraryController extends ChangeNotifier {
     return null;
   }
 
+  Future<void> select(String id) async {
+    if (loading) return;
+    final builtIn = PieceSkin.values
+        .where((skin) => skin.name == id)
+        .firstOrNull;
+    if (builtIn != null) {
+      await preferences.selectPieceSkin(builtIn, builtIn.name);
+      return;
+    }
+    final profile = definitionFor(id);
+    if (profile != null) {
+      await preferences.selectPieceSkin(profile.baseSkin, id);
+    }
+  }
+
   Future<bool> updateAppearance(
     String id, {
     int? scalePercent,

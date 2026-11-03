@@ -540,3 +540,4 @@ E43观察新建皮肤编辑页含大小/位置控件，右移一次显示1%、�
 E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文件或操作导入；格式、目录结构、覆盖和成功语义全部U。M4-21复用PieceImagePicker/ImageRepository既有端口及file_selector，无新增依赖。多选上限14张、总量7 MiB（P），每图沿用512 KiB、PNG/JPEG、1024边长、1MP与真实解码验证。Material3预览后映射至不重复槽位，名称只做建议。整批校验在任一写入前完成；写入仍逐槽原子，跨槽不是事务；故障显示部分成功，保留成功项并支持跳过已成功槽重试。
 
 最终专项 `flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 10/10通过；根`flutter test --reporter compact` 481通过/5跳过(exit0，5项需官方引擎/NNUE环境)；`flutter analyze`无问题；`flutter run -d macos` Build/Sync成功PID56134、VM `127.0.0.1:53841`。`git diff --check`通过。CUA窗口视觉和macOS文件选择器人工交互not run。ZIP、文件夹、库管理、跨平台选择器及网页实际导入边界仍未验。
+| M4-24 | F21/B24 本机皮肤库搜索、排序和选择 | `flutter test --reporter compact` 488通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID64446/VM 127.0.0.1:49993 | E42源站显式回车搜索/五类排序可追溯；本机实现默认/名称/最近创建。点赞/作者需在线元数据；人工视觉验收未做 |

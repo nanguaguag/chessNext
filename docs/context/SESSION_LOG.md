@@ -1,5 +1,13 @@
 # 会话日志
 
+## 2026-11-04 / M4-24 / F21,B24 本机皮肤库搜索排序和选择
+
+承接持续对齐授权，先读取AGENTS、README、CURRENT_STATE、HANDOFF、DECISIONS、flutter-feature/feature-audit/quality-gate/session-handoff技能及B24/E42。M4-23已按`c3b9dd2`提交。E42确认搜索输入后回车才筛选，源站有默认/赞最多/名称/作者/最新导入五类排序；本机没有点赞和作者元数据，不生成假值。
+
+本机目录新增名称搜索（显式提交、清空恢复）、默认/名称/最近创建排序；点击条目实际持久化选择并关闭。首轮目标测试编译失败：调用`selectPieceSkin`缺第二个ID参数；修正后目标`flutter test test/application/piece_skin_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`11/11通过。中途`flutter analyze --no-pub`发现curly-braces风格info，补块后最终根测试再次通过、分析无问题。最终`flutter test --reporter compact`488通过/5跳过；5跳过依赖本机官方Pikafish/NNUE环境。`flutter analyze --no-pub` No issues found。`flutter run -d macos` Build/Sync成功，app PID64446、VM `127.0.0.1:49993`；flutter_tts SwiftPM未来兼容warning。未做人工视觉验收。根测试日志`/tmp/chessnext-m424-final-test.log`。
+
+M4-24源码和追踪/缺口/交接文档待独立中文提交。下一独立功能M4-25逐用户阴影：用户皮肤现仅独立大小/位置，阴影仍写基础PieceSkin偏好；需检查application/port分层后决定可序列化模型，贯穿设置/BoardDisplayScope/图片与GIF快照，F21保持开放。无后台验证命令。
+
 ## 2026-11-04 / M4-23 / F21,B24 用户皮肤大小和位置
 
 承接用户持续对齐要求，先以E43为依据：访客页面新建皮肤编辑器可见大小/位置/自动对正；一次示值初始50、左侧约20.5、最右70、方向步进1。未操作保存/使用/导出，精确范围、成功语义均U。ADR-059确定本机P边界，大小80–120%每1%，位置±8%格宽每1%。
@@ -8,7 +16,7 @@
 
 定向`flutter test test/application/piece_skin_library_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 19/19；最终根`flutter test --reporter compact` 488通过/5跳过（官方Pikafish/NNUE环境缺少），`flutter analyze --no-pub`无问题；macOS run Build/Sync成功PID63084/VM `127.0.0.1:64399`。插件flutter_tts SwiftPM未来兼容warning；窗口视觉验收未做。第二次回归新增“缺失保存皮肤后退回基础”的测试，最终定向计数仍19/19、根最终488/5。
 
-M4-22已提交`b83193e feat(skins): 支持本机多套棋子皮肤`。M4-23代码/文档待单独中文commit；B24继续逐用户阴影、库搜索排序导出、ZIP/文件夹安全导入、在线目录和自建后端部署。F21/全站不完整。
+M4-22已提交`b83193e feat(skins): 支持本机多套棋子皮肤`；后续M4-23/M4-24以本日志顶部更新为准。B24继续逐用户阴影、库导出、ZIP/文件夹安全导入、在线目录和自建后端部署。F21/全站不完整。
 
 ## 2026-11-04 / M4-22 / F21,B24 本机用户棋子皮肤目录
 

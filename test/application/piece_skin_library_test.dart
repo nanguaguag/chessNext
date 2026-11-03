@@ -94,6 +94,10 @@ void main() {
     expect(prefs.value.selectedPieceSkinId, created.id);
     expect(preferencesRepository.value!.selectedPieceSkinId, created.id);
     expect(prefs.value.pieceSkin, PieceSkin.roundSeal);
+    await library.select(PieceSkin.squareInk.name);
+    expect(prefs.value.selectedPieceSkinId, PieceSkin.squareInk.name);
+    await library.select(created.id);
+    expect(prefs.value.selectedPieceSkinId, created.id);
     expect(
       await library.updateAppearance(
         created.id,

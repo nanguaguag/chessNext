@@ -1,12 +1,18 @@
 # 会话交接
 
+## 2026-11-04 / B24 持续交付：M4-24皮肤库搜索/排序/选择
+
+M4-24代码/专项/全量验证完成，待独立提交。皮肤库支持回车提交名称搜索、默认/名称/最近创建排序、点击条目持久化选择并关闭。E42确认源站回车行为和五种排序入口；点赞/作者排序因本机皮肤无对应数据，仍缺，不伪造。首次专项编译错误（selectPieceSkin需传皮肤和ID）已修复；最终目标专项11/11、根`flutter test --reporter compact`488通过/5跳过、`flutter analyze --no-pub`无问题、`flutter run -d macos`Build/Sync启动PID64446/VM `127.0.0.1:49993`。flutter_tts提示SwiftPM未来兼容；未做窗口视觉验收。日志`/tmp/chessnext-m424-final-test.log`。
+
+先检查`git diff --check`与工作树，提交M4-24中文独立提交。下一切片M4-25：把M4-20阴影参数扩展为每个用户皮肤独立设置，并贯穿主盘/编辑器/PNG/GIF；读取flutter-feature和quality-gate，检查阴影模型/快照/设置测试及M4-20 ADR。F21/全站未完成。
+
 ## 2026-11-04 / B24 持续交付：M4-23用户皮肤大小/位置
 
 用户要求继续推进至登录部分外所有可确认功能/设置，不因单项停下。持续实现和macOS运行、每功能根`flutter test`+`flutter analyze`通过后单独中文commit已授权；在线功能保留，按自建可替换后端并提供部署方案；离线优先只是顺序，无分代理，许可暂缓。
 
 E43观察新建皮肤编辑页的大小滑杆、位置方向键/自动对正；一次数值为大小初50、最右70、左侧约20.5、右移显示1。完整范围和保存/使用/导出未操作，仍U。ADR-059按项目方案P：本机用户皮肤大小80–120%、横纵偏移±8%格宽，步1%。创建复制当前参数，设置改动按用户皮肤独立持久化，主盘/编辑器/PNG/GIF一致。
 
-M4-23已完成待提交。定向19/19，最终根`flutter test --reporter compact`488通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID63084、VM `127.0.0.1:64399`。跳过要求官方Pikafish/NNUE配置，flutter_tts有SwiftPM未来warning；未做人工窗口视觉检查。
+M4-23已提交`c3b9dd2 feat(skins): 支持用户棋子大小位置独立调整`。定向19/19，最终根`flutter test --reporter compact`488通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID63084、VM `127.0.0.1:64399`。跳过要求官方Pikafish/NNUE配置，flutter_tts有SwiftPM未来warning；未做人工窗口视觉检查。
 
 M4-22已提交`b83193e feat(skins): 支持本机多套棋子皮肤`，建立皮肤目录/独立图片ID/创建选择重命名删除。M4-23补上大小/位置独立参数。剩余B24含逐用户阴影、搜索/排序/导出、ZIP/文件夹导入、在线目录+自建后端部署。工作树当前含M4-23源码/测试/文档，请提交前核对。F21/全站未完成。
 

@@ -3,10 +3,40 @@ import '../../application/board_appearance.dart';
 import 'package:flutter/material.dart';
 import '../../application/preferences_controller.dart';
 import '../../application/app_preferences.dart';
+import '../../application/audio_library_controller.dart';
+import '../../ports/audio_feedback.dart';
+import 'audio_options_dialog.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
-  const BoardDisplayDialog({super.key, required this.preferences});
+  const BoardDisplayDialog({
+    super.key,
+    required this.preferences,
+    this.audioLibrary,
+  });
   final PreferencesController preferences;
+  final AudioLibraryController? audioLibrary;
+
+  Widget _soundOptions(
+    BuildContext context,
+    AudioFeedbackKind kind,
+    String label,
+  ) {
+    final library = audioLibrary;
+    if (library == null) return const SizedBox.shrink();
+    return Align(
+      alignment: Alignment.centerRight,
+      child: TextButton.icon(
+        onPressed: () => showDialog<void>(
+          context: context,
+          builder: (_) =>
+              AudioOptionsDialog(kind: kind, title: label, library: library),
+        ),
+        icon: const Icon(Icons.tune),
+        label: Text('更换$label音效'),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: preferences,
@@ -74,6 +104,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     : (enabled) =>
                           unawaited(preferences.setPlayMoveSound(enabled)),
               ),
+              _soundOptions(context, AudioFeedbackKind.move, '走棋'),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('吃子音效'),
@@ -84,6 +115,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     : (enabled) =>
                           unawaited(preferences.setPlayCaptureSound(enabled)),
               ),
+              _soundOptions(context, AudioFeedbackKind.capture, '吃子'),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('将军音效'),
@@ -94,6 +126,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     : (enabled) =>
                           unawaited(preferences.setPlayCheckSound(enabled)),
               ),
+              _soundOptions(context, AudioFeedbackKind.check, '将军'),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('绝杀音效'),
@@ -104,6 +137,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     : (enabled) =>
                           unawaited(preferences.setPlayMateSound(enabled)),
               ),
+              _soundOptions(context, AudioFeedbackKind.mate, '绝杀'),
               SwitchListTile(
                 contentPadding: EdgeInsets.zero,
                 title: const Text('选子音效'),
@@ -114,6 +148,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     : (enabled) =>
                           unawaited(preferences.setPlaySelectionSound(enabled)),
               ),
+              _soundOptions(context, AudioFeedbackKind.select, '选子'),
               DropdownButtonFormField<SelectionStyle>(
                 key: ValueKey(preferences.value.selectionStyle),
                 initialValue: preferences.value.selectionStyle,

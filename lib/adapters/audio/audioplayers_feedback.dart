@@ -1,16 +1,10 @@
 import 'package:audioplayers/audioplayers.dart';
 import '../../ports/audio_feedback.dart';
+import '../../ports/audio_library.dart';
 
 /// audioplayers-backed local feedback; media is synthesized in memory.
 final class AudioplayersFeedback implements AudioFeedbackPort {
-  final AudioPlayer _selection = AudioPlayer(playerId: 'chessnext-select');
-  final AudioPlayer _move = AudioPlayer(playerId: 'chessnext-move');
-  final AudioPlayer _capture = AudioPlayer(playerId: 'chessnext-capture');
-  final AudioPlayer _check = AudioPlayer(playerId: 'chessnext-check');
-  final AudioPlayer _mate = AudioPlayer(playerId: 'chessnext-mate');
-  bool _disposed = false;
-
-  AudioplayersFeedback() {
+  AudioplayersFeedback({this.overrides}) {
     // Short effects do not need a per-frame position stream.
     _selection.positionUpdater = null;
     _move.positionUpdater = null;
@@ -18,6 +12,14 @@ final class AudioplayersFeedback implements AudioFeedbackPort {
     _check.positionUpdater = null;
     _mate.positionUpdater = null;
   }
+
+  final AudioOverrideRepository? overrides;
+  final AudioPlayer _selection = AudioPlayer(playerId: 'chessnext-select');
+  final AudioPlayer _move = AudioPlayer(playerId: 'chessnext-move');
+  final AudioPlayer _capture = AudioPlayer(playerId: 'chessnext-capture');
+  final AudioPlayer _check = AudioPlayer(playerId: 'chessnext-check');
+  final AudioPlayer _mate = AudioPlayer(playerId: 'chessnext-mate');
+  bool _disposed = false;
 
   @override
   Future<void> play(AudioFeedbackKind kind) async {
@@ -29,7 +31,16 @@ final class AudioplayersFeedback implements AudioFeedbackPort {
       AudioFeedbackKind.check => (_check, 'audio/check.wav'),
       AudioFeedbackKind.mate => (_mate, 'audio/mate.wav'),
     };
-    await player.play(AssetSource(asset), volume: .45);
+    String? customPath;
+    try {
+      customPath = await overrides?.pathFor(kind);
+    } catch (_) {
+      // Damaged custom audio falls back to the bundled offline sound.
+    }
+    await player.play(
+      customPath == null ? AssetSource(asset) : DeviceFileSource(customPath),
+      volume: .45,
+    );
   }
 
   @override

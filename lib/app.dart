@@ -52,6 +52,8 @@ import 'features/board/xiangqi_board.dart';
 import 'application/board_feedback_controller.dart';
 import 'ports/audio_feedback.dart';
 import 'ports/move_speech.dart';
+import 'application/audio_library_controller.dart';
+import 'ports/audio_library.dart';
 
 class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
@@ -67,6 +69,8 @@ class ChessNextApp extends StatefulWidget {
     this.imageClipboard,
     this.audioFeedback,
     this.moveSpeech,
+    this.audioFilePicker,
+    this.audioOverrides,
     this.gifExporter,
     this.engineFactory,
     this.reviewCache,
@@ -82,6 +86,8 @@ class ChessNextApp extends StatefulWidget {
   final ImageClipboard? imageClipboard;
   final AudioFeedbackPort? audioFeedback;
   final MoveSpeechPort? moveSpeech;
+  final AudioFilePicker? audioFilePicker;
+  final AudioOverrideRepository? audioOverrides;
   final GifFileExporter? gifExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
@@ -101,6 +107,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final DraftController? drafts;
   late final PreferencesController preferences;
   late final BoardFeedbackController boardFeedback;
+  late final AudioLibraryController? audioLibrary;
   late final EngineSessionController analysis;
   BoardGifSettings gifSettings = BoardGifSettings();
   @override
@@ -130,10 +137,20 @@ class _ChessNextAppState extends State<ChessNextApp>
       analysis,
       widget.preferencesRepository ?? MemoryPreferencesRepository(),
     );
+    final audio = widget.audioFeedback ?? const SilentAudioFeedback();
+    audioLibrary =
+        widget.audioFilePicker == null || widget.audioOverrides == null
+        ? null
+        : AudioLibraryController(
+            widget.audioFilePicker!,
+            widget.audioOverrides!,
+            audio,
+          );
+    if (audioLibrary != null) unawaited(audioLibrary!.initialize());
     boardFeedback = BoardFeedbackController(
       session,
       preferences,
-      widget.audioFeedback ?? const SilentAudioFeedback(),
+      audio,
       widget.moveSpeech ?? const SilentMoveSpeech(),
     );
     preferences.addListener(_preferencesChanged);
@@ -254,6 +271,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     WidgetsBinding.instance.removeObserver(this);
     preferences.removeListener(_preferencesChanged);
     unawaited(boardFeedback.dispose());
+    audioLibrary?.dispose();
     unawaited(preferences.flush());
     preferences.dispose();
     analysis.dispose();
@@ -301,6 +319,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     home: _BoardPage(
       drafts: drafts,
       preferences: preferences,
+      audioLibrary: audioLibrary,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       filePicker: widget.filePicker,
       fileExporter: widget.fileExporter,
@@ -341,8 +360,10 @@ class _BoardPage extends StatelessWidget {
     required this.analysis,
     this.drafts,
     required this.preferences,
+    this.audioLibrary,
   });
   final PreferencesController preferences;
+  final AudioLibraryController? audioLibrary;
   final DraftController? drafts;
   final TextClipboard clipboard;
   final RecordFilePicker? filePicker;
@@ -656,7 +677,10 @@ class _BoardPage extends StatelessWidget {
               session.setCurrentVariationArrows(false);
               showDialog<void>(
                 context: context,
-                builder: (_) => PreferencesDialog(preferences: preferences),
+                builder: (_) => PreferencesDialog(
+                  preferences: preferences,
+                  audioLibrary: audioLibrary,
+                ),
               );
             },
           ),

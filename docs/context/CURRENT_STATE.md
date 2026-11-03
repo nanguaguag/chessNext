@@ -1,5 +1,9 @@
 # 当前状态
 
+## 最新交付：M4-09（2026-11-03）
+
+F28/B23新增按事件本机导入自定义音效：受限WAV PCM/IEEE-float或MP3 Layer III，512KiB/5秒，独立替换、试听、恢复默认；目录和清单路径受控，用户取消不改现值。专项5/5，macOS集成2/2，根 `flutter test --reporter compact` 446通过/5跳过（缺官方Pikafish环境变量），`flutter analyze` 无问题。`flutter run -d macos` 已启动PID21638，VM `127.0.0.1:52467`。交付提交见git log。浏览器证据E37/E38，参考站导入成功仍未知。下一按B23推进音效方案或棋子动画范围审计；F28仍未完成，全站未完成。
+
 2026-11-03 Asia/Shanghai。完整对标仍在开发，不能宣称全部对齐。历史切片状态已归档history/2026-11-02-before-piece-size-state.md，验证详planning/TRACEABILITY和SESSION_LOG。
 
 ## 授权与门槛

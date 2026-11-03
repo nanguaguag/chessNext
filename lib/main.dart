@@ -15,9 +15,14 @@ import 'adapters/storage/file_game_repository.dart';
 import 'app.dart';
 import 'adapters/audio/audioplayers_feedback.dart';
 import 'adapters/speech/flutter_tts_move_speech.dart';
+import 'adapters/platform/file_selector_audio_picker.dart';
+import 'adapters/storage/file_audio_override_repository.dart';
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
+  final audioOverrides = FileAudioOverrideRepository(
+    getApplicationSupportDirectory,
+  );
   runApp(
     ChessNextApp(
       showFirstRunGuide: true,
@@ -34,8 +39,10 @@ void main() {
       preferencesRepository: FilePreferencesRepository(
         getApplicationSupportDirectory,
       ),
-      audioFeedback: AudioplayersFeedback(),
+      audioFeedback: AudioplayersFeedback(overrides: audioOverrides),
       moveSpeech: FlutterTtsMoveSpeech(),
+      audioFilePicker: FileSelectorAudioPicker(),
+      audioOverrides: audioOverrides,
       engineFactory: openBundledEngine,
       reviewCache: FileReviewCacheRepository(getApplicationSupportDirectory),
       deviceThreads: Platform.numberOfProcessors,

@@ -73,3 +73,6 @@ M4-05 增加的 AnimationSpeed 是本机展示偏好，不进入规则/棋谱/�
 M4-06的BoardFeedbackController是BoardSession与AudioFeedbackPort间的应用层事件翻译；偏好开关驱动，不向规则、GameTree或UCI发送音频依赖。生产root仅注入AudioplayersFeedback，组件/领域测试用静音或fake端口。播放器异常是可选副作用并隔离，不改变已提交着法。见ADR-043。
 
 M4-08由BoardFeedbackController按已提交节点的父局面计算ChineseNotation，并通过独立MoveSpeechPort请求系统朗读，不复用AudioFeedbackPort或走棋音效开关。FlutterTtsMoveSpeech只在官方插件已声明的平台并发现已安装中文voice时播报；Android跳过标记联网语音，Linux/Web保持静音。可用性/异常不影响棋局。见ADR-044。
+## M4-09：自定义本机音效边界
+
+`AudioOptionsDialog` 经 `AudioLibraryController` 调用 `AudioFilePicker`、`AudioOverrideRepository`，不直接访问文件系统；播放器仍通过独立 `AudioFeedbackPort` 查询 overrides 并使用 `DeviceFileSource`。默认素材由应用bundle资产提供。存储适配器仅使用 application support 受控子目录和严格清单文件名，临时目录完成写入后替换清单。WAV/MP3验证留在纯Dart应用层；文件选择适配器在读取时也限制512KiB。新设置不可达时音效维持默认。

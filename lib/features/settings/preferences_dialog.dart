@@ -5,10 +5,16 @@ import '../../application/preferences_controller.dart';
 import 'text_size_dialog.dart';
 import 'board_display_dialog.dart';
 import 'analysis_markers_dialog.dart';
+import '../../application/audio_library_controller.dart';
 
 class PreferencesDialog extends StatefulWidget {
-  const PreferencesDialog({super.key, required this.preferences});
+  const PreferencesDialog({
+    super.key,
+    required this.preferences,
+    this.audioLibrary,
+  });
   final PreferencesController preferences;
+  final AudioLibraryController? audioLibrary;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -109,8 +115,10 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                     OutlinedButton.icon(
                       onPressed: () => showDialog<void>(
                         context: context,
-                        builder: (_) =>
-                            BoardDisplayDialog(preferences: widget.preferences),
+                        builder: (_) => BoardDisplayDialog(
+                          preferences: widget.preferences,
+                          audioLibrary: widget.audioLibrary,
+                        ),
                       ),
                       icon: const Icon(Icons.grid_on),
                       label: const Text('棋盘显示'),

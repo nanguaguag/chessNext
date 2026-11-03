@@ -436,3 +436,10 @@ E36/E37确认默认走棋、选子开关和走棋方案选择器边界；原站�
 E39五个音效开关各自关开状态独立并恢复原值，未触发棋步；站点语音仍off。实现默认false的`speakMoves` schema1偏好、PreferencesController、独立Material开关与MoveSpeechPort。提交节点的父局面生成ChineseNotation，独立于声音偏好；flutter_tts 4.2.5平台适配器过滤Android联网voice，仅在存在已装中文voice时串行朗读，无voice/API异常不影响落子。插件未声明Linux，Web不启用；系统语言包依OS预先安装和设置，不能保证全部机型都可用。E39只是开关验证，源站实际播报触发/音色和历史导航读法仍未知。
 
 专项应用/组件测试14/14；macOS集成音效/TTS端口1/1（尝试查询voice并请求中文着法，若系统无voice静默返回）；根 `flutter test --reporter compact` 441 pass/5 skipped（Pikafish环境未配置），`flutter analyze` no issues。普通 `flutter run -d macos` PID19009，VM Service `127.0.0.1:50874`。插件警告：暂不支持Swift Package Manager且可能在未来Flutter升级成为error；AVSpeechSynth枚举future cases warning。无人工听感或其它OS验证；依赖/归档许可在LICENSING。
+## 2026-11-03 / M4-09 / F28 → B23 本机自定义音效
+
+E37/E38实测参考站声明五类音效可各自试听/本机导入 WAV、MP3，限制512 KiB/5秒；导入点击未观察到文件选择器，成功边界仍U，未复制站点音频或外观。项目新增独立 `AudioFilePicker`/`AudioOverrideRepository` 端口及 `AudioLibraryController`。各事件使用本机应用支持目录和schema 1清单独立替换/预览/恢复默认；文件先阶段写、移至受控目录，再替换清单，删除旧文件。播放遇缺失/损坏清单回退原创asset。UI只触发Controller。
+
+导入边界为512 KiB、5秒；结构验证支持PCM/IEEE-float WAV及MPEG Layer III，文件读取流也有界，取消不更改配置。清单文件名严格限制，拒绝路径穿越。`test/audio_library_test.dart` 5项覆盖WAV/MP3有效及边界、无效/过大、隔离本机持久化、污染清单、取消/试听/恢复及Material对话框。macOS集成测试新增真实临时 WAV `DeviceFileSource` 加载；integration 2/2通过（既有内置音效和新增自定义路径）。`flutter test --reporter compact` 446 passed / 5 skipped；5项依赖未设置的官方 Pikafish环境；`flutter analyze` 无问题。`flutter run -d macos` 构建启动PID21638，VM Service `127.0.0.1:52467`。
+
+该功能提供项目自己的默认/自定义切换，不实现参考站音效1/2/随皮肤预设；其它OS系统文件选择器/实际解码、试听听感未验，不关闭F28/B23。无新依赖；沿用已登记file_selector/audioplayers，原创素材登记见LICENSING。ADR-045。

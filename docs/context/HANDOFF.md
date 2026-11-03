@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-03 / M4-09 交接（待本片提交）
+
+F28/B23新增本机自定义音效导入：`AudioFilePicker`/`AudioOverrideRepository`/`AudioFeedbackPort`隔离，`AudioLibraryController`协调，Material对话框只触发应用层；应用支持目录保存按事件独立的文件和schema1清单。512KiB/5秒，支持PCM/IEEE-float WAV和MP3 Layer III。取消不改配置；失败有类型文案；清单路径正则限制并防路径穿越；损坏/缺失的自定义资源退回本机原创默认声音。导入后可试听/恢复默认。
+
+专项 `flutter test test/audio_library_test.dart --reporter expanded` 5/5；macOS `flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 2/2（含真实临时自定义WAV本地路径）；根 `flutter test --reporter compact` 446通过/5跳过（需设置官方引擎环境），`flutter analyze` 无问题。`flutter run -d macos` 成功，PID21638，VM Service `127.0.0.1:52467`，仍运行，不要终止。无新依赖；引用既有file_selector/audioplayers。
+
+已更新TRACEABILITY/FEATURE_MATRIX/FEATURE_GAPS/BACKLOG/ADR-045；本片未新增依赖，沿用既有file_selector/audioplayers登记。提交前复核`git diff --check`通过；提交见git log。下一步恢复README/CURRENT_STATE/HANDOFF/DECISIONS，读相关Feature Audit技能，继续B23或转其它本机未完功能。不要宣称源站导入成功、预设音色、其它平台或F28全部完成。证据状态与下一调查见REFERENCE_EVIDENCE E37/E38及FEATURE_GAPS。
+
 ## 2026-11-03 / M4-08 交接
 
 用户授权持续审计和实现至参考功能对齐；每功能根目录`flutter test`、`flutter analyze`通过后单独中文Conventional Commit。在线使用自建可替换后端并提供部署方案，当前仍优先离线。上一M4-07提交 `7444c64`；该提交后工作树干净再开始本片。

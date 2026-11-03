@@ -502,3 +502,12 @@ E38在xiangqiai.com/#/settings/sound分别打开将军/吃子/绝杀更换弹层
 在线检索官方pub.dev flutter_tts信息：latest stable 4.2.5、MIT、原生插件声明Android/iOS/macOS/Web/Windows但无Linux。增加MoveSpeechPort和适配器，只在存在已安装中文voice时请求系统朗读；Android过滤network_required，Web/Linux关闭。默认关的偏好单独序列化，落子朗读与声音Switch无关。源站语音是否读历史导航仍U。
 
 专项 `flutter test --reporter expanded test/application/board_feedback_test.dart test/widgets/last_move_markers_test.dart` 14/14；`flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 1/1，测试请求move音效五资源和speech适配器voice查找/中文文本（若无本机voice，adapter静默）；`flutter test --reporter compact` 441 pass/5 skip（仅Pikafish测试环境未设），`flutter analyze` no issues。普通 `flutter run -d macos` PID19009/VM 127.0.0.1:50874。Flutter提示插件未支持Swift Package Manager，未来SDK可能由warning升级error；Xcode对系统AVSpeechSynth voice quality/gender future cases有warning，无构建失败。其它OS和人工听感/视觉not-run。
+## 2026-11-03 / M4-09 / F28 → B23 本机自定义音效
+
+实现按五种 AudioFeedbackKind 独立导入/替换/试听/恢复默认。IO 经 AudioFilePicker 和 AudioOverrideRepository，应用层 AudioLibraryController 校验/协调，播放器通过AudioOverrideRepository读取自定义路径，不直接依赖存储适配器。主入口注入file_selector和application support目录适配器。界面声明本机保存、不上传。
+
+限制512KiB与5秒；仅接受WAV PCM/IEEE float与MPEG Layer III。流式有界文件读取、损坏头/时长错误、取消边界、坏manifest path穿越拒绝。替换写临时目录，再受控文件移动、manifest替换、旧文件删除；新资源不存在时默认asset回退。无新增依赖，复用file_selector和audioplayers。
+
+验证 `flutter test test/audio_library_test.dart --reporter expanded` 5/5；`flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 2/2，包含本机临时自定义WAV的DeviceFileSource；根 `flutter test --reporter compact` 446通过/5跳过（5个依赖未配置PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK的官方引擎测试）；`flutter analyze` 0问题。普通 `flutter run -d macos`构建、同步并启动PID21638，VM Service 127.0.0.1:52467，运行会话37640保持运行。测试/build期间flutter_tts提示不支持Swift Package Manager，未来SDK可能变error；未阻止构建。
+
+新增ADR-045和FEATURE/TRACEABILITY/BACKLOG/交接更新。E37/E38仅确认源站显示本机自定义入口和声明限制；实际导入按钮不显示可见picker，故源站导入成功持续U。项目没有加入站点预设/资源。待`git diff --check`及提交 `feat(audio): 支持本机导入自定义音效`，之后继续B23，尚有其它离线功能待审计；不宣称F28或全站对齐。

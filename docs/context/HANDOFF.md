@@ -1,5 +1,20 @@
 # 会话交接
 
+## 2026-11-04 / B25 持续交付：M4-31侧栏面板显隐
+
+用户授权持续推进至登录相关部分外全部可确认功能/设置，不在一项功能后停。在线能力仍保留范围，采用可替换自建后端并提供部署方案；离线优先仅为推进顺序。许可决策按要求暂缓，无代理授权。
+
+本轮先读取AGENTS/README/CURRENT_STATE/HANDOFF/DECISIONS、恢复技能及F21/B23文档，确认入口HEAD `a74d53b`、工作树干净。参考站只读完成E49语言列表和E50操作设置范围；无源站设置变更。审计提交`e8b6017 docs(audit): 记录语言与操作设置证据`。随后分别交付：
+
+- M4-30 `0053171 feat(settings): 支持侧栏面板顺序调整`（ADR-065）：四种本机侧栏拖动重排、持久化、坏值拒绝和读取竞态保护。
+- M4-31 `4a02127 feat(settings): 支持侧栏面板显隐`（ADR-066）：四种侧栏独立开关，隐藏后不构造面板子树；全隐藏时仍能从AppBar进入设置恢复。
+
+E50站点的AI/云库/局势图/着法与本机对弈/分析/复盘/候选并非已证实一一对应（项目映射P）；播放时长、播放按钮、棋谱栏/面板切换栏与长按/右键菜单仍缺；E49语言切换没有实际选择，翻译与持久性U。
+
+验证：`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`No issues found；`flutter run -d macos`Build/Sync成功，PID78894、VM `127.0.0.1:51984`，runner会话21286仍运行。5项跳过需本机官方Pikafish/NNUE环境。`flutter_tts`仍有SwiftPM未来兼容warning。CUA尝试读取macOS窗口超时，人工视觉验收未做。额外首轮执行记录：M4-30全量根测试505/5、analyze发现弃用`onReorder`后换成推荐`onReorderItem`再跑最终门槛；M4-31首轮widget点击目标因未滚动而miss，修正`ensureVisible`后专项通过。
+
+最新功能提交后工作树干净；文档状态更新待单独提交。下一步沿B25继续操作设置垂直增量（可先评估每步播放间隔/当前线路自动播放），同时审计剩余设置；F27须有完整翻译资源再开放语言选择。B24还需可替换自建在线皮肤目录和部署方案；全站其它在线/格式/训练差距仍按矩阵推进。不能称F20/F27/F21或全站已对齐。
+
 ## 2026-11-04 / B23 持续交付：M4-29主棋盘棋子移动动画
 
 M4-29已单独提交`177abff feat(board): 增加棋步移动动画`。ADR-064：主棋盘每次显示的走棋身份更新时，棋子从from格移动到to格；复用`AnimationSpeed`的项目映射（关0/快300/标准600/慢1200ms），系统Reduce Motion优先静止。过渡中将落点格的视觉棋子换成IgnorePointer overlay；棋谱/规则同步提交不等待动效。只有`XiangqiBoard`主棋盘开启动画，`BoardSurface`默认静态，因此编辑器、PV预览、PNG/GIF快照不动。新身份会重启/替代前一动效，落点无棋子或速度关时立即静态。

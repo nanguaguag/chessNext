@@ -700,3 +700,14 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 按E43可见的无/柔和/明显档位及角度/距离/模糊/浓淡字段，新增纯Dart `PieceSkinShadow`、逐PieceSkin偏好/JSON兼容/损坏值拒绝、延迟读取合并、设置控件和BoardDisplayScope只读分发。主棋盘、局面编辑器、PNG/GIF快照共用配置；距离/模糊按格宽转换，角度0°右/90°下，浓淡转黑色alpha。内置圆章默认沿用原柔和投影，方章默认无影；项目值域和预设均为P（ADR-056），E43单例与真实范围/算法/保存结果未知。
 
 实际验证：定向`flutter test test/application/piece_skin_shadow_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/board_coordinates_test.dart --reporter compact`通过；最终根`flutter test --reporter compact`exit0，478通过/5跳过，日志`/tmp/chessnext-m420-root-test-final.log`（5项需官方Pikafish/NNUE环境）；`flutter analyze`无问题；`flutter run -d macos` 最终复跑Build/Sync成功PID54316，VM `127.0.0.1:51653`，flutter_tts有SwiftPM未来兼容warning。CUA窗口查询历史超时，本轮视觉检查not run。首轮定向渲染测试夹具缺Material ancestor导致失败，补Scaffold后专项全部通过；无产品运行错误。`git diff --check`通过。无新增外部素材/依赖。代码与文档待独立中文Conventional Commit；继续目标不变。
+# 2026-11-04 / E49,E50 / M4-30,M4-31 F20,B25
+
+按用户持续推进要求恢复仓库文档和skills。入口HEAD `a74d53b`、工作树干净。只读IAB从设置首页进入显示语言：观察简体中文当前选中、繁體中文/Tiếng Việt/English候选；没有切换（E49，O）。进入操作设置：观察播放每步0.5/1/2/3秒/自定义、棋谱开关、四面板排序/显隐、长按/右键菜单复制/其它项和播放按钮/棋谱栏/面板切换栏开关（E50，O）。未触发菜单或更改设置，返回设置首页。
+
+审计证据/矩阵/缺口/待办/交互规格独立提交`e8b6017 docs(audit): 记录语言与操作设置证据`。
+
+M4-30 F20侧栏顺序：新增`SidePanel`稳定ID、严格完整顺序schema1、本机持久化和读取竞态合并；Material拖动排序即时影响主App四张侧栏卡片。ADR-065；专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`首次指出`onReorder`弃用，换用`onReorderItem`后定向测试7/7、分析无问题，根测试再通过505/5；`flutter run -d macos` Build/Sync成功PID77791，VM `127.0.0.1:51219`。CUA窗口读取超时。提交`0053171 feat(settings): 支持侧栏面板顺序调整`。
+
+M4-31 F20侧栏显隐：新增可空`visibleSidePanels`集合，拒绝重复/未知项，旧字段全显；设置列表独立Switch、偏好即时持久化、App隐藏卡片子树且AppBar设置永久保留。覆盖序列化、重复值、迟到读取合并和实际隐藏widget。首轮widget点击离屏Switch被测试命中警告且偏好未变化；增加`ensureVisible`后定向7/7。最终根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`No issues found；`flutter run -d macos`Build/Sync成功PID78894、VM `127.0.0.1:51984`，flutter_tts SwiftPM未来兼容warning。尝试CUA `getApp("chessNext")`超时，人工视觉验收未做。提交`4a02127 feat(settings): 支持侧栏面板显隐`。
+
+本轮macOS runner会话21286及既有Debug/runner进程仍运行，未终止。源码和对应功能提交均完成，交接状态文档提交待做。下一可执行：B25当前线路播放计时/播放按钮，按项目P实现并测试；F27补足本地化资源前不呈现虚假语言切换；继续B24自建可替换在线皮肤目录/部署设计及矩阵其它未完成范围。E50源站面板与本机卡片映射U；F20/F27/F21和全站仍开放。

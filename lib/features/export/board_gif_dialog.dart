@@ -219,6 +219,8 @@ class _BoardGifDialogState extends State<BoardGifDialog> {
                     pieceImages: snapshot.pieceImages,
                     pieceSizePercent: snapshot.pieceSizePercent,
                     pieceSkinSizePercent: snapshot.pieceSkinSizePercent,
+                    pieceSkinOffsetXPercent: snapshot.pieceSkinOffsetXPercent,
+                    pieceSkinOffsetYPercent: snapshot.pieceSkinOffsetYPercent,
                     arrowHead: snapshot.arrowHead,
                     lastMoveMarker: snapshot.lastMoveStyle,
                     child: BoardSurface(

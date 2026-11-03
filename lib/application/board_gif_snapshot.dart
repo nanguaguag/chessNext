@@ -24,6 +24,8 @@ final class BoardGifSnapshot {
     required this.showCoordinates,
     required this.pieceSizePercent,
     this.pieceSkinSizePercent = 100,
+    this.pieceSkinOffsetXPercent = 0,
+    this.pieceSkinOffsetYPercent = 0,
     required this.lastMoveStyle,
     required this.arrowHead,
     this.flipped = false,
@@ -59,6 +61,12 @@ final class BoardGifSnapshot {
       pieceSkinSizePercent: prefs.pieceSkin == PieceSkin.roundSeal
           ? prefs.roundSealPieceScalePercent
           : prefs.squareInkPieceScalePercent,
+      pieceSkinOffsetXPercent: prefs.pieceSkin == PieceSkin.roundSeal
+          ? prefs.roundSealPieceOffsetX
+          : prefs.squareInkPieceOffsetX,
+      pieceSkinOffsetYPercent: prefs.pieceSkin == PieceSkin.roundSeal
+          ? prefs.roundSealPieceOffsetY
+          : prefs.squareInkPieceOffsetY,
       lastMoveStyle: prefs.lastMoveMarker,
       arrowHead: prefs.arrowHead,
       flipped: session.flipped,
@@ -78,6 +86,7 @@ final class BoardGifSnapshot {
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final int pieceSizePercent;
   final int pieceSkinSizePercent;
+  final int pieceSkinOffsetXPercent, pieceSkinOffsetYPercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;
 }

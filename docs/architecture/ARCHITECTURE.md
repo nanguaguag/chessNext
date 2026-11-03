@@ -82,3 +82,5 @@ M4-10只给走棋事件添加独立 `MoveSoundChoice` 偏好；走棋系统音�
 M4-14的棋子图片流程采用`PieceImagePicker`/`PieceImageRepository` ports，由`PieceImageLibraryController`串接校验和本地持久化；UI只读控制器状态，图像解析/业务失败类型不依赖Flutter。选图后先执行容量、PNG/JPEG头部尺寸及真实解码校验，再由仓库写入每皮肤独立目录和受限JSON清单。`BoardDisplayScope`仅提供当前皮肤只读图片；PNG/GIF快照复制bytes并冻结，避免偏好之后变动影响导出。当前限制512 KiB、1024边长及1MP，批量归档导入另行设计。
 
 M4-15皮肤缩放数值作为`AppPreferences`中两个稳定字段按PieceSkin分别持久化；异步偏好加载遵循既有edited-fields合并屏障。`BoardDisplayScope`只暴露当前皮肤比例，UI不操作棋盘绘制器；单面容比例和全局比例在展示端组合，图片/GIF快照则冻结原始两个因子。范围80–120为项目P，不复刻参考站未知最小端点。
+
+M4-16预设位置同样是schema1的四个独立偏好字段。展示端以每格宽百分比将棋子绘制层视觉平移，始终设置`transformHitTests:false`；Navigator、领域棋谱与棋盘交点不感知装饰性偏移。BoardDisplayScope和图片/GIF冻结快照各自持有只读值，方向按钮通过PreferencesController的有界更改入口持久化，自动对正写回零值。

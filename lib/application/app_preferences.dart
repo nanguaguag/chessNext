@@ -46,6 +46,10 @@ final class AppPreferences {
     this.pieceSizePercent = 100,
     this.roundSealPieceScalePercent = 100,
     this.squareInkPieceScalePercent = 100,
+    this.roundSealPieceOffsetX = 0,
+    this.roundSealPieceOffsetY = 0,
+    this.squareInkPieceOffsetX = 0,
+    this.squareInkPieceOffsetY = 0,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
     this.showEvaluationBar = true,
@@ -75,7 +79,15 @@ final class AppPreferences {
         roundSealPieceScalePercent < 80 ||
         roundSealPieceScalePercent > 120 ||
         squareInkPieceScalePercent < 80 ||
-        squareInkPieceScalePercent > 120) {
+        squareInkPieceScalePercent > 120 ||
+        roundSealPieceOffsetX < -8 ||
+        roundSealPieceOffsetX > 8 ||
+        roundSealPieceOffsetY < -8 ||
+        roundSealPieceOffsetY > 8 ||
+        squareInkPieceOffsetX < -8 ||
+        squareInkPieceOffsetX > 8 ||
+        squareInkPieceOffsetY < -8 ||
+        squareInkPieceOffsetY > 8) {
       throw ArgumentError('Invalid preferences');
     }
   }
@@ -96,6 +108,8 @@ final class AppPreferences {
   final int pieceSizePercent;
   final int roundSealPieceScalePercent;
   final int squareInkPieceScalePercent;
+  final int roundSealPieceOffsetX, roundSealPieceOffsetY;
+  final int squareInkPieceOffsetX, squareInkPieceOffsetY;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
   final bool showEvaluationBar;
@@ -123,6 +137,10 @@ final class AppPreferences {
     int? pieceSizePercent,
     int? roundSealPieceScalePercent,
     int? squareInkPieceScalePercent,
+    int? roundSealPieceOffsetX,
+    int? roundSealPieceOffsetY,
+    int? squareInkPieceOffsetX,
+    int? squareInkPieceOffsetY,
     bool? showAnalysisArrows,
     bool? showVariationArrows,
     bool? showEvaluationBar,
@@ -155,6 +173,10 @@ final class AppPreferences {
         roundSealPieceScalePercent ?? this.roundSealPieceScalePercent,
     squareInkPieceScalePercent:
         squareInkPieceScalePercent ?? this.squareInkPieceScalePercent,
+    roundSealPieceOffsetX: roundSealPieceOffsetX ?? this.roundSealPieceOffsetX,
+    roundSealPieceOffsetY: roundSealPieceOffsetY ?? this.roundSealPieceOffsetY,
+    squareInkPieceOffsetX: squareInkPieceOffsetX ?? this.squareInkPieceOffsetX,
+    squareInkPieceOffsetY: squareInkPieceOffsetY ?? this.squareInkPieceOffsetY,
     showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
     showVariationArrows: showVariationArrows ?? this.showVariationArrows,
     showEvaluationBar: showEvaluationBar ?? this.showEvaluationBar,
@@ -194,6 +216,14 @@ final class AppPreferences {
       'roundSealPieceScalePercent': roundSealPieceScalePercent,
     if (squareInkPieceScalePercent != 100)
       'squareInkPieceScalePercent': squareInkPieceScalePercent,
+    if (roundSealPieceOffsetX != 0)
+      'roundSealPieceOffsetX': roundSealPieceOffsetX,
+    if (roundSealPieceOffsetY != 0)
+      'roundSealPieceOffsetY': roundSealPieceOffsetY,
+    if (squareInkPieceOffsetX != 0)
+      'squareInkPieceOffsetX': squareInkPieceOffsetX,
+    if (squareInkPieceOffsetY != 0)
+      'squareInkPieceOffsetY': squareInkPieceOffsetY,
     if (!showAnalysisArrows) 'showAnalysisArrows': false,
     if (!showVariationArrows) 'showVariationArrows': false,
     if (!showEvaluationBar) 'showEvaluationBar': false,
@@ -247,6 +277,14 @@ final class AppPreferences {
             json['roundSealPieceScalePercent'] is! int) ||
         (json.containsKey('squareInkPieceScalePercent') &&
             json['squareInkPieceScalePercent'] is! int) ||
+        (json.containsKey('roundSealPieceOffsetX') &&
+            json['roundSealPieceOffsetX'] is! int) ||
+        (json.containsKey('roundSealPieceOffsetY') &&
+            json['roundSealPieceOffsetY'] is! int) ||
+        (json.containsKey('squareInkPieceOffsetX') &&
+            json['squareInkPieceOffsetX'] is! int) ||
+        (json.containsKey('squareInkPieceOffsetY') &&
+            json['squareInkPieceOffsetY'] is! int) ||
         ![
           'threads',
           'hashMb',
@@ -300,6 +338,10 @@ final class AppPreferences {
             json['roundSealPieceScalePercent'] as int? ?? 100,
         squareInkPieceScalePercent:
             json['squareInkPieceScalePercent'] as int? ?? 100,
+        roundSealPieceOffsetX: json['roundSealPieceOffsetX'] as int? ?? 0,
+        roundSealPieceOffsetY: json['roundSealPieceOffsetY'] as int? ?? 0,
+        squareInkPieceOffsetX: json['squareInkPieceOffsetX'] as int? ?? 0,
+        squareInkPieceOffsetY: json['squareInkPieceOffsetY'] as int? ?? 0,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
@@ -336,6 +378,10 @@ final class AppPreferences {
       pieceSizePercent == other.pieceSizePercent &&
       roundSealPieceScalePercent == other.roundSealPieceScalePercent &&
       squareInkPieceScalePercent == other.squareInkPieceScalePercent &&
+      roundSealPieceOffsetX == other.roundSealPieceOffsetX &&
+      roundSealPieceOffsetY == other.roundSealPieceOffsetY &&
+      squareInkPieceOffsetX == other.squareInkPieceOffsetX &&
+      squareInkPieceOffsetY == other.squareInkPieceOffsetY &&
       threads == other.threads &&
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
@@ -367,6 +413,10 @@ final class AppPreferences {
     pieceSizePercent,
     roundSealPieceScalePercent,
     squareInkPieceScalePercent,
+    roundSealPieceOffsetX,
+    roundSealPieceOffsetY,
+    squareInkPieceOffsetX,
+    squareInkPieceOffsetY,
     threads,
     hashMb,
     multiPv,

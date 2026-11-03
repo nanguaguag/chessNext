@@ -89,6 +89,8 @@ class BoardSurface extends StatefulWidget {
     this.pieceImages,
     this.pieceSizePercent,
     this.pieceSkinSizePercent,
+    this.pieceSkinOffsetXPercent,
+    this.pieceSkinOffsetYPercent,
     this.showAnalysisArrows,
     this.arrowHeadStyle,
     this.variations = const [],
@@ -99,12 +101,18 @@ class BoardSurface extends StatefulWidget {
     this.recommendation,
     this.reply,
   }) : assert(
-         pieceSizePercent == null ||
-             (pieceSizePercent >= 10 &&
-                 pieceSizePercent <= 200 &&
-                 pieceSizePercent % 5 == 0),
-         pieceSkinSizePercent == null ||
-             (pieceSkinSizePercent >= 80 && pieceSkinSizePercent <= 120),
+         (pieceSizePercent == null ||
+                 (pieceSizePercent >= 10 &&
+                     pieceSizePercent <= 200 &&
+                     pieceSizePercent % 5 == 0)) &&
+             (pieceSkinSizePercent == null ||
+                 (pieceSkinSizePercent >= 80 && pieceSkinSizePercent <= 120)) &&
+             (pieceSkinOffsetXPercent == null ||
+                 (pieceSkinOffsetXPercent >= -8 &&
+                     pieceSkinOffsetXPercent <= 8)) &&
+             (pieceSkinOffsetYPercent == null ||
+                 (pieceSkinOffsetYPercent >= -8 &&
+                     pieceSkinOffsetYPercent <= 8)),
        );
   final Piece? Function(Square) at;
   final ValueChanged<Square> onTap;
@@ -127,6 +135,7 @@ class BoardSurface extends StatefulWidget {
   final Map<PieceImageSlot, Uint8List>? pieceImages;
   final int? pieceSizePercent;
   final int? pieceSkinSizePercent;
+  final int? pieceSkinOffsetXPercent, pieceSkinOffsetYPercent;
   final bool? showAnalysisArrows;
   final ArrowHeadStyle? arrowHeadStyle;
   final List<VariationArrow> variations;
@@ -481,6 +490,20 @@ class _BoardSurfaceState extends State<BoardSurface> {
       scaled = Transform.translate(
         key: const ValueKey('selected-piece-lift'),
         offset: Offset(0, -step * .08),
+        transformHitTests: false,
+        child: scaled,
+      );
+    }
+    final offsetX =
+        widget.pieceSkinOffsetXPercent ??
+        BoardDisplayScope.pieceSkinOffsetXOf(context);
+    final offsetY =
+        widget.pieceSkinOffsetYPercent ??
+        BoardDisplayScope.pieceSkinOffsetYOf(context);
+    if (offsetX != 0 || offsetY != 0) {
+      scaled = Transform.translate(
+        key: const ValueKey('piece-skin-position'),
+        offset: Offset(step * offsetX / 100, step * offsetY / 100),
         transformHitTests: false,
         child: scaled,
       );

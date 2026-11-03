@@ -141,6 +141,18 @@ class PreferencesController extends ChangeNotifier {
                 _edited.contains('squareInkPieceScalePercent')
                 ? previous.squareInkPieceScalePercent
                 : null,
+            roundSealPieceOffsetX: _edited.contains('roundSealPieceOffsetX')
+                ? previous.roundSealPieceOffsetX
+                : null,
+            roundSealPieceOffsetY: _edited.contains('roundSealPieceOffsetY')
+                ? previous.roundSealPieceOffsetY
+                : null,
+            squareInkPieceOffsetX: _edited.contains('squareInkPieceOffsetX')
+                ? previous.squareInkPieceOffsetX
+                : null,
+            squareInkPieceOffsetY: _edited.contains('squareInkPieceOffsetY')
+                ? previous.squareInkPieceOffsetY
+                : null,
             showCoordinates: _edited.contains('showCoordinates')
                 ? previous.showCoordinates
                 : null,
@@ -237,6 +249,22 @@ class PreferencesController extends ChangeNotifier {
           : value.squareInkPieceScalePercent,
     ),
   );
+  Future<void> setPieceSkinOffset(PieceSkin skin, {int? x, int? y}) => apply(
+    value.copyWith(
+      roundSealPieceOffsetX: skin == PieceSkin.roundSeal
+          ? x ?? value.roundSealPieceOffsetX
+          : value.roundSealPieceOffsetX,
+      roundSealPieceOffsetY: skin == PieceSkin.roundSeal
+          ? y ?? value.roundSealPieceOffsetY
+          : value.roundSealPieceOffsetY,
+      squareInkPieceOffsetX: skin == PieceSkin.squareInk
+          ? x ?? value.squareInkPieceOffsetX
+          : value.squareInkPieceOffsetX,
+      squareInkPieceOffsetY: skin == PieceSkin.squareInk
+          ? y ?? value.squareInkPieceOffsetY
+          : value.squareInkPieceOffsetY,
+    ),
+  );
   Future<void> setAnalysisArrows(bool visible) =>
       apply(value.copyWith(showAnalysisArrows: visible));
   Future<void> setVariationArrows(bool visible) =>
@@ -314,6 +342,18 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.squareInkPieceScalePercent != value.squareInkPieceScalePercent) {
       _edited.add('squareInkPieceScalePercent');
+    }
+    if (next.roundSealPieceOffsetX != value.roundSealPieceOffsetX) {
+      _edited.add('roundSealPieceOffsetX');
+    }
+    if (next.roundSealPieceOffsetY != value.roundSealPieceOffsetY) {
+      _edited.add('roundSealPieceOffsetY');
+    }
+    if (next.squareInkPieceOffsetX != value.squareInkPieceOffsetX) {
+      _edited.add('squareInkPieceOffsetX');
+    }
+    if (next.squareInkPieceOffsetY != value.squareInkPieceOffsetY) {
+      _edited.add('squareInkPieceOffsetY');
     }
     if (next.showCoordinates != value.showCoordinates) {
       _edited.add('showCoordinates');

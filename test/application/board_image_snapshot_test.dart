@@ -27,6 +27,8 @@ void main() {
       boardSkin: BoardSkin.jade,
       pieceSkin: PieceSkin.squareInk,
       squareInkPieceScalePercent: 110,
+      squareInkPieceOffsetX: 4,
+      squareInkPieceOffsetY: -1,
       pieceSizePercent: 135,
       arrowHead: ArrowHeadStyle.wide,
       lastMoveMarker: LastMoveMarkerStyle.box,
@@ -48,6 +50,8 @@ void main() {
     expect(snapshot.boardSkin, BoardSkin.jade);
     expect(snapshot.pieceSkin, PieceSkin.squareInk);
     expect(snapshot.pieceSkinSizePercent, 110);
+    expect(snapshot.pieceSkinOffsetXPercent, 4);
+    expect(snapshot.pieceSkinOffsetYPercent, -1);
     expect(snapshot.pieceSizePercent, 135);
     expect(snapshot.arrowHead, ArrowHeadStyle.wide);
     expect(snapshot.lastMoveStyle, LastMoveMarkerStyle.box);

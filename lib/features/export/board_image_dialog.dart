@@ -193,6 +193,10 @@ class _BoardImageDialogState extends State<BoardImageDialog> {
                                 pieceImages: s.pieceImages,
                                 pieceSizePercent: s.pieceSizePercent,
                                 pieceSkinSizePercent: s.pieceSkinSizePercent,
+                                pieceSkinOffsetXPercent:
+                                    s.pieceSkinOffsetXPercent,
+                                pieceSkinOffsetYPercent:
+                                    s.pieceSkinOffsetYPercent,
                                 arrowHead: s.arrowHead,
                                 lastMoveMarker: s.lastMoveStyle,
                                 child: BoardSurface(

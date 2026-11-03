@@ -15,6 +15,8 @@ class BoardDisplayScope extends InheritedWidget {
     this.pieceImages = const {},
     this.pieceSizePercent = 100,
     this.pieceSkinSizePercent = 100,
+    this.pieceSkinOffsetXPercent = 0,
+    this.pieceSkinOffsetYPercent = 0,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
     this.showMoveGrades = true,
@@ -35,6 +37,7 @@ class BoardDisplayScope extends InheritedWidget {
   final Map<PieceImageSlot, Uint8List> pieceImages;
   final int pieceSizePercent;
   final int pieceSkinSizePercent;
+  final int pieceSkinOffsetXPercent, pieceSkinOffsetYPercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
   final bool showMoveGrades;
@@ -87,6 +90,16 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.pieceSkinSizePercent ??
       100;
+  static int pieceSkinOffsetXOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.pieceSkinOffsetXPercent ??
+      0;
+  static int pieceSkinOffsetYOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.pieceSkinOffsetYPercent ??
+      0;
   static bool coordinatesOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
@@ -127,5 +140,7 @@ class BoardDisplayScope extends InheritedWidget {
       showVariationArrows != oldWidget.showVariationArrows ||
       arrowHead != oldWidget.arrowHead ||
       pieceSizePercent != oldWidget.pieceSizePercent ||
-      pieceSkinSizePercent != oldWidget.pieceSkinSizePercent;
+      pieceSkinSizePercent != oldWidget.pieceSkinSizePercent ||
+      pieceSkinOffsetXPercent != oldWidget.pieceSkinOffsetXPercent ||
+      pieceSkinOffsetYPercent != oldWidget.pieceSkinOffsetYPercent;
 }

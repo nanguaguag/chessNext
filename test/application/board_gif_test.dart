@@ -25,6 +25,8 @@ void main() {
         boardSkin: BoardSkin.jade,
         pieceSkin: PieceSkin.squareInk,
         squareInkPieceScalePercent: 115,
+        squareInkPieceOffsetX: 3,
+        squareInkPieceOffsetY: -2,
       ),
     );
     expect(snapshot.frames.map((frame) => frame.move?.toString()), [
@@ -37,6 +39,8 @@ void main() {
     expect(snapshot.boardSkin, BoardSkin.jade);
     expect(snapshot.pieceSkin, PieceSkin.squareInk);
     expect(snapshot.pieceSkinSizePercent, 115);
+    expect(snapshot.pieceSkinOffsetXPercent, 3);
+    expect(snapshot.pieceSkinOffsetYPercent, -2);
     session.playVariation('n2', Move.parse('b0c2'));
     expect(snapshot.frames.length, 4);
     expect(snapshot.frames.last.move, Move.parse('h0g2'));

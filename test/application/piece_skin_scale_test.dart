@@ -8,7 +8,6 @@ import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
 class _DelayedStore extends MemoryPreferencesRepository {
   final gate = Completer<void>();
   @override
@@ -42,6 +41,33 @@ void main() {
   });
 
   test(
+    'skin offsets are independent, bounded and have a default alignment',
+    () {
+      final defaults = AppPreferences();
+      expect(defaults.roundSealPieceOffsetX, 0);
+      expect(defaults.squareInkPieceOffsetY, 0);
+      final custom = defaults.copyWith(
+        roundSealPieceOffsetX: 8,
+        squareInkPieceOffsetX: -8,
+        squareInkPieceOffsetY: 4,
+      );
+      expect(AppPreferences.fromJson(custom.toJson()), custom);
+      expect(
+        custom.copyWith(theme: ThemePreference.dark).squareInkPieceOffsetY,
+        4,
+      );
+      expect(
+        () => AppPreferences(roundSealPieceOffsetY: -9),
+        throwsArgumentError,
+      );
+      expect(
+        () => AppPreferences(squareInkPieceOffsetX: 9),
+        throwsArgumentError,
+      );
+    },
+  );
+
+  test(
     'setting one skin size preserves the other across late storage read',
     () async {
       final session = BoardSession();
@@ -63,6 +89,12 @@ void main() {
         expect(preferences.value.squareInkPieceScalePercent, 120);
         expect(store.value!.roundSealPieceScalePercent, 105);
         expect(store.value!.squareInkPieceScalePercent, 120);
+        await preferences.setPieceSkinOffset(PieceSkin.squareInk, x: 5, y: -3);
+        expect(preferences.value.roundSealPieceOffsetX, 0);
+        expect(preferences.value.squareInkPieceOffsetX, 5);
+        expect(preferences.value.squareInkPieceOffsetY, -3);
+        await preferences.setPieceSkinOffset(PieceSkin.squareInk, x: 0, y: 0);
+        expect(store.value!.squareInkPieceOffsetY, 0);
       } finally {
         preferences.dispose();
         engine.dispose();

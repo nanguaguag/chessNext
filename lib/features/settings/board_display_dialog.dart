@@ -20,6 +20,28 @@ class BoardDisplayDialog extends StatelessWidget {
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController? pieceImages;
 
+  int _skinOffsetX(PreferencesController preferences) =>
+      preferences.value.pieceSkin == PieceSkin.roundSeal
+      ? preferences.value.roundSealPieceOffsetX
+      : preferences.value.squareInkPieceOffsetX;
+
+  int _skinOffsetY(PreferencesController preferences) =>
+      preferences.value.pieceSkin == PieceSkin.roundSeal
+      ? preferences.value.roundSealPieceOffsetY
+      : preferences.value.squareInkPieceOffsetY;
+
+  void _moveSkinPiece(
+    PreferencesController preferences, {
+    int x = 0,
+    int y = 0,
+  }) => unawaited(
+    preferences.setPieceSkinOffset(
+      preferences.value.pieceSkin,
+      x: (_skinOffsetX(preferences) + x).clamp(-8, 8),
+      y: (_skinOffsetY(preferences) + y).clamp(-8, 8),
+    ),
+  );
+
   Widget _soundOptions(
     BuildContext context,
     AudioFeedbackKind kind,
@@ -131,6 +153,89 @@ class BoardDisplayDialog extends StatelessWidget {
                       ),
               ),
               const Text('大小只对当前棋子样式生效，并与下方全局棋子大小相乘；默认100%，范围80%–120%。'),
+              const SizedBox(height: 8),
+              Text(
+                '当前棋子样式位置：横向${preferences.value.pieceSkin == PieceSkin.roundSeal ? preferences.value.roundSealPieceOffsetX : preferences.value.squareInkPieceOffsetX}%，纵向${preferences.value.pieceSkin == PieceSkin.roundSeal ? preferences.value.roundSealPieceOffsetY : preferences.value.squareInkPieceOffsetY}%',
+              ),
+              Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    IconButton(
+                      tooltip: '棋子上移1%',
+                      onPressed:
+                          preferences.loading ||
+                              (preferences.value.pieceSkin ==
+                                          PieceSkin.roundSeal
+                                      ? preferences.value.roundSealPieceOffsetY
+                                      : preferences
+                                            .value
+                                            .squareInkPieceOffsetY) <=
+                                  -8
+                          ? null
+                          : () => _moveSkinPiece(preferences, y: -1),
+                      icon: const Icon(Icons.keyboard_arrow_up),
+                    ),
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        IconButton(
+                          tooltip: '棋子左移1%',
+                          onPressed:
+                              preferences.loading ||
+                                  (preferences.value.pieceSkin ==
+                                              PieceSkin.roundSeal
+                                          ? preferences
+                                                .value
+                                                .roundSealPieceOffsetX
+                                          : preferences
+                                                .value
+                                                .squareInkPieceOffsetX) <=
+                                      -8
+                              ? null
+                              : () => _moveSkinPiece(preferences, x: -1),
+                          icon: const Icon(Icons.keyboard_arrow_left),
+                        ),
+                        IconButton(
+                          key: const ValueKey('piece-skin-auto-align'),
+                          tooltip: '棋子自动对正',
+                          onPressed:
+                              preferences.loading ||
+                                  (_skinOffsetX(preferences) == 0 &&
+                                      _skinOffsetY(preferences) == 0)
+                              ? null
+                              : () => unawaited(
+                                  preferences.setPieceSkinOffset(
+                                    preferences.value.pieceSkin,
+                                    x: 0,
+                                    y: 0,
+                                  ),
+                                ),
+                          icon: const Icon(Icons.my_location),
+                        ),
+                        IconButton(
+                          tooltip: '棋子右移1%',
+                          onPressed:
+                              preferences.loading ||
+                                  _skinOffsetX(preferences) >= 8
+                              ? null
+                              : () => _moveSkinPiece(preferences, x: 1),
+                          icon: const Icon(Icons.keyboard_arrow_right),
+                        ),
+                      ],
+                    ),
+                    IconButton(
+                      tooltip: '棋子下移1%',
+                      onPressed:
+                          preferences.loading || _skinOffsetY(preferences) >= 8
+                          ? null
+                          : () => _moveSkinPiece(preferences, y: 1),
+                      icon: const Icon(Icons.keyboard_arrow_down),
+                    ),
+                  ],
+                ),
+              ),
+              const Text('每次移动当前棋子样式1%格宽，最多±8%；位置仅影响棋子绘制。'),
               Align(
                 alignment: Alignment.centerRight,
                 child: TextButton.icon(

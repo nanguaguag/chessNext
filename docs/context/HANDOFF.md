@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-03 / M4-16 交接（待提交）
+
+基于E43观察完成预设专属位置微调：横/纵各自值域-8…8，方向键1%步进，自动对正写0；每个PieceSkin独立持久化。Render层按棋格宽比例只平移面容、关闭hit tests；不改落点、棋谱或引擎。Material3显示当前X/Y及边界disable；PNG/GIF冻结参数。专项测试偏好范围/往返/late-load、方向操作/自动对正、命中测试和快照均通过。
+
+根`flutter test --reporter compact` 466通过/5跳过；`flutter analyze`零问题；`flutter run -d macos` PID33743，VM Service `127.0.0.1:64032`。修正过一次dart assert语法错误后，dart format及专项通过。已更新ADR-052/FEATURE_MATRIX/GAPS/INTERACTION_SPEC/BACKLOG/TRACEABILITY；`git diff --check`通过后提交中文Conventional Commit，再回填hash。
+
+下一步依据E43实现阴影模式与参数的有界本机设计；随后棋盘图层/标记图片、ZIP归档导入安全边界和皮肤列表管理。源站保存/使用/导出操作未测，仍为U。继续不要关闭F21或宣称全站齐全。
+
 ## 2026-11-03 / M4-15 交接（待提交）
 
 网页E43已核对新建棋子编辑器：大小初值50、最右观察70、左侧附近20.5；位置四方向步进/自动对正/归零；阴影无/柔和/明显和四个参数字段。仅操作了位置右移后自动对正、选择柔和，然后按返回确认放弃草稿。页面恢复到设置页默认棋盘/棋子/100%/坐标开/倒置关，无用户棋谱更改。保存/使用/导出按钮未点，结果为U。E43已记录。

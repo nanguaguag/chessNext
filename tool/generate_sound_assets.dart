@@ -11,6 +11,9 @@ Future<void> main() async {
     '${directory.path}/move.wav',
   ).writeAsBytes(toneWave(frequency: 520, durationMs: 75));
   await File(
+    '${directory.path}/move2.wav',
+  ).writeAsBytes(toneWave(frequency: 390, durationMs: 110));
+  await File(
     '${directory.path}/capture.wav',
   ).writeAsBytes(toneWave(frequency: 660, durationMs: 65));
   await File(

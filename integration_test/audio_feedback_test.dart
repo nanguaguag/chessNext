@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:chess_next/adapters/audio/audioplayers_feedback.dart';
+import 'package:chess_next/adapters/storage/file_audio_override_repository.dart';
 import 'package:chess_next/ports/audio_feedback.dart';
 import 'package:chess_next/adapters/speech/flutter_tts_move_speech.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -22,6 +23,9 @@ void main() {
     await audio.play(AudioFeedbackKind.capture);
     await audio.play(AudioFeedbackKind.check);
     await audio.play(AudioFeedbackKind.mate);
+    for (final choice in MoveSoundChoice.values) {
+      await audio.previewMoveSound(choice);
+    }
     final speech = FlutterTtsMoveSpeech();
     addTearDown(speech.dispose);
     await speech.speak(
@@ -36,6 +40,19 @@ void main() {
     final file = File('${directory.path}/custom.wav');
     await file.writeAsBytes(_wav());
     final audio = AudioplayersFeedback(overrides: _Override(file.path));
+    addTearDown(audio.dispose);
+    await audio.play(AudioFeedbackKind.move);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('macOS plugin plays the persisted second move sound', (
+    tester,
+  ) async {
+    final directory = await Directory.systemTemp.createTemp('audio-choice-');
+    addTearDown(() => directory.delete(recursive: true));
+    final repository = FileAudioOverrideRepository(() async => directory);
+    await repository.setMoveSoundChoice(MoveSoundChoice.sound2);
+    final audio = AudioplayersFeedback(overrides: repository);
     addTearDown(audio.dispose);
     await audio.play(AudioFeedbackKind.move);
     expect(tester.takeException(), isNull);
@@ -55,6 +72,10 @@ class _Override implements AudioOverrideRepository {
   ) async {}
   @override
   Future<void> remove(AudioFeedbackKind kind) async {}
+  @override
+  Future<MoveSoundChoice> moveSoundChoice() async => MoveSoundChoice.sound1;
+  @override
+  Future<void> setMoveSoundChoice(MoveSoundChoice choice) async {}
 }
 
 Uint8List _wav() {

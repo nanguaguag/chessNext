@@ -2,6 +2,16 @@ import 'dart:typed_data';
 
 import 'audio_feedback.dart';
 
+enum MoveSoundChoice { sound1, sound2, followPieceSkin }
+
+extension MoveSoundChoicePresentation on MoveSoundChoice {
+  String get label => switch (this) {
+    MoveSoundChoice.sound1 => '音效1',
+    MoveSoundChoice.sound2 => '音效2',
+    MoveSoundChoice.followPieceSkin => '随棋子皮肤',
+  };
+}
+
 abstract final class AudioLibraryLimits {
   static const maxBytes = 512 * 1024;
 }
@@ -44,4 +54,10 @@ abstract interface class AudioOverrideRepository {
   Future<String?> pathFor(AudioFeedbackKind kind);
   Future<void> save(AudioFeedbackKind kind, String extension, Uint8List bytes);
   Future<void> remove(AudioFeedbackKind kind);
+  Future<MoveSoundChoice> moveSoundChoice();
+  Future<void> setMoveSoundChoice(MoveSoundChoice choice);
+}
+
+abstract interface class AudioSoundPreviewPort {
+  Future<void> previewMoveSound(MoveSoundChoice choice);
 }

@@ -443,3 +443,11 @@ E37/E38实测参考站声明五类音效可各自试听/本机导入 WAV、MP3�
 导入边界为512 KiB、5秒；结构验证支持PCM/IEEE-float WAV及MPEG Layer III，文件读取流也有界，取消不更改配置。清单文件名严格限制，拒绝路径穿越。`test/audio_library_test.dart` 5项覆盖WAV/MP3有效及边界、无效/过大、隔离本机持久化、污染清单、取消/试听/恢复及Material对话框。macOS集成测试新增真实临时 WAV `DeviceFileSource` 加载；integration 2/2通过（既有内置音效和新增自定义路径）。`flutter test --reporter compact` 446 passed / 5 skipped；5项依赖未设置的官方 Pikafish环境；`flutter analyze` 无问题。`flutter run -d macos` 构建启动PID21638，VM Service `127.0.0.1:52467`。
 
 该功能提供项目自己的默认/自定义切换，不实现参考站音效1/2/随皮肤预设；其它OS系统文件选择器/实际解码、试听听感未验，不关闭F28/B23。无新依赖；沿用已登记file_selector/audioplayers，原创素材登记见LICENSING。ADR-045。
+
+## 2026-11-03 / M4-10 / F28 → B23 走棋音效方案
+
+E40 V证据：源站走棋事件可选音效1/2/随棋子皮肤且分别试听；音效2选择在关闭并重开弹层后仍selected，最后恢复音效1。源站吃子更换器仅显示默认音效/试听。项目新增持久化`MoveSoundChoice`、原创音效2bundle和`AudioSoundPreviewPort`；走棋事件按照本机选择播放对应资源，坏偏好退回音效1，三个方案可单项试听。其他四事件不共享走棋方案。项目暂未实现皮肤资源，随皮肤映射现用的默认音效1；UI明确此范围。自定义文件存在时覆盖内置选择并锁定方案选择直至恢复默认，防止设置显示与实际播放不一致。ADR-046。
+
+单元 `flutter test test/audio_library_test.dart --reporter expanded` 5/5（原测试扩展，覆盖持久化重开/损坏默认、方案切换/试听及自定义边界）；macOS集成 `flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 3/3（5事件、三种走棋预览、自定义路径和实际持久化sound2资源加载）；根 `flutter test --reporter compact` 446通过/5跳过；`flutter analyze` 无问题；普通 `flutter run -d macos`成功启动PID24870，VM Service `127.0.0.1:54576`。五项跳过需官方Pikafish执行文件和NNUE环境。无新增依赖；新增音效2由既有生成器创建，SHA登记LICENSING。
+
+剩余：F21完整棋子皮肤并接入对应声音、项目素材声学可接受性、源站试听听感/导入结果、Linux/Web语音能力与棋子位移动画映射；F28未完整对齐。

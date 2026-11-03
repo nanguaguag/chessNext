@@ -1,5 +1,15 @@
 # 会话交接
 
+## 2026-11-03 / M4-10 交接
+
+E40补证：源站走棋音效有音效1/2/随棋子皮肤方案和独立试听；音效2选择退出弹层后仍保留，之后恢复音效1；吃子选择器只有默认音效和试听。最终回到声音设置主页，五音效开关全开、着法朗读关、动画标准、无弹层，棋谱无修改。
+
+项目实现走棋方案本地持久化，`AudioSoundPreviewPort`独立试听三个方案。生成原创 `assets/audio/move2.wav`；随皮肤占位映射当前默认sound1并明确写在UI，因为F21尚无皮肤选择。自定义走棋文件仍优先，方案选择禁用直至恢复默认。其他事件的默认音效未改。ADR-046。
+
+专项audio library 5/5；macOS integration 3/3，覆盖内置五声音/三个预览/本地自定义路径/持久化sound2实际asset调用；根 `flutter test --reporter compact` 446通过/5跳过（引擎环境变量缺失）；`flutter analyze`0问题；`flutter run -d macos`启动PID24870、VM Service `127.0.0.1:54576`，进程继续运行不关闭。构建提示flutter_tts未采用SwiftPM（warning未来可能升级error）；无阻断。
+
+已更新E40、FEATURE_MATRIX/GAPS、BACKLOG、TRACEABILITY、ADR-046、架构、LICENSING（sound2 SHA）；`git diff --check`通过，单独中文提交见git log。下一步F21棋子皮肤与随皮肤映射/动画范围审计，再继续其他本机差距。不要将占位音效说成皮肤联动完成；F28和全站仍不完整。
+
 ## 2026-11-03 / M4-09 交接（待本片提交）
 
 F28/B23新增本机自定义音效导入：`AudioFilePicker`/`AudioOverrideRepository`/`AudioFeedbackPort`隔离，`AudioLibraryController`协调，Material对话框只触发应用层；应用支持目录保存按事件独立的文件和schema1清单。512KiB/5秒，支持PCM/IEEE-float WAV和MP3 Layer III。取消不改配置；失败有类型文案；清单路径正则限制并防路径穿越；损坏/缺失的自定义资源退回本机原创默认声音。导入后可试听/恢复默认。

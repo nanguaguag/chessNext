@@ -70,6 +70,19 @@ void main() {
       expect(customPath, isNotNull);
       expect(await File(customPath!).readAsBytes(), wav);
       expect(await repository.pathFor(AudioFeedbackKind.move), isNull);
+      expect(await repository.moveSoundChoice(), MoveSoundChoice.sound1);
+      await repository.setMoveSoundChoice(MoveSoundChoice.sound2);
+      expect(await repository.moveSoundChoice(), MoveSoundChoice.sound2);
+      expect(
+        await FileAudioOverrideRepository(
+          () async => directory,
+        ).moveSoundChoice(),
+        MoveSoundChoice.sound2,
+      );
+      await File(
+        '${directory.path}/chessnext-audio/move-choice.json',
+      ).writeAsString('{broken');
+      expect(await repository.moveSoundChoice(), MoveSoundChoice.sound1);
       await repository.remove(AudioFeedbackKind.capture);
       expect(await repository.pathFor(AudioFeedbackKind.capture), isNull);
     },
@@ -103,10 +116,21 @@ void main() {
 
       expect(await controller.importCustom(AudioFeedbackKind.move), isTrue);
       expect(controller.hasCustom(AudioFeedbackKind.move), isTrue);
+      expect(
+        await controller.selectMoveSoundChoice(MoveSoundChoice.sound2),
+        isFalse,
+      );
       expect(await controller.preview(AudioFeedbackKind.move), isTrue);
       expect(audio.played, [AudioFeedbackKind.move]);
       expect(await controller.reset(AudioFeedbackKind.move), isTrue);
       expect(controller.hasCustom(AudioFeedbackKind.move), isFalse);
+      expect(controller.moveChoice, MoveSoundChoice.sound1);
+      expect(
+        await controller.selectMoveSoundChoice(MoveSoundChoice.sound2),
+        isTrue,
+      );
+      expect(await controller.previewMoveSound(MoveSoundChoice.sound2), isTrue);
+      expect(audio.previewed, [MoveSoundChoice.sound2]);
 
       picker.selected = null;
       expect(await controller.importCustom(AudioFeedbackKind.move), isFalse);
@@ -134,12 +158,23 @@ void main() {
         ),
       ),
     );
+    expect(find.text('当前：音效1'), findsOneWidget);
+    final soundChoiceDropdown = find.byType(
+      DropdownButtonFormField<MoveSoundChoice>,
+    );
+    await tester.ensureVisible(soundChoiceDropdown);
+    await tester.pumpAndSettle();
+    await tester.tap(soundChoiceDropdown.hitTestable());
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('音效2').last);
+    await tester.pumpAndSettle();
+    expect(find.text('当前：音效2'), findsOneWidget);
     await tester.tap(find.text('导入自定义音效'));
     await tester.pumpAndSettle();
     expect(find.text('当前：自定义音效'), findsOneWidget);
     await tester.tap(find.text('恢复默认音效'));
     await tester.pumpAndSettle();
-    expect(find.text('当前：默认音效'), findsOneWidget);
+    expect(find.text('当前：音效1'), findsOneWidget);
     library.dispose();
   });
 }
@@ -190,6 +225,7 @@ class _Picker implements AudioFilePicker {
 
 class _MemoryOverrides implements AudioOverrideRepository {
   final files = <AudioFeedbackKind, String>{};
+  MoveSoundChoice choice = MoveSoundChoice.sound1;
   @override
   Future<String?> pathFor(AudioFeedbackKind kind) async => files[kind];
   @override
@@ -203,12 +239,24 @@ class _MemoryOverrides implements AudioOverrideRepository {
 
   @override
   Future<void> remove(AudioFeedbackKind kind) async => files.remove(kind);
+
+  @override
+  Future<MoveSoundChoice> moveSoundChoice() async => choice;
+
+  @override
+  Future<void> setMoveSoundChoice(MoveSoundChoice value) async {
+    choice = value;
+  }
 }
 
-class _Audio implements AudioFeedbackPort {
+class _Audio implements AudioFeedbackPort, AudioSoundPreviewPort {
   final played = <AudioFeedbackKind>[];
+  final previewed = <MoveSoundChoice>[];
   @override
   Future<void> play(AudioFeedbackKind kind) async => played.add(kind);
+  @override
+  Future<void> previewMoveSound(MoveSoundChoice choice) async =>
+      previewed.add(choice);
   @override
   Future<void> dispose() async {}
 }

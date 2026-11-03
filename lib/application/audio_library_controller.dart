@@ -15,6 +15,7 @@ class AudioLibraryController extends ChangeNotifier {
   AudioFeedbackKind? busyKind;
   AudioFeedbackKind? errorKind;
   String? error;
+  MoveSoundChoice moveChoice = MoveSoundChoice.sound1;
   bool _disposed = false;
 
   bool hasCustom(AudioFeedbackKind kind) => _custom.contains(kind);
@@ -27,7 +28,52 @@ class AudioLibraryController extends ChangeNotifier {
         // Keep the application usable if one local setting file is damaged.
       }
     }
+    try {
+      moveChoice = await repository.moveSoundChoice();
+    } catch (_) {
+      moveChoice = MoveSoundChoice.sound1;
+    }
     _notify();
+  }
+
+  Future<bool> selectMoveSoundChoice(MoveSoundChoice choice) async {
+    if (busyKind != null || _disposed) return false;
+    if (hasCustom(AudioFeedbackKind.move)) {
+      _begin(AudioFeedbackKind.move);
+      _setError(AudioFeedbackKind.move, '请先恢复默认音效，再选择内置方案。');
+      _finish();
+      return false;
+    }
+    _begin(AudioFeedbackKind.move);
+    try {
+      await repository.setMoveSoundChoice(choice);
+      moveChoice = choice;
+      return true;
+    } catch (_) {
+      _setError(AudioFeedbackKind.move, '音效方案未能保存在本机，请重试。');
+      return false;
+    } finally {
+      _finish();
+    }
+  }
+
+  Future<bool> previewMoveSound(MoveSoundChoice choice) async {
+    if (busyKind != null || _disposed) return false;
+    if (audio is! AudioSoundPreviewPort) {
+      _setError(AudioFeedbackKind.move, '当前音效播放器不支持方案试听。');
+      _notify();
+      return false;
+    }
+    _begin(AudioFeedbackKind.move);
+    try {
+      await (audio as AudioSoundPreviewPort).previewMoveSound(choice);
+      return true;
+    } catch (_) {
+      _setError(AudioFeedbackKind.move, '音效播放失败，请检查本机音频设备后重试。');
+      return false;
+    } finally {
+      _finish();
+    }
   }
 
   Future<bool> importCustom(AudioFeedbackKind kind) async {
@@ -74,6 +120,10 @@ class AudioLibraryController extends ChangeNotifier {
     try {
       await repository.remove(kind);
       _custom.remove(kind);
+      if (kind == AudioFeedbackKind.move) {
+        await repository.setMoveSoundChoice(MoveSoundChoice.sound1);
+        moveChoice = MoveSoundChoice.sound1;
+      }
       return true;
     } catch (_) {
       _setError(kind, '无法恢复默认音效，请重试。');

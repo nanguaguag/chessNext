@@ -17,6 +17,45 @@ class FileAudioOverrideRepository implements AudioOverrideRepository {
   File _manifest(Directory folder, AudioFeedbackKind kind) =>
       File('${folder.path}/${kind.name}.json');
 
+  File _moveChoice(Directory folder) => File('${folder.path}/move-choice.json');
+
+  @override
+  Future<MoveSoundChoice> moveSoundChoice() async {
+    final folder = await _folder();
+    final file = _moveChoice(folder);
+    if (!await file.exists() || await file.length() > 128) {
+      return MoveSoundChoice.sound1;
+    }
+    try {
+      final value = jsonDecode(await file.readAsString());
+      if (value is Map<String, dynamic> && value['schema'] == 1) {
+        return MoveSoundChoice.values.firstWhere(
+          (choice) => choice.name == value['choice'],
+          orElse: () => MoveSoundChoice.sound1,
+        );
+      }
+    } catch (_) {
+      // Corrupt preferences fall back to the first built-in sound.
+    }
+    return MoveSoundChoice.sound1;
+  }
+
+  @override
+  Future<void> setMoveSoundChoice(MoveSoundChoice choice) async {
+    final folder = await _folder();
+    final stage = await folder.createTemp('.move-choice-');
+    try {
+      final pending = File('${stage.path}/move-choice.json');
+      await pending.writeAsString(
+        jsonEncode({'schema': 1, 'choice': choice.name}),
+        flush: true,
+      );
+      await pending.rename(_moveChoice(folder).path);
+    } finally {
+      if (await stage.exists()) await stage.delete(recursive: true);
+    }
+  }
+
   Future<Map<String, dynamic>?> _readManifest(
     Directory folder,
     AudioFeedbackKind kind,

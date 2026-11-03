@@ -511,3 +511,12 @@ E38在xiangqiai.com/#/settings/sound分别打开将军/吃子/绝杀更换弹层
 验证 `flutter test test/audio_library_test.dart --reporter expanded` 5/5；`flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 2/2，包含本机临时自定义WAV的DeviceFileSource；根 `flutter test --reporter compact` 446通过/5跳过（5个依赖未配置PIKAFISH_EXECUTABLE/PIKAFISH_NETWORK的官方引擎测试）；`flutter analyze` 0问题。普通 `flutter run -d macos`构建、同步并启动PID21638，VM Service 127.0.0.1:52467，运行会话37640保持运行。测试/build期间flutter_tts提示不支持Swift Package Manager，未来SDK可能变error；未阻止构建。
 
 新增ADR-045和FEATURE/TRACEABILITY/BACKLOG/交接更新。E37/E38仅确认源站显示本机自定义入口和声明限制；实际导入按钮不显示可见picker，故源站导入成功持续U。项目没有加入站点预设/资源。待`git diff --check`及提交 `feat(audio): 支持本机导入自定义音效`，之后继续B23，尚有其它离线功能待审计；不宣称F28或全站对齐。
+## 2026-11-03 / E40 + M4-10 / F28 → B23 走棋音效方案
+
+E40访客设置页：走棋音效更换弹层三项radio音效1/2/随皮肤且各有试听；选音效2后退出重开仍checked，最后恢复音效1。再核吃子弹层只有默认音效与试听。最终主页复核五类声音开、语音关、标准动画，无棋谱变化。
+
+增加MoveSoundChoice和FileAudioOverrideRepository本机原子schema1选择文件；坏设置回退sound1；音效2由tool/generate_sound_assets.dart原创合成`assets/audio/move2.wav`（SHA登记LICENSING）。走棋系统音按choice选择；AudioSoundPreviewPort独立预览各方案。当前项目无皮肤选择器，随皮肤有提示、映射到默认sound1；未来F21皮肤增量再换成映射。已上传自定义文件时它优先播放、预设控件禁用；恢复默认删除自定义音并重置sound1。其它四类保持默认音。
+
+测试：专项audio library 5/5；macOS integration 3/3，真实验证声音2生成asset按本机偏好加载；根 `flutter test --reporter compact` 446通过/5跳过（缺官方引擎环境变量）；`flutter analyze` 0问题；`flutter run -d macos`启动PID24870，VM `127.0.0.1:54576`。flutter_tts SwiftPM提示warning，不阻断。E40 AX最终截图取自会话结果，未存研究目录；可见恢复的设置状态。
+
+M4-10单独中文提交见git log。保持走棋音效1最终源站状态，F21皮肤和声学/移动动画仍缺。继续审计剩余离线范围。

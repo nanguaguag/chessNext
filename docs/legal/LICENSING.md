@@ -41,4 +41,6 @@ file_selector1.1.0及实际解析的平台/传递依赖见[文件选择登记](F
 
 新增 audioplayers 6.8.1（https://pub.dev/packages/audioplayers/versions/6.8.1），pub.dev标注MIT，直接归档SHA256 2ba4bb2944baacbdd5372ff8254a8e7feb8c10d7739545e392f5605a8f618745；解析 audioplayers_android 5.3.0、audioplayers_darwin 6.5.0、audioplayers_linux 4.3.0、audioplayers_web 5.3.0、audioplayers_windows 4.4.1 和 platform interface，确切锁定版本/归档摘要见pubspec.lock。macOS构建出现插件Swift 6隔离警告（当前是warning），需要未来升级/发行复核；本片只在macOS实际集成验证。此登记不等于全部传递依赖SBOM完成。
 
+2026-11-03 M4-10 新增 `assets/audio/move2.wav`，由既有原创生成器 `tool/generate_sound_assets.dart` 使用 `toneWave(frequency:390,durationMs:110)` 合成PCM；不来自参考站。SHA256 `3da893db283f952017b31e61fc94e56db15d5520e5d7d0037f5914819426fb7f`。没有新增第三方依赖。
+
 2026-11-03新增[flutter_tts 4.2.5](https://pub.dev/packages/flutter_tts/versions/4.2.5)，官方pub.dev发布页标注MIT，pub归档SHA256 ce5eb209b40e95f2f4a1397116c87ab2fcdff32257d04ed7a764e75894c03775。插件声明平台为Android/iOS/macOS/Web/Windows，没有Linux实现；本项目为离线边界在Web也不自动朗读，防止依赖浏览器未知在线voice。macOS插件编译给AVSpeechSynth枚举future-case warning，构建成功；Flutter还提示该插件暂不支持Swift Package Manager，将来Flutter可能提高要求。须在升级/发行前复核。

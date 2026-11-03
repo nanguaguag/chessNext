@@ -5,6 +5,7 @@ import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/piece_image_library_controller.dart';
 import 'package:chess_next/application/piece_skin_library_controller.dart';
+import 'package:chess_next/application/piece_skin_package_codec.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/ports/piece_images.dart';
 import 'package:chess_next/ports/piece_skin_library.dart';
@@ -139,6 +140,46 @@ void main() {
     prefs.dispose();
     engine.dispose();
   });
+
+  test(
+    'package import creates a fresh local ID and selects the skin',
+    () async {
+      final engine = EngineSessionController(BoardSession(), null);
+      final prefs = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      await prefs.initialize();
+      final images = PieceImageLibraryController(
+        const CancelPieceImagePicker(),
+        MemoryPieceImageRepository(),
+      );
+      await images.initialize();
+      final repo = MemoryPieceSkinLibraryRepository();
+      final library = PieceSkinLibraryController(repo, images, prefs);
+      await library.initialize();
+      final package = PieceSkinPackage(
+        profile: PieceSkinDefinition(
+          id: 'custom-exported1',
+          name: '迁移皮肤',
+          baseSkin: PieceSkin.squareInk,
+          scalePercent: 108,
+        ),
+        images: const {},
+      );
+
+      expect(await library.importPackage(package), isTrue);
+      final imported = library.profiles.single;
+      expect(imported.id, isNot(package.profile.id));
+      expect(imported.scalePercent, 108);
+      expect(prefs.value.selectedPieceSkinId, imported.id);
+      expect(await repo.load(), [imported]);
+      library.dispose();
+      images.dispose();
+      prefs.dispose();
+      engine.dispose();
+    },
+  );
 
   test(
     'failed create and delete preserve the old selectable profile',

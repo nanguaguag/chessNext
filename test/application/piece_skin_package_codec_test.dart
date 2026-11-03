@@ -23,6 +23,9 @@ void main() {
     final zip = PieceSkinPackageCodec.encode(profile, {
       PieceImageSlot.redHorse: png,
     });
+    final decodedPackage = PieceSkinPackageCodec.decode(zip);
+    expect(decodedPackage.profile, profile);
+    expect(decodedPackage.images[PieceImageSlot.redHorse], png);
     final archive = ZipDecoder().decodeBytes(zip);
     expect(archive.files.map((file) => file.name).toSet(), {
       'skin.json',
@@ -49,5 +52,33 @@ void main() {
       }),
       throwsFormatException,
     );
+  });
+
+  test('rejects path traversal entries in untrusted ZIP packages', () {
+    final profile = PieceSkinDefinition(
+      id: 'custom-exported1',
+      name: '测试皮肤',
+      baseSkin: PieceSkin.roundSeal,
+    );
+    final archive = Archive()
+      ..addFile(
+        ArchiveFile.string(
+          'skin.json',
+          jsonEncode({
+            'schema': 1,
+            'profile': profile.toJson(),
+            'images': [
+              {
+                'slot': PieceImageSlot.redRook.name,
+                'path': 'images/../../outside.png',
+                'sha256': List.filled(64, '0').join(),
+              },
+            ],
+          }),
+        ),
+      )
+      ..addFile(ArchiveFile.string('images/../../outside.png', 'bad'));
+    final bytes = Uint8List.fromList(ZipEncoder().encode(archive));
+    expect(() => PieceSkinPackageCodec.decode(bytes), throwsFormatException);
   });
 }

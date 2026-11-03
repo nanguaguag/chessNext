@@ -1,5 +1,13 @@
 # 会话交接
 
+## 2026-11-04 / B24 持续交付：M4-27项目格式皮肤ZIP导入
+
+M4-27代码及门槛完成，待独立中文提交。ADR-062仅接受M4-26项目schema1单皮肤ZIP，不宣称支持站点任意格式。系统选择流读≤8 MiB；解码前后检查≤15中心项、固定白名单路径、无重复项/软链接/目录/路径穿越、清单≤64 KiB、图片总展开≤7 MiB/单图≤512 KiB、槽位唯一/全部引用、SHA-256和真实PNG/JPEG解码。全包确认前不落盘；用户确认后新ID、不覆盖重名/超过64拒绝；先存图片后持久化目录，目录失败时清理图片，清理失败有可能残留不可见孤儿文件夹。成功选用该皮肤。选文件器目前仅主入口macOS注入。
+
+专项codec/picker/library/exporter`flutter test test/application/piece_skin_package_codec_test.dart test/adapters/macos_piece_skin_package_exporter_test.dart test/adapters/file_selector_piece_skin_package_picker_test.dart test/application/piece_skin_library_test.dart --reporter compact`13/13；根`flutter test --reporter compact`496通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID69107/VM `127.0.0.1:56731`。未实际操作系统面板/人工视觉。调试期间初次target遗漏尚未创建的picker测试文件、后续发现测试输入类型错误及误把XFile.name当可靠扩展名；已加入测试、修正字节类型并移除名称强制检查，由类型过滤+ZIP结构校验防护。日志`/tmp/chessnext-m427-final-test.log`。
+
+先提交M4-27中文独立提交。之后继续站点ZIP/多套包与文件夹导入审计（E42/E48成功仍U），并推进其它设置和在线皮肤自建可替换服务部署。F21/全站开放。
+
 ## 2026-11-04 / B24 持续交付：M4-26本机用户皮肤ZIP导出
 
 M4-26实现和门槛完成，待独立中文提交。ADR-061定义`skin.json` schema1及`images/<slot>.<ext>`固定路径、SHA-256清单。图片复用PNG/JPEG真实解码限制，最多14张/7 MiB原图累计/8 MiB最终ZIP；macOS系统保存位置，原生`writeZipAtomic`校验ZIP签名/大小后原子写。导出不含其它皮肤/账户/棋谱。`archive` 4.6.0从传递依赖改直接依赖，MIT许可已有归档和LICENSE SHA记录。

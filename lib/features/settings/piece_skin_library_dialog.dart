@@ -5,15 +5,18 @@ import '../../ports/piece_skin_library.dart';
 import '../../application/piece_skin_package_codec.dart';
 import '../../ports/piece_skin_package_exporter.dart';
 import '../../ports/record_file_exporter.dart';
+import '../../ports/piece_skin_package_picker.dart';
 
 class PieceSkinLibraryDialog extends StatefulWidget {
   const PieceSkinLibraryDialog({
     super.key,
     required this.library,
     this.exporter,
+    this.picker,
   });
   final PieceSkinLibraryController library;
   final PieceSkinPackageExporter? exporter;
+  final PieceSkinPackagePicker? picker;
 
   @override
   State<PieceSkinLibraryDialog> createState() => _PieceSkinLibraryDialogState();
@@ -225,6 +228,13 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
       ),
       actions: [
         TextButton.icon(
+          onPressed: widget.library.loading || widget.picker == null
+              ? null
+              : () => _import(context),
+          icon: const Icon(Icons.archive_outlined),
+          label: const Text('导入ZIP'),
+        ),
+        TextButton.icon(
           onPressed: widget.library.loading
               ? null
               : () async {
@@ -290,6 +300,48 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
       ScaffoldMessenger.maybeOf(
         context,
       )?.showSnackBar(const SnackBar(content: Text('皮肤包导出失败，请检查本机存储后重试。')));
+    }
+  }
+
+  Future<void> _import(BuildContext context) async {
+    try {
+      final bytes = await widget.picker!.pickZip();
+      if (bytes == null || !context.mounted) return;
+      final skinPackage = PieceSkinPackageCodec.decode(bytes);
+      final confirmed = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('导入${skinPackage.profile.name}？'),
+          content: Text(
+            '将新增一套本机皮肤，包含${skinPackage.images.length}张图片。导入后会选用该皮肤。',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('导入并使用'),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !context.mounted) return;
+      final imported = await widget.library.importPackage(skinPackage);
+      if (!context.mounted) return;
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(
+          content: Text(
+            imported ? '皮肤已导入并选用。' : widget.library.error ?? '皮肤导入失败。',
+          ),
+        ),
+      );
+    } catch (_) {
+      if (!context.mounted) return;
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(const SnackBar(content: Text('皮肤包无效或无法读取，未写入本机数据。')));
     }
   }
 }

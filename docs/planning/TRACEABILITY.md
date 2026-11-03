@@ -543,3 +543,4 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 | M4-24 | F21/B24 本机皮肤库搜索、排序和选择 | `flutter test --reporter compact` 488通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID64446/VM 127.0.0.1:49993 | E42源站显式回车搜索/五类排序可追溯；本机实现默认/名称/最近创建。点赞/作者需在线元数据；人工视觉验收未做 |
 | M4-25 | F21/B24 用户皮肤独立阴影 | `flutter test --reporter compact` 488通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID65664/VM 127.0.0.1:51711 | 控件值域沿用ADR-056项目P；E43源站精确端点和算法U；人工视觉验收未做 |
 | M4-26 | F21/B24 用户皮肤ZIP导出 | `flutter test --reporter compact` 492通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID67175/VM 127.0.0.1:54273 | 原子二进制原生端口编译通过；E43导出入口仅O，源站格式/成功仍U；未人工选文件验收 |
+| M4-27 | F21/B24 项目格式皮肤包安全导入 | `flutter test --reporter compact` 496通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID69107/VM 127.0.0.1:56731 | 项目ZIP schema1，不支持通用站点包；路径/条目/字节/图片校验及用户确认有测试；系统选择面板未人工操作；E42/E48源站成功仍U |

@@ -1,5 +1,13 @@
 # 会话日志
 
+## 2026-11-04 / M4-27 / F21,B24 项目格式皮肤ZIP导入
+
+M4-26独立导出已提交`dfec26c`。E42/E48实际导入成功仍U，本片按ADR-062仅构建自有schema1单皮肤包的导入闭环，不把它说成通用站点格式。
+
+输入由macOS file_selector流读取，头部/长度限22B至8MiB、持续8秒，实际读取也逐块计量；ZipDecoder使用verify，核中心目录≤15且Archive输出项数量与目录一致以拒绝重复名；每条是普通文件、不允许目录/软链接；仅skin.json和固定槽位images/<slot>.png/.jpg可出现；清单≤64KiB、每图≤512KiB、总展开≤7MiB；清单槽位唯一、entry路径映射唯一/无悬空/无额外文件，SHA256匹配，复用PNG/JPEG真实解码/尺寸检查。解析全包后才展示确认；导入新ID，重名/达64拒绝覆盖，确认后先安装图片再写皮肤目录并选用。仓库写失败尝试删除图片目录；清理若也失败会留下不在清单内的孤立目录。站点其它ZIP/文件夹和多皮肤ZIP选择没实现。
+
+定向codec/adapter/library`flutter test test/application/piece_skin_package_codec_test.dart test/adapters/macos_piece_skin_package_exporter_test.dart test/adapters/file_selector_piece_skin_package_picker_test.dart test/application/piece_skin_library_test.dart --reporter compact`13/13；最终根`flutter test --reporter compact`496通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功PID69107/VM `127.0.0.1:56731`。跳过依赖官方引擎/NNUE，SwiftPM warning既有；未人工操作文件面板。初次专项未包含尚未落盘的新picker测试文件、随后XFile测试构造的字节类型报错、XFile名称在内存测试不可靠；都已修正，输入拒绝由chooser类型和ZIP结构负责，不强制filename后缀。日志`/tmp/chessnext-m427-final-test.log`。代码/ADR/追踪/README/交接待独立中文提交。后续审计E42/E48实际格式或做文件夹导入，然后在线皮肤目录和部署方案。全站仍未完成。
+
 ## 2026-11-04 / M4-26 / F21,B24 本机用户皮肤ZIP导出
 
 M4-25已提交`1589a60`。E43只确认编辑页存在导出入口、并未实际操作；源站成功/格式仍U。M4-26定义ADR-061本机迁移备份包：固定`skin.json`清单schema1、槽位固定内部文件名、sha256；PNG/JPEG复用受限真实解码校验，最大14图/7MiB源文件/8MiB ZIP。archive 4.6.0已从transitive调整为direct，MIT来源/hash沿用LICENSING已记录值。导出UI对用户皮肤显示；macOS file_selector保存面板后通过新`writeZipAtomic`原子写入，Swift检查PK签名及8MiB上限；其它平台端口不注入、按钮disabled。

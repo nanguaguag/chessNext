@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import '../ports/piece_images.dart';
 import '../ports/piece_skin_library.dart';
 import '../ports/piece_skin_shadow.dart';
+import 'piece_skin_package_codec.dart';
 import 'piece_image_library_controller.dart';
 import 'preferences_controller.dart';
 
@@ -112,8 +113,7 @@ class PieceSkinLibraryController extends ChangeNotifier {
     loading = true;
     error = null;
     notifyListeners();
-    final id =
-        'custom-${DateTime.now().microsecondsSinceEpoch.toRadixString(36)}-${Random.secure().nextInt(1 << 24).toRadixString(36)}';
+    final id = _newId();
     final base = preferences.value.pieceSkin;
     try {
       if (!await images.cloneSkinImages(
@@ -165,6 +165,58 @@ class PieceSkinLibraryController extends ChangeNotifier {
       if (!_disposed) notifyListeners();
     }
   }
+
+  Future<bool> importPackage(PieceSkinPackage package) async {
+    final profile = package.profile;
+    if (loading ||
+        profiles.length >= 64 ||
+        profiles.any(
+          (item) => item.name.toLowerCase() == profile.name.toLowerCase(),
+        )) {
+      error = '皮肤名称重复或本机皮肤数量已达上限。';
+      notifyListeners();
+      return false;
+    }
+    loading = true;
+    error = null;
+    notifyListeners();
+    final id = _newId();
+    final imported = PieceSkinDefinition(
+      id: id,
+      name: profile.name,
+      baseSkin: profile.baseSkin,
+      scalePercent: profile.scalePercent,
+      offsetXPercent: profile.offsetXPercent,
+      offsetYPercent: profile.offsetYPercent,
+      shadow: profile.shadow,
+    );
+    try {
+      if (!await images.installPackageImages(id, package.images)) {
+        throw StateError('package images could not be installed');
+      }
+      final next = [...profiles, imported];
+      await repository.save(next);
+      profiles = List.unmodifiable(next);
+      try {
+        await preferences.selectPieceSkin(imported.baseSkin, imported.id);
+      } catch (_) {
+        error = '皮肤已导入，但自动选用失败。';
+      }
+      return true;
+    } catch (_) {
+      try {
+        await images.discardInstalledSkin(id);
+      } catch (_) {}
+      error = '导入失败，当前皮肤库保持不变。';
+      return false;
+    } finally {
+      loading = false;
+      if (!_disposed) notifyListeners();
+    }
+  }
+
+  String _newId() =>
+      'custom-${DateTime.now().microsecondsSinceEpoch.toRadixString(36)}-${Random.secure().nextInt(1 << 24).toRadixString(36)}';
 
   Future<bool> rename(String id, String name) async {
     final normalized = name.trim();

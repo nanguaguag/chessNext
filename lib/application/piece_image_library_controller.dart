@@ -208,6 +208,89 @@ class PieceImageLibraryController extends ChangeNotifier {
     return batchImportedSlots.length;
   }
 
+  Future<bool> installPackageImages(
+    String skinId,
+    Map<PieceImageSlot, Uint8List> packageImages,
+  ) async {
+    if (_disposed || loading || busySlot != null || batchBusy) {
+      return false;
+    }
+    for (final bytes in packageImages.values) {
+      final extension = _imageExtension(bytes);
+      if (extension == null) return false;
+      try {
+        PieceImageValidator.validate(SelectedPieceImage(extension, bytes));
+      } on PieceImageException catch (exception) {
+        error = exception.message;
+        _notify();
+        return false;
+      }
+    }
+    batchBusy = true;
+    batchImportedCount = 0;
+    batchImportedSlots.clear();
+    error = null;
+    _notify();
+    final saved = <PieceImageSlot>[];
+    try {
+      for (final entry in packageImages.entries) {
+        final extension = _imageExtension(entry.value)!;
+        await repository.save(skinId, entry.key, extension, entry.value);
+        saved.add(entry.key);
+        batchImportedSlots.add(entry.key);
+        batchImportedCount = saved.length;
+        _setImage(skinId, entry.key, entry.value);
+      }
+      return true;
+    } catch (_) {
+      try {
+        await repository.removeSkin(skinId);
+      } catch (_) {
+        for (final slot in saved) {
+          try {
+            await repository.remove(skinId, slot);
+          } catch (_) {}
+        }
+      }
+      final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_images)
+        ..remove(skinId);
+      _images = Map.unmodifiable(next);
+      error = '皮肤图片导入失败，未添加该皮肤。';
+      return false;
+    } finally {
+      batchBusy = false;
+      _notify();
+    }
+  }
+
+  Future<void> discardInstalledSkin(String skinId) async {
+    try {
+      await repository.removeSkin(skinId);
+    } finally {
+      final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_images)
+        ..remove(skinId);
+      _images = Map.unmodifiable(next);
+      _notify();
+    }
+  }
+
+  static String? _imageExtension(Uint8List bytes) {
+    if (bytes.length >= 4 &&
+        bytes[0] == 0xff &&
+        bytes[1] == 0xd8 &&
+        bytes[2] == 0xff) {
+      return 'jpg';
+    }
+    if (bytes.length >= 8 &&
+        bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4e &&
+        bytes[3] == 0x47) {
+      return 'png';
+    }
+    return null;
+  }
+
   void _setImage(String skin, PieceImageSlot slot, Uint8List bytes) {
     final next = Map<String, Map<PieceImageSlot, Uint8List>>.from(_images);
     next[skin] = Map<PieceImageSlot, Uint8List>.from(next[skin] ?? const {})

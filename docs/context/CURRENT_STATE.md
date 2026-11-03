@@ -2,7 +2,7 @@
 
 ## 最新交付 M4-29（2026-11-04）
 
-B23/F28 棋步移动动画（ADR-064）：主棋盘在走棋身份变化时从起点到落点移动棋子；动画速度复用关/快/标准/慢项目时长，Reduce Motion和关档静态。动画中隐藏落点棋子视觉但保留棋盘语义/命中；不延迟棋谱/规则提交。编辑器/分析预览/PNG/GIF静态。定向3/3；根`flutter test --reporter compact`501通过/5跳过；`flutter analyze --no-pub`无问题；最终`flutter run -d macos`Build/Sync成功PID74615/VM `127.0.0.1:64108`。CUA窗口读取超时两次，人工视觉验收未做。已提交`177abff feat(board): 增加棋步移动动画`。源站动画对象和速度映射仍U；F28未完成。
+B23/F28 棋步移动动画（ADR-064）：主棋盘在走棋身份变化时从起点到落点移动棋子；动画速度复用关/快/标准/慢项目时长，Reduce Motion和关档静态。动画中隐藏落点棋子视觉但保留棋盘语义/命中；不延迟棋谱/规则提交。编辑器/分析预览/PNG/GIF静态。定向5/5；根`flutter test --reporter compact`503通过/5跳过；`flutter analyze --no-pub`无问题；最终`flutter run -d macos`Build/Sync成功PID74615/VM `127.0.0.1:64108`。CUA窗口读取超时两次，人工视觉验收未做。已提交`177abff feat(board): 增加棋步移动动画`，补充边界测试待提交。源站动画对象和速度映射仍U；F28未完成。
 
 ## M4-28（2026-11-04）
 

@@ -139,4 +139,122 @@ void main() {
     expect(find.byKey(const ValueKey('moving-piece-overlay')), findsNothing);
     await tester.pumpWidget(const SizedBox.shrink());
   });
+
+  testWidgets('fast speed animates and a newer move replaces the current one', (
+    tester,
+  ) async {
+    var position = Position.initial();
+    Move? lastMove;
+    var identity = 0;
+    late void Function(VoidCallback) update;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: BoardDisplayScope(
+            showCoordinates: false,
+            animationSpeed: AnimationSpeed.fast,
+            child: StatefulBuilder(
+              builder: (context, setState) {
+                update = setState;
+                return BoardSurface(
+                  at: position.at,
+                  onTap: (_) {},
+                  lastMove: lastMove,
+                  lastMoveIdentity: identity,
+                  animatePieceMoves: true,
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+    final firstMove = Move.parse('h2e2');
+    update(() {
+      position = position.play(firstMove);
+      lastMove = firstMove;
+      identity++;
+    });
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 100));
+    final overlay = find.byKey(const ValueKey('moving-piece-overlay'));
+    final firstController =
+        tester.widget<AnimatedBuilder>(overlay).animation
+            as AnimationController;
+    expect(firstController.value, greaterThan(0));
+    expect(firstController.value, lessThan(1));
+
+    final nextMove = Move.parse('b9c7');
+    update(() {
+      position = position.play(nextMove);
+      lastMove = nextMove;
+      identity++;
+    });
+    await tester.pump();
+    final restartedController =
+        tester.widget<AnimatedBuilder>(overlay).animation
+            as AnimationController;
+    expect(restartedController.value, 0);
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(restartedController.value, greaterThan(0));
+    expect(restartedController.value, lessThan(1));
+    await tester.pump(const Duration(milliseconds: 200));
+    await tester.pumpAndSettle();
+    expect(overlay, findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
+
+  testWidgets('Reduce Motion stops an animation already in progress', (
+    tester,
+  ) async {
+    var position = Position.initial();
+    Move? lastMove;
+    var identity = 0;
+    var reduceMotion = false;
+    late void Function(VoidCallback) updatePosition;
+    late void Function(VoidCallback) updateSettings;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setSettings) {
+              updateSettings = setSettings;
+              return MediaQuery(
+                data: MediaQueryData(disableAnimations: reduceMotion),
+                child: BoardDisplayScope(
+                  showCoordinates: false,
+                  animationSpeed: AnimationSpeed.slow,
+                  child: StatefulBuilder(
+                    builder: (context, setState) {
+                      updatePosition = setState;
+                      return BoardSurface(
+                        at: position.at,
+                        onTap: (_) {},
+                        lastMove: lastMove,
+                        lastMoveIdentity: identity,
+                        animatePieceMoves: true,
+                      );
+                    },
+                  ),
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+    final move = Move.parse('h2e2');
+    updatePosition(() {
+      position = position.play(move);
+      lastMove = move;
+      identity++;
+    });
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 200));
+    expect(find.byKey(const ValueKey('moving-piece-overlay')), findsOneWidget);
+    updateSettings(() => reduceMotion = true);
+    await tester.pump();
+    expect(find.byKey(const ValueKey('moving-piece-overlay')), findsNothing);
+    await tester.pumpWidget(const SizedBox.shrink());
+  });
 }

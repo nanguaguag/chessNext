@@ -4,7 +4,7 @@
 
 M4-29已单独提交`177abff feat(board): 增加棋步移动动画`。ADR-064：主棋盘每次显示的走棋身份更新时，棋子从from格移动到to格；复用`AnimationSpeed`的项目映射（关0/快300/标准600/慢1200ms），系统Reduce Motion优先静止。过渡中将落点格的视觉棋子换成IgnorePointer overlay；棋谱/规则同步提交不等待动效。只有`XiangqiBoard`主棋盘开启动画，`BoardSurface`默认静态，因此编辑器、PV预览、PNG/GIF快照不动。新身份会重启/替代前一动效，落点无棋子或速度关时立即静态。
 
-专项`flutter test test/widgets/board_piece_move_animation_test.dart --reporter compact`3/3通过，覆盖慢档位置/结束、Reduce Motion和关档；最终根`flutter test --reporter compact`501通过/5跳过；`flutter analyze --no-pub`无问题；最新`flutter run -d macos` Build/Sync PID74615、VM `127.0.0.1:64108`。CUA `getApp("chessNext")`连续两次超时，故窗口/动效视觉验收not run。`flutter_tts` SwiftPM未来兼容warning。快档具体时长、连续新步打断仍未测。源站动效对象/速度映射U，项目行为P。M4-29已提交；随后继续B23/F28剩余音频/朗读与F27语言，在线目录留在离线工作后推进。PID74615仍运行，flutter run session 86168仍在。
+专项`flutter test test/widgets/board_piece_move_animation_test.dart --reporter compact`5/5通过，覆盖慢/快档、快速连续新着替代、关档及运行中切换Reduce Motion；最终根`flutter test --reporter compact`503通过/5跳过；`flutter analyze --no-pub`无问题；最新`flutter run -d macos` Build/Sync PID74615、VM `127.0.0.1:64108`。CUA `getApp("chessNext")`连续两次超时，故窗口/动效视觉验收not run。`flutter_tts` SwiftPM未来兼容warning。源站动效对象/速度映射U，项目行为P。M4-29已提交；补充边界回归待test/doc commit。随后继续B23/F28剩余音频/朗读与F27语言，在线目录留在离线工作后推进。PID74615仍运行，flutter run session 86168仍在。
 
 ## 2026-11-04 / B24 持续交付：M4-28项目皮肤包文件夹导入
 

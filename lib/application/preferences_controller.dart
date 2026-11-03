@@ -192,6 +192,10 @@ class PreferencesController extends ChangeNotifier {
             thinkTimeMs: _edited.contains('thinkTimeMs')
                 ? previous.thinkTimeMs
                 : null,
+            recordPlaybackIntervalMs:
+                _edited.contains('recordPlaybackIntervalMs')
+                ? previous.recordPlaybackIntervalMs
+                : null,
           ),
         );
         _persisted = stored;
@@ -229,6 +233,8 @@ class PreferencesController extends ChangeNotifier {
 
   Future<void> setReviewMode(ReviewMode mode) =>
       apply(value.copyWith(reviewMode: mode));
+  Future<void> setRecordPlaybackInterval(int milliseconds) =>
+      apply(value.copyWith(recordPlaybackIntervalMs: milliseconds));
   Future<void> setSidePanelOrder(List<SidePanel> order) =>
       apply(value.copyWith(sidePanelOrder: order));
   Future<void> setSidePanelVisibility(SidePanel panel, bool visible) {
@@ -454,6 +460,9 @@ class PreferencesController extends ChangeNotifier {
     if (next.hashMb != value.hashMb) _edited.add('hashMb');
     if (next.multiPv != value.multiPv) _edited.add('multiPv');
     if (next.thinkTimeMs != value.thinkTimeMs) _edited.add('thinkTimeMs');
+    if (next.recordPlaybackIntervalMs != value.recordPlaybackIntervalMs) {
+      _edited.add('recordPlaybackIntervalMs');
+    }
   }
 
   void _engineChanged() {

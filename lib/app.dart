@@ -31,6 +31,7 @@ import 'package:flutter/foundation.dart' as foundation;
 import 'application/app_preferences.dart';
 import 'application/board_skin_geometry.dart';
 import 'application/preferences_controller.dart';
+import 'application/record_playback_controller.dart';
 import 'ports/preferences_repository.dart';
 import 'features/settings/preferences_dialog.dart';
 import 'dart:ui' show AppExitResponse;
@@ -132,6 +133,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final RecentReadingController readings;
   late final DraftController? drafts;
   late final PreferencesController preferences;
+  late final RecordPlaybackController recordPlayback;
   late final BoardFeedbackController boardFeedback;
   late final AudioLibraryController? audioLibrary;
   late final PieceImageLibraryController pieceImages;
@@ -165,6 +167,11 @@ class _ChessNextAppState extends State<ChessNextApp>
     preferences = PreferencesController(
       analysis,
       widget.preferencesRepository ?? MemoryPreferencesRepository(),
+    );
+    recordPlayback = RecordPlaybackController(
+      session,
+      analysis,
+      intervalMs: preferences.value.recordPlaybackIntervalMs,
     );
     final audio = widget.audioFeedback ?? const SilentAudioFeedback();
     audioLibrary =
@@ -253,7 +260,10 @@ class _ChessNextAppState extends State<ChessNextApp>
   }
 
   void _preferencesChanged() {
-    if (mounted) setState(() {});
+    if (mounted) {
+      recordPlayback.setInterval(preferences.value.recordPlaybackIntervalMs);
+      setState(() {});
+    }
   }
 
   @override
@@ -267,6 +277,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       if (!desktop || state != AppLifecycleState.inactive) {
         unawaited(analysis.disable());
       }
+      recordPlayback.stop();
       if (drafts != null) unawaited(drafts!.flush());
       unawaited(preferences.flush());
       unawaited(readings.flush());
@@ -276,6 +287,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   @override
   Future<AppExitResponse> didRequestAppExit() async {
     await analysis.disable();
+    recordPlayback.stop();
     await drafts?.flush();
     await preferences.flush();
     await readings.flush();
@@ -319,6 +331,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     preferences.removeListener(_preferencesChanged);
+    recordPlayback.dispose();
     unawaited(boardFeedback.dispose());
     audioLibrary?.dispose();
     pieceImages.removeListener(_preferencesChanged);
@@ -410,6 +423,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     home: _BoardPage(
       drafts: drafts,
       preferences: preferences,
+      recordPlayback: recordPlayback,
       audioLibrary: audioLibrary,
       pieceImages: pieceImages,
       pieceSkins: pieceSkins,
@@ -457,6 +471,7 @@ class _BoardPage extends StatelessWidget {
     required this.analysis,
     this.drafts,
     required this.preferences,
+    required this.recordPlayback,
     this.audioLibrary,
     required this.pieceImages,
     required this.pieceSkins,
@@ -466,6 +481,7 @@ class _BoardPage extends StatelessWidget {
     required this.boardSkinImages,
   });
   final PreferencesController preferences;
+  final RecordPlaybackController recordPlayback;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController pieceImages;
   final PieceSkinLibraryController pieceSkins;
@@ -794,7 +810,13 @@ class _BoardPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([session, library, analysis, ?drafts]),
+    listenable: Listenable.merge([
+      session,
+      library,
+      analysis,
+      recordPlayback,
+      ?drafts,
+    ]),
     builder: (context, _) => Scaffold(
       appBar: AppBar(
         title: const Text('chessNext'),
@@ -1061,6 +1083,19 @@ class _BoardPage extends StatelessWidget {
                   Wrap(
                     spacing: 4,
                     children: [
+                      IconButton(
+                        onPressed: recordPlayback.playing
+                            ? recordPlayback.stop
+                            : recordPlayback.canPlay
+                            ? recordPlayback.start
+                            : null,
+                        tooltip: recordPlayback.playing ? '暂停播放' : '播放棋谱',
+                        icon: Icon(
+                          recordPlayback.playing
+                              ? Icons.pause
+                              : Icons.play_arrow,
+                        ),
+                      ),
                       IconButton(
                         onPressed: session.canUndo
                             ? () =>

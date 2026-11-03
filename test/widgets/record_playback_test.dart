@@ -1,0 +1,101 @@
+import 'package:chess_next/app.dart';
+import 'package:chess_next/application/app_preferences.dart';
+import 'package:chess_next/features/board/xiangqi_board.dart';
+import 'package:chess_next/ports/preferences_repository.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_test/flutter_test.dart';
+import '../support/branched_record.dart';
+
+void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
+
+  void desktop(WidgetTester tester) {
+    tester.view.physicalSize = const Size(1120, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+  }
+
+  Future<void> tap(WidgetTester tester, Finder target) async {
+    await tester.ensureVisible(target);
+    await tester.pumpAndSettle();
+    await tester.tap(target);
+    await tester.pumpAndSettle();
+  }
+
+  testWidgets('playback interval choices persist from settings', (
+    tester,
+  ) async {
+    desktop(tester);
+    final store = MemoryPreferencesRepository();
+    await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
+    await tester.pumpAndSettle();
+    await tap(tester, find.byTooltip('应用设置'));
+    await tap(tester, find.text('棋谱播放'));
+    await tap(tester, find.text('0.5秒'));
+    expect(store.value?.recordPlaybackIntervalMs, 500);
+    await tap(tester, find.text('关闭'));
+  });
+
+  testWidgets(
+    'playback follows the current line, pauses, and never dirties the record',
+    (tester) async {
+      desktop(tester);
+      final store = MemoryPreferencesRepository()
+        ..value = AppPreferences(recordPlaybackIntervalMs: 500);
+      await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
+      await tester.pumpAndSettle();
+
+      final session = tester
+          .widget<XiangqiBoard>(find.byType(XiangqiBoard))
+          .session;
+      session.replaceTree(branchedRecord());
+      session.first();
+      await tester.pumpAndSettle();
+      final rootId = session.tree.root.id;
+      final contentRevision = session.revision;
+      expect(session.nextNodeId, isNotNull);
+      final playbackButton = tester.widget<IconButton>(
+        find.ancestor(
+          of: find.byTooltip('播放棋谱'),
+          matching: find.byType(IconButton),
+        ),
+      );
+      expect(playbackButton.onPressed, isNotNull);
+
+      await tester.tap(find.byTooltip('播放棋谱'));
+      await tester.pump();
+      expect(
+        find.byTooltip('暂停播放'),
+        findsOneWidget,
+        reason: 'playback button did not enter playing state',
+      );
+      await tester.pump(const Duration(milliseconds: 500));
+      await tester.pump();
+      expect(session.tree.cursorId, isNot(rootId));
+      expect(session.revision, contentRevision);
+
+      await tester.tap(find.byTooltip('暂停播放'));
+      await tester.pump();
+      final pausedAt = session.tree.cursorId;
+      await tester.pump(const Duration(seconds: 2));
+      expect(session.tree.cursorId, pausedAt);
+      expect(find.byTooltip('播放棋谱'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('播放棋谱'));
+      await tester.pump();
+      for (
+        var i = 0;
+        i < 5 && find.byTooltip('暂停播放').evaluate().isNotEmpty;
+        i++
+      ) {
+        await tester.pump(const Duration(milliseconds: 500));
+        await tester.pump();
+      }
+      expect(session.tree.cursorId, session.tree.currentLine.last.id);
+      expect(find.byTooltip('播放棋谱'), findsOneWidget);
+      expect(session.revision, contentRevision);
+      expect(session.dirty, isFalse);
+    },
+  );
+}

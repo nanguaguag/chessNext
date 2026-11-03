@@ -84,6 +84,7 @@ final class AppPreferences {
     this.hashMb = 16,
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
+    this.recordPlaybackIntervalMs = 2000,
     this.guideVersion = 0,
     List<SidePanel> sidePanelOrder = defaultSidePanelOrder,
     List<SidePanel> visibleSidePanels = defaultSidePanelOrder,
@@ -112,6 +113,9 @@ final class AppPreferences {
         multiPv > 256 ||
         thinkTimeMs < 50 ||
         thinkTimeMs > 600000 ||
+        recordPlaybackIntervalMs < 500 ||
+        recordPlaybackIntervalMs > 30000 ||
+        recordPlaybackIntervalMs % 100 != 0 ||
         guideVersion < 0 ||
         guideVersion > 1000000 ||
         roundSealPieceScalePercent < 80 ||
@@ -172,7 +176,12 @@ final class AppPreferences {
   final LastMoveMarkerStyle lastMoveMarker;
   final SelectionStyle selectionStyle;
   static const currentGuideVersion = 1;
-  final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
+  final int threads,
+      hashMb,
+      multiPv,
+      thinkTimeMs,
+      recordPlaybackIntervalMs,
+      guideVersion;
   final List<SidePanel> sidePanelOrder;
   final List<SidePanel> visibleSidePanels;
   AppPreferences copyWith({
@@ -211,6 +220,7 @@ final class AppPreferences {
     int? hashMb,
     int? multiPv,
     int? thinkTimeMs,
+    int? recordPlaybackIntervalMs,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
     List<SidePanel>? visibleSidePanels,
@@ -252,6 +262,8 @@ final class AppPreferences {
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
     thinkTimeMs: thinkTimeMs ?? this.thinkTimeMs,
+    recordPlaybackIntervalMs:
+        recordPlaybackIntervalMs ?? this.recordPlaybackIntervalMs,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
     visibleSidePanels: visibleSidePanels ?? this.visibleSidePanels,
@@ -317,6 +329,8 @@ final class AppPreferences {
     'hashMb': hashMb,
     'multiPv': multiPv,
     'thinkTimeMs': thinkTimeMs,
+    if (recordPlaybackIntervalMs != 2000)
+      'recordPlaybackIntervalMs': recordPlaybackIntervalMs,
     if (guideVersion != 0) 'guideVersion': guideVersion,
     if (!_listEquals(sidePanelOrder, defaultSidePanelOrder))
       'sidePanelOrder': sidePanelOrder.map((panel) => panel.name).toList(),
@@ -367,6 +381,8 @@ final class AppPreferences {
         (json.containsKey('selectedPieceSkinId') &&
             json['selectedPieceSkinId'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
+        (json.containsKey('recordPlaybackIntervalMs') &&
+            json['recordPlaybackIntervalMs'] is! int) ||
         (json.containsKey('sidePanelOrder') &&
             (json['sidePanelOrder'] is! List ||
                 (json['sidePanelOrder'] as List).any(
@@ -456,6 +472,8 @@ final class AppPreferences {
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
+        recordPlaybackIntervalMs:
+            json['recordPlaybackIntervalMs'] as int? ?? 2000,
         guideVersion: json['guideVersion'] as int? ?? 0,
         sidePanelOrder:
             (json['sidePanelOrder'] as List?)
@@ -555,6 +573,7 @@ final class AppPreferences {
       multiPv == other.multiPv &&
       thinkTimeMs == other.thinkTimeMs &&
       guideVersion == other.guideVersion &&
+      recordPlaybackIntervalMs == other.recordPlaybackIntervalMs &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
       _listEquals(visibleSidePanels, other.visibleSidePanels);
   @override
@@ -599,6 +618,7 @@ final class AppPreferences {
     multiPv,
     thinkTimeMs,
     guideVersion,
+    recordPlaybackIntervalMs,
     Object.hashAll(sidePanelOrder),
     Object.hashAll(visibleSidePanels),
   ]);

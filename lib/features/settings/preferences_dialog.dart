@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'side_panel_order_dialog.dart';
+import 'record_playback_settings_dialog.dart';
 import '../../application/app_preferences.dart';
 import '../../application/preferences_controller.dart';
 import 'text_size_dialog.dart';
@@ -158,6 +159,16 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       ),
                       icon: const Icon(Icons.view_sidebar_outlined),
                       label: const Text('侧栏面板'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () => showDialog<void>(
+                        context: context,
+                        builder: (_) => RecordPlaybackSettingsDialog(
+                          preferences: widget.preferences,
+                        ),
+                      ),
+                      icon: const Icon(Icons.play_circle_outline),
+                      label: const Text('棋谱播放'),
                     ),
                   ],
                 ),

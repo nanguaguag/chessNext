@@ -2,7 +2,7 @@
 
 ## 最新交付 M4-17（2026-11-04）
 
-F21/B24本机棋盘图片图层：按每种BoardSkin支持棋盘背景、起点、落点、选中框四种PNG/JPEG图层逐项替换/恢复；本机有界校验与文件仓库；设置入口Material 3；主盘/编辑器同源渲染，PNG/GIF快照冻结图像。定向3/3；根`flutter test --reporter compact`469通过/5跳过；`flutter analyze`无问题；macOS app成功构建/同步，VM `127.0.0.1:50487` PID44785，但`open returned 1`前台失败，未人工视觉验证。已提交`c7e3151 feat(skins): 支持本机棋盘图片图层`。详ADR-053/TRACEABILITY/SESSION_LOG。E44网页保存/替换成功仍U。下一步棋盘格点/边距/缩放几何及落点旋转审计/设计，之后继续皮肤列表/导入；F21及全站未完成。
+F21/B24本机棋盘图片图层：按每种BoardSkin支持棋盘背景、起点、落点、选中框四种PNG/JPEG图层逐项替换/恢复；本机有界校验与文件仓库；设置入口Material 3；主盘/编辑器同源渲染，PNG/GIF快照冻结图像。定向3/3；根`flutter test --reporter compact`469通过/5跳过；`flutter analyze`无问题；macOS app成功构建/同步，VM `127.0.0.1:50487` PID44785，但`open returned 1`前台失败，未人工视觉验证。已提交`c7e3151 feat(skins): 支持本机棋盘图片图层`。详ADR-053/TRACEABILITY/SESSION_LOG。E44网页保存/替换成功仍U。E45已核落点旋转switch能由0切1，但无自定义图，真实动画仍U；取消草稿并恢复设置默认V。下一步棋盘格点/边距/缩放几何审计/设计，旋转时序作为P另定，之后继续皮肤列表/导入；F21及全站未完成。
 
 ## 最新交付 M4-16（2026-11-03）
 

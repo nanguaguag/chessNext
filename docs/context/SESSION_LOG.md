@@ -577,3 +577,8 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 - `git diff --check`：通过。
 
 未加依赖或外部资源。验证日志`/tmp/chessnext-m4-17-test.log`（首次失败）和`/tmp/chessnext-m4-17-test-final.log`。功能已提交`c7e3151 feat(skins): 支持本机棋盘图片图层`。
+
+
+## 2026-11-04 / E45 / F21 棋盘标记旋转控件
+
+桌面IAB访客从`#/settings/skins/edit/new?type=board`打开图片tab，AX观察“落点标记旋转”初值0，点击变为1。未替换落点图，因此真实动画效果、时序、仅新落子还是持续旋转均未知；没有range input可验证两个滑块的min/max。点返回并确认丢弃后恢复`#/settings/board`默认棋子/棋盘、100%、坐标开、对面倒置关，未保存/应用/导出、无棋谱变化。详REFERENCE_EVIDENCE E45；F21仍未完成。

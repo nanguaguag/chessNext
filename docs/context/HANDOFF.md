@@ -1,5 +1,15 @@
 # 会话交接
 
+## 2026-11-04 / B24 持续交付：M4-21多选棋子图片
+
+持续授权仍有效：继续推进登录部分除外的已确认全站功能和设置，不在单功能后停；在线能力保留为自建可替换后端与部署方案；离线优先；无分代理。许可暂缓。当前主线：`main`，进入本片前HEAD `549d807`、ahead origin 9。M4-21代码/文档在工作树，验收完成待提交。
+
+改动：`PieceImageBatchPicker`、`NamedPieceImage`、最多14张/7 MiB读取、控制器整批预检/逐槽保存与失败重试、映射预览弹窗、设置入口及应用/Widget测试。ADR-057、DECISIONS、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY已更新。E42实际导入成功和覆盖边界仍U；本机数量/累计限制和映射交互为P。未支持ZIP、文件夹或完整皮肤清单。
+
+实际验证：定向`flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 10/10；根`flutter test --reporter compact` 481通过/5跳过（官方Pikafish/NNUE测试环境未配置，exit0）；`flutter analyze`无问题；`flutter run -d macos` Build/Sync成功，PID56134、VM `127.0.0.1:53841`，run进程会话仍保持。插件`flutter_tts`有既有SwiftPM兼容警告；CUA窗口人工视觉验收未做。`git diff --check`通过。未加依赖/外部素材。
+
+下一步先检查当前diff和文件状态，单独提交`feat(skins): 支持批量导入棋子图片`。然后继续B24下一独立片：按现有入口优先研究安全ZIP棋子皮肤包导入（ZIP结构、清单/映射、解压预算、路径穿越/符号链接/压缩炸弹边界；参考站成功语义仍U），并继续文件夹导入、用户皮肤创建/列表搜索排序/管理和在线自建后端方案。目标仍为全站对齐（登录后功能除外），不得声称F21/全站已完成。会话结束前更新CURRENT_STATE/HANDOFF/SESSION_LOG；保留正在运行的macOS实例，不杀旧进程。
+
 ## 2026-11-04 / B24 持续交付：M4-20棋子阴影
 
 授权持续到登录后功能除外的全站可确认功能与设置全部推进；离线优先，其它在线服务继续保留并采用自建可替换后端及部署方案；不使用分代理。许可决定暂缓，不阻挡本机开发。

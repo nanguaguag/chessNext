@@ -13,6 +13,9 @@ class PieceImageLibraryController extends ChangeNotifier {
   Map<PieceSkin, Map<PieceImageSlot, Uint8List>> _images = const {};
   bool loading = false;
   PieceImageSlot? busySlot;
+  bool batchBusy = false;
+  int batchImportedCount = 0;
+  final Set<PieceImageSlot> batchImportedSlots = {};
   PieceImageSlot? errorSlot;
   String? error;
   bool _disposed = false;
@@ -56,7 +59,7 @@ class PieceImageLibraryController extends ChangeNotifier {
   }
 
   Future<bool> replace(PieceSkin skin, PieceImageSlot slot) async {
-    if (_disposed || loading || busySlot != null) return false;
+    if (_disposed || loading || busySlot != null || batchBusy) return false;
     busySlot = slot;
     errorSlot = null;
     error = null;
@@ -84,7 +87,7 @@ class PieceImageLibraryController extends ChangeNotifier {
   }
 
   Future<bool> reset(PieceSkin skin, PieceImageSlot slot) async {
-    if (_disposed || loading || busySlot != null) return false;
+    if (_disposed || loading || busySlot != null || batchBusy) return false;
     busySlot = slot;
     errorSlot = null;
     error = null;
@@ -111,6 +114,94 @@ class PieceImageLibraryController extends ChangeNotifier {
       busySlot = null;
       _notify();
     }
+  }
+
+  Future<List<NamedPieceImage>?> pickBatchImages() async {
+    if (_disposed || loading || busySlot != null || batchBusy) return null;
+    if (picker is! PieceImageBatchPicker) {
+      error = '当前平台不支持多选棋子图片。';
+      errorSlot = null;
+      _notify();
+      return null;
+    }
+    final batchPicker = picker as PieceImageBatchPicker;
+    batchBusy = true;
+    batchImportedCount = 0;
+    batchImportedSlots.clear();
+    error = null;
+    errorSlot = null;
+    _notify();
+    try {
+      final selected = await batchPicker.pickImages();
+      if (_disposed || selected == null) return selected;
+      if (selected.isEmpty) {
+        error = '请选择至少一张 PNG/JPEG 图片。';
+        return null;
+      }
+      for (final file in selected) {
+        PieceImageValidator.validate(file.image);
+      }
+      return selected;
+    } on PieceImageException catch (exception) {
+      error = exception.message;
+      return null;
+    } catch (_) {
+      error = '读取图片失败，请确认所选文件仍可用。';
+      return null;
+    } finally {
+      batchBusy = false;
+      _notify();
+    }
+  }
+
+  Future<int> importBatch(
+    PieceSkin skin,
+    Map<PieceImageSlot, SelectedPieceImage> images,
+  ) async {
+    if (_disposed ||
+        loading ||
+        busySlot != null ||
+        batchBusy ||
+        images.isEmpty) {
+      return 0;
+    }
+    for (final image in images.values) {
+      try {
+        PieceImageValidator.validate(image);
+      } on PieceImageException catch (exception) {
+        error = exception.message;
+        errorSlot = null;
+        _notify();
+        return 0;
+      }
+    }
+    batchBusy = true;
+    error = null;
+    errorSlot = null;
+    _notify();
+    try {
+      for (final entry in images.entries) {
+        if (batchImportedSlots.contains(entry.key)) continue;
+        if (_disposed) break;
+        busySlot = entry.key;
+        _notify();
+        final file = entry.value;
+        await repository.save(skin, entry.key, file.extension, file.bytes);
+        if (_disposed) break;
+        _setImage(skin, entry.key, file.bytes);
+        batchImportedSlots.add(entry.key);
+        batchImportedCount++;
+      }
+    } catch (_) {
+      error = batchImportedSlots.isEmpty
+          ? '批量导入失败，未写入图片。'
+          : '已导入$batchImportedCount张；其余图片保存失败，可重试未完成项。';
+    } finally {
+      busySlot = null;
+      batchBusy = false;
+      _notify();
+    }
+    return batchImportedSlots.length;
   }
 
   void _setImage(PieceSkin skin, PieceImageSlot slot, Uint8List bytes) {

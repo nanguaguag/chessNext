@@ -522,3 +522,9 @@ E45只验证棋盘皮肤图片页的开关AX从0变为1，没有自定义落点�
 ## 2026-11-04 / M4-20 / F21,B24 棋子皮肤阴影
 
 E43可见阴影档位无/柔和/明显，以及方向、距离、模糊、浓淡；柔和时看到138°/6.7%/2.4%/50%单例。数值范围、单位和算法未知，不能泛化。ADR-056定义本机项目范围P，并为两套PieceSkin独立持久化；同一shadow值投影到棋盘预览/编辑器及图片/GIF冻结快照。关闭阴影禁用相关滑杆；不触碰棋谱/规则/命中/引擎。模型roundtrip/值域/延迟合并、PNG/GIF冻结、UI持久化和渲染定向测试通过；根478通过/5跳过、analyze无问题，macOS Build/Sync成功PID54316/VM `127.0.0.1:51653`。CUA窗口视觉验收not run。
+
+## 2026-11-04 / M4-21 / F21 → B24 本机多选棋子图片导入
+
+E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文件或操作导入；格式、目录结构、覆盖和成功语义全部U。M4-21复用PieceImagePicker/ImageRepository既有端口及file_selector，无新增依赖。多选上限14张、总量7 MiB（P），每图沿用512 KiB、PNG/JPEG、1024边长、1MP与真实解码验证。Material3预览后映射至不重复槽位，名称只做建议。整批校验在任一写入前完成；写入仍逐槽原子，跨槽不是事务；故障显示部分成功，保留成功项并支持跳过已成功槽重试。
+
+最终专项 `flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 10/10通过；根`flutter test --reporter compact` 481通过/5跳过(exit0，5项需官方引擎/NNUE环境)；`flutter analyze`无问题；`flutter run -d macos` Build/Sync成功PID56134、VM `127.0.0.1:53841`。`git diff --check`通过。CUA窗口视觉和macOS文件选择器人工交互not run。ZIP、文件夹、库管理、跨平台选择器及网页实际导入边界仍未验。

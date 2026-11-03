@@ -62,6 +62,8 @@ abstract final class PieceImageLimits {
   static const maxBytes = 512 * 1024;
   static const maxDimension = 1024;
   static const maxPixels = 1024 * 1024;
+  static const maxBatchFiles = 14;
+  static const maxBatchBytes = maxBytes * maxBatchFiles;
 }
 
 final class SelectedPieceImage {
@@ -71,6 +73,12 @@ final class SelectedPieceImage {
   final Uint8List bytes;
 }
 
+final class NamedPieceImage {
+  const NamedPieceImage({required this.name, required this.image});
+  final String name;
+  final SelectedPieceImage image;
+}
+
 enum PieceImageFailure {
   tooLarge,
   format,
@@ -78,6 +86,7 @@ enum PieceImageFailure {
   read,
   unavailable,
   write,
+  batchLimit,
 }
 
 class PieceImageException implements Exception {
@@ -90,11 +99,16 @@ class PieceImageException implements Exception {
     PieceImageFailure.read => '无法读取所选图片，请确认文件仍可用。',
     PieceImageFailure.unavailable => '当前平台的本机图片选择器不可用。',
     PieceImageFailure.write => '棋子图片未能保存在本机，请重试。',
+    PieceImageFailure.batchLimit => '一次最多导入14张图片，总大小不能超过7 MiB。',
   };
 }
 
 abstract interface class PieceImagePicker {
   Future<SelectedPieceImage?> pickImage();
+}
+
+abstract interface class PieceImageBatchPicker {
+  Future<List<NamedPieceImage>?> pickImages();
 }
 
 abstract interface class PieceImageRepository {

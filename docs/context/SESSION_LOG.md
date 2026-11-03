@@ -1,5 +1,21 @@
 # 会话日志
 
+## 2026-11-04 / M4-21 / F21,B24 本机批量棋子图片导入
+
+E42源站观察限于三个导入入口（ZIP/图片多选/文件夹），未选文件或执行导入，成功语义、结构、覆盖策略U。项目继续只实现多选增量：复用已有file_selector与PieceImageRepository，最多14张、总量7 MiB为P；每图沿用PNG/JPEG、512KiB、1024边长和1MP校验。预览映射到14个唯一槽，先整批验证，后逐槽写入。跨槽非事务；中途失败保存已成功槽状态，重试跳过已成功槽。无新增依赖和资源。
+
+改动文件涉及`lib/ports/piece_images.dart`、`lib/adapters/platform/file_selector_piece_image_picker.dart`、`lib/application/piece_image_library_controller.dart`、设置对话框与新批量映射对话框、应用和Widget测试；ADR-057及功能矩阵/缺口/交互/待办/追踪更新。
+
+命令和结果：
+- `dart format [7个上述Dart源/测试文件]`：通过，0文件需格式改写。
+- `flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`：10/10通过，包含最大数量、整批校验先于写入、UI槽位映射、本机持久化和失败重试跳过成功槽。
+- 根`flutter test --reporter compact`：exit0，481通过/5跳过；5项要求本地配置官方Pikafish执行文件与NNUE环境。
+- `flutter analyze`：exit0，No issues found。
+- `flutter run -d macos`：Build/Sync成功，PID56134、VM `127.0.0.1:53841`，前台Flutter run会话仍运行。插件`flutter_tts` SwiftPM未来兼容warning。没有执行Computer Use窗口视觉检查或macOS文件选择器人工选择。
+- `git diff --check`：通过。
+
+无后台验证任务。代码/文档验收完成，待单独提交M4-21；本记录的CURRENT_STATE/HANDOFF也待和该功能同批提交。之后继续ZIP/文件夹/皮肤库管理及全站设置审计，不以此功能停止。E42导入结果未知，F21与全站均未完成。
+
 ## 2026-11-01 / M0-01
 
 范围：调查、验证设计、文档与 Agent 体系。初始为空仓库，无 AGENTS。

@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../application/piece_image_library_controller.dart';
 import '../../ports/piece_images.dart';
+import 'piece_skin_batch_import_dialog.dart';
 
 class PieceSkinImagesDialog extends StatelessWidget {
   const PieceSkinImagesDialog({
@@ -26,7 +27,38 @@ class PieceSkinImagesDialog extends StatelessWidget {
         child: Column(
           children: [
             const Text('仅替换选中的棋子，PNG/JPEG、512 KiB以内、最长边1024像素；文件保存在本机。'),
+            Align(
+              alignment: Alignment.centerRight,
+              child: TextButton.icon(
+                key: const ValueKey('batch-import-piece-images'),
+                onPressed:
+                    library.loading ||
+                        library.busySlot != null ||
+                        library.batchBusy
+                    ? null
+                    : () async {
+                        final images = await library.pickBatchImages();
+                        if (!context.mounted || images == null) return;
+                        final imported = await showDialog<int>(
+                          context: context,
+                          builder: (_) => PieceSkinBatchImportDialog(
+                            skin: skin,
+                            images: images,
+                            library: library,
+                          ),
+                        );
+                        if (imported != null && context.mounted) {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(content: Text('已导入$imported张棋子图片。')),
+                          );
+                        }
+                      },
+                icon: const Icon(Icons.file_upload_outlined),
+                label: const Text('批量导入图片'),
+              ),
+            ),
             if (library.loading) const LinearProgressIndicator(),
+            if (library.batchBusy) const LinearProgressIndicator(),
             if (library.error != null && library.errorSlot == null)
               Padding(
                 padding: const EdgeInsets.only(top: 8),
@@ -47,7 +79,10 @@ class PieceSkinImagesDialog extends StatelessWidget {
                     image: bytes,
                     busy: busy,
                     error: library.errorSlot == slot ? library.error : null,
-                    canEdit: !library.loading && library.busySlot == null,
+                    canEdit:
+                        !library.loading &&
+                        library.busySlot == null &&
+                        !library.batchBusy,
                     onReplace: () => library.replace(skin, slot),
                     onReset: bytes == null
                         ? null
@@ -61,7 +96,7 @@ class PieceSkinImagesDialog extends StatelessWidget {
       ),
       actions: [
         TextButton(
-          onPressed: library.busySlot == null
+          onPressed: library.busySlot == null && !library.batchBusy
               ? () => Navigator.pop(context)
               : null,
           child: const Text('关闭'),

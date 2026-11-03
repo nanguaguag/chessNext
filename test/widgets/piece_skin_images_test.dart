@@ -3,12 +3,22 @@ import 'dart:typed_data';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/features/board/board_display_scope.dart';
 import 'package:chess_next/app.dart';
+import 'package:chess_next/application/piece_image_library_controller.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:chess_next/ports/piece_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as raster;
 import 'package:xiangqi_core/xiangqi_core.dart';
+
+class _BatchPiecePicker implements PieceImagePicker, PieceImageBatchPicker {
+  _BatchPiecePicker(this.files);
+  final List<NamedPieceImage> files;
+  @override
+  Future<SelectedPieceImage?> pickImage() async => null;
+  @override
+  Future<List<NamedPieceImage>?> pickImages() async => files;
+}
 
 void main() {
   testWidgets('piece skin nudges persist and auto-align resets both axes', (
@@ -125,5 +135,56 @@ void main() {
     );
     expect(translation.transform.getTranslation().x, greaterThan(0));
     expect(translation.transform.getTranslation().y, lessThan(0));
+  });
+
+  testWidgets('batch image import maps filenames and persists both slots', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1120, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final bytes = Uint8List.fromList(
+      raster.encodePng(raster.Image(width: 2, height: 2)),
+    );
+    final repository = MemoryPieceImageRepository();
+    await tester.pumpWidget(
+      ChessNextApp(
+        pieceImagePicker: _BatchPiecePicker([
+          NamedPieceImage(
+            name: 'redRook.png',
+            image: SelectedPieceImage('png', bytes),
+          ),
+          NamedPieceImage(
+            name: 'blackHorse.png',
+            image: SelectedPieceImage('png', bytes),
+          ),
+        ]),
+        pieceImageRepository: repository,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('应用设置'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('棋盘显示'));
+    await tester.pumpAndSettle();
+    final editImages = find.text('编辑棋子图片');
+    await tester.ensureVisible(editImages);
+    await tester.tap(editImages);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('batch-import-piece-images')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('apply-piece-image-batch')),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('apply-piece-image-batch')));
+    await tester.pumpAndSettle();
+    final loaded = await repository.load();
+    expect(loaded[PieceSkin.roundSeal]!.keys.toSet(), {
+      PieceImageSlot.redRook,
+      PieceImageSlot.blackHorse,
+    });
+    await tester.pumpAndSettle();
   });
 }

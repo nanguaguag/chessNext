@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-04 / M4-29 / F28,B23 主棋盘棋子移动动画
+
+按ADR-064，将项目AnimationSpeed从末步标记/落点皮肤图扩展到主棋盘走棋子。显示棋步身份变化后获取当前落点棋子并以动画overlay从from平移到to，暂时隐藏落点格视觉；IgnorePointer和ExcludeSemantics避免重复交互/读屏，逻辑棋盘立即落在最终局面。Reduce Motion/关档静态；新局/无Move停止；非主棋盘BoardSurface默认不动，故分析/编辑/PNG/GIF静态。源站真实动效范围和速度映射仍U。未增加依赖/资源。
+
+定向`flutter test test/widgets/board_piece_move_animation_test.dart --reporter compact`3/3通过，覆盖慢档中段位置/完成、系统Reduce Motion及关档静态。根`flutter test --reporter compact`501通过/5跳过（日志`/tmp/chessnext-m429-root-final2.log`）；`flutter analyze --no-pub`无问题；`flutter run -d macos` Build/Sync PID74615/VM `127.0.0.1:64108`。CUA窗口查询两次超时，视觉not run。第一次目标测试因未包Material导致180条InkWell祖先异常，修复Scaffold；动画结束断言等待问题改为pumpAndSettle后通过。快档具体时长和连续新步打断仍待覆盖。代码/追踪更新后单独提交M4-29。
+
 ## 2026-11-04 / M4-28 / F21,B24 项目皮肤包文件夹导入
 
 依ADR-063增加macOS文件夹选择器、端口、皮肤库入口。仅支持解压项目schema1布局：`skin.json`和`images/<槽位>.png|jpg`，严格限制层级、类型、符号链接、文件数和字节；读取后打包为内存ZIP并交给M4-27严格解码，UI复用其确认、新ID、重名/容量拒绝和自动选用闭环。源站目录实际格式/导入成功仍U。未增加依赖。

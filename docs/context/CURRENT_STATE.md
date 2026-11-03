@@ -1,6 +1,10 @@
 # 当前状态
 
-## 最新交付 M4-28（2026-11-04）
+## 最新交付 M4-29（2026-11-04）
+
+B23/F28 棋步移动动画（ADR-064）：主棋盘在走棋身份变化时从起点到落点移动棋子；动画速度复用关/快/标准/慢项目时长，Reduce Motion和关档静态。动画中隐藏落点棋子视觉但保留棋盘语义/命中；不延迟棋谱/规则提交。编辑器/分析预览/PNG/GIF静态。定向3/3；根`flutter test --reporter compact`501通过/5跳过；`flutter analyze --no-pub`无问题；最终`flutter run -d macos`Build/Sync成功PID74615/VM `127.0.0.1:64108`。CUA窗口读取超时两次，人工视觉验收未做。代码与文档待中文独立提交。源站动画对象和速度映射仍U；F28未完成。
+
+## M4-28（2026-11-04）
 
 B24/F21项目schema1皮肤包文件夹导入（ADR-063）：macOS选择已解压目录，仅接受根`skin.json`及`images/<槽位>.png|jpg`，拒绝未知条目、链接和额外层级；单文件≤512 KiB、最多14图/累计7 MiB、清单≤64 KiB/临时ZIP≤8 MiB，复用M4-27完整验证/确认/新增流程。格式为项目P，站点文件夹格式仍U。专项2/2；最终根`flutter test --reporter expanded`498通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync启动PID71234/VM `127.0.0.1:59893`。首次紧凑根测试出现1次失败，未能复现，expanded复跑全通过。已提交`a807155 feat(skins): 支持导入本机皮肤文件夹`。
 

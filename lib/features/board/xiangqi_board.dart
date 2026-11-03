@@ -60,6 +60,7 @@ class XiangqiBoard extends StatelessWidget {
     onCancel: session.cancelSelection,
     recommendation: recommendation,
     reply: reply,
+    animatePieceMoves: true,
     variations: session.showCurrentVariationArrows
         ? session.currentMoveArrows.visible
         : const [],
@@ -71,6 +72,15 @@ class BoardDragData {
   final Piece piece;
   final Square? from;
 }
+
+(int, int) _visualSquare(
+  Square square, {
+  required bool flipped,
+  required bool mirrored,
+}) => (
+  flipped != mirrored ? 8 - square.file : square.file,
+  flipped ? square.rank : 9 - square.rank,
+);
 
 class BoardSurface extends StatefulWidget {
   const BoardSurface({
@@ -106,6 +116,7 @@ class BoardSurface extends StatefulWidget {
     this.onDrop,
     this.recommendation,
     this.reply,
+    this.animatePieceMoves = false,
   }) : assert(
          (pieceSizePercent == null ||
                  (pieceSizePercent >= 10 &&
@@ -150,16 +161,45 @@ class BoardSurface extends StatefulWidget {
   final bool enabled;
   final Move? recommendation;
   final Move? reply;
+  final bool animatePieceMoves;
   @override
   State<BoardSurface> createState() => _BoardSurfaceState();
 }
 
-class _BoardSurfaceState extends State<BoardSurface> {
+class _BoardSurfaceState extends State<BoardSurface>
+    with SingleTickerProviderStateMixin {
   final boardFocus = FocusNode(debugLabel: 'xiangqi-board');
+  late final AnimationController moveController;
+  Move? movingMove;
+  Piece? movingPiece;
+  Object? movingIdentity;
   Square cursor = Square(4, 0);
   bool hasFocus = false;
   bool animateMarkerOnMount = false;
   int landingRotationTurns = 0;
+  @override
+  void initState() {
+    super.initState();
+    moveController = AnimationController(
+      vsync: this,
+      duration: AnimationSpeed.standard.duration,
+    );
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (movingMove != null &&
+        (MediaQuery.disableAnimationsOf(context) ||
+            BoardDisplayScope.animationSpeedOf(context) ==
+                AnimationSpeed.off)) {
+      movingIdentity = null;
+      movingMove = null;
+      movingPiece = null;
+      moveController.stop(canceled: false);
+    }
+  }
+
   @override
   void didUpdateWidget(covariant BoardSurface oldWidget) {
     super.didUpdateWidget(oldWidget);
@@ -167,11 +207,39 @@ class _BoardSurfaceState extends State<BoardSurface> {
         widget.lastMove != oldWidget.lastMove ||
         widget.lastMoveIdentity != oldWidget.lastMoveIdentity;
     if (animateMarkerOnMount) landingRotationTurns++;
+    if (widget.lastMoveIdentity != oldWidget.lastMoveIdentity) {
+      final duration =
+          widget.animatePieceMoves && !MediaQuery.disableAnimationsOf(context)
+          ? BoardDisplayScope.animationSpeedOf(context).duration
+          : Duration.zero;
+      final move = widget.lastMove;
+      final piece = move == null ? null : widget.at(move.to);
+      if (move != null && duration > Duration.zero && piece != null) {
+        movingMove = move;
+        movingPiece = piece;
+        movingIdentity = widget.lastMoveIdentity;
+        moveController.duration = duration;
+        moveController.forward(from: 0).whenComplete(() {
+          if (mounted && movingIdentity == widget.lastMoveIdentity) {
+            setState(() {
+              movingMove = null;
+              movingPiece = null;
+            });
+          }
+        });
+      } else {
+        moveController.stop(canceled: false);
+        movingMove = null;
+        movingPiece = null;
+        movingIdentity = null;
+      }
+    }
   }
 
   @override
   void dispose() {
     boardFocus.dispose();
+    moveController.dispose();
     super.dispose();
   }
 
@@ -406,6 +474,47 @@ class _BoardSurfaceState extends State<BoardSurface> {
                               flipped: widget.flipped,
                               mirrored: widget.mirrored,
                             ),
+                          ),
+                        if (movingMove case final move?)
+                          AnimatedBuilder(
+                            key: const ValueKey('moving-piece-overlay'),
+                            animation: moveController,
+                            builder: (context, _) {
+                              final from = _visualSquare(
+                                move.from,
+                                flipped: widget.flipped,
+                                mirrored: widget.mirrored,
+                              );
+                              final to = _visualSquare(
+                                move.to,
+                                flipped: widget.flipped,
+                                mirrored: widget.mirrored,
+                              );
+                              return Positioned(
+                                left:
+                                    (from.$1 +
+                                        (to.$1 - from.$1) *
+                                            moveController.value) *
+                                    step,
+                                top:
+                                    (from.$2 +
+                                        (to.$2 - from.$2) *
+                                            moveController.value) *
+                                    step,
+                                width: step,
+                                height: step,
+                                child: IgnorePointer(
+                                  child: ExcludeSemantics(
+                                    child: _face(
+                                      movingPiece,
+                                      step,
+                                      false,
+                                      false,
+                                    ),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
                       ],
                     ),
@@ -646,7 +755,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
               onTap: widget.enabled ? () => _tap(square) : null,
               borderRadius: BorderRadius.circular(step / 2),
               child: _face(
-                piece,
+                movingMove?.to == square ? null : piece,
                 step,
                 selected,
                 target,

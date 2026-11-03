@@ -545,3 +545,4 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 | M4-26 | F21/B24 用户皮肤ZIP导出 | `flutter test --reporter compact` 492通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID67175/VM 127.0.0.1:54273 | 原子二进制原生端口编译通过；E43导出入口仅O，源站格式/成功仍U；未人工选文件验收 |
 | M4-27 | F21/B24 项目格式皮肤包安全导入 | `flutter test --reporter compact` 496通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID69107/VM 127.0.0.1:56731 | 项目ZIP schema1，不支持通用站点包；路径/条目/字节/图片校验及用户确认有测试；系统选择面板未人工操作；E42/E48源站成功仍U |
 | M4-28 | F21/B24 项目格式皮肤包文件夹导入 | 专项2/2；根498通过/5跳过；`flutter analyze --no-pub`无问题；macOS PID71234/VM 127.0.0.1:59893 | 固定解压布局项目P；目录条目/链接/大小限制；系统目录面板未人工操作；首轮compact有未复现失败；E42/E48源站格式/成功仍U |
+| M4-29 | F28/B23 主棋盘棋子移动动画 | `flutter test test/widgets/board_piece_move_animation_test.dart --reporter compact`3/3；根501通过/5跳过；`flutter analyze --no-pub`无问题；macOS PID74615/VM 127.0.0.1:64108 | 慢速中间位置/动画结束/动画关/Reduce Motion验证；快档具体时长和快速连续打断未测；CUA窗口读取超时；源站范围/速度映射U，项目行为ADR-064 |

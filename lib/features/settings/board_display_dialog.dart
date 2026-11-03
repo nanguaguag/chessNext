@@ -620,7 +620,7 @@ class BoardDisplayDialog extends StatelessWidget {
                           }
                         },
                 ),
-                const Text('标出最后一步的起点与终点。光圈在换步时旋转一周；系统减少动画时静止。'),
+                const Text('动画速度控制棋子走动和自定义标记；系统减少动态效果时静止。'),
                 const SizedBox(height: 12),
                 SegmentedButton<AnimationSpeed>(
                   key: const ValueKey('animation-speed'),

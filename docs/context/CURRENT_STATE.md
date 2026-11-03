@@ -2,7 +2,7 @@
 
 ## 最新交付 M4-17（2026-11-04）
 
-F21/B24本机棋盘图片图层：按每种BoardSkin支持棋盘背景、起点、落点、选中框四种PNG/JPEG图层逐项替换/恢复；本机有界校验与文件仓库；设置入口Material 3；主盘/编辑器同源渲染，PNG/GIF快照冻结图像。定向3/3；根`flutter test --reporter compact`469通过/5跳过；`flutter analyze`无问题；macOS app成功构建/同步，VM `127.0.0.1:50487` PID44785，但`open returned 1`前台失败，未人工视觉验证。已提交`c7e3151 feat(skins): 支持本机棋盘图片图层`。详ADR-053/TRACEABILITY/SESSION_LOG。E44网页保存/替换成功仍U。E45核落点旋转switch 0→1但无图时动画仍U；E46重复左stepper三次，33→34.5、右边距联动约0.06，其余范围未知。两次均丢弃草稿并复核设置默认恢复。下一步棋盘几何审计/设计，旋转时序作为P另定，之后继续皮肤列表/导入；F21及全站未完成。
+F21/B24本机棋盘图片图层：按每种BoardSkin支持棋盘背景、起点、落点、选中框四种PNG/JPEG图层逐项替换/恢复；本机有界校验与文件仓库；设置入口Material 3；主盘/编辑器同源渲染，PNG/GIF快照冻结图像。定向3/3；根`flutter test --reporter compact`469通过/5跳过；`flutter analyze`无问题；macOS app成功构建/同步，VM `127.0.0.1:50487` PID44785，但`open returned 1`前台失败，未人工视觉验证。已提交`c7e3151 feat(skins): 支持本机棋盘图片图层`。详ADR-053/TRACEABILITY/SESSION_LOG。E44网页保存/替换成功仍U。E45核落点旋转switch 0→1但无图时动画仍U；E46重复左stepper三次，33→34.5、右边距联动约0.06，其余范围未知。两次均丢弃草稿并复核设置默认恢复。下一步棋盘几何审计/设计，旋转时序作为P另定，之后继续皮肤列表/导入；F21及全站未完成。截止2026-11-04 Asia/Shanghai：HEAD `90ad321`，工作树干净；macOS Debug app PID44785仍运行，`flutter run -d macos` runner PID44412仍在前台会话；IAB审计草稿均已丢弃，不依赖临时浏览器状态。
 
 ## 最新交付 M4-16（2026-11-03）
 

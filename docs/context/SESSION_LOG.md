@@ -587,3 +587,8 @@ M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久�
 ## 2026-11-04 / E46 / F21 棋盘边距步进复核
 
 桌面IAB访客打开棋盘新建编辑器；左边距stepper加号重复3次，左33→34.5、右465→465.06；AX显示约每次左+0.5、右+0.02联动，其它方向/slider范围仍未知。按返回确认丢弃后设置页恢复默认。证据不推广为完整几何算法，详REFERENCE_EVIDENCE E46。
+
+
+## 2026-11-04 / 新会话交接准备
+
+复核README、CURRENT_STATE、HANDOFF、DECISIONS、session-handoff Skill和git状态；HEAD `90ad321`，功能/研究文档已提交，工作树干净。根验证沿用M4-17最终结果：469通过/5跳过，analyze0；macOS run为Build/Sync/VM成功但前台返回`open returned 1`。当前仍有Debug app PID44785与Flutter run runner PID44412，保留运行以满足用户此前macOS运行请求，未终止；E45/E46浏览器草稿已安全放弃。临时审计IAB tab清理操作返回浏览器控制错误，但后续项目不依赖该tab，页面状态已回设置首页。

@@ -125,6 +125,24 @@ void main() {
       throwsFormatException,
     );
   });
+  test('local board skins default safely and round-trip as stable names', () {
+    final legacy = AppPreferences().toJson();
+    expect(legacy.containsKey('boardSkin'), isFalse);
+    expect(AppPreferences.fromJson(legacy).boardSkin, BoardSkin.parchment);
+    for (final skin in BoardSkin.values) {
+      final preferences = AppPreferences(boardSkin: skin);
+      expect(AppPreferences.fromJson(preferences.toJson()), preferences);
+      expect(preferences.copyWith(theme: ThemePreference.dark).boardSkin, skin);
+    }
+    expect(
+      () => AppPreferences.fromJson({...legacy, 'boardSkin': 'unknown'}),
+      throwsFormatException,
+    );
+    expect(
+      () => AppPreferences.fromJson({...legacy, 'boardSkin': 2}),
+      throwsFormatException,
+    );
+  });
   test('orientation edited during settings load is not overwritten', () async {
     final session = BoardSession();
     final engine = EngineSessionController(session, null);
@@ -142,6 +160,28 @@ void main() {
       expect(preferences.value.showCoordinates, isFalse);
       expect(store.value, preferences.value);
       expect(session.dirty, isFalse);
+    } finally {
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
+  test('board skin edited during settings load is not overwritten', () async {
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final store = DelayedMarkerPreferences();
+    final preferences = PreferencesController(engine, store);
+    store.value = AppPreferences(showCoordinates: false);
+    try {
+      final loading = preferences.initialize();
+      final saving = preferences.setBoardSkin(BoardSkin.jade);
+      store.gate.complete();
+      await loading;
+      await saving;
+      await preferences.flush();
+      expect(preferences.value.boardSkin, BoardSkin.jade);
+      expect(preferences.value.showCoordinates, isFalse);
+      expect(store.value, preferences.value);
     } finally {
       preferences.dispose();
       engine.dispose();

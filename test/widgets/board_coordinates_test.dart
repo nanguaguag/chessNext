@@ -1,5 +1,6 @@
 import 'package:chess_next/app.dart';
 import 'package:chess_next/application/app_preferences.dart';
+import 'package:chess_next/application/board_appearance.dart';
 import 'package:chess_next/features/board/board_display_scope.dart';
 import 'package:chess_next/features/board/board_file_coordinates.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
@@ -43,6 +44,43 @@ void main() {
       tester.widget<Text>(find.byKey(ValueKey('coordinate-$edge-$i'))).data!,
   ].join();
 
+  testWidgets(
+    'local board skin applies immediately and survives a new app instance',
+    (tester) async {
+      desktop(tester);
+      final store = MemoryPreferencesRepository();
+      await tester.pumpWidget(
+        ChessNextApp(key: UniqueKey(), preferencesRepository: store),
+      );
+      await tester.pumpAndSettle();
+      await open(tester);
+      final dropdown = find.byType(DropdownButtonFormField<BoardSkin>);
+      await tap(tester, dropdown);
+      await tap(tester, find.text('松石青').last);
+      expect(store.value!.boardSkin, BoardSkin.jade);
+      final background = tester.widget<DecoratedBox>(
+        find.byKey(const ValueKey('board-skin-background')),
+      );
+      expect(
+        (background.decoration as BoxDecoration).color,
+        Color(BoardSkin.jade.boardColor),
+      );
+      await tap(tester, find.text('关闭'));
+      await tester.pumpWidget(const SizedBox.shrink());
+      await tester.pumpAndSettle();
+      await tester.pumpWidget(
+        ChessNextApp(key: UniqueKey(), preferencesRepository: store),
+      );
+      await tester.pumpAndSettle();
+      final restored = tester.widget<DecoratedBox>(
+        find.byKey(const ValueKey('board-skin-background')),
+      );
+      expect(
+        (restored.decoration as BoxDecoration).color,
+        Color(BoardSkin.jade.boardColor),
+      );
+    },
+  );
   testWidgets(
     'all four orientations label logical files and align with grid columns',
     (tester) async {

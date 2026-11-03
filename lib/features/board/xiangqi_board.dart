@@ -83,6 +83,7 @@ class BoardSurface extends StatefulWidget {
     this.mirrored = false,
     this.showCoordinates,
     this.rotateOppositePieces,
+    this.boardSkin,
     this.pieceSizePercent,
     this.showAnalysisArrows,
     this.arrowHeadStyle,
@@ -115,6 +116,7 @@ class BoardSurface extends StatefulWidget {
   final bool mirrored;
   final bool? showCoordinates;
   final bool? rotateOppositePieces;
+  final BoardSkin? boardSkin;
   final int? pieceSizePercent;
   final bool? showAnalysisArrows;
   final ArrowHeadStyle? arrowHeadStyle;
@@ -207,15 +209,18 @@ class _BoardSurfaceState extends State<BoardSurface> {
         child: LayoutBuilder(
           builder: (context, constraints) {
             final step = constraints.maxWidth / 9;
+            final skin =
+                widget.boardSkin ?? BoardDisplayScope.boardSkinOf(context);
             return DecoratedBox(
+              key: const ValueKey('board-skin-background'),
               decoration: BoxDecoration(
-                color: const Color(0xfff1dfbf),
+                color: Color(skin.boardColor),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: Stack(
                 children: [
                   Positioned.fill(
-                    child: CustomPaint(painter: const _BoardPainter()),
+                    child: CustomPaint(painter: _BoardPainter(skin)),
                   ),
                   if ((widget.showAnalysisArrows ??
                           BoardDisplayScope.analysisArrowsOf(context)) &&
@@ -329,6 +334,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
     final rotateOppositePieces =
         widget.rotateOppositePieces ??
         BoardDisplayScope.rotateOppositePiecesOf(context);
+    final skin = widget.boardSkin ?? BoardDisplayScope.boardSkinOf(context);
     final topSide = widget.flipped ? Side.red : Side.black;
     final rotateGlyph =
         piece != null && rotateOppositePieces && piece.side == topSide;
@@ -341,13 +347,13 @@ class _BoardSurfaceState extends State<BoardSurface> {
         color: selected
             ? const Color(0xffc6d8b2)
             : piece != null
-            ? const Color(0xfffff4da)
+            ? Color(skin.pieceColor)
             : null,
         border: Border.all(
           color: selected || focused
               ? const Color(0xff3c624a)
               : piece != null
-              ? const Color(0xffbda177)
+              ? Color(skin.pieceBorderColor)
               : Colors.transparent,
           width: selected ? 3 : 1.5,
         ),
@@ -527,12 +533,13 @@ class _BoardSurfaceState extends State<BoardSurface> {
 }
 
 class _BoardPainter extends CustomPainter {
-  const _BoardPainter();
+  const _BoardPainter(this.skin);
+  final BoardSkin skin;
   @override
   void paint(Canvas canvas, Size size) {
     final step = size.width / 9;
     final paint = Paint()
-      ..color = const Color(0xff947c57)
+      ..color = Color(skin.gridColor)
       ..strokeWidth = 1;
     Offset point(double x, double y) =>
         Offset((x + .5) * step, (y + .5) * step);
@@ -552,10 +559,10 @@ class _BoardPainter extends CustomPainter {
       canvas.drawLine(point(5, y), point(3, y + 2), paint);
     }
     final text = TextPainter(
-      text: const TextSpan(
+      text: TextSpan(
         text: '楚 河          汉 界',
         style: TextStyle(
-          color: Color(0xff806b4d),
+          color: Color(skin.labelColor),
           fontSize: 18,
           letterSpacing: 3,
         ),
@@ -570,5 +577,6 @@ class _BoardPainter extends CustomPainter {
   }
 
   @override
-  bool shouldRepaint(covariant _BoardPainter oldDelegate) => false;
+  bool shouldRepaint(covariant _BoardPainter oldDelegate) =>
+      skin != oldDelegate.skin;
 }

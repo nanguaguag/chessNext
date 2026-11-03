@@ -19,7 +19,10 @@ void main() {
     tree = tree.goTo('n2');
     final session = BoardSession()..replaceTree(tree, saved: false);
     session.mirror();
-    final snapshot = BoardGifSnapshot.capture(session, AppPreferences());
+    final snapshot = BoardGifSnapshot.capture(
+      session,
+      AppPreferences(boardSkin: BoardSkin.jade),
+    );
     expect(snapshot.frames.map((frame) => frame.move?.toString()), [
       null,
       'h2e2',
@@ -27,6 +30,7 @@ void main() {
       'h0g2',
     ]);
     expect(snapshot.mirrored, isTrue);
+    expect(snapshot.boardSkin, BoardSkin.jade);
     session.playVariation('n2', Move.parse('b0c2'));
     expect(snapshot.frames.length, 4);
     expect(snapshot.frames.last.move, Move.parse('h0g2'));

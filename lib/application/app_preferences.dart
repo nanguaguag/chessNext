@@ -41,6 +41,7 @@ final class AppPreferences {
     this.textSize = TextSizePreference.system,
     this.showCoordinates = true,
     this.rotateOppositePieces = false,
+    this.boardSkin = BoardSkin.parchment,
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
@@ -83,6 +84,7 @@ final class AppPreferences {
   final TextSizePreference textSize;
   final bool showCoordinates;
   final bool rotateOppositePieces;
+  final BoardSkin boardSkin;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
@@ -106,6 +108,7 @@ final class AppPreferences {
     TextSizePreference? textSize,
     bool? showCoordinates,
     bool? rotateOppositePieces,
+    BoardSkin? boardSkin,
     int? pieceSizePercent,
     bool? showAnalysisArrows,
     bool? showVariationArrows,
@@ -132,6 +135,7 @@ final class AppPreferences {
     textSize: textSize ?? this.textSize,
     showCoordinates: showCoordinates ?? this.showCoordinates,
     rotateOppositePieces: rotateOppositePieces ?? this.rotateOppositePieces,
+    boardSkin: boardSkin ?? this.boardSkin,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
     showVariationArrows: showVariationArrows ?? this.showVariationArrows,
@@ -165,6 +169,7 @@ final class AppPreferences {
     if (textSize != TextSizePreference.system) 'textSize': textSize.name,
     if (!showCoordinates) 'showCoordinates': false,
     if (rotateOppositePieces) 'rotateOppositePieces': true,
+    if (boardSkin != BoardSkin.parchment) 'boardSkin': boardSkin.name,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
     if (!showAnalysisArrows) 'showAnalysisArrows': false,
     if (!showVariationArrows) 'showVariationArrows': false,
@@ -210,6 +215,7 @@ final class AppPreferences {
             json['showCoordinates'] is! bool) ||
         (json.containsKey('rotateOppositePieces') &&
             json['rotateOppositePieces'] is! bool) ||
+        (json.containsKey('boardSkin') && json['boardSkin'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('pieceSizePercent') &&
             json['pieceSizePercent'] is! int) ||
@@ -255,6 +261,9 @@ final class AppPreferences {
         threads: json['threads'] as int,
         showCoordinates: json['showCoordinates'] as bool? ?? true,
         rotateOppositePieces: json['rotateOppositePieces'] as bool? ?? false,
+        boardSkin: BoardSkin.values.byName(
+          json['boardSkin'] as String? ?? 'parchment',
+        ),
         pieceSizePercent: json['pieceSizePercent'] as int? ?? 100,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
@@ -287,6 +296,7 @@ final class AppPreferences {
       textSize == other.textSize &&
       showCoordinates == other.showCoordinates &&
       rotateOppositePieces == other.rotateOppositePieces &&
+      boardSkin == other.boardSkin &&
       pieceSizePercent == other.pieceSizePercent &&
       threads == other.threads &&
       hashMb == other.hashMb &&
@@ -314,6 +324,7 @@ final class AppPreferences {
     textSize,
     showCoordinates,
     rotateOppositePieces,
+    boardSkin,
     pieceSizePercent,
     threads,
     hashMb,

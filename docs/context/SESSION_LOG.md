@@ -528,3 +528,9 @@ E41桌面访客页审计见REFERENCE_EVIDENCE；观察上方棋子180°设置与
 M4-11增加默认关闭的`rotateOppositePieces`本地偏好、异步设置读取字段合并和BoardDisplayScope传播；主棋盘/局面编辑/PNG/GIF快照统一。按实际视觉上方阵营翻转字形。增加偏好兼容/非法值/异步竞态与Widget翻转方向测试。首次定向Widget运行因测试树未包Material暴露InkWell祖先断言，补Material后相关测试通过（8/8）。全量`flutter test --reporter compact`450通过/5跳过，flutter analyze无问题。`flutter run -d macos`构建成功，提示前台open返回1后仍完成文件同步并显示VM `127.0.0.1:56207`（PID26430）；flutter_tts SwiftPM未来兼容warning仍存在。
 
 M4-11单独提交为`eb44677 feat(board): 支持对面棋子翻转显示`，之后继续B24皮肤边界审计与实现，F21不关闭。
+
+## 2026-11-03 / E42 + M4-12 / F21 → B24 本机棋盘配色
+
+E42证据见REFERENCE_EVIDENCE：目录支持默认/点赞/名称/作者/最新导入排序；输入玉石需Enter后返回7项；导入说明提供ZIP、图片多选、文件夹选项并声明本机保存。未打开文件选择器/选文件/应用。新建棋子编辑草稿的尺寸控件初见50，点滑杆靠左得到20.5，靠右得到68.5；端点/真正上下限未可靠锁定，不记录为准确范围。编辑返回触发“放弃修改/改动未保存会丢掉”确认并安全返回默认棋子/棋盘、100%、坐标开、倒置关。网页全程无用户棋谱修改。
+
+M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久化和BoardDisplayScope;包含底色、格线、河界字、棋子填充/边框，并冻结至PNG/GIF。新偏好旧值/坏值/延迟加载测试，UI即时应用/新实例恢复，以及快照 capture 测试。目标测试通过；完整根测试453通过/5跳过，flutter analyze0；`flutter run -d macos`成功构建同步，PID27652 VM `127.0.0.1:58201`，flutter_tts仍报SwiftPM将来兼容warning。收尾后继续B24本机皮肤选择与编辑，不能称F21完成。

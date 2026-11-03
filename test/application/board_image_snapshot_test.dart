@@ -24,6 +24,7 @@ void main() {
     final recommendation = session.position.legalMoves.first;
     final prefs = AppPreferences(
       showCoordinates: false,
+      boardSkin: BoardSkin.jade,
       pieceSizePercent: 135,
       arrowHead: ArrowHeadStyle.wide,
       lastMoveMarker: LastMoveMarkerStyle.box,
@@ -42,6 +43,7 @@ void main() {
     expect(snapshot.flipped, isTrue);
     expect(snapshot.mirrored, isTrue);
     expect(snapshot.showCoordinates, isFalse);
+    expect(snapshot.boardSkin, BoardSkin.jade);
     expect(snapshot.pieceSizePercent, 135);
     expect(snapshot.arrowHead, ArrowHeadStyle.wide);
     expect(snapshot.lastMoveStyle, LastMoveMarkerStyle.box);

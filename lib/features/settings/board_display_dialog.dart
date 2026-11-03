@@ -49,6 +49,28 @@ class BoardDisplayDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              DropdownButtonFormField<BoardSkin>(
+                key: ValueKey(preferences.value.boardSkin),
+                initialValue: preferences.value.boardSkin,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: '棋盘皮肤'),
+                items: const [
+                  DropdownMenuItem(
+                    value: BoardSkin.parchment,
+                    child: Text('宣纸木色'),
+                  ),
+                  DropdownMenuItem(value: BoardSkin.jade, child: Text('松石青')),
+                ],
+                onChanged: preferences.loading
+                    ? null
+                    : (skin) {
+                        if (skin != null) {
+                          unawaited(preferences.setBoardSkin(skin));
+                        }
+                      },
+              ),
+              const Text('原创配色，只保存在本机；皮肤图片导入与编辑仍待实现。'),
+              const SizedBox(height: 12),
               DropdownButtonFormField<LastMoveMarkerStyle>(
                 key: ValueKey(preferences.value.lastMoveMarker),
                 initialValue: preferences.value.lastMoveMarker,

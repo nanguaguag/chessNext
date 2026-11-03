@@ -359,5 +359,15 @@ void main() {
       store.value!.boardGeometries[BoardSkin.parchment]!.leftPercent,
       greaterThan(100 * .5 / 9),
     );
+    final rotation = find.byKey(
+      const ValueKey('board-geometry-parchment-landing-rotation'),
+    );
+    await tester.ensureVisible(rotation);
+    await tester.tap(rotation);
+    await tester.pumpAndSettle();
+    expect(
+      store.value!.boardGeometries[BoardSkin.parchment]!.rotateLandingMarker,
+      isTrue,
+    );
   });
 }

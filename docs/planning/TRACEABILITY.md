@@ -512,3 +512,8 @@ E43观察到上/下/左/右步进、自动对正、偏移后归零可用；按�
 定向 `flutter test test/application/board_skin_image_library_test.dart test/widgets/board_skin_image_layers_test.dart --reporter expanded` 3/3通过。第一次全量测试 468通过/5跳过/1失败，失败为现有键盘遍历测试Tab预算20不足；新入口添加了焦点节点后将该用例遍历预算扩至40，专项通过。最终根 `flutter test --reporter compact` 469通过/5跳过（5项需配置官方Pikafish/NNUE环境），`flutter analyze`无问题，`git diff --check`通过。`flutter run -d macos` Build成功并同步、VM Service `127.0.0.1:50487`（PID44785）；Flutter报告`Failed to foreground app; open returned 1`，但app已构建、同步且VM可连接，前台人工视觉未验证。插件 `flutter_tts`仍有Swift Package Manager兼容警告。
 
 本片为本机项目设计P，不证明网页替换、保存、应用成功，E44旋转与几何边界仍U。无新依赖或外部资源；F21未完成。
+
+
+## 2026-11-04 / M4-19 / F21,B24 自定义落点图片旋转
+
+E45只验证棋盘皮肤图片页的开关AX从0变为1，没有自定义落点图片，故项目不据此声明源站动效或时序。按ADR-055实现BoardSkin独立布尔偏好；新末步身份时仅自定义落点图绕目标交点线性旋转一周，首次挂载静止，同身份重建不重播。全局AnimationSpeed控制时长/关闭，MediaQuery Reduce Motion立即静止；不改变棋盘命中/布局、起点图、规则、引擎或静态PNG/GIF快照。模型旧值兼容与Widget行为/速度测试已定向通过5项。完整根测试、analyze、macOS run待执行；可视验收待完成。该切片独立提交后继续B24其它皮肤能力及全站审计，不能关闭F21或全站。

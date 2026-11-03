@@ -155,12 +155,14 @@ class _BoardSurfaceState extends State<BoardSurface> {
   Square cursor = Square(4, 0);
   bool hasFocus = false;
   bool animateMarkerOnMount = false;
+  int landingRotationTurns = 0;
   @override
   void didUpdateWidget(covariant BoardSurface oldWidget) {
     super.didUpdateWidget(oldWidget);
     animateMarkerOnMount =
         widget.lastMove != oldWidget.lastMove ||
         widget.lastMoveIdentity != oldWidget.lastMoveIdentity;
+    if (animateMarkerOnMount) landingRotationTurns++;
   }
 
   @override
@@ -692,6 +694,24 @@ class _BoardSurfaceState extends State<BoardSurface> {
     double step,
     BoardSkinImageSlot slot,
   ) {
+    Widget marker = Image.memory(
+      image,
+      fit: BoxFit.contain,
+      key: ValueKey('board-skin-image-${slot.name}'),
+    );
+    final geometry = widget.geometry ?? BoardDisplayScope.geometryOf(context);
+    if (slot == BoardSkinImageSlot.landingMarker &&
+        geometry.rotateLandingMarker) {
+      marker = AnimatedRotation(
+        key: const ValueKey('landing-marker-image-rotation'),
+        turns: landingRotationTurns.toDouble(),
+        duration: MediaQuery.disableAnimationsOf(context)
+            ? Duration.zero
+            : BoardDisplayScope.animationSpeedOf(context).duration,
+        curve: Curves.linear,
+        child: marker,
+      );
+    }
     final center = boardSquarePoint(
       square,
       Size(step * 9, step * 10),
@@ -703,15 +723,7 @@ class _BoardSurfaceState extends State<BoardSurface> {
       top: center.dy - step / 2,
       width: step,
       height: step,
-      child: IgnorePointer(
-        child: ExcludeSemantics(
-          child: Image.memory(
-            image,
-            fit: BoxFit.contain,
-            key: ValueKey('board-skin-image-${slot.name}'),
-          ),
-        ),
-      ),
+      child: IgnorePointer(child: ExcludeSemantics(child: marker)),
     );
   }
 }

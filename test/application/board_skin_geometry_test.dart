@@ -28,9 +28,21 @@ void main() {
         rightPercent: 90,
         bottomPercent: 92,
         pieceScalePercent: 110,
+        rotateLandingMarker: true,
       );
       expect(BoardSkinGeometry.fromJson(geometry.toJson()), geometry);
       expect(geometry.copyWith().pieceScalePercent, 110);
+      expect(geometry.copyWith().rotateLandingMarker, isTrue);
+      expect(
+        BoardSkinGeometry.fromJson({
+          'left': 100 * .5 / 9,
+          'top': 5,
+          'right': 100 * 8.5 / 9,
+          'bottom': 95,
+          'pieceScale': 100,
+        }).rotateLandingMarker,
+        isFalse,
+      );
       expect(
         () => BoardSkinGeometry(leftPercent: 20, rightPercent: 70),
         throwsArgumentError,

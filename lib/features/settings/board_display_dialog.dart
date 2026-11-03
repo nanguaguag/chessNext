@@ -132,6 +132,21 @@ class BoardDisplayDialog extends StatelessWidget {
                 ),
         ),
         const Text('棋子只改变面容尺寸，不改变格线间距或交点命中；与全局棋子尺寸、棋子样式比例相乘。'),
+        SwitchListTile(
+          key: ValueKey('board-geometry-${skin.name}-landing-rotation'),
+          contentPadding: EdgeInsets.zero,
+          title: const Text('落点标记图片旋转'),
+          subtitle: const Text('每次换步时转一周后静止；系统减少动画或关闭动画速度时静止。'),
+          value: geometry.rotateLandingMarker,
+          onChanged: preferences.loading
+              ? null
+              : (enabled) => unawaited(
+                  preferences.setBoardSkinGeometry(
+                    skin,
+                    geometry.copyWith(rotateLandingMarker: enabled),
+                  ),
+                ),
+        ),
         Align(
           alignment: Alignment.centerRight,
           child: TextButton.icon(

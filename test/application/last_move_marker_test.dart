@@ -143,6 +143,24 @@ void main() {
       throwsFormatException,
     );
   });
+  test('piece skin preference defaults safely and rejects unknown values', () {
+    final legacy = AppPreferences().toJson();
+    expect(legacy.containsKey('pieceSkin'), isFalse);
+    expect(AppPreferences.fromJson(legacy).pieceSkin, PieceSkin.roundSeal);
+    for (final skin in PieceSkin.values) {
+      final preferences = AppPreferences(pieceSkin: skin);
+      expect(AppPreferences.fromJson(preferences.toJson()), preferences);
+      expect(preferences.copyWith(theme: ThemePreference.dark).pieceSkin, skin);
+    }
+    expect(
+      () => AppPreferences.fromJson({...legacy, 'pieceSkin': 'unknown'}),
+      throwsFormatException,
+    );
+    expect(
+      () => AppPreferences.fromJson({...legacy, 'pieceSkin': false}),
+      throwsFormatException,
+    );
+  });
   test('orientation edited during settings load is not overwritten', () async {
     final session = BoardSession();
     final engine = EngineSessionController(session, null);
@@ -180,6 +198,28 @@ void main() {
       await saving;
       await preferences.flush();
       expect(preferences.value.boardSkin, BoardSkin.jade);
+      expect(preferences.value.showCoordinates, isFalse);
+      expect(store.value, preferences.value);
+    } finally {
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
+  test('piece skin edited during settings load is not overwritten', () async {
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final store = DelayedMarkerPreferences();
+    final preferences = PreferencesController(engine, store);
+    store.value = AppPreferences(showCoordinates: false);
+    try {
+      final loading = preferences.initialize();
+      final saving = preferences.setPieceSkin(PieceSkin.squareInk);
+      store.gate.complete();
+      await loading;
+      await saving;
+      await preferences.flush();
+      expect(preferences.value.pieceSkin, PieceSkin.squareInk);
       expect(preferences.value.showCoordinates, isFalse);
       expect(store.value, preferences.value);
     } finally {

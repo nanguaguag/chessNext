@@ -462,4 +462,12 @@ E41观察棋盘设置的对面一方棋子倒置开关，初始关闭，说明�
 
 E41/E42确认棋盘皮肤库、显式搜索提交及排序选项；本机导入入口声明支持压缩包、图片多选和文件夹，但尚未实测文件选择成功。项目提供原创宣纸木色（默认）与松石青两项BoardSkin配色，schema1兼容持久化、异步读取合并；通过BoardDisplayScope传递至主盘/局面编辑，BoardImageSnapshot/BoardGifSnapshot冻结配色，使导出预览不随后改偏好变化。Material3选择即时应用，保持规则/棋谱状态独立。
 
-测试：偏好类型与往返/旧值/坏值、延迟加载合并；应用设置选配色后底板真实颜色即时变化、新App实例恢复；PNG/GIF快照捕获。根全量`flutter test --reporter compact`453通过/5跳过（缺官方Pikafish测试环境变量），`flutter analyze`无问题；`flutter run -d macos`构建启动成功，VM `127.0.0.1:58201`（PID27652）。F21其余图片皮肤/导入/编辑/在线后端仍未完成，详ADR-048/B24。
+测试：偏好类型与往返/旧值/坏值、延迟加载合并；应用设置选配色后底板真实颜色即时变化、新App实例恢复；PNG/GIF快照捕获。根全量`flutter test --reporter compact`456通过/5跳过（缺官方Pikafish测试环境变量），`flutter analyze`无问题；macOS音频集成`flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded`3/3通过；`flutter run -d macos`构建启动成功，VM `127.0.0.1:60040`（PID29670）。F21其余图片皮肤/导入/编辑/在线后端仍未完成，详ADR-048/B24。
+
+## 2026-11-03 / M4-13 / F21,F28 → B08,B20,B23,B24 本机棋子预设与跟随走棋音
+
+E41/E42审计确认源站棋盘/棋子皮肤库与各自编辑入口；E37/E40确认走棋音效有随棋子皮肤预设和试听。新增原创PieceSkin本机偏好`roundSeal/squareInk`，默认圆章；Material3设置选择，BoardDisplayScope作用主盘/编辑器，BoardImageSnapshot/BoardGifSnapshot冻结当前皮肤。圆章沿用圆形外观，方章显示柔角方形，选中/目标/焦点/对面旋转语义保持。
+
+应用层读取持久化`MoveSoundChoice`；followPieceSkin + roundSeal解析sound1、squareInk解析sound2，再经AudioFeedbackPort传递已解析值，Audioplayers适配器优先检查自定义路径。试听层解析相同关系，弹窗当前状态摘要显示具体预设。显式sound1/sound2不跟皮肤变化。
+
+验证：偏好旧schema/未知类型/延迟设置读取合并；界面切换和棋子外观形状、重开恢复；图片/GIF快照捕获；BoardFeedbackController跟随sound2；预览映射测试。macOS音频集成 `flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded` 3/3通过；根全量测试、analyze、macOS `flutter run -d macos`结果追加本记录。图片级自定义皮肤、导入、编辑器、在线服务仍待，F21未完成。

@@ -534,3 +534,9 @@ M4-11单独提交为`eb44677 feat(board): 支持对面棋子翻转显示`，之�
 E42证据见REFERENCE_EVIDENCE：目录支持默认/点赞/名称/作者/最新导入排序；输入玉石需Enter后返回7项；导入说明提供ZIP、图片多选、文件夹选项并声明本机保存。未打开文件选择器/选文件/应用。新建棋子编辑草稿的尺寸控件初见50，点滑杆靠左得到20.5，靠右得到68.5；端点/真正上下限未可靠锁定，不记录为准确范围。编辑返回触发“放弃修改/改动未保存会丢掉”确认并安全返回默认棋子/棋盘、100%、坐标开、倒置关。网页全程无用户棋谱修改。
 
 M4-12增加原创BoardSkin两预设（宣纸木色/松石青）、schema1持久化和BoardDisplayScope;包含底色、格线、河界字、棋子填充/边框，并冻结至PNG/GIF。新偏好旧值/坏值/延迟加载测试，UI即时应用/新实例恢复，以及快照 capture 测试。目标测试通过；完整根测试453通过/5跳过，flutter analyze0；`flutter run -d macos`成功构建同步，PID27652 VM `127.0.0.1:58201`，flutter_tts仍报SwiftPM将来兼容warning。M4-12提交`de9de01 feat(board): 增加离线棋盘配色`，之后继续B24本机皮肤选择与编辑，不能称F21完成。
+
+## 2026-11-03 / M4-13 / F21,F28 → B23,B24 本机棋子预设与音效联动
+
+应用本机PieceSkin枚举传统圆章/方章墨韵，schema1兼容偏好及读设置竞态。圆章保留既有样式，方章为柔角方形/淡色边框；BoardDisplayScope统一推主盘/编辑器，PNG/GIF snapshot捕获。音频port可接收已解析的MoveSoundChoice，BoardFeedbackController把持久化followPieceSkin+roundSeal解析为sound1，squareInk解析为sound2；显式方案不变，音频adapter的自定义文件优先。试听传入当前PieceSkin解析，当前状态摘要提供实际皮肤名。添加对应状态/异步读合并/应用渲染/快照/试听/音频选择测试。
+
+定向`board_feedback_test`/`audio_library_test`/设置/快照/皮肤相关widget全过；期间一次首轮编译因新fake repository缺`dart:typed_data`导入失败，补导入后目标测试通过。根`flutter test --reporter compact`456通过/5跳过；`flutter analyze`无问题；macOS音频集成`flutter test integration_test/audio_feedback_test.dart -d macos --reporter expanded`3/3；`flutter run -d macos`构建同步，PID29670 VM `127.0.0.1:60040`。flutter_tts SwiftPM未来兼容提示仍有。提交后继续本机皮肤图片导入/编辑切片。

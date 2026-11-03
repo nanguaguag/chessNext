@@ -189,6 +189,7 @@ class _BoardImageDialogState extends State<BoardImageDialog> {
                                 showCoordinates: s.showCoordinates,
                                 rotateOppositePieces: s.rotateOppositePieces,
                                 boardSkin: s.boardSkin,
+                                pieceSkin: s.pieceSkin,
                                 pieceSizePercent: s.pieceSizePercent,
                                 arrowHead: s.arrowHead,
                                 lastMoveMarker: s.lastMoveStyle,

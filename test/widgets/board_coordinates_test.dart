@@ -65,6 +65,24 @@ void main() {
         (background.decoration as BoxDecoration).color,
         Color(BoardSkin.jade.boardColor),
       );
+      final pieceDropdown = find.byType(DropdownButtonFormField<PieceSkin>);
+      await tap(tester, pieceDropdown);
+      await tap(tester, find.text('方章墨韵').last);
+      expect(store.value!.pieceSkin, PieceSkin.squareInk);
+      final inkFace = find.descendant(
+        of: find.byKey(const ValueKey('square-a9')),
+        matching: find.byWidgetPredicate(
+          (widget) =>
+              widget is Container &&
+              widget.decoration is BoxDecoration &&
+              (widget.decoration as BoxDecoration).borderRadius != null,
+        ),
+      );
+      expect(inkFace, findsOneWidget);
+      expect(
+        (tester.widget<Container>(inkFace).decoration as BoxDecoration).shape,
+        BoxShape.rectangle,
+      );
       await tap(tester, find.text('关闭'));
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
@@ -79,6 +97,7 @@ void main() {
         (restored.decoration as BoxDecoration).color,
         Color(BoardSkin.jade.boardColor),
       );
+      expect(store.value!.pieceSkin, PieceSkin.squareInk);
     },
   );
   testWidgets(

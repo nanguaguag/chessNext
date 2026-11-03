@@ -21,7 +21,7 @@ void main() {
     session.mirror();
     final snapshot = BoardGifSnapshot.capture(
       session,
-      AppPreferences(boardSkin: BoardSkin.jade),
+      AppPreferences(boardSkin: BoardSkin.jade, pieceSkin: PieceSkin.squareInk),
     );
     expect(snapshot.frames.map((frame) => frame.move?.toString()), [
       null,
@@ -31,6 +31,7 @@ void main() {
     ]);
     expect(snapshot.mirrored, isTrue);
     expect(snapshot.boardSkin, BoardSkin.jade);
+    expect(snapshot.pieceSkin, PieceSkin.squareInk);
     session.playVariation('n2', Move.parse('b0c2'));
     expect(snapshot.frames.length, 4);
     expect(snapshot.frames.last.move, Move.parse('h0g2'));

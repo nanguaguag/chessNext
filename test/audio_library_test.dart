@@ -130,7 +130,14 @@ void main() {
         isTrue,
       );
       expect(await controller.previewMoveSound(MoveSoundChoice.sound2), isTrue);
-      expect(audio.previewed, [MoveSoundChoice.sound2]);
+      expect(
+        await controller.previewMoveSound(
+          MoveSoundChoice.followPieceSkin,
+          followSkinChoice: MoveSoundChoice.sound2,
+        ),
+        isTrue,
+      );
+      expect(audio.previewed, [MoveSoundChoice.sound2, MoveSoundChoice.sound2]);
 
       picker.selected = null;
       expect(await controller.importCustom(AudioFeedbackKind.move), isFalse);
@@ -253,7 +260,10 @@ class _Audio implements AudioFeedbackPort, AudioSoundPreviewPort {
   final played = <AudioFeedbackKind>[];
   final previewed = <MoveSoundChoice>[];
   @override
-  Future<void> play(AudioFeedbackKind kind) async => played.add(kind);
+  Future<void> play(
+    AudioFeedbackKind kind, {
+    MoveSoundChoice moveChoice = MoveSoundChoice.sound1,
+  }) async => played.add(kind);
   @override
   Future<void> previewMoveSound(MoveSoundChoice choice) async =>
       previewed.add(choice);

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../application/audio_library_controller.dart';
+import '../../application/board_appearance.dart';
 import '../../ports/audio_feedback.dart';
 import '../../ports/audio_library.dart';
 
@@ -10,11 +11,13 @@ class AudioOptionsDialog extends StatelessWidget {
     required this.kind,
     required this.title,
     required this.library,
+    this.pieceSkin = PieceSkin.roundSeal,
   });
 
   final AudioFeedbackKind kind;
   final String title;
   final AudioLibraryController library;
+  final PieceSkin pieceSkin;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -34,7 +37,7 @@ class AudioOptionsDialog extends StatelessWidget {
                   library.hasCustom(kind)
                       ? '当前：自定义音效'
                       : kind == AudioFeedbackKind.move
-                      ? '当前：${library.moveChoice.label}'
+                      ? '当前：${library.moveChoice.label}${library.moveChoice == MoveSoundChoice.followPieceSkin ? '（${pieceSkin == PieceSkin.roundSeal ? '传统圆章' : '方章墨韵'}）' : ''}'
                       : '当前：默认音效',
                 ),
                 const SizedBox(height: 8),
@@ -53,11 +56,7 @@ class AudioOptionsDialog extends StatelessWidget {
                         .map(
                           (choice) => DropdownMenuItem(
                             value: choice,
-                            child: Text(
-                              choice == MoveSoundChoice.followPieceSkin
-                                  ? '随棋子皮肤（当前仅默认外观）'
-                                  : choice.label,
-                            ),
+                            child: Text(choice.label),
                           ),
                         )
                         .toList(),
@@ -78,7 +77,13 @@ class AudioOptionsDialog extends StatelessWidget {
                           (choice) => OutlinedButton.icon(
                             onPressed: busy
                                 ? null
-                                : () => library.previewMoveSound(choice),
+                                : () => library.previewMoveSound(
+                                    choice,
+                                    followSkinChoice:
+                                        pieceSkin == PieceSkin.roundSeal
+                                        ? MoveSoundChoice.sound1
+                                        : MoveSoundChoice.sound2,
+                                  ),
                             icon: const Icon(Icons.play_arrow),
                             label: Text('试听${choice.label}'),
                           ),

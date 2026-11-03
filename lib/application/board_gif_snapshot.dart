@@ -26,6 +26,7 @@ final class BoardGifSnapshot {
     this.mirrored = false,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.pieceSkin = PieceSkin.roundSeal,
   }) : frames = List.unmodifiable(frames) {
     if (this.frames.isEmpty || this.frames.length > maxFrames) {
       throw BoardGifCapacityException(this.frames.length);
@@ -48,6 +49,7 @@ final class BoardGifSnapshot {
       mirrored: session.mirrored,
       rotateOppositePieces: prefs.rotateOppositePieces,
       boardSkin: prefs.boardSkin,
+      pieceSkin: prefs.pieceSkin,
     );
   }
 
@@ -55,6 +57,7 @@ final class BoardGifSnapshot {
   final List<BoardGifFrame> frames;
   final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final BoardSkin boardSkin;
+  final PieceSkin pieceSkin;
   final int pieceSizePercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;

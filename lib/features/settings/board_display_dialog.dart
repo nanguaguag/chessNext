@@ -28,8 +28,12 @@ class BoardDisplayDialog extends StatelessWidget {
       child: TextButton.icon(
         onPressed: () => showDialog<void>(
           context: context,
-          builder: (_) =>
-              AudioOptionsDialog(kind: kind, title: label, library: library),
+          builder: (_) => AudioOptionsDialog(
+            kind: kind,
+            title: label,
+            library: library,
+            pieceSkin: preferences.value.pieceSkin,
+          ),
         ),
         icon: const Icon(Icons.tune),
         label: Text('更换$label音效'),
@@ -70,6 +74,31 @@ class BoardDisplayDialog extends StatelessWidget {
                       },
               ),
               const Text('原创配色，只保存在本机；皮肤图片导入与编辑仍待实现。'),
+              const SizedBox(height: 12),
+              DropdownButtonFormField<PieceSkin>(
+                key: ValueKey(preferences.value.pieceSkin),
+                initialValue: preferences.value.pieceSkin,
+                isExpanded: true,
+                decoration: const InputDecoration(labelText: '棋子皮肤'),
+                items: const [
+                  DropdownMenuItem(
+                    value: PieceSkin.roundSeal,
+                    child: Text('传统圆章'),
+                  ),
+                  DropdownMenuItem(
+                    value: PieceSkin.squareInk,
+                    child: Text('方章墨韵'),
+                  ),
+                ],
+                onChanged: preferences.loading
+                    ? null
+                    : (skin) {
+                        if (skin != null) {
+                          unawaited(preferences.setPieceSkin(skin));
+                        }
+                      },
+              ),
+              const Text('棋子样式会同步决定“随棋子皮肤”的走棋音效。'),
               const SizedBox(height: 12),
               DropdownButtonFormField<LastMoveMarkerStyle>(
                 key: ValueKey(preferences.value.lastMoveMarker),

@@ -23,7 +23,10 @@ final class AudioplayersFeedback
   bool _disposed = false;
 
   @override
-  Future<void> play(AudioFeedbackKind kind) async {
+  Future<void> play(
+    AudioFeedbackKind kind, {
+    MoveSoundChoice moveChoice = MoveSoundChoice.sound1,
+  }) async {
     if (_disposed) return;
     final (player, defaultAsset) = switch (kind) {
       AudioFeedbackKind.select => (_selection, 'audio/select.wav'),
@@ -40,13 +43,7 @@ final class AudioplayersFeedback
     }
     var asset = defaultAsset;
     if (kind == AudioFeedbackKind.move && customPath == null) {
-      try {
-        asset = _moveAsset(
-          await overrides?.moveSoundChoice() ?? MoveSoundChoice.sound1,
-        );
-      } catch (_) {
-        // A broken choice file falls back to sound 1.
-      }
+      asset = _moveAsset(moveChoice);
     }
     await player.play(
       customPath == null ? AssetSource(asset) : DeviceFileSource(customPath),

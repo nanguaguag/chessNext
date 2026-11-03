@@ -9,6 +9,7 @@ import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/features/settings/board_display_dialog.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:chess_next/ports/audio_feedback.dart';
+import 'package:chess_next/ports/audio_library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -28,7 +29,10 @@ class MarkerStore extends MemoryPreferencesRepository {
 class MarkerAudio implements AudioFeedbackPort {
   final events = <AudioFeedbackKind>[];
   @override
-  Future<void> play(AudioFeedbackKind kind) async => events.add(kind);
+  Future<void> play(
+    AudioFeedbackKind kind, {
+    MoveSoundChoice moveChoice = MoveSoundChoice.sound1,
+  }) async => events.add(kind);
   @override
   Future<void> dispose() async {}
 }

@@ -1,10 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:chess_next/adapters/audio/tone_wave.dart';
 import 'package:chess_next/application/board_feedback_controller.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/application/app_preferences.dart';
+import 'package:chess_next/application/board_appearance.dart';
 import 'package:chess_next/ports/audio_feedback.dart';
+import 'package:chess_next/ports/audio_library.dart';
 import 'package:chess_next/ports/move_speech.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -12,11 +16,16 @@ import 'package:xiangqi_core/xiangqi_core.dart';
 
 class FakeAudio implements AudioFeedbackPort {
   final events = <AudioFeedbackKind>[];
+  final moveChoices = <MoveSoundChoice>[];
   bool fail = false;
 
   @override
-  Future<void> play(AudioFeedbackKind kind) async {
+  Future<void> play(
+    AudioFeedbackKind kind, {
+    MoveSoundChoice moveChoice = MoveSoundChoice.sound1,
+  }) async {
     events.add(kind);
+    if (kind == AudioFeedbackKind.move) moveChoices.add(moveChoice);
     if (fail) throw StateError('audio device unavailable');
   }
 
@@ -32,6 +41,27 @@ class FakeSpeech implements MoveSpeechPort {
 
   @override
   Future<void> dispose() async {}
+}
+
+class MoveChoiceStore implements AudioOverrideRepository {
+  MoveChoiceStore(this.choice);
+  MoveSoundChoice choice;
+  @override
+  Future<String?> pathFor(AudioFeedbackKind kind) async => null;
+  @override
+  Future<void> save(
+    AudioFeedbackKind kind,
+    String extension,
+    Uint8List bytes,
+  ) async {}
+  @override
+  Future<void> remove(AudioFeedbackKind kind) async {}
+  @override
+  Future<MoveSoundChoice> moveSoundChoice() async => choice;
+  @override
+  Future<void> setMoveSoundChoice(MoveSoundChoice next) async {
+    choice = next;
+  }
 }
 
 void main() {
@@ -83,6 +113,37 @@ void main() {
         AudioFeedbackKind.move,
       ]);
       expect(session.tree.current.move, reply);
+    } finally {
+      await feedback.dispose();
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
+
+  test('follow skin resolves to the selected piece skin audio', () async {
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final preferences = PreferencesController(
+      engine,
+      MemoryPreferencesRepository()
+        ..value = AppPreferences(pieceSkin: PieceSkin.squareInk),
+    );
+    final audio = FakeAudio();
+    final choice = MoveChoiceStore(MoveSoundChoice.followPieceSkin);
+    await preferences.initialize();
+    final feedback = BoardFeedbackController(
+      session,
+      preferences,
+      audio,
+      const SilentMoveSpeech(),
+      choice,
+    );
+    try {
+      final move = session.legalMoves.first;
+      expect(session.playMove(move), isTrue);
+      await Future<void>.delayed(Duration.zero);
+      expect(audio.moveChoices, [MoveSoundChoice.sound2]);
     } finally {
       await feedback.dispose();
       preferences.dispose();

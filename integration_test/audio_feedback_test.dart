@@ -19,7 +19,10 @@ void main() {
     final audio = AudioplayersFeedback();
     addTearDown(audio.dispose);
     await audio.play(AudioFeedbackKind.select);
-    await audio.play(AudioFeedbackKind.move);
+    await audio.play(
+      AudioFeedbackKind.move,
+      moveChoice: MoveSoundChoice.sound2,
+    );
     await audio.play(AudioFeedbackKind.capture);
     await audio.play(AudioFeedbackKind.check);
     await audio.play(AudioFeedbackKind.mate);
@@ -54,7 +57,10 @@ void main() {
     await repository.setMoveSoundChoice(MoveSoundChoice.sound2);
     final audio = AudioplayersFeedback(overrides: repository);
     addTearDown(audio.dispose);
-    await audio.play(AudioFeedbackKind.move);
+    await audio.play(
+      AudioFeedbackKind.move,
+      moveChoice: await repository.moveSoundChoice(),
+    );
     expect(tester.takeException(), isNull);
   });
 }

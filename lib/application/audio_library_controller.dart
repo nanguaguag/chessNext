@@ -57,7 +57,10 @@ class AudioLibraryController extends ChangeNotifier {
     }
   }
 
-  Future<bool> previewMoveSound(MoveSoundChoice choice) async {
+  Future<bool> previewMoveSound(
+    MoveSoundChoice choice, {
+    MoveSoundChoice followSkinChoice = MoveSoundChoice.sound1,
+  }) async {
     if (busyKind != null || _disposed) return false;
     if (audio is! AudioSoundPreviewPort) {
       _setError(AudioFeedbackKind.move, '当前音效播放器不支持方案试听。');
@@ -66,7 +69,9 @@ class AudioLibraryController extends ChangeNotifier {
     }
     _begin(AudioFeedbackKind.move);
     try {
-      await (audio as AudioSoundPreviewPort).previewMoveSound(choice);
+      await (audio as AudioSoundPreviewPort).previewMoveSound(
+        choice == MoveSoundChoice.followPieceSkin ? followSkinChoice : choice,
+      );
       return true;
     } catch (_) {
       _setError(AudioFeedbackKind.move, '音效播放失败，请检查本机音频设备后重试。');

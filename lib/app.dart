@@ -152,6 +152,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       preferences,
       audio,
       widget.moveSpeech ?? const SilentMoveSpeech(),
+      widget.audioOverrides,
     );
     preferences.addListener(_preferencesChanged);
     unawaited(_initializePreferences());
@@ -310,6 +311,7 @@ class _ChessNextAppState extends State<ChessNextApp>
         showCoordinates: preferences.value.showCoordinates,
         rotateOppositePieces: preferences.value.rotateOppositePieces,
         boardSkin: preferences.value.boardSkin,
+        pieceSkin: preferences.value.pieceSkin,
         pieceSizePercent: preferences.value.pieceSizePercent,
         showAnalysisArrows: preferences.value.showAnalysisArrows,
         showVariationArrows: preferences.value.showVariationArrows,

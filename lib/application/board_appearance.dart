@@ -7,6 +7,8 @@ enum SelectionStyle { lift, frame }
 
 enum BoardSkin { parchment, jade }
 
+enum PieceSkin { roundSeal, squareInk }
+
 extension BoardSkinPalette on BoardSkin {
   int get boardColor => switch (this) {
     BoardSkin.parchment => 0xfff1dfbf,
@@ -27,5 +29,16 @@ extension BoardSkinPalette on BoardSkin {
   int get pieceBorderColor => switch (this) {
     BoardSkin.parchment => 0xffbda177,
     BoardSkin.jade => 0xff9bb3a0,
+  };
+}
+
+extension PieceSkinPalette on PieceSkin {
+  int get faceColor => switch (this) {
+    PieceSkin.roundSeal => 0xfffff4da,
+    PieceSkin.squareInk => 0xfff2eddf,
+  };
+  int get borderColor => switch (this) {
+    PieceSkin.roundSeal => 0xffbda177,
+    PieceSkin.squareInk => 0xff756a58,
   };
 }

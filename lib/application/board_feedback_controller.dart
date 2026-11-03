@@ -2,6 +2,8 @@ import 'dart:async';
 
 import '../ports/audio_feedback.dart';
 import '../ports/move_speech.dart';
+import '../ports/audio_library.dart';
+import 'board_appearance.dart';
 import 'board_session.dart';
 import 'preferences_controller.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
@@ -13,6 +15,7 @@ class BoardFeedbackController {
     this.preferences,
     this.audio, [
     this.speech = const SilentMoveSpeech(),
+    this.audioOverrides,
   ]) {
     _epoch = session.epoch;
     _positionRevision = session.positionRevision;
@@ -24,6 +27,7 @@ class BoardFeedbackController {
   final PreferencesController preferences;
   final AudioFeedbackPort audio;
   final MoveSpeechPort speech;
+  final AudioOverrideRepository? audioOverrides;
   late int _epoch;
   late int _positionRevision;
   Square? _selected;
@@ -71,7 +75,17 @@ class BoardFeedbackController {
 
   Future<void> _play(AudioFeedbackKind kind) async {
     try {
-      await audio.play(kind);
+      var choice = MoveSoundChoice.sound1;
+      if (kind == AudioFeedbackKind.move) {
+        final stored =
+            await audioOverrides?.moveSoundChoice() ?? MoveSoundChoice.sound1;
+        choice = stored == MoveSoundChoice.followPieceSkin
+            ? preferences.value.pieceSkin == PieceSkin.roundSeal
+                  ? MoveSoundChoice.sound1
+                  : MoveSoundChoice.sound2
+            : stored;
+      }
+      await audio.play(kind, moveChoice: choice);
     } catch (_) {
       // Audio is optional and must not affect board state or engine work.
     }

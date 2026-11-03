@@ -42,6 +42,7 @@ final class AppPreferences {
     this.showCoordinates = true,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.pieceSkin = PieceSkin.roundSeal,
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
@@ -85,6 +86,7 @@ final class AppPreferences {
   final bool showCoordinates;
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
+  final PieceSkin pieceSkin;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
@@ -109,6 +111,7 @@ final class AppPreferences {
     bool? showCoordinates,
     bool? rotateOppositePieces,
     BoardSkin? boardSkin,
+    PieceSkin? pieceSkin,
     int? pieceSizePercent,
     bool? showAnalysisArrows,
     bool? showVariationArrows,
@@ -136,6 +139,7 @@ final class AppPreferences {
     showCoordinates: showCoordinates ?? this.showCoordinates,
     rotateOppositePieces: rotateOppositePieces ?? this.rotateOppositePieces,
     boardSkin: boardSkin ?? this.boardSkin,
+    pieceSkin: pieceSkin ?? this.pieceSkin,
     pieceSizePercent: pieceSizePercent ?? this.pieceSizePercent,
     showAnalysisArrows: showAnalysisArrows ?? this.showAnalysisArrows,
     showVariationArrows: showVariationArrows ?? this.showVariationArrows,
@@ -170,6 +174,7 @@ final class AppPreferences {
     if (!showCoordinates) 'showCoordinates': false,
     if (rotateOppositePieces) 'rotateOppositePieces': true,
     if (boardSkin != BoardSkin.parchment) 'boardSkin': boardSkin.name,
+    if (pieceSkin != PieceSkin.roundSeal) 'pieceSkin': pieceSkin.name,
     if (pieceSizePercent != 100) 'pieceSizePercent': pieceSizePercent,
     if (!showAnalysisArrows) 'showAnalysisArrows': false,
     if (!showVariationArrows) 'showVariationArrows': false,
@@ -216,6 +221,7 @@ final class AppPreferences {
         (json.containsKey('rotateOppositePieces') &&
             json['rotateOppositePieces'] is! bool) ||
         (json.containsKey('boardSkin') && json['boardSkin'] is! String) ||
+        (json.containsKey('pieceSkin') && json['pieceSkin'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
         (json.containsKey('pieceSizePercent') &&
             json['pieceSizePercent'] is! int) ||
@@ -264,6 +270,9 @@ final class AppPreferences {
         boardSkin: BoardSkin.values.byName(
           json['boardSkin'] as String? ?? 'parchment',
         ),
+        pieceSkin: PieceSkin.values.byName(
+          json['pieceSkin'] as String? ?? 'roundSeal',
+        ),
         pieceSizePercent: json['pieceSizePercent'] as int? ?? 100,
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
@@ -297,6 +306,7 @@ final class AppPreferences {
       showCoordinates == other.showCoordinates &&
       rotateOppositePieces == other.rotateOppositePieces &&
       boardSkin == other.boardSkin &&
+      pieceSkin == other.pieceSkin &&
       pieceSizePercent == other.pieceSizePercent &&
       threads == other.threads &&
       hashMb == other.hashMb &&
@@ -325,6 +335,7 @@ final class AppPreferences {
     showCoordinates,
     rotateOppositePieces,
     boardSkin,
+    pieceSkin,
     pieceSizePercent,
     threads,
     hashMb,

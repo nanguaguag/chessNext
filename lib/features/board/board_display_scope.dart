@@ -9,6 +9,7 @@ class BoardDisplayScope extends InheritedWidget {
     required this.showCoordinates,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.pieceSkin = PieceSkin.roundSeal,
     this.pieceSizePercent = 100,
     this.showAnalysisArrows = true,
     this.showVariationArrows = true,
@@ -26,6 +27,7 @@ class BoardDisplayScope extends InheritedWidget {
   final bool showCoordinates;
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
+  final PieceSkin pieceSkin;
   final int pieceSizePercent;
   final bool showAnalysisArrows;
   final bool showVariationArrows;
@@ -89,6 +91,11 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.boardSkin ??
       BoardSkin.parchment;
+  static PieceSkin pieceSkinOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.pieceSkin ??
+      PieceSkin.roundSeal;
   @override
   bool updateShouldNotify(BoardDisplayScope oldWidget) =>
       showMoveGrades != oldWidget.showMoveGrades ||
@@ -98,6 +105,7 @@ class BoardDisplayScope extends InheritedWidget {
       showCoordinates != oldWidget.showCoordinates ||
       rotateOppositePieces != oldWidget.rotateOppositePieces ||
       boardSkin != oldWidget.boardSkin ||
+      pieceSkin != oldWidget.pieceSkin ||
       showAnalysisArrows != oldWidget.showAnalysisArrows ||
       showVariationArrows != oldWidget.showVariationArrows ||
       arrowHead != oldWidget.arrowHead ||

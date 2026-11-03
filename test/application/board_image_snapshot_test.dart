@@ -25,6 +25,7 @@ void main() {
     final prefs = AppPreferences(
       showCoordinates: false,
       boardSkin: BoardSkin.jade,
+      pieceSkin: PieceSkin.squareInk,
       pieceSizePercent: 135,
       arrowHead: ArrowHeadStyle.wide,
       lastMoveMarker: LastMoveMarkerStyle.box,
@@ -44,6 +45,7 @@ void main() {
     expect(snapshot.mirrored, isTrue);
     expect(snapshot.showCoordinates, isFalse);
     expect(snapshot.boardSkin, BoardSkin.jade);
+    expect(snapshot.pieceSkin, PieceSkin.squareInk);
     expect(snapshot.pieceSizePercent, 135);
     expect(snapshot.arrowHead, ArrowHeadStyle.wide);
     expect(snapshot.lastMoveStyle, LastMoveMarkerStyle.box);

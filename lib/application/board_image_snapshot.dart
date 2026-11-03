@@ -21,6 +21,7 @@ class BoardImageSnapshot {
     this.mirrored = false,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.pieceSkin = PieceSkin.roundSeal,
     Iterable<VariationArrow> variations = const [],
   }) : variations = List.unmodifiable(
          variations.take(CurrentMoveArrows.maxVisible),
@@ -50,6 +51,7 @@ class BoardImageSnapshot {
     mirrored: session.mirrored,
     rotateOppositePieces: prefs.rotateOppositePieces,
     boardSkin: prefs.boardSkin,
+    pieceSkin: prefs.pieceSkin,
     showCoordinates: prefs.showCoordinates,
     pieceSizePercent: prefs.pieceSizePercent,
     lastMoveStyle: prefs.lastMoveMarker,
@@ -61,6 +63,7 @@ class BoardImageSnapshot {
   final List<VariationArrow> variations;
   final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final BoardSkin boardSkin;
+  final PieceSkin pieceSkin;
   final int pieceSizePercent;
   final LastMoveMarkerStyle lastMoveStyle;
   final ArrowHeadStyle arrowHead;

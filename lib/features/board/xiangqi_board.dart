@@ -84,6 +84,7 @@ class BoardSurface extends StatefulWidget {
     this.showCoordinates,
     this.rotateOppositePieces,
     this.boardSkin,
+    this.pieceSkin,
     this.pieceSizePercent,
     this.showAnalysisArrows,
     this.arrowHeadStyle,
@@ -117,6 +118,7 @@ class BoardSurface extends StatefulWidget {
   final bool? showCoordinates;
   final bool? rotateOppositePieces;
   final BoardSkin? boardSkin;
+  final PieceSkin? pieceSkin;
   final int? pieceSizePercent;
   final bool? showAnalysisArrows;
   final ArrowHeadStyle? arrowHeadStyle;
@@ -334,7 +336,8 @@ class _BoardSurfaceState extends State<BoardSurface> {
     final rotateOppositePieces =
         widget.rotateOppositePieces ??
         BoardDisplayScope.rotateOppositePiecesOf(context);
-    final skin = widget.boardSkin ?? BoardDisplayScope.boardSkinOf(context);
+    final pieceSkin =
+        widget.pieceSkin ?? BoardDisplayScope.pieceSkinOf(context);
     final topSide = widget.flipped ? Side.red : Side.black;
     final rotateGlyph =
         piece != null && rotateOppositePieces && piece.side == topSide;
@@ -343,21 +346,26 @@ class _BoardSurfaceState extends State<BoardSurface> {
     final face = Container(
       margin: EdgeInsets.all(step * .06),
       decoration: BoxDecoration(
-        shape: BoxShape.circle,
+        shape: pieceSkin == PieceSkin.roundSeal
+            ? BoxShape.circle
+            : BoxShape.rectangle,
+        borderRadius: pieceSkin == PieceSkin.squareInk
+            ? BorderRadius.circular(step * .16)
+            : null,
         color: selected
             ? const Color(0xffc6d8b2)
             : piece != null
-            ? Color(skin.pieceColor)
+            ? Color(pieceSkin.faceColor)
             : null,
         border: Border.all(
           color: selected || focused
               ? const Color(0xff3c624a)
               : piece != null
-              ? Color(skin.pieceBorderColor)
+              ? Color(pieceSkin.borderColor)
               : Colors.transparent,
           width: selected ? 3 : 1.5,
         ),
-        boxShadow: piece == null
+        boxShadow: piece == null || pieceSkin == PieceSkin.squareInk
             ? null
             : lifted
             ? const [

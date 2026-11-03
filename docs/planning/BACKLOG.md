@@ -265,3 +265,5 @@ M4-28 / F21,B24：macOS选择解压的项目schema1单皮肤文件夹，固定�
 - E49确认语言选项简体中文、繁體中文、Tiếng Việt、English；候选选择后的真实切换效果/持久性尚未验证。本机须提供完整翻译资源后才暴露可选语言，不能以只记Locale代替翻译。
 - E50确认参考站操作设置包含播放时间、棋谱显隐、四面板排序/显隐、播放按钮/棋谱栏/面板切换栏及长按/右键菜单动作。先审计项目当前布局/面板架构，再选一个完整离线切片；验证键鼠/触控、窄屏、大字号、键盘焦点、偏好持久化和无效项回退。
 - 登录后的设置同步按用户范围排除；皮肤目录等其他在线能力仍使用可替换后端并提供自建部署方案。
+
+M4-30 / F20,B25：按ADR-065为本机四类侧栏卡片提供拖动排序，偏好校验必须是恰好四项且唯一，持久化旧值兼容与读写竞态沿用PreferencesController；布局按实时顺序重建，不修改棋树/分析。参考站实际面板映射仍U，项目分组为P。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID77791、VM `127.0.0.1:51219`。CUA `getApp("chessNext")`超时，人工窗口视觉验收未做。

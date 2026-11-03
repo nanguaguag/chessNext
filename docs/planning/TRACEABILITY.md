@@ -546,3 +546,7 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 | M4-27 | F21/B24 项目格式皮肤包安全导入 | `flutter test --reporter compact` 496通过/5跳过；`flutter analyze --no-pub` 无问题；`flutter run -d macos` PID69107/VM 127.0.0.1:56731 | 项目ZIP schema1，不支持通用站点包；路径/条目/字节/图片校验及用户确认有测试；系统选择面板未人工操作；E42/E48源站成功仍U |
 | M4-28 | F21/B24 项目格式皮肤包文件夹导入 | 专项2/2；根498通过/5跳过；`flutter analyze --no-pub`无问题；macOS PID71234/VM 127.0.0.1:59893 | 固定解压布局项目P；目录条目/链接/大小限制；系统目录面板未人工操作；首轮compact有未复现失败；E42/E48源站格式/成功仍U |
 | M4-29 | F28/B23 主棋盘棋子移动动画 | `flutter test test/widgets/board_piece_move_animation_test.dart --reporter compact`5/5；根503通过/5跳过；`flutter analyze --no-pub`无问题；macOS PID74615/VM 127.0.0.1:64108 | 慢/快档中间位置/结束、连续新步替代、动画关及运行中Reduce Motion验证；CUA窗口读取超时；源站范围/速度映射U，项目行为ADR-064 |
+
+## 2026-11-04 / M4-30 / F20,B25 本机侧栏重排
+
+`AppPreferences.sidePanelOrder`为四项完整且唯一的`SidePanel`排列；省略字段兼容当前默认顺序，未知/重复/缺失解码失败。`PreferencesController`提供即时持久化并将初始化中的编辑合并进迟到读取。Material3拖动列表写入偏好，主界面实时按偏好顺序构造Play/Analysis/Review/Candidate卡片。项目映射属P，不改文档或分析状态；不实现源站其余操作选项。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID77791、VM `127.0.0.1:51219`。CUA `getApp("chessNext")`超时，人工窗口视觉验收未做。

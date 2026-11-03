@@ -67,11 +67,39 @@ void main() {
         'multiPv': 257,
         'thinkTimeMs': 49,
         'hashMb': 1.5,
+        'sidePanelOrder': ['analysis', 'analysis', 'review', 'candidates'],
       }.entries) {
         expect(
           () => AppPreferences.fromJson({
             ...value.toJson(),
             entry.key: entry.value,
+          }),
+          throwsFormatException,
+        );
+      }
+    },
+  );
+  test(
+    'side panel order persists and invalid or incomplete orders are rejected',
+    () async {
+      final changed = AppPreferences().copyWith(
+        sidePanelOrder: const [
+          SidePanel.candidates,
+          SidePanel.play,
+          SidePanel.analysis,
+          SidePanel.review,
+        ],
+      );
+      expect(AppPreferences.fromJson(changed.toJson()), changed);
+      for (final invalid in [
+        ['analysis'],
+        ['analysis', 'analysis', 'review', 'candidates'],
+        ['analysis', 'play', 'review', 'unknown'],
+      ]) {
+        expect(
+          () => AppPreferences.fromJson({
+            ...AppPreferences().toJson(),
+            'sidePanelOrder': invalid,
           }),
           throwsFormatException,
         );
@@ -90,6 +118,12 @@ void main() {
       repository.readGate = Completer<void>();
       final reading = preferences.initialize();
       final choosing = preferences.setTheme(ThemePreference.light);
+      final choosingPanels = preferences.setSidePanelOrder(const [
+        SidePanel.candidates,
+        SidePanel.play,
+        SidePanel.analysis,
+        SidePanel.review,
+      ]);
       await engine.setThinkTime(3000);
       var finished = false;
       final exiting = preferences.flush().then((_) => finished = true);
@@ -98,9 +132,11 @@ void main() {
       repository.readGate!.complete();
       await reading;
       await choosing;
+      await choosingPanels;
       await exiting;
       await preferences.flush();
       expect(preferences.value.theme, ThemePreference.light);
+      expect(preferences.value.sidePanelOrder.first, SidePanel.candidates);
       expect(preferences.value.thinkTimeMs, 3000);
       expect(preferences.value.hashMb, 128);
       expect(engine.settings.multiPv, 3);

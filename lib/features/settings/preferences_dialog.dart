@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'side_panel_order_dialog.dart';
 import '../../application/app_preferences.dart';
 import '../../application/preferences_controller.dart';
 import 'text_size_dialog.dart';
@@ -147,6 +148,16 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       ),
                       icon: const Icon(Icons.grid_on),
                       label: const Text('棋盘显示'),
+                    ),
+                    OutlinedButton.icon(
+                      onPressed: () => showDialog<void>(
+                        context: context,
+                        builder: (_) => SidePanelOrderDialog(
+                          preferences: widget.preferences,
+                        ),
+                      ),
+                      icon: const Icon(Icons.view_sidebar_outlined),
+                      label: const Text('侧栏顺序'),
                     ),
                   ],
                 ),

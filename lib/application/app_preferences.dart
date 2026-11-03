@@ -28,6 +28,15 @@ extension AnimationSpeedTiming on AnimationSpeed {
 
 enum TextSizePreference { system, standard, large, extraLarge }
 
+enum SidePanel { play, analysis, review, candidates }
+
+const defaultSidePanelOrder = <SidePanel>[
+  SidePanel.play,
+  SidePanel.analysis,
+  SidePanel.review,
+  SidePanel.candidates,
+];
+
 extension TextSizeScale on TextSizePreference {
   double? get manualScale => switch (this) {
     TextSizePreference.system => null,
@@ -76,6 +85,7 @@ final class AppPreferences {
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
     this.guideVersion = 0,
+    List<SidePanel> sidePanelOrder = defaultSidePanelOrder,
   }) : boardGeometries = Map.unmodifiable({
          for (final skin in BoardSkin.values)
            skin: boardGeometries[skin] ?? BoardSkinGeometry(),
@@ -87,7 +97,8 @@ final class AppPreferences {
                (skin == PieceSkin.roundSeal
                    ? const PieceSkinShadow.roundSealDefault()
                    : const PieceSkinShadow.standard()),
-       }) {
+       }),
+       sidePanelOrder = List.unmodifiable(sidePanelOrder) {
     if (pieceSizePercent < 10 ||
         pieceSizePercent > 200 ||
         pieceSizePercent % 5 != 0 ||
@@ -118,6 +129,11 @@ final class AppPreferences {
     if (!(PieceSkin.values.any((skin) => skin.name == selectedPieceSkinId) ||
         PieceSkinDefinition.isValidId(selectedPieceSkinId))) {
       throw ArgumentError('Invalid selected piece skin');
+    }
+    if (this.sidePanelOrder.length != SidePanel.values.length ||
+        this.sidePanelOrder.toSet().length != SidePanel.values.length ||
+        !this.sidePanelOrder.toSet().containsAll(SidePanel.values)) {
+      throw ArgumentError('Invalid side panel order');
     }
   }
   final ThemePreference theme;
@@ -151,6 +167,7 @@ final class AppPreferences {
   final SelectionStyle selectionStyle;
   static const currentGuideVersion = 1;
   final int threads, hashMb, multiPv, thinkTimeMs, guideVersion;
+  final List<SidePanel> sidePanelOrder;
   AppPreferences copyWith({
     ThemePreference? theme,
     AnimationSpeed? animationSpeed,
@@ -188,6 +205,7 @@ final class AppPreferences {
     int? multiPv,
     int? thinkTimeMs,
     int? guideVersion,
+    List<SidePanel>? sidePanelOrder,
   }) => AppPreferences(
     theme: theme ?? this.theme,
     animationSpeed: animationSpeed ?? this.animationSpeed,
@@ -227,6 +245,7 @@ final class AppPreferences {
     multiPv: multiPv ?? this.multiPv,
     thinkTimeMs: thinkTimeMs ?? this.thinkTimeMs,
     guideVersion: guideVersion ?? this.guideVersion,
+    sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
   );
   Map<String, Object> toJson() => {
     'schema': 1,
@@ -290,6 +309,8 @@ final class AppPreferences {
     'multiPv': multiPv,
     'thinkTimeMs': thinkTimeMs,
     if (guideVersion != 0) 'guideVersion': guideVersion,
+    if (!_listEquals(sidePanelOrder, defaultSidePanelOrder))
+      'sidePanelOrder': sidePanelOrder.map((panel) => panel.name).toList(),
   };
   factory AppPreferences.fromJson(Map<String, dynamic> json) {
     if (json['schema'] != 1 ||
@@ -333,6 +354,11 @@ final class AppPreferences {
         (json.containsKey('selectedPieceSkinId') &&
             json['selectedPieceSkinId'] is! String) ||
         (json.containsKey('guideVersion') && json['guideVersion'] is! int) ||
+        (json.containsKey('sidePanelOrder') &&
+            (json['sidePanelOrder'] is! List ||
+                (json['sidePanelOrder'] as List).any(
+                  (item) => item is! String,
+                ))) ||
         (json.containsKey('pieceSizePercent') &&
             json['pieceSizePercent'] is! int) ||
         (json.containsKey('roundSealPieceScalePercent') &&
@@ -397,7 +423,8 @@ final class AppPreferences {
         pieceSkin: PieceSkin.values.byName(
           json['pieceSkin'] as String? ?? 'roundSeal',
         ),
-        selectedPieceSkinId: json['selectedPieceSkinId'] as String? ??
+        selectedPieceSkinId:
+            json['selectedPieceSkinId'] as String? ??
             (json['pieceSkin'] as String? ?? 'roundSeal'),
         pieceSizePercent: json['pieceSizePercent'] as int? ?? 100,
         roundSealPieceScalePercent:
@@ -412,6 +439,11 @@ final class AppPreferences {
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
         guideVersion: json['guideVersion'] as int? ?? 0,
+        sidePanelOrder:
+            (json['sidePanelOrder'] as List?)
+                ?.map((item) => SidePanel.values.byName(item as String))
+                .toList() ??
+            defaultSidePanelOrder,
       );
     } on ArgumentError {
       throw const FormatException('Invalid preference value');
@@ -499,7 +531,8 @@ final class AppPreferences {
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
       thinkTimeMs == other.thinkTimeMs &&
-      guideVersion == other.guideVersion;
+      guideVersion == other.guideVersion &&
+      _listEquals(sidePanelOrder, other.sidePanelOrder);
   @override
   int get hashCode => Object.hashAll([
     reviewMode,
@@ -542,5 +575,15 @@ final class AppPreferences {
     multiPv,
     thinkTimeMs,
     guideVersion,
+    Object.hashAll(sidePanelOrder),
   ]);
+}
+
+bool _listEquals<T>(List<T> a, List<T> b) {
+  if (identical(a, b)) return true;
+  if (a.length != b.length) return false;
+  for (var i = 0; i < a.length; i++) {
+    if (a[i] != b[i]) return false;
+  }
+  return true;
 }

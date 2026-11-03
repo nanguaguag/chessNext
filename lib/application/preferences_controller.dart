@@ -180,6 +180,9 @@ class PreferencesController extends ChangeNotifier {
             guideVersion: _edited.contains('guideVersion')
                 ? previous.guideVersion
                 : null,
+            sidePanelOrder: _edited.contains('sidePanelOrder')
+                ? previous.sidePanelOrder
+                : null,
             threads: _edited.contains('threads') ? previous.threads : null,
             hashMb: _edited.contains('hashMb') ? previous.hashMb : null,
             multiPv: _edited.contains('multiPv') ? previous.multiPv : null,
@@ -223,6 +226,8 @@ class PreferencesController extends ChangeNotifier {
 
   Future<void> setReviewMode(ReviewMode mode) =>
       apply(value.copyWith(reviewMode: mode));
+  Future<void> setSidePanelOrder(List<SidePanel> order) =>
+      apply(value.copyWith(sidePanelOrder: order));
   Future<void> setTheme(ThemePreference theme) =>
       apply(value.copyWith(theme: theme));
   Future<void> setAnimationSpeed(AnimationSpeed speed) =>
@@ -278,9 +283,8 @@ class PreferencesController extends ChangeNotifier {
       skin == PieceSkin.roundSeal
       ? const PieceSkinShadow.roundSealDefault()
       : const PieceSkinShadow.standard();
-  Future<void> setPieceSkin(PieceSkin skin) => apply(
-    value.copyWith(pieceSkin: skin, selectedPieceSkinId: skin.name),
-  );
+  Future<void> setPieceSkin(PieceSkin skin) =>
+      apply(value.copyWith(pieceSkin: skin, selectedPieceSkinId: skin.name));
   Future<void> selectPieceSkin(PieceSkin skin, String skinId) =>
       apply(value.copyWith(pieceSkin: skin, selectedPieceSkinId: skinId));
   Future<void> setPieceSkinShadow(PieceSkin skin, PieceSkinShadow shadow) {
@@ -429,6 +433,9 @@ class PreferencesController extends ChangeNotifier {
       _edited.add('selectedPieceSkinId');
     }
     if (next.guideVersion != value.guideVersion) _edited.add('guideVersion');
+    if (!listEquals(next.sidePanelOrder, value.sidePanelOrder)) {
+      _edited.add('sidePanelOrder');
+    }
     if (next.threads != value.threads) _edited.add('threads');
     if (next.hashMb != value.hashMb) _edited.add('hashMb');
     if (next.multiPv != value.multiPv) _edited.add('multiPv');

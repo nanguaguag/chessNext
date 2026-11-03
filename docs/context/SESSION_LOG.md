@@ -4,7 +4,7 @@
 
 按ADR-064，将项目AnimationSpeed从末步标记/落点皮肤图扩展到主棋盘走棋子。显示棋步身份变化后获取当前落点棋子并以动画overlay从from平移到to，暂时隐藏落点格视觉；IgnorePointer和ExcludeSemantics避免重复交互/读屏，逻辑棋盘立即落在最终局面。Reduce Motion/关档静态；新局/无Move停止；非主棋盘BoardSurface默认不动，故分析/编辑/PNG/GIF静态。源站真实动效范围和速度映射仍U。未增加依赖/资源。
 
-定向`flutter test test/widgets/board_piece_move_animation_test.dart --reporter compact`5/5通过，覆盖慢/快档位置与完成、快速连续新着替代、关档、系统Reduce Motion开始前及运行中。根`flutter test --reporter compact`503通过/5跳过（日志`/tmp/chessnext-m429-root-final4.log`）；`flutter analyze --no-pub`无问题；`flutter run -d macos` Build/Sync PID74615/VM `127.0.0.1:64108`。CUA窗口查询两次超时，视觉not run。第一次目标测试因未包Material导致180条InkWell祖先异常，修复Scaffold；动画结束断言等待问题改为pumpAndSettle后通过。后补快档/中断/动态Reduce Motion测试。已提交`177abff feat(board): 增加棋步移动动画`；回归补充待独立测试提交。
+定向`flutter test test/widgets/board_piece_move_animation_test.dart --reporter compact`5/5通过，覆盖慢/快档位置与完成、快速连续新着替代、关档、系统Reduce Motion开始前及运行中。根`flutter test --reporter compact`503通过/5跳过（日志`/tmp/chessnext-m429-root-final4.log`）；`flutter analyze --no-pub`无问题；`flutter run -d macos` Build/Sync PID74615/VM `127.0.0.1:64108`。CUA窗口查询两次超时，视觉not run。第一次目标测试因未包Material导致180条InkWell祖先异常，修复Scaffold；动画结束断言等待问题改为pumpAndSettle后通过。后补快档/中断/动态Reduce Motion测试。已提交`177abff feat(board): 增加棋步移动动画`；测试补充提交`759970b test(board): 覆盖移动动画速度边界`。
 
 ## 2026-11-04 / M4-28 / F21,B24 项目皮肤包文件夹导入
 

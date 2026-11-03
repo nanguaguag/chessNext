@@ -4,8 +4,11 @@ import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/features/board/board_display_scope.dart';
 import 'package:chess_next/app.dart';
 import 'package:chess_next/application/piece_image_library_controller.dart';
+import 'package:chess_next/application/piece_skin_library_controller.dart';
+import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:chess_next/ports/piece_images.dart';
+import 'package:chess_next/ports/piece_skin_library.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as raster;
@@ -21,6 +24,87 @@ class _BatchPiecePicker implements PieceImagePicker, PieceImageBatchPicker {
 }
 
 void main() {
+  testWidgets('custom skin size and position stay independent from its base', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1120, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    const id = 'custom-abcdefgh';
+    final preferences = MemoryPreferencesRepository()
+      ..value = AppPreferences(
+        pieceSkin: PieceSkin.squareInk,
+        selectedPieceSkinId: id,
+        squareInkPieceScalePercent: 87,
+        squareInkPieceOffsetX: -5,
+      );
+    final skins = MemoryPieceSkinLibraryRepository();
+    await skins.save([
+      PieceSkinDefinition(
+        id: id,
+        name: '独立外观',
+        baseSkin: PieceSkin.squareInk,
+        scalePercent: 111,
+        offsetXPercent: 2,
+        offsetYPercent: -1,
+      ),
+    ]);
+    await tester.pumpWidget(
+      ChessNextApp(
+        preferencesRepository: preferences,
+        pieceSkinLibraryRepository: skins,
+      ),
+    );
+    await tester.pumpAndSettle();
+    var scope = tester.widget<BoardDisplayScope>(
+      find.byType(BoardDisplayScope),
+    );
+    expect(scope.pieceSkinSizePercent, 111);
+    expect(scope.pieceSkinOffsetXPercent, 2);
+    expect(scope.pieceSkinOffsetYPercent, -1);
+
+    await tester.tap(find.byTooltip('应用设置'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('棋盘显示'));
+    await tester.pumpAndSettle();
+    final sizeSlider = tester.widget<Slider>(
+      find.byKey(const ValueKey('piece-skin-size-$id')),
+    );
+    expect(sizeSlider.value, 111);
+    sizeSlider.onChanged!(118);
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('棋子右移1%'));
+    await tester.pumpAndSettle();
+    scope = tester.widget<BoardDisplayScope>(find.byType(BoardDisplayScope));
+    expect(scope.pieceSkinSizePercent, 118);
+    expect(scope.pieceSkinOffsetXPercent, 3);
+    expect(scope.pieceSkinOffsetYPercent, -1);
+    expect(preferences.value!.squareInkPieceScalePercent, 87);
+    expect(preferences.value!.squareInkPieceOffsetX, -5);
+    expect((await skins.load()).single.scalePercent, 118);
+    expect((await skins.load()).single.offsetXPercent, 3);
+  });
+
+  testWidgets(
+    'unknown saved skin is repaired before the settings picker opens',
+    (tester) async {
+      final store = MemoryPreferencesRepository()
+        ..value = AppPreferences(selectedPieceSkinId: 'custom-abcdefgh');
+      await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
+      await tester.pumpAndSettle();
+      expect(store.value!.selectedPieceSkinId, PieceSkin.roundSeal.name);
+      await tester.tap(find.byTooltip('应用设置'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('棋盘显示'));
+      await tester.pumpAndSettle();
+      final picker = tester.widget<DropdownButtonFormField<String>>(
+        find.byType(DropdownButtonFormField<String>),
+      );
+      expect(picker.initialValue, PieceSkin.roundSeal.name);
+    },
+  );
+
   testWidgets('piece skin nudges persist and auto-align resets both axes', (
     tester,
   ) async {

@@ -523,6 +523,12 @@ E45只验证棋盘皮肤图片页的开关AX从0变为1，没有自定义落点�
 
 E43可见阴影档位无/柔和/明显，以及方向、距离、模糊、浓淡；柔和时看到138°/6.7%/2.4%/50%单例。数值范围、单位和算法未知，不能泛化。ADR-056定义本机项目范围P，并为两套PieceSkin独立持久化；同一shadow值投影到棋盘预览/编辑器及图片/GIF冻结快照。关闭阴影禁用相关滑杆；不触碰棋谱/规则/命中/引擎。模型roundtrip/值域/延迟合并、PNG/GIF冻结、UI持久化和渲染定向测试通过；根478通过/5跳过、analyze无问题，macOS Build/Sync成功PID54316/VM `127.0.0.1:51653`。CUA窗口视觉验收not run。
 
+## 2026-11-04 / M4-23 / F21 → B24 用户皮肤独立大小与位置
+
+E43观察新建皮肤编辑页含大小/位置控件，右移一次显示1%、滑杆可观察20.5–70；精确端点、步进全域、保存/使用/导出均未验证。按ADR-059做本机P：用户皮肤定义分别存比例80–120%（1%步进）与X/Y偏移±8%（1%格宽步进），创建复制当前设置。棋子设置选择自定义项时滑杆/方向键直接改本机皮肤目录，忙写期间禁用避免丢更新；内置预设继续使用原偏好字段。BoardDisplayScope主盘/编辑共享ID参数，交点命中保持不变；PNG/GIF从App读取自定义参数并在捕获时冻结，与所选用户图片一致。
+
+定向`flutter test test/application/piece_skin_library_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact`19/19；最终根`flutter test --reporter compact`488通过/5跳过（5项需官方Pikafish/NNUE环境）；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync成功，PID63084、VM `127.0.0.1:64399`。`flutter_tts`SwiftPM兼容warning；未做窗口人工视觉检查。F21/全站仍不完整；逐用户阴影与库搜索/排序/导出/ZIP/文件夹/在线目录继续B24。
+
 ## 2026-11-04 / M4-22 / F21 → B24 本机用户棋子皮肤目录
 
 根据E41/E42/E48观察到的皮肤库/多套导入入口，建立用户本机皮肤ID，避免未来多套ZIP只能覆盖两种内置`PieceSkin`。网页只观察说明和入口；ZIP/文件夹实际操作成功与格式仍U。ADR-058标注本片项目提案P：最多64套、名称最多32码点；基础风格引用内置圆章/方章，复制当前图片覆盖并保留源格式，ID隔离图片；支持选择、新建、重命名、删除，内置项不可改；删除当前皮肤切回其基底。目录、选择偏好独立持久化，不依赖登录/网络。自定义皮肤目前沿用基础预设的大小/位置/阴影参数，未实现逐皮肤编辑。

@@ -57,6 +57,9 @@ void main() {
       prefs,
       assessment: assessment,
       recommendation: recommendation,
+      pieceSkinSizePercent: 117,
+      pieceSkinOffsetXPercent: -3,
+      pieceSkinOffsetYPercent: 2,
     );
 
     expect(snapshot.position, same(session.position));
@@ -78,9 +81,9 @@ void main() {
       ),
     );
     expect(snapshot.pieceSkin, PieceSkin.squareInk);
-    expect(snapshot.pieceSkinSizePercent, 110);
-    expect(snapshot.pieceSkinOffsetXPercent, 4);
-    expect(snapshot.pieceSkinOffsetYPercent, -1);
+    expect(snapshot.pieceSkinSizePercent, 117);
+    expect(snapshot.pieceSkinOffsetXPercent, -3);
+    expect(snapshot.pieceSkinOffsetYPercent, 2);
     expect(
       snapshot.pieceSkinShadow,
       PieceSkinShadow(

@@ -58,6 +58,9 @@ class BoardImageSnapshot {
     MoveAssessment? assessment,
     Move? recommendation,
     Move? reply,
+    int? pieceSkinSizePercent,
+    int? pieceSkinOffsetXPercent,
+    int? pieceSkinOffsetYPercent,
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
     Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
   }) => BoardImageSnapshot(
@@ -82,15 +85,21 @@ class BoardImageSnapshot {
     boardSkinImages: boardSkinImages,
     showCoordinates: prefs.showCoordinates,
     pieceSizePercent: prefs.pieceSizePercent,
-    pieceSkinSizePercent: prefs.pieceSkin == PieceSkin.roundSeal
-        ? prefs.roundSealPieceScalePercent
-        : prefs.squareInkPieceScalePercent,
-    pieceSkinOffsetXPercent: prefs.pieceSkin == PieceSkin.roundSeal
-        ? prefs.roundSealPieceOffsetX
-        : prefs.squareInkPieceOffsetX,
-    pieceSkinOffsetYPercent: prefs.pieceSkin == PieceSkin.roundSeal
-        ? prefs.roundSealPieceOffsetY
-        : prefs.squareInkPieceOffsetY,
+    pieceSkinSizePercent:
+        pieceSkinSizePercent ??
+        (prefs.pieceSkin == PieceSkin.roundSeal
+            ? prefs.roundSealPieceScalePercent
+            : prefs.squareInkPieceScalePercent),
+    pieceSkinOffsetXPercent:
+        pieceSkinOffsetXPercent ??
+        (prefs.pieceSkin == PieceSkin.roundSeal
+            ? prefs.roundSealPieceOffsetX
+            : prefs.squareInkPieceOffsetX),
+    pieceSkinOffsetYPercent:
+        pieceSkinOffsetYPercent ??
+        (prefs.pieceSkin == PieceSkin.roundSeal
+            ? prefs.roundSealPieceOffsetY
+            : prefs.squareInkPieceOffsetY),
     lastMoveStyle: prefs.lastMoveMarker,
     arrowHead: prefs.arrowHead,
   );

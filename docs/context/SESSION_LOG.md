@@ -1,5 +1,15 @@
 # 会话日志
 
+## 2026-11-04 / M4-23 / F21,B24 用户皮肤大小和位置
+
+承接用户持续对齐要求，先以E43为依据：访客页面新建皮肤编辑器可见大小/位置/自动对正；一次示值初始50、左侧约20.5、最右70、方向步进1。未操作保存/使用/导出，精确范围、成功语义均U。ADR-059确定本机P边界，大小80–120%每1%，位置±8%格宽每1%。
+
+在PieceSkinDefinition/本机JSON中添加按ID独立scale/X/Y，并校验和往返；从当前用户项创建时继承这些参数。设置页滑杆和方向键写当前自定义项，写盘期间禁用；内置圆章/方章继续沿用原有AppPreferences字段。App BoardDisplayScope主盘/局面编辑使用目录值，PNG/GIF capture显式冻结用户值。还调整应用初始化次序，先恢复AppPreferences再加载并验证用户目录，旧皮肤ID缺项回退基础预设，避免Dropdown选中值无对应项。
+
+定向`flutter test test/application/piece_skin_library_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 19/19；最终根`flutter test --reporter compact` 488通过/5跳过（官方Pikafish/NNUE环境缺少），`flutter analyze --no-pub`无问题；macOS run Build/Sync成功PID63084/VM `127.0.0.1:64399`。插件flutter_tts SwiftPM未来兼容warning；窗口视觉验收未做。第二次回归新增“缺失保存皮肤后退回基础”的测试，最终定向计数仍19/19、根最终488/5。
+
+M4-22已提交`b83193e feat(skins): 支持本机多套棋子皮肤`。M4-23代码/文档待单独中文commit；B24继续逐用户阴影、库搜索排序导出、ZIP/文件夹安全导入、在线目录和自建后端部署。F21/全站不完整。
+
 ## 2026-11-04 / M4-22 / F21,B24 本机用户棋子皮肤目录
 
 持续授权要求不中途停在单功能；本轮承接未提交实现，复核AGENTS/README/CURRENT_STATE/HANDOFF/DECISIONS、技能project-onboarding/flutter-feature/quality-gate及棋盘架构/交互/证据。HEAD起点`5430f52`，此前工作树有4项已改文件与新piece skin port；无其它用户改动。
@@ -10,7 +20,7 @@
 
 验证命令：`flutter test test/application/piece_skin_library_test.dart` 3/3；`flutter test test/application/piece_image_library_test.dart test/widgets/piece_skin_images_test.dart --reporter compact` 10/10；`flutter test test/widgets/board_coordinates_test.dart --reporter expanded` 9/9；最终`flutter test --reporter compact`484通过/5跳过；`flutter analyze --no-pub`No issues found；`flutter run -d macos`Build/Sync成功，app PID59671、VM `127.0.0.1:59146`。5跳过需官方Pikafish/NNUE变量；flutter_tts插件提示未来SwiftPM兼容。无人工视觉验收、无新依赖/资源。
 
-E42/E48仅观察皮肤管理和ZIP/文件夹说明/入口，实际导入操作结果仍U。B24继续：逐用户大小/位置/阴影、皮肤列表搜索/排序/导出、ZIP与文件夹安全导入；在线目录仍在全站范围，采用可替换自建后端并留部署方案。用户明确要求持续推进直到全部非登录功能/设置对齐，不因单片停止。本片待中文提交后继续。F21和全站不完整。
+E42/E48仅观察皮肤管理和ZIP/文件夹说明/入口，实际导入操作结果仍U。M4-22单独提交`b83193e feat(skins): 支持本机多套棋子皮肤`。之后继续用户皮肤参数和B24差距。
 
 ## 2026-11-04 / M4-21 / F21,B24 本机批量棋子图片导入
 

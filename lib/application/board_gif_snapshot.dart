@@ -56,6 +56,9 @@ final class BoardGifSnapshot {
   factory BoardGifSnapshot.capture(
     BoardSession session,
     AppPreferences prefs, {
+    int? pieceSkinSizePercent,
+    int? pieceSkinOffsetXPercent,
+    int? pieceSkinOffsetYPercent,
     Map<PieceImageSlot, Uint8List> pieceImages = const {},
     Map<BoardSkinImageSlot, Uint8List> boardSkinImages = const {},
   }) {
@@ -68,15 +71,21 @@ final class BoardGifSnapshot {
       ],
       showCoordinates: prefs.showCoordinates,
       pieceSizePercent: prefs.pieceSizePercent,
-      pieceSkinSizePercent: prefs.pieceSkin == PieceSkin.roundSeal
-          ? prefs.roundSealPieceScalePercent
-          : prefs.squareInkPieceScalePercent,
-      pieceSkinOffsetXPercent: prefs.pieceSkin == PieceSkin.roundSeal
-          ? prefs.roundSealPieceOffsetX
-          : prefs.squareInkPieceOffsetX,
-      pieceSkinOffsetYPercent: prefs.pieceSkin == PieceSkin.roundSeal
-          ? prefs.roundSealPieceOffsetY
-          : prefs.squareInkPieceOffsetY,
+      pieceSkinSizePercent:
+          pieceSkinSizePercent ??
+          (prefs.pieceSkin == PieceSkin.roundSeal
+              ? prefs.roundSealPieceScalePercent
+              : prefs.squareInkPieceScalePercent),
+      pieceSkinOffsetXPercent:
+          pieceSkinOffsetXPercent ??
+          (prefs.pieceSkin == PieceSkin.roundSeal
+              ? prefs.roundSealPieceOffsetX
+              : prefs.squareInkPieceOffsetX),
+      pieceSkinOffsetYPercent:
+          pieceSkinOffsetYPercent ??
+          (prefs.pieceSkin == PieceSkin.roundSeal
+              ? prefs.roundSealPieceOffsetY
+              : prefs.squareInkPieceOffsetY),
       lastMoveStyle: prefs.lastMoveMarker,
       arrowHead: prefs.arrowHead,
       flipped: session.flipped,

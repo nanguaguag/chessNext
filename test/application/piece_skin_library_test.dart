@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:chess_next/adapters/storage/file_piece_skin_library_repository.dart';
 import 'package:chess_next/application/board_session.dart';
+import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/piece_image_library_controller.dart';
 import 'package:chess_next/application/piece_skin_library_controller.dart';
@@ -32,6 +33,31 @@ class _FailingImageRemoval extends MemoryPieceImageRepository {
 }
 
 void main() {
+  test(
+    'custom profile appearance has bounded, persisted scale and offsets',
+    () {
+      final profile = PieceSkinDefinition(
+        id: 'custom-abcdefgh',
+        name: '独立大小',
+        baseSkin: PieceSkin.squareInk,
+        scalePercent: 118,
+        offsetXPercent: -7,
+        offsetYPercent: 5,
+      );
+      expect(PieceSkinDefinition.fromJson(profile.toJson()), profile);
+      expect(
+        () => PieceSkinDefinition(
+          id: profile.id,
+          name: profile.name,
+          baseSkin: profile.baseSkin,
+          scalePercent: 121,
+        ),
+        throwsArgumentError,
+      );
+      expect(() => profile.copyWith(offsetXPercent: 9), throwsArgumentError);
+    },
+  );
+
   test('profile library persists definitions with safe validation', () async {
     final temp = await Directory.systemTemp.createTemp('piece-skins-');
     addTearDown(() => temp.delete(recursive: true));
@@ -68,6 +94,17 @@ void main() {
     expect(prefs.value.selectedPieceSkinId, created.id);
     expect(preferencesRepository.value!.selectedPieceSkinId, created.id);
     expect(prefs.value.pieceSkin, PieceSkin.roundSeal);
+    expect(
+      await library.updateAppearance(
+        created.id,
+        scalePercent: 117,
+        offsetXPercent: -3,
+        offsetYPercent: 2,
+      ),
+      isTrue,
+    );
+    expect(library.definitionFor(created.id)!.scalePercent, 117);
+    expect(library.definitionFor(created.id)!.offsetXPercent, -3);
     final restoredEngine = EngineSessionController(BoardSession(), null);
     final restoredPreferences = PreferencesController(
       restoredEngine,
@@ -117,6 +154,33 @@ void main() {
       expect(await library.delete(created.id), isFalse);
       expect(library.profiles.single.id, created.id);
       expect(prefs.value.selectedPieceSkinId, created.id);
+      library.dispose();
+      images.dispose();
+      prefs.dispose();
+      engine.dispose();
+    },
+  );
+
+  test(
+    'missing saved custom profile falls back after preferences are loaded',
+    () async {
+      final engine = EngineSessionController(BoardSession(), null);
+      final store = MemoryPreferencesRepository()
+        ..value = AppPreferences(selectedPieceSkinId: 'custom-abcdefgh');
+      final prefs = PreferencesController(engine, store);
+      await prefs.initialize();
+      final images = PieceImageLibraryController(
+        const CancelPieceImagePicker(),
+        MemoryPieceImageRepository(),
+      );
+      await images.initialize();
+      final library = PieceSkinLibraryController(
+        MemoryPieceSkinLibraryRepository(),
+        images,
+        prefs,
+      );
+      await library.initialize();
+      expect(prefs.value.selectedPieceSkinId, PieceSkin.roundSeal.name);
       library.dispose();
       images.dispose();
       prefs.dispose();

@@ -37,6 +37,9 @@ void main() {
           ),
         },
       ),
+      pieceSkinSizePercent: 117,
+      pieceSkinOffsetXPercent: -4,
+      pieceSkinOffsetYPercent: 6,
     );
     expect(snapshot.frames.map((frame) => frame.move?.toString()), [
       null,
@@ -47,9 +50,9 @@ void main() {
     expect(snapshot.mirrored, isTrue);
     expect(snapshot.boardSkin, BoardSkin.jade);
     expect(snapshot.pieceSkin, PieceSkin.squareInk);
-    expect(snapshot.pieceSkinSizePercent, 115);
-    expect(snapshot.pieceSkinOffsetXPercent, 3);
-    expect(snapshot.pieceSkinOffsetYPercent, -2);
+    expect(snapshot.pieceSkinSizePercent, 117);
+    expect(snapshot.pieceSkinOffsetXPercent, -4);
+    expect(snapshot.pieceSkinOffsetYPercent, 6);
     expect(
       snapshot.pieceSkinShadow,
       PieceSkinShadow(

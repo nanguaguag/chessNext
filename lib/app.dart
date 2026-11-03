@@ -179,7 +179,6 @@ class _ChessNextAppState extends State<ChessNextApp>
       preferences,
     );
     pieceSkins.addListener(_preferencesChanged);
-    unawaited(pieceSkins.initialize());
     boardSkinImages = BoardSkinImageLibraryController(
       widget.boardSkinImagePicker ?? const CancelPieceImagePicker(),
       widget.boardSkinImageRepository ?? MemoryBoardSkinImageRepository(),
@@ -200,6 +199,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   bool _guideOpen = false;
   Future<void> _initializePreferences() async {
     await preferences.initialize();
+    await pieceSkins.initialize();
     if (!mounted ||
         !widget.showFirstRunGuide ||
         preferences.error != null ||
@@ -367,17 +367,27 @@ class _ChessNextAppState extends State<ChessNextApp>
           preferences.value.selectedPieceSkinId,
         ),
         pieceSizePercent: preferences.value.pieceSizePercent,
-        pieceSkinSizePercent: preferences.value.pieceSkin == PieceSkin.roundSeal
-            ? preferences.value.roundSealPieceScalePercent
-            : preferences.value.squareInkPieceScalePercent,
+        pieceSkinSizePercent:
+            pieceSkins
+                .definitionFor(preferences.value.selectedPieceSkinId)
+                ?.scalePercent ??
+            (preferences.value.pieceSkin == PieceSkin.roundSeal
+                ? preferences.value.roundSealPieceScalePercent
+                : preferences.value.squareInkPieceScalePercent),
         pieceSkinOffsetXPercent:
-            preferences.value.pieceSkin == PieceSkin.roundSeal
-            ? preferences.value.roundSealPieceOffsetX
-            : preferences.value.squareInkPieceOffsetX,
+            pieceSkins
+                .definitionFor(preferences.value.selectedPieceSkinId)
+                ?.offsetXPercent ??
+            (preferences.value.pieceSkin == PieceSkin.roundSeal
+                ? preferences.value.roundSealPieceOffsetX
+                : preferences.value.squareInkPieceOffsetX),
         pieceSkinOffsetYPercent:
-            preferences.value.pieceSkin == PieceSkin.roundSeal
-            ? preferences.value.roundSealPieceOffsetY
-            : preferences.value.squareInkPieceOffsetY,
+            pieceSkins
+                .definitionFor(preferences.value.selectedPieceSkinId)
+                ?.offsetYPercent ??
+            (preferences.value.pieceSkin == PieceSkin.roundSeal
+                ? preferences.value.roundSealPieceOffsetY
+                : preferences.value.squareInkPieceOffsetY),
         showAnalysisArrows: preferences.value.showAnalysisArrows,
         showVariationArrows: preferences.value.showVariationArrows,
         showMoveGrades: preferences.value.showMoveGrades,
@@ -664,6 +674,15 @@ class _BoardPage extends StatelessWidget {
     final snapshot = BoardImageSnapshot.capture(
       session,
       preferences.value,
+      pieceSkinSizePercent: pieceSkins
+          .definitionFor(preferences.value.selectedPieceSkinId)
+          ?.scalePercent,
+      pieceSkinOffsetXPercent: pieceSkins
+          .definitionFor(preferences.value.selectedPieceSkinId)
+          ?.offsetXPercent,
+      pieceSkinOffsetYPercent: pieceSkins
+          .definitionFor(preferences.value.selectedPieceSkinId)
+          ?.offsetYPercent,
       assessment: analysis.currentMoveAssessment,
       recommendation: analysis.recommended,
       reply: analysis.reply,
@@ -686,6 +705,15 @@ class _BoardPage extends StatelessWidget {
       snapshot = BoardGifSnapshot.capture(
         session,
         preferences.value,
+        pieceSkinSizePercent: pieceSkins
+            .definitionFor(preferences.value.selectedPieceSkinId)
+            ?.scalePercent,
+        pieceSkinOffsetXPercent: pieceSkins
+            .definitionFor(preferences.value.selectedPieceSkinId)
+            ?.offsetXPercent,
+        pieceSkinOffsetYPercent: pieceSkins
+            .definitionFor(preferences.value.selectedPieceSkinId)
+            ?.offsetYPercent,
         pieceImages: pieceImages.imagesFor(
           preferences.value.selectedPieceSkinId,
         ),

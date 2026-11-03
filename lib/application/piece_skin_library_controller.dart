@@ -31,6 +31,11 @@ class PieceSkinLibraryController extends ChangeNotifier {
       }
     } catch (_) {
       error = '本机棋子皮肤目录读取失败。';
+      if (!PieceSkin.values.any(
+        (skin) => skin.name == preferences.value.selectedPieceSkinId,
+      )) {
+        await preferences.setPieceSkin(preferences.value.pieceSkin);
+      }
     } finally {
       loading = false;
       if (!_disposed) notifyListeners();
@@ -45,6 +50,31 @@ class PieceSkinLibraryController extends ChangeNotifier {
       if (item.id == id) return item.name;
     }
     return id;
+  }
+
+  PieceSkinDefinition? definitionFor(String id) {
+    for (final profile in profiles) {
+      if (profile.id == id) return profile;
+    }
+    return null;
+  }
+
+  Future<bool> updateAppearance(
+    String id, {
+    int? scalePercent,
+    int? offsetXPercent,
+    int? offsetYPercent,
+  }) {
+    final profile = definitionFor(id);
+    if (profile == null || loading) return Future.value(false);
+    final updated = profile.copyWith(
+      scalePercent: scalePercent,
+      offsetXPercent: offsetXPercent,
+      offsetYPercent: offsetYPercent,
+    );
+    return _save(
+      profiles.map((item) => item.id == id ? updated : item).toList(),
+    );
   }
 
   Future<bool> create({required String name}) async {
@@ -72,9 +102,32 @@ class PieceSkinLibraryController extends ChangeNotifier {
       )) {
         throw StateError('clone failed');
       }
+      final active = definitionFor(preferences.value.selectedPieceSkinId);
+      final scalePercent =
+          active?.scalePercent ??
+          (base == PieceSkin.roundSeal
+              ? preferences.value.roundSealPieceScalePercent
+              : preferences.value.squareInkPieceScalePercent);
+      final offsetXPercent =
+          active?.offsetXPercent ??
+          (base == PieceSkin.roundSeal
+              ? preferences.value.roundSealPieceOffsetX
+              : preferences.value.squareInkPieceOffsetX);
+      final offsetYPercent =
+          active?.offsetYPercent ??
+          (base == PieceSkin.roundSeal
+              ? preferences.value.roundSealPieceOffsetY
+              : preferences.value.squareInkPieceOffsetY);
       final next = [
         ...profiles,
-        PieceSkinDefinition(id: id, name: normalized, baseSkin: base),
+        PieceSkinDefinition(
+          id: id,
+          name: normalized,
+          baseSkin: base,
+          scalePercent: scalePercent,
+          offsetXPercent: offsetXPercent,
+          offsetYPercent: offsetYPercent,
+        ),
       ];
       await repository.save(next);
       profiles = List.unmodifiable(next);

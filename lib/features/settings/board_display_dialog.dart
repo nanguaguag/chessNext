@@ -13,6 +13,7 @@ import '../../application/board_skin_library_controller.dart';
 import 'board_skin_images_dialog.dart';
 import 'board_skin_library_dialog.dart';
 import '../../application/board_skin_geometry.dart';
+import 'board_geometry_editor.dart';
 import '../../application/piece_skin_library_controller.dart';
 import '../../ports/piece_skin_library.dart';
 import '../../ports/piece_skin_package_exporter.dart';
@@ -286,6 +287,37 @@ class BoardDisplayDialog extends StatelessWidget {
       children: [
         Text('格点与边距', style: Theme.of(context).textTheme.titleSmall),
         const Text('按画布百分比调整格网四边；所有棋子、标记和交点点击共用此几何。'),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            key: ValueKey('board-grid-editor-open-$skinId'),
+            onPressed: preferences.loading
+                ? null
+                : () => showDialog<void>(
+                    context: context,
+                    builder: (dialogContext) => AlertDialog(
+                      title: const Text('拖动格点校准'),
+                      content: SizedBox(
+                        width: 216,
+                        child: BoardGeometryEditor(
+                          key: ValueKey('board-grid-editor-$skinId'),
+                          geometry: geometry,
+                          enabled: !preferences.loading,
+                          onChanged: (next) => unawaited(setGeometry(next)),
+                        ),
+                      ),
+                      actions: [
+                        TextButton(
+                          onPressed: () => Navigator.pop(dialogContext),
+                          child: const Text('完成'),
+                        ),
+                      ],
+                    ),
+                  ),
+            icon: const Icon(Icons.open_with),
+            label: const Text('拖动格点校准'),
+          ),
+        ),
         edge(
           '左边距',
           geometry.leftPercent,

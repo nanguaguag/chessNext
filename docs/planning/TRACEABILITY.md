@@ -767,3 +767,9 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 ## M4-57 / F15,F22,F23 / ADR-089 AI单步云库策略
 
 分析AI单步可独立配置服务地址、关闭/最佳/分差内随机、残局库开关、离库回合数；初始策略为开局最佳、残局开、离库10。服务地址留空时绝不请求网络，并明确说明单步查询会发送当前局面/完整历史至指定端点。云候选必须匹配当前合法着法并绑定现有epoch/局面/棋树身份，miss/服务异常/无合法候选回退本机引擎。随机≤100cp、残局≤8个非将棋子、离库上界255均为项目P，源站E71均U。定向`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart test/adapters/network/http_book_service_test.dart --reporter expanded`32/32；根串行`flutter test --concurrency=1 --reporter compact`572通过/5跳过；`flutter analyze --no-pub`无问题；复用PID50598/runner50125 attach同步1047ms、热重启993ms。系统锁屏，人工视觉验收未做。
+
+## M4-58 / F21,B24 / ADR-090 棋盘双格点拖动校准
+
+在棋盘显示设置添加独立校准对话框和9列×10行预览，拖左上/右下手柄按画布宽高比例改对应格网边；遵守`BoardSkinGeometry`的1–99%边界与至少55%跨度。四边滑杆仍可作精调，既有表单高度不增加。映射是项目P，不套用源站33/465数字或未知公式。
+
+专项`flutter test --concurrency=1 test/widgets/piece_skin_images_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`8/8；根串行`flutter test --concurrency=1 --reporter compact`574通过/5跳过；`flutter analyze --no-pub`无问题。首次根测试发现预览内联使原PieceSkin控件滚出视口，修复为单独对话框后根测试全通过。复用macOS PID50598/runner50125，attach同步1060ms、热重启1020ms；进程审计始终一个App及单测试宿主。系统锁屏，未人工视觉验收。浏览器坐标真实算法仍U。

@@ -195,3 +195,5 @@ E71追加实操：难度通过Home/End分别到0/20并恢复20（V）；自定�
 分析AI单步读取云库偏好；添加自建服务根地址、开局关闭/最佳/分差随机、残局开关、离库步数，默认最佳/开/10。只此单步使用网络，关闭地址时无网络调用。匹配服务返回后以领域合法着法列表复核；无效/miss/不可达回退本机引擎。源站随机差距、残局分类及离库计数上限未知；本项目采用100cp随机带、≤8枚非将残局识别、已完成全回合步数及255上限并标P（ADR-089）。F22/F23仍未完成真实远端查询、撤销/取消及UI视觉等验收。
 
 定向`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart test/adapters/network/http_book_service_test.dart --reporter expanded`32/32；根串行`flutter test --concurrency=1 --reporter compact`572通过/5跳过，`flutter analyze --no-pub`通过。复用macOS PID50598/runner50125，attach同步1047ms、热重启993ms；锁屏未人工视觉验收。
+
+M4-58 / F21,B24增加本机双格点拖动校准预览（P），把手分别改变左上/右下两边并维持项目模型边界。该交互不说明或实现参考站完整联动公式；E64/E66/E72覆盖的边界仍为局部样本，页面保存生命周期及reload行为仍U。后续还需核对其它可见棋盘/棋子设置与跨尺寸编辑器表现。

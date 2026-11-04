@@ -308,3 +308,8 @@ E54/E55文档审计分别提交：`149a153 docs(audit): 验证显示语言切换
 本轮实际验证：定向`flutter test test/application/preferences_controller_test.dart test/widgets/resizable_workspace_test.dart --reporter expanded`10/10；根`flutter test --reporter compact`514通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。`flutter run -d macos --no-pub` Build/Sync成功，VM `127.0.0.1:49754`，Flutter报告`open returned 1`；Mac锁屏导致不能置前或人工验收。只启动一个新的Debug runner会话，供后续复用；根测试不启动App。不要重复`flutter run`，先复用会话/核对进程；会话号由Codex工具维护，VM服务URL仅本地临时。
 
 当前源码与研究文档待单独功能commit，见`git status`。紧接着继续F27：先盘点真实用户可见字符串和本地化架构，再准备简中/英语完整资源垂直切片；同时不停止审计全站剩余设置、在线可替换后端范围。macOS锁屏是人工现场验收阻碍；进程及会话以实时ps为准。
+## 2026-11-04 / E58 / F21,B24 棋盘格点与缩放控件续审
+
+在访客临时IAB标签8打开`https://xiangqiai.com/#/settings/skins/edit/new?type=board`，视口约527×860。前置空白棋盘草稿；初始格点滑杆50/50、stepper左/上/右/下33/33/465/519、棋子缩放100%。截图观察两个蓝点分别在画布左上/右下交点。左上点从约(64,88)拖到(112,138)，AX显示左85.50/上87/右465.18/下519.09；只做一个方向/距离样本，不推断单位、联动算法或完整范围。缩放滑杆轨道视觉端点当次显示60%/139%，在139%聚焦按右方向键后值不变；实际范围、边界与缩放对象仍U。按返回并确认丢弃后回`#/settings/board`，AX确认默认棋子/棋盘、100%、坐标开、倒置关。临时标签已关闭，用户原标签1没操作。
+
+更新REFERENCE_EVIDENCE E58、FEATURE_GAPS、INTERACTION_SPEC、ADR-054证据边界、BACKLOG与context。仅文档改动，不跑Flutter测试/analyze，不重启macOS；执行`git diff --check`后单独中文docs commit。下一步延续B24：识别现有自建在线可替换目录的缺失架构和部署方案，且保持F21/F27及全站剩余项开放。当前唯一macOS runner会话2427/App PID2479仍需保留复用，不要因测试另启实例。

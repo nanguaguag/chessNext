@@ -791,3 +791,8 @@ E57研究文档提交`d3176c6`。无新增应用实例。待核`git status`；�
 此前尝试向旧runner app PID87104发`SIGUSR1`后，旧runner/app消失；不确定此信号是否导致退出，因此没有再次发送信号。随后确认没有旧App实例后仅启动一次新runner会话2427，运行实例PID2479。应保留该会话复用；不要重复启动flutter run。此前仅凭Shell列PID推断可发送信号并不充分，今后优先用可交互runner stdin热重载（确认会话仍活跃）或仅build；系统锁屏时不要继续尝试CUA视觉操作。
 
 本次改动涉及lib/app.dart、application/app_preferences.dart、preferences_controller.dart、features/settings/preferences_dialog.dart、features/workspace/resizable_workspace.dart及两组测试；ADR-073、矩阵/缺口/交互、BACKLOG/TRACEABILITY、DESIGN_SYSTEM、IMPLEMENTED_MODULES、上下文待提交。下一步核git diff/status，单独中文Conventional Commit；随后继续F27完整本地化架构盘点和其他全站设置审计，不停止于M4-38。登录后功能除外，B24在线服务仍在自建可替换后端总范围。
+## 2026-11-04 / E58 / F21,B24 棋盘几何草稿审计
+
+临时IAB标签8访客访问`https://xiangqiai.com/#/settings/skins/edit/new?type=board`，约527×860。AX观察初值为两个格点50/50、四边左33/上33/右465/下519、棋子缩放100%；截图可见两个蓝点在棋盘画布对角交点。将左上点约拖动一格(48×50px)后，AX显示左85.50/上87/右465.18/下519.09，证明一次拖动导致多边值变化，不能确定公式/单位/约束。缩放滑杆100%拖到轨道左端得60%，右端得139%；聚焦139%按一次右键值不变。记录当次轨道终点显示，不推断精确内部边界/步长或缩放对象。回退触发放弃确认，点击确认后AX返回默认棋盘页，默认棋子/棋盘、棋子大小100%、坐标开、对面倒置关。临时标签关闭，原用户IAB标签1未碰；无保存/使用/导出/上传/账号/棋谱改动。
+
+更新E58、ADR-054证据边界、F21 gap/交互规格/BACKLOG和handoff。纯文档，不跑测试/analyze/macOS。`git diff --check`待执行。M4-38已提交`1aceb59`。后续继续B24自建可替换在线目录/部署方案，不停止在这次几何审计；F27完整本地化待大范围覆盖。唯一Debug runner PID2226/App PID2479会话2427保持运行，无测试App实例。

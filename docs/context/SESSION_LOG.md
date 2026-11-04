@@ -920,6 +920,12 @@ E66/E67仅更新文档，待`git diff --check`并以中文docs commit单独提�
 已更新REFERENCE_EVIDENCE、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、DECISIONS、TRACEABILITY、BACKLOG、CURRENT_STATE/HANDOFF；待`git diff --check`和docs commit。M4-32本机原0.5–30秒/0.1秒与该范围不一致，准备M4-51独立修正为0.1特殊首值、其后0.5秒步长至60秒并保留既有设置兼容。当前测试样本删除尚待用户确认，设置均恢复。
 
 
+# 2026-11-05 / M4-55 / F22,F23 / ADR-087 自建云库只读服务端
+
+按E71实现运营者自供book.json的只读开局/残局查询接口，精确匹配kind、完整FEN、完整历史；候选结果含坐标着法/分值/权重并带数据集许可与归属。默认无数据，不附第三方棋库、不持久化查询；校验manifest/request/candidate边界，并补充示例与systemd/nginx部署说明。仍缺Flutter客户端、真实授权数据、搜索合法性与策略端到端验证，不能称云库完整或全站对齐。
+
+专项server测试12/12；根串行`flutter test --concurrency=1 --reporter compact`564通过/5跳过；`flutter analyze --no-pub`、`dart analyze server/skin_catalog/lib server/skin_catalog/bin`通过；`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功；`git diff --check`通过。仅server改动，不运行/重启macOS app；复用唯一既有PID50598/runner50125，单一flutter_tester，无新增chessNext。功能提交`4f515e9 feat(server): 增加自建云库查询接口`；本交接更新单独docs commit待做。下一步Flutter BookService端、开局/残局策略和离库步数，随后继续登录外所有缺口。
+
 # 2026-11-05 / E69 / F24 高级分析设置审计
 
 参考站访客临时tab2 `/settings/analysis/advanced`：默认5线程/320MB，说明内存每线程64MB；打开“解限”后推荐最大线程10→1024、内存512→1984MB；线程加号5→6令内存320→384，随后均恢复。仅UI联动V/能力文本O，不证明实际引擎/设备极限；手动范围和生命周期持久性U。更新证据、矩阵、缺口、交互规格、追溯、待办、CURRENT_STATE/HANDOFF。文档待diff check与中文单独commit，无Flutter测试/分析需求。核对进程仅App PID50598、runner PID50125；持续复用，不新开实例。下一步先看本机F24参数等价和全站剩余设置，继续推进。

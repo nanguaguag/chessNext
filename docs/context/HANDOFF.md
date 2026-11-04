@@ -1,5 +1,13 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## 最新进展 M4-55 / 服务端云库查询切片
+
+当前feature基线`4f515e9 feat(server): 增加自建云库查询接口`；仅本交接文档待独立提交。`server/skin_catalog`增加可选运营者book.json、开局/残局精确键查询（kind+完整FEN+history）、候选着法/分值/权重及数据许可/归属信息，服务默认无棋库数据、不记录查询。请求32KiB、最多512步历史/32候选等校验，部署文档涵盖systemd/nginx。不是端到端云库；还缺Flutter客户端、合法棋步核验集成、真实授权数据和策略等价验证。
+
+验证：专项`flutter test --concurrency=1 test/server/book_catalog_server_test.dart test/server/skin_catalog_server_test.dart --reporter expanded`12/12；根`flutter test --concurrency=1 --reporter compact`564通过/5跳过；`flutter analyze --no-pub`、`dart analyze server/skin_catalog/lib server/skin_catalog/bin`、`git diff --check`均通过；服务端`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功。仅服务端变更，未重启App；唯一既有PID50598/runner50125保留，测试单一flutter_tester，没有新chessNext。
+
+M4-55功能已单独提交；完成本交接文档的中文docs提交后，继续F22/F23 Flutter BookService接入、开局最佳/分差随机/残局云库与离库步数（随机分差等源站未知值须标U并选择项目P）；随后继续B24/F21几何审计与其余设置、F27/F31等登录外缺口。持续目标未完成，不得宣称全站对齐。
+
 ## 授权与目标
 
 持续实现和实际macOS运行已获授权；目标是对齐 xiangqiai.com 登录后功能以外的所有可确认功能与设置，不依赖旧聊天记忆。离线优先推进，在线能力仍在总范围，采用自建可替换后端并提供部署方案。许可决策按用户要求暂缓。每个功能单独中文Conventional Commit，并执行根`flutter test`、`flutter analyze`；macOS变更复用同一App/runner。无代理授权。

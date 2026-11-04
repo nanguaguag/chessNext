@@ -898,3 +898,12 @@ M4-48按ADR-082将本机`BoardSkinGeometry`棋盘皮肤专属棋子比例由80�
 专项HTTP/应用/设置弹层14/14；根`flutter test --reporter compact`548通过/5跳过；根`flutter analyze --no-pub`无问题。macOS复用唯一App PID50598/runner PID50125，`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/`同步约1.1秒，热重载报告0库/450ms，热重启953ms成功；未新开实例。Mac锁屏，视觉验收not run。`git diff --check`待做；代码/测试及DECISIONS/FEATURE_MATRIX/BACKLOG/TRACEABILITY/context更新仍待本片独立中文feature commit。
 
 下一条继续B24几何边距/格点可达边界和皮肤编辑草稿持久化审计，再推进矩阵其它全站功能与设置；远端部署未配置、站点未知格式不声称兼容、F21和全站仍开放。
+# 2026-11-05 / E66–E67 / F21,B24 几何端点与保存/使用边界
+
+参考站：`https://xiangqiai.com/#/settings/skins/edit/new?type=board`，访客、临时IAB标签2，默认棋盘/棋子及空白草稿。左步进减一次33→32.5，右465→464.98；连续减至左0且减号禁用，右463.68。输入左999移焦后左500、加号禁用且右500；输入上999移焦后上550、加号禁用且下550。结果仅覆盖左下界和左/上超限夹限及配对联动，右/下独立范围、单位与完整公式仍U。确认丢弃E66草稿并核对设置恢复默认。
+
+E67另建仅供本次审计的“我的棋盘”（ID `local-e59de8ef-c7a7-4eda-b57a-4911a2309829`）。左33→33.5后保存，页面提示已保存，设置当前仍默认；列表可见该皮肤。点“使用这套”后设置当前变为“我的棋盘”。编辑同一皮肤将上33→33.5（下519→518.96）再保存；退出后当前仍默认，重新打开编辑仍能读到已保存四边值。证明当前会话内保存与使用分离；reload/重启/跨进程与其他字段保存仍U。已恢复默认棋盘，并从临时列表发起删除后依据站点“删除后不能恢复”警示取消；测试皮肤尚留在同浏览器配置下，等待用户明确确认后才能清理。原用户tab1未碰。
+
+M4-50 `31740d3 feat(skins): 接入在线棋盘皮肤目录`已提交。根`flutter test --reporter compact`548通过/5跳过，`flutter analyze --no-pub`无问题，专项14/14。仅有chessNext App PID50598和runner PID50125；测试是flutter_tester，不开App。macOS复用现有实例已热重启（953ms）并成功；Mac锁屏，视觉验收not run。系统内存在多条遗留attach工具进程但无额外App。
+
+E66/E67仅更新文档，待`git diff --check`并以中文docs commit单独提交，不需Flutter门槛。继续B24几何/源站保存生命周期和其他设置/功能差距，不以M4-50或局部审计停止；用户目标为对齐全站除登录部分，在线能力仍在范围。工作树、临时标签与待确认删除样本见HANDOFF最上方。

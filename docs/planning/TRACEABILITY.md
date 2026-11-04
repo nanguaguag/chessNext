@@ -704,3 +704,9 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 `HttpPieceSkinCatalog.forBoards`按独立`/v1/board-catalog` route复用既有HTTPS/loopback、超时、≤2MiB响应、≤8MiB包、SHA异常模型和`FilePieceSkinCatalogCache`；完整path作为key区分棋子与棋盘目录。棋盘皮肤库共享本机自建服务地址偏好，提供远程搜索、五种排序、分页和离线缓存时间标记。详情展示许可署名；下载校验SHA，解包由`BoardSkinPackageCodec`校验格式/图片并核对名称；用户确认许可后以新ID加入并选用。定义和schema1 ZIP可选持久化许可署名，旧数据空值兼容。
 
 定向HTTP/应用/设置弹层14/14；根`flutter test --reporter compact`548通过/5跳过；`flutter analyze --no-pub`无问题。macOS复用PID50598/runner PID50125，attach sync约1.1s，热重载0库/450ms后热重启953ms成功，无第二实例。Mac锁屏，窗口人工验收未做；服务实服配置/远程manifest尚未验。源站格式/素材没有复用，不宣称站点兼容。
+
+## 2026-11-05 / E66–E67 / F21,B24 几何值域与保存/应用分离
+
+E66在参考站访客临时棋盘皮肤草稿上用实际按钮/输入操作验证：左字段可减至0；左字段输入999后移焦显示500并使加号禁用、配对右字段显示500；上字段同操作移焦显示550、配对下字段显示550。仅覆盖左下界、左/上输入上限和两次联动样本，右/下独立边界与全局约束仍U。E67把左值33→33.5后点保存，设置仍选默认棋盘；选择器另点“使用这套”后当前项才变“我的棋盘”。编辑同皮肤后修改上值33→33.5再保存，退出仍为默认；回到编辑页可读到本会话保存的四边数值。此为参考站V，不作为本机验证。
+
+测试样本已恢复默认选中，但“我的棋盘”仍保留；因删除弹窗说明不可恢复，已取消等待用户明确确认。源站reload/重启持久性与dirty语义仍U。文档审计不运行Flutter门槛；证据、矩阵、缺口、交互规格、ADR-054、BACKLOG及context待`git diff --check`后中文docs提交。

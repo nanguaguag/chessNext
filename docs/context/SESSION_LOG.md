@@ -978,3 +978,10 @@ E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新�
 参考站既有“我的棋盘”编辑页，左边距stepper单击使33.00→33.50，右边距465.00→465.02；再减回左值并退出，确认丢弃草稿，检查设置恢复。证据只支持这组一步观察，完整耦合公式/单位/其余边界仍U。证据及矩阵、缺口、交互规格、追溯、待办更新。纯文档审计，未运行Flutter测试、analyze或Mac重启；`git diff --check`通过。E72 docs commit待执行。
 
 用户说明此前测试会造成多个chessNext后台实例。当前进程检查见App PID50598，无flutter_tester、无新`flutter run`；后续Flutter全量测试均串行，macOS验证只对既有VM Service `flutter attach`，并在前后核对App PID唯一性。下一步E72中文文档提交，然后继续F21几何功能实现，不在本增量结束后停止总体目标。
+# 2026-11-05 / M4-58 / F21,B24 / ADR-090 棋盘格点拖动校准
+
+新增`BoardGeometryEditor`独立预览对话框，绘制9×10交点，左上/右下手柄分别更改left/top或right/bottom；每次拖动按预览宽高分别转换成内部百分比，并经现有模型保持1–99%、跨度≥55%。四边滑杆仍保留做精确和键盘/语义调整；更改即时保存。此为本机项目P，不代表源站值映射或coupling算法。新增Widget测试及ADR-090、matrix/gaps/spec/traceability/backlog。
+
+专项`flutter test --concurrency=1 test/widgets/piece_skin_images_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`8/8。根首轮`flutter test --concurrency=1 --reporter compact`570通过/5跳过/2失败，失败为既有PieceSkin偏移按钮被新增内联预览挤出视口；移入独立Dialog，专项重跑后8/8。`flutter analyze --no-pub`通过，根复跑`flutter test --concurrency=1 --reporter compact`574通过/5跳过；`git diff --check`通过。复用App50598/runner50125，attach sync1060ms、热重启1020ms，Ctrl-C脱离后app/runner存活。系统锁屏，视觉not run。feature提交`b3f9f36 feat(settings): 增加棋盘拖点校准`。
+
+根测试全程`--concurrency=1`，进程审核仅一个flutter_tester和单App50598，已处理用户关于重复开多个App的担心。后续仍继续全站登录外对齐，不在M4-58停止。

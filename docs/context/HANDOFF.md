@@ -57,3 +57,12 @@ HEAD为`b3025a7`，工作树干净。当前唯一macOS Debug App为PID50598，ru
 用户反馈曾因测试重复打开多个chessNext。本轮检查只发现既有App PID50598，没有运行`flutter run`或根测试；后续测试必须串行`flutter test --concurrency=1`。macOS改动只能复用既有App及VM Service attach，操作前核对PID；不得再次启动app实例。最后明确的既有runner PID50125需重新核对。
 
 工作树：E72文档审计改动待提交；无业务代码改动。未跑测试/analyze/macOS（纯审计）。下一步单独提交E72文档后，继续F21/B24双格点/边距交互设计与实现，逐项保持源站未知值为U；每个功能根目录串行`flutter test`、`flutter analyze`、复用Mac app并单独中文feature commit，随后更新上下文。
+# 2026-11-05 最新交接 / M4-58
+
+用户持续授权实现登录以外所有功能/设置及实际macOS运行；不得用代理。用户特别指出测试不应启动多个chessNext：根Flutter测试用`--concurrency=1`，macOS代码验证复用既有runner/app的`flutter attach`，不要新跑`flutter run`。当前HEAD `b3f9f36`，M4-58 feature commit已完成，下面本交接文档更新待独立中文docs commit。
+
+M4-58/F21/B24实现本机9列×10行棋盘格预览及双拖柄；左上仅改left/top，右下仅改right/bottom，以预览画布比例换算并钳制现有1–99%、最小跨度55%。四边0.5%滑杆继续保留。全部几何写入通过原Preferences/BoardSkin controller，即时保存。值映射为项目P，绝不宣称是站点算法。ADR-090、矩阵/缺口/交互规格/追溯/待办已提交；源站完整边界、公式、保存与重载仍U。
+
+验证：`flutter test --concurrency=1 test/widgets/piece_skin_images_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`8/8；根`flutter test --concurrency=1 --reporter compact`574通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。首轮根测试570通过/5跳过/2失败，两失败来自新增预览把既有棋子偏移设置控件推到视口外；改为单独校准Dialog后同专项及完整根测试通过。复用既有PID50598与runner50125，VM Service 61579，attach同步1060ms、热重启1020ms，脱离后App/runner仍在。测试过程中只见一个flutter_tester；没有新开GUI实例。Mac锁屏，人工视觉验收not run。
+
+参考站E72审计已单独提交于`78c4040`，左33→33.5/右465→465.02仅为一个步进样本。现在没有未提交功能代码；下一步继续F21剩余几何/棋盘和棋子编辑功能，及F27/F31等登录外全站缺口，不能在单个增量后停下或宣称全站完成。在线能力仍为自建可替换后端并有部署方案，许可决策暂缓。

@@ -46,6 +46,29 @@ void main() {
     );
   });
 
+  test('board skin package and import preserve license metadata', () async {
+    final source = BoardSkinDefinition(
+      id: 'custom-12345678-abcd',
+      name: 'Licensed board',
+      baseSkin: BoardSkin.jade,
+      license: 'CC-BY-4.0',
+      attribution: 'Original artist',
+    );
+    final encoded = BoardSkinPackageCodec.encode(source, const {});
+    final decoded = BoardSkinPackageCodec.decode(encoded);
+    expect(decoded.profile.license, 'CC-BY-4.0');
+    expect(decoded.profile.attribution, 'Original artist');
+    expect(
+      BoardSkinDefinition.fromJson({
+        'id': 'custom-12345678-abcd',
+        'name': 'Legacy board',
+        'baseSkin': 'jade',
+        'geometry': BoardSkinGeometry.standard().toJson(),
+      }).license,
+      isEmpty,
+    );
+  });
+
   test(
     'file library round-trips, replaces atomically, and rejects duplicates',
     () async {
@@ -58,6 +81,8 @@ void main() {
         id: 'custom-12345678-abcd',
         name: '书房',
         baseSkin: BoardSkin.parchment,
+        license: 'CC-BY-4.0',
+        attribution: '棋手甲',
       );
       await repository.save([first]);
       expect(await repository.load(), [first]);
@@ -173,65 +198,71 @@ void main() {
     }
   });
 
-  test('package import allocates a fresh id and selects the new profile', () async {
-    final session = BoardSession();
-    final engine = EngineSessionController(session, null);
-    final preferences = PreferencesController(
-      engine,
-      MemoryPreferencesRepository(),
-    );
-    final repository = MemoryBoardSkinLibraryRepository();
-    final imageRepository = MemoryBoardSkinImageRepository();
-    final boardImages = BoardSkinImageLibraryController(
-      _NoopPicker(),
-      imageRepository,
-    );
-    final controller = BoardSkinLibraryController(
-      repository,
-      boardImages,
-      preferences,
-    );
-    try {
-      await preferences.initialize();
-      await boardImages.initialize();
-      await controller.initialize();
-      final source = BoardSkinDefinition(
-        id: 'custom-12345678-abcd',
-        name: '外来棋盘',
-        baseSkin: BoardSkin.jade,
-        geometry: const BoardSkinGeometry.standard().copyWith(
-          rotateLandingMarker: true,
-        ),
+  test(
+    'package import allocates a fresh id and selects the new profile',
+    () async {
+      final session = BoardSession();
+      final engine = EngineSessionController(session, null);
+      final preferences = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
       );
-      final image = _png();
-      expect(
-        await controller.importPackage(
-          BoardSkinPackage(
-            profile: source,
-            images: {BoardSkinImageSlot.landingMarker: image},
+      final repository = MemoryBoardSkinLibraryRepository();
+      final imageRepository = MemoryBoardSkinImageRepository();
+      final boardImages = BoardSkinImageLibraryController(
+        _NoopPicker(),
+        imageRepository,
+      );
+      final controller = BoardSkinLibraryController(
+        repository,
+        boardImages,
+        preferences,
+      );
+      try {
+        await preferences.initialize();
+        await boardImages.initialize();
+        await controller.initialize();
+        final source = BoardSkinDefinition(
+          id: 'custom-12345678-abcd',
+          name: '外来棋盘',
+          baseSkin: BoardSkin.jade,
+          geometry: const BoardSkinGeometry.standard().copyWith(
+            rotateLandingMarker: true,
           ),
-        ),
-        isTrue,
-      );
-      final imported = controller.profiles.single;
-      expect(imported.id, isNot(source.id));
-      expect(imported.name, source.name);
-      expect(imported.geometry, source.geometry);
-      expect(preferences.value.selectedBoardSkinId, imported.id);
-      expect(
-        (await imageRepository.load())[imported.id]![
-          BoardSkinImageSlot.landingMarker
-        ],
-        orderedEquals(image),
-      );
-    } finally {
-      controller.dispose();
-      boardImages.dispose();
-      preferences.dispose();
-      engine.dispose();
-      session.dispose();
-    }
-  });
+          license: 'CC-BY-4.0',
+          attribution: '站点作者',
+        );
+        final image = _png();
+        expect(
+          await controller.importPackage(
+            BoardSkinPackage(
+              profile: source,
+              images: {BoardSkinImageSlot.landingMarker: image},
+            ),
+          ),
+          isTrue,
+        );
+        final imported = controller.profiles.single;
+        expect(imported.id, isNot(source.id));
+        expect(imported.name, source.name);
+        expect(imported.geometry, source.geometry);
+        expect(imported.license, source.license);
+        expect(imported.attribution, source.attribution);
+        expect(preferences.value.selectedBoardSkinId, imported.id);
+        expect(
+          (await imageRepository
+              .load())[imported.id]![BoardSkinImageSlot.landingMarker],
+          orderedEquals(image),
+        );
+      } finally {
+        controller.dispose();
+        boardImages.dispose();
+        preferences.dispose();
+        engine.dispose();
+        session.dispose();
+      }
+    },
+  );
 }
 
 final class _NoopPicker implements PieceImagePicker {

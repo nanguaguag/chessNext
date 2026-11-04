@@ -12,6 +12,7 @@ import 'package:chess_next/ports/piece_skin_catalog.dart';
 void main() {
   late HttpServer server;
   late HttpPieceSkinCatalog catalog;
+  late HttpPieceSkinCatalog boardCatalog;
   late Directory cacheDirectory;
   late List<Uri> requests;
   final packageBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
@@ -62,10 +63,15 @@ void main() {
       timeout: const Duration(seconds: 2),
       cache: FilePieceSkinCatalogCache(() async => cacheDirectory),
     );
+    boardCatalog = HttpPieceSkinCatalog.forBoards(
+      timeout: const Duration(seconds: 2),
+      cache: FilePieceSkinCatalogCache(() async => cacheDirectory),
+    );
   });
 
   tearDown(() async {
     catalog.close();
+    boardCatalog.close();
     await server.close(force: true);
     await cacheDirectory.delete(recursive: true);
   });
@@ -87,6 +93,22 @@ void main() {
       'page': '2',
       'pageSize': '12',
     });
+  });
+
+  test('uses separate board catalog search and package routes', () async {
+    final result = await boardCatalog.search(
+      endpoint: Uri.parse('http://127.0.0.1:${server.port}'),
+      query: '棋盘',
+      sort: PublicBoardSkinSort.recent,
+    );
+    expect(result.items.single.name, '原创红章');
+    expect(requests.single.path, '/v1/board-catalog');
+    await boardCatalog.downloadPackage(
+      endpoint: Uri.parse('http://127.0.0.1:${server.port}'),
+      id: 'original-red',
+      expectedSha256: sha256.convert(packageBytes).toString(),
+    );
+    expect(requests.last.path, '/v1/board-catalog/original-red/package');
   });
 
   test(

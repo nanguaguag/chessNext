@@ -7,6 +7,8 @@ Type=simple
 User=skin-catalog
 Group=skin-catalog
 Environment=SKIN_CATALOG_ROOT=/srv/chessnext/skin-catalog/public
+# Optional: enable the independent board-skin catalog endpoints.
+# Environment=SKIN_BOARD_CATALOG_ROOT=/srv/chessnext/board-skin-catalog/public
 Environment=SKIN_CATALOG_ADDRESS=127.0.0.1
 Environment=SKIN_CATALOG_PORT=8087
 ExecStart=/usr/local/bin/chessnext-skin-catalog

@@ -372,6 +372,10 @@ E64当前已更新REFERENCE_EVIDENCE、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、
 
 继续用户已授权的全站功能/设置对齐（登录除外）；不要在单个切片后停止，也不得把未知项说成完成。在线棋盘皮肤目录缺少实现（当前自建目录是棋子皮肤目录）；需要先阅读现有`PieceSkinCatalog`接口/服务契约及M4-39 ADR-074，设计可替换的棋盘皮肤目录后推进。当前唯一macOS App PID50598、Flutter runner PID50125保留复用；根测试不启动GUI App。
 
-## 当前实现 M4-49（2026-11-05）
+## 当前交付 M4-49（2026-11-05，已提交 4c795a8）
 
-已实现服务端可选棋盘目录根+`/v1/board-catalog`读列表/详情/包，支持和原棋子目录物理隔离；以项目棋盘皮肤schema ZIP作为发布内容，客户端需要二次验证许可/SHA与包。服务端定向6/6、根测试545通过/5跳过，根Flutter analyze与服务dart analyze通过；macOS UI不是本增量目标，未运行。代码/ADR/TRACEABILITY/FEATURE_MATRIX/BACKLOG有未提交改动，先`git diff --check`复核并以中文Conventional Commit单独提交。随后立即继续M4-50客户端目录UI/cache/import，不因服务端切片停止；仍需推进B24及全站。
+已实现服务端可选棋盘目录根+`/v1/board-catalog`读列表/详情/包，支持和原棋子目录物理隔离；以项目棋盘皮肤schema ZIP作为发布内容，客户端需二次校验许可/SHA与包。服务端定向6/6、根测试545通过/5跳过，根Flutter analyze与服务dart analyze通过；未改macOS UI。
+
+## 最新实现 M4-50（2026-11-05）
+
+当前待提交M4-50在棋盘皮肤库加入自建目录地址、搜索/排序/分页、离线页缓存标记；复用`HttpPieceSkinCatalog.forBoards`走独立路由。下载包经SHA、ZIP/schema/图片/name校验，显示许可证署名并由用户确认后导入新皮肤；许可署名写入本机定义与包schema，旧无字段数据兼容。定向HTTP/应用/设置弹层14/14；根`flutter test --reporter compact`548通过/5跳过；`flutter analyze --no-pub`无问题。macOS使用唯一PID50598/runner PID50125 attach同步约1.1s、热重载报告0库/450ms、热重启953ms成功；无第二实例。锁屏故无窗口视觉验收。先`git diff --check`复核并中文单独commit，然后马上继续B24几何/保存事务及全站缺口；实服部署尚未验，全站/源站格式不宣称完成。

@@ -30,6 +30,7 @@ class PreferencesDialog extends StatefulWidget {
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
     this.pieceSkinCatalog,
+    this.boardSkinCatalog,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
@@ -41,6 +42,7 @@ class PreferencesDialog extends StatefulWidget {
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
   final PieceSkinCatalog? pieceSkinCatalog;
+  final BoardSkinCatalog? boardSkinCatalog;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -178,8 +180,8 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                           pieceSkinCatalog: widget.pieceSkinCatalog,
                           boardSkinPackageExporter:
                               widget.pieceSkinPackageExporter,
-                          boardSkinPackagePicker:
-                              widget.pieceSkinPackagePicker,
+                          boardSkinPackagePicker: widget.pieceSkinPackagePicker,
+                          boardSkinCatalog: widget.boardSkinCatalog,
                         ),
                       ),
                       icon: const Icon(Icons.grid_on),

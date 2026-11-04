@@ -92,6 +92,7 @@ class ChessNextApp extends StatefulWidget {
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
     this.pieceSkinCatalog,
+    this.boardSkinCatalog,
     this.boardSkinImagePicker,
     this.boardSkinImageRepository,
     this.boardSkinLibraryRepository,
@@ -119,6 +120,7 @@ class ChessNextApp extends StatefulWidget {
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
   final PieceSkinCatalog? pieceSkinCatalog;
+  final BoardSkinCatalog? boardSkinCatalog;
   final PieceImagePicker? boardSkinImagePicker;
   final BoardSkinImageRepository? boardSkinImageRepository;
   final BoardSkinLibraryRepository? boardSkinLibraryRepository;
@@ -453,6 +455,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       pieceSkinPackagePicker: widget.pieceSkinPackagePicker,
       pieceSkinFolderPicker: widget.pieceSkinFolderPicker,
       pieceSkinCatalog: widget.pieceSkinCatalog,
+      boardSkinCatalog: widget.boardSkinCatalog,
       boardSkinImages: boardSkinImages,
       boardSkins: boardSkins,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
@@ -509,6 +512,7 @@ class _BoardPage extends StatelessWidget {
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
     this.pieceSkinCatalog,
+    this.boardSkinCatalog,
     required this.boardSkinImages,
     required this.boardSkins,
   });
@@ -523,6 +527,7 @@ class _BoardPage extends StatelessWidget {
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
   final PieceSkinCatalog? pieceSkinCatalog;
+  final BoardSkinCatalog? boardSkinCatalog;
   final BoardSkinImageLibraryController boardSkinImages;
   final BoardSkinLibraryController boardSkins;
   final DraftController? drafts;
@@ -942,6 +947,7 @@ class _BoardPage extends StatelessWidget {
         pieceSkinPackagePicker: pieceSkinPackagePicker,
         pieceSkinFolderPicker: pieceSkinFolderPicker,
         pieceSkinCatalog: pieceSkinCatalog,
+        boardSkinCatalog: boardSkinCatalog,
         boardSkinImages: boardSkinImages,
         boardSkins: boardSkins,
       ),

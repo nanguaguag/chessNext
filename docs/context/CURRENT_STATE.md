@@ -12,9 +12,13 @@
 
 `c8e4f43 feat(skins): 对齐棋盘缩放范围`已完成：根据E63把本机棋盘皮肤棋子缩放范围设为60–140%、整数步进。E64仅为审计，无代码改动，无需运行Flutter测试/分析。当前仍复用唯一macOS App PID50598和runner PID50125；不要另启实例。F21/全站设置继续未完成，继续按矩阵审计并推进，不在单片后停止。
 
-## 当前实现 M4-49（测试通过待提交）
+## 当前交付 M4-49（已提交 4c795a8）
 
-自建只读服务可选加载独立棋盘皮肤目录根（board-catalog.json + board-packages），新增/v1/board-catalog列表/详情/项目ZIP端点，现有棋子路径兼容。服务定向6/6；根flutter test 545通过/5跳过；服务端`dart analyze`及根`flutter analyze --no-pub`无问题；`git diff --check`待做。服务端增量未启动macOS客户端，唯一PID50598/runner PID50125不变。客户端目录HTTP、缓存、确认导入仍未实现，之后接续M4-50。
+自建只读服务可选加载独立棋盘皮肤目录根（board-catalog.json + board-packages），新增/v1/board-catalog列表/详情/项目ZIP端点，现有棋子路径兼容。服务定向6/6；根flutter test 545通过/5跳过；服务端`dart analyze`及根`flutter analyze --no-pub`无问题。服务端增量未启动macOS客户端，唯一PID50598/runner PID50125不变。
+
+## 当前实现 M4-50（验证完成待提交）
+
+棋盘皮肤库接入在线棋盘目录，含共享自建端点、搜索/排序/分页、24页结果缓存/离线标记、SHA与schema1 ZIP验证、许可确认和署名本机持久化。专项14/14；根548通过/5跳过；`flutter analyze --no-pub`无问题。复用PID50598/runner PID50125，attach同步后热重启953ms，无第二实例；Mac锁屏，未人工视觉验收。M4-50实现/追踪文件待diff复核和中文commit；之后继续B24剩余几何/草稿审计及全站差距，不宣称全站对齐。
 
 ## 当前审计 E63（2026-11-05）
 

@@ -891,3 +891,10 @@ M4-48按ADR-082将本机`BoardSkinGeometry`棋盘皮肤专属棋子比例由80�
 `server/skin_catalog`现在可选从`SKIN_BOARD_CATALOG_ROOT`装载独立棋盘目录清单/包目录，新增`board-catalog.json`、`board-packages/`布局及`/v1/board-catalog`分页查询/详情/包下载路由。既有`/v1/catalog`保持旧目录不变，不配置board root时新路由404。服务仍只读，SHA/大小/符号链接边界不变；客户端必须二次校验，在线目录UI/离线缓存/许可确认导入仍未做。测试：`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`6/6；根`flutter test --reporter compact`545通过/5跳过；`dart analyze server/skin_catalog/lib server/skin_catalog/bin`无问题；`flutter analyze --no-pub`无问题；格式化3文件，`git diff --check`待做。未改Flutter/macOS客户端，不运行App；PID50598/runner PID50125仅保留复用。
 
 更新ADR-083、DECISIONS、矩阵、追溯、待办与context，未提交。下一步检查diff后中文feature commit，继续M4-50客户端目录/缓存/安全导入，再审计/实现其余设置；全站对齐仍未完成。
+## 2026-11-05 / M4-50 / F21,B24,ADR-083 棋盘皮肤在线目录客户端
+
+新增BoardSkinCatalog port，由`HttpPieceSkinCatalog.forBoards`复用同一只读传输和cache实现但使用`/v1/board-catalog`独立路由；URL完整路径参与缓存键。棋盘皮肤库连接已保存自建地址，支持搜索/五种排序/分页/标记同查询离线缓存；详情展示许可署名，下载后SHA、项目ZIP清单、图片和名称复核，用户明确接受许可后生成新ID导入并即时选用。`BoardSkinDefinition`/schema1棋盘包新增可选license/attribution字段，复制和导出保留，旧数据缺省空字符串。
+
+专项HTTP/应用/设置弹层14/14；根`flutter test --reporter compact`548通过/5跳过；根`flutter analyze --no-pub`无问题。macOS复用唯一App PID50598/runner PID50125，`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/`同步约1.1秒，热重载报告0库/450ms，热重启953ms成功；未新开实例。Mac锁屏，视觉验收not run。`git diff --check`待做；代码/测试及DECISIONS/FEATURE_MATRIX/BACKLOG/TRACEABILITY/context更新仍待本片独立中文feature commit。
+
+下一条继续B24几何边距/格点可达边界和皮肤编辑草稿持久化审计，再推进矩阵其它全站功能与设置；远端部署未配置、站点未知格式不声称兼容、F21和全站仍开放。

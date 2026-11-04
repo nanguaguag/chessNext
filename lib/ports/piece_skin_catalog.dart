@@ -72,6 +72,30 @@ abstract interface class PieceSkinCatalog {
   });
 }
 
+/// Board skins use the same bounded metadata and transport contract, but a
+/// separate server route and package codec.
+typedef PublicBoardSkin = PublicPieceSkin;
+typedef PublicBoardSkinSort = PublicPieceSkinSort;
+typedef BoardSkinCatalogPage = PieceSkinCatalogPage;
+typedef CachedBoardSkinCatalogResponse = CachedPieceSkinCatalogResponse;
+typedef BoardSkinCatalogCache = PieceSkinCatalogCache;
+
+abstract interface class BoardSkinCatalog {
+  Future<BoardSkinCatalogPage> search({
+    required Uri endpoint,
+    required String query,
+    required PublicBoardSkinSort sort,
+    int page = 1,
+    int pageSize = 24,
+  });
+
+  Future<Uint8List> downloadPackage({
+    required Uri endpoint,
+    required String id,
+    required String expectedSha256,
+  });
+}
+
 sealed class PieceSkinCatalogException implements Exception {
   const PieceSkinCatalogException();
 }

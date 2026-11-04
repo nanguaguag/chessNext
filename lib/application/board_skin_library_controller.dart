@@ -108,6 +108,8 @@ final class BoardSkinLibraryController extends ChangeNotifier {
           name: normalized,
           baseSkin: baseSkin,
           geometry: geometry,
+          license: currentDefinition?.license ?? '',
+          attribution: currentDefinition?.attribution ?? '',
         ),
       ];
       await repository.save(next);
@@ -175,8 +177,15 @@ final class BoardSkinLibraryController extends ChangeNotifier {
     return BoardSkinPackageCodec.encode(profile, images.imagesFor(id));
   }
 
-  Future<bool> importPackage(BoardSkinPackage package) async {
-    final source = package.profile;
+  Future<bool> importPackage(
+    BoardSkinPackage package, {
+    String? license,
+    String? attribution,
+  }) async {
+    final source = package.profile.copyWith(
+      license: license ?? package.profile.license,
+      attribution: attribution ?? package.profile.attribution,
+    );
     try {
       BoardSkinPackageCodec.encode(source, package.images);
     } on FormatException {
@@ -186,7 +195,9 @@ final class BoardSkinLibraryController extends ChangeNotifier {
     }
     if (loading ||
         profiles.length >= 64 ||
-        profiles.any((item) => item.name.toLowerCase() == source.name.toLowerCase())) {
+        profiles.any(
+          (item) => item.name.toLowerCase() == source.name.toLowerCase(),
+        )) {
       error = '棋盘皮肤名称重复或本机皮肤库已达64套。';
       _notify();
       return false;
@@ -200,6 +211,8 @@ final class BoardSkinLibraryController extends ChangeNotifier {
       name: source.name,
       baseSkin: source.baseSkin,
       geometry: source.geometry,
+      license: source.license,
+      attribution: source.attribution,
     );
     try {
       await images.importImages(id, package.images);

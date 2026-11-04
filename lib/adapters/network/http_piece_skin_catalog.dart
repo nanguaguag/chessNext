@@ -11,16 +11,25 @@ const _maxCatalogResponseBytes = 2 * 1024 * 1024;
 const _maxSkinPackageBytes = 8 * 1024 * 1024;
 
 /// HTTP implementation for a public, read-only self-hosted catalog.
-final class HttpPieceSkinCatalog implements PieceSkinCatalog {
+final class HttpPieceSkinCatalog implements PieceSkinCatalog, BoardSkinCatalog {
   HttpPieceSkinCatalog({
     HttpClient? client,
     this.cache,
     this.timeout = const Duration(seconds: 8),
-  }) : _client = client ?? HttpClient();
+  }) : _client = client ?? HttpClient(),
+       _catalogPath = '/v1/catalog';
+
+  HttpPieceSkinCatalog.forBoards({
+    HttpClient? client,
+    this.cache,
+    this.timeout = const Duration(seconds: 8),
+  }) : _client = client ?? HttpClient(),
+       _catalogPath = '/v1/board-catalog';
 
   final HttpClient _client;
   final PieceSkinCatalogCache? cache;
   final Duration timeout;
+  final String _catalogPath;
 
   void close() => _client.close(force: true);
 
@@ -41,7 +50,7 @@ final class HttpPieceSkinCatalog implements PieceSkinCatalog {
       throw const PieceSkinCatalogInvalidResponse();
     }
     final uri = endpoint.replace(
-      path: '${endpoint.path.replaceFirst(RegExp(r'/+$'), '')}/v1/catalog',
+      path: '${endpoint.path.replaceFirst(RegExp(r'/+$'), '')}$_catalogPath',
       queryParameters: {
         'q': query,
         'sort': switch (sort) {
@@ -130,7 +139,7 @@ final class HttpPieceSkinCatalog implements PieceSkinCatalog {
       throw const PieceSkinCatalogInvalidResponse();
     }
     final basePath = endpoint.path.replaceFirst(RegExp(r'/+$'), '');
-    final uri = endpoint.replace(path: '$basePath/v1/catalog/$id/package');
+    final uri = endpoint.replace(path: '$basePath$_catalogPath/$id/package');
     try {
       final request = await _client.getUrl(uri).timeout(timeout);
       request.headers.set(HttpHeaders.acceptHeader, 'application/zip');

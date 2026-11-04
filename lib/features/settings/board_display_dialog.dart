@@ -34,6 +34,7 @@ class BoardDisplayDialog extends StatelessWidget {
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
     this.pieceSkinCatalog,
+    this.boardSkinCatalog,
     this.boardSkinPackageExporter,
     this.boardSkinPackagePicker,
   });
@@ -47,6 +48,7 @@ class BoardDisplayDialog extends StatelessWidget {
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
   final PieceSkinCatalog? pieceSkinCatalog;
+  final BoardSkinCatalog? boardSkinCatalog;
   final PieceSkinPackageExporter? boardSkinPackageExporter;
   final PieceSkinPackagePicker? boardSkinPackagePicker;
 
@@ -444,12 +446,12 @@ class BoardDisplayDialog extends StatelessWidget {
                         ? null
                         : () => showDialog<void>(
                             context: context,
-                            builder: (_) =>
-                                BoardSkinLibraryDialog(
-                                  library: boardSkins!,
-                                  exporter: boardSkinPackageExporter,
-                                  picker: boardSkinPackagePicker,
-                                ),
+                            builder: (_) => BoardSkinLibraryDialog(
+                              library: boardSkins!,
+                              exporter: boardSkinPackageExporter,
+                              picker: boardSkinPackagePicker,
+                              catalog: boardSkinCatalog,
+                            ),
                           ),
                     icon: const Icon(Icons.collections_bookmark_outlined),
                     label: const Text('管理棋盘皮肤库'),

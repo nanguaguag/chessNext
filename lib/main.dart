@@ -72,6 +72,9 @@ void main() {
       pieceSkinCatalog: HttpPieceSkinCatalog(
         cache: FilePieceSkinCatalogCache(getApplicationSupportDirectory),
       ),
+      boardSkinCatalog: HttpPieceSkinCatalog.forBoards(
+        cache: FilePieceSkinCatalogCache(getApplicationSupportDirectory),
+      ),
       boardSkinImagePicker: FileSelectorPieceImagePicker(),
       boardSkinImageRepository: FileBoardSkinImageRepository(
         getApplicationSupportDirectory,

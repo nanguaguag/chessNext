@@ -27,8 +27,8 @@ final class BoardSkinGeometry {
   static const minSpanPercent = 55.0;
   static const minEdgePercent = 1.0;
   static const maxEdgePercent = 99.0;
-  static const minPieceScalePercent = 80;
-  static const maxPieceScalePercent = 120;
+  static const minPieceScalePercent = 60;
+  static const maxPieceScalePercent = 140;
   static const _defaultLeft = 100 * .5 / 9;
   static const _defaultRight = 100 * 8.5 / 9;
 

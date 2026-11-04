@@ -314,7 +314,7 @@ class BoardDisplayDialog extends StatelessWidget {
         ),
         Text('棋子缩放 ${geometry.pieceScalePercent}%'),
         Slider(
-          key: ValueKey('board-geometry-${skin.name}-piece-scale'),
+          key: ValueKey('board-geometry-$skinId-piece-scale'),
           value: geometry.pieceScalePercent.toDouble(),
           min: BoardSkinGeometry.minPieceScalePercent.toDouble(),
           max: BoardSkinGeometry.maxPieceScalePercent.toDouble(),

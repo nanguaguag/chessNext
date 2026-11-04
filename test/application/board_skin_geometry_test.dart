@@ -32,6 +32,22 @@ void main() {
       );
       expect(BoardSkinGeometry.fromJson(geometry.toJson()), geometry);
       expect(geometry.copyWith().pieceScalePercent, 110);
+      expect(
+        BoardSkinGeometry(pieceScalePercent: 60).pieceScalePercent,
+        60,
+      );
+      expect(
+        BoardSkinGeometry(pieceScalePercent: 140).pieceScalePercent,
+        140,
+      );
+      expect(
+        () => BoardSkinGeometry(pieceScalePercent: 59),
+        throwsArgumentError,
+      );
+      expect(
+        () => BoardSkinGeometry(pieceScalePercent: 141),
+        throwsArgumentError,
+      );
       expect(geometry.copyWith().rotateLandingMarker, isTrue);
       expect(
         BoardSkinGeometry.fromJson({

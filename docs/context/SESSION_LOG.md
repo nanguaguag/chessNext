@@ -870,3 +870,9 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 ## 2026-11-05 / E62 / F21,B24 棋盘缩放AX声明与恢复
 
 访客临时标签2在`https://xiangqiai.com/#/settings/skins/edit/new?type=board`只读查看。棋子缩放AX语义声明60–140、当前100（O）；Playwright对控件尝试End和ArrowRight后AX仍100，不能确认实际键盘行为/可达端点（U）。格点拖柄AX值50但无min/max/now；边距stepper完整范围/联动继续U。未改参数或执行保存/使用；返回触发放弃确认，确认后默认棋盘/棋子/100%/坐标开/对面倒置关复原（V）。无用户棋谱/数据改动，原IAB tab1未触碰。按审计skill更新E62、Feature Matrix/Gaps、Interaction Spec、Traceability、Backlog、CURRENT_STATE/HANDOFF。仅文档改动，不运行Flutter测试/分析，不重启App；执行`git diff --check`后独立中文docs提交。下一步继续测可观察几何操作并推进全站缺口。
+
+## 2026-11-05 / E63 + M4-48 / F21,B24 棋盘皮肤棋子缩放实际边界
+
+访客临时标签2对棋盘编辑页棋子缩放做鼠标拖动：轨道左端读60%，右端附近先读139%，继续拖过轨道右侧读140%；60%向右约4屏幕像素后读61%。棋子面容随比例明显变、格线与四边数值不变。区间端点有实际操作验证；中间像素映射/右边缘行为和全量step细节U。未保存；点返回并确认丢弃，截图/AX复核回到设置页默认棋盘/棋子、全局100%、坐标开、对面倒置关。用户原IAB tab1未碰。
+
+M4-48按ADR-082将本机`BoardSkinGeometry`棋盘皮肤专属棋子比例由80–120%更改为60–140%、整数1%步进，并让控件key含用户皮肤ID；旧数据值不变且继续有效。定向`flutter test test/application/board_skin_geometry_test.dart test/widgets/board_coordinates_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`12/12；根`flutter test --reporter compact`544通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。根测试使用flutter_tester、未开App。复用唯一PID50598/VM61589，通过flutter attach热重载38/1745 libraries、1390ms；没有第二个App，人工窗口视觉not run。更新E63、ADR-082、需求矩阵/缺口/交互/追溯/待办和context。工作树待单独中文feat commit。继续格点/边距交互审计和全站其余差距，F21保持开放。

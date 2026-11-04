@@ -918,3 +918,8 @@ E66/E67仅更新文档，待`git diff --check`并以中文docs commit单独提�
 参考站访客临时tab2 `https://xiangqiai.com/#/settings/operations`：预设初始2秒，切自定义页显示0.1–60秒；stepper减值从2到1.5/1/0.5/0.1并在0.1处禁用，2秒起加号116次到60且禁用，常规步进0.5秒。只操作设置，不启动播放。恢复预设2秒，确认切换到声音设置时操作初值已恢复；仅展开快捷操作观察复制FEN/局面与着法/棋谱/东萍/局面链接/粘贴/搜索/保存/导入/导出勾选项，未改变任何项。证据E68，源站播放实际时序、快捷动作效果及持久化仍U。
 
 已更新REFERENCE_EVIDENCE、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、DECISIONS、TRACEABILITY、BACKLOG、CURRENT_STATE/HANDOFF；待`git diff --check`和docs commit。M4-32本机原0.5–30秒/0.1秒与该范围不一致，准备M4-51独立修正为0.1特殊首值、其后0.5秒步长至60秒并保留既有设置兼容。当前测试样本删除尚待用户确认，设置均恢复。
+
+
+# 2026-11-05 / E69 / F24 高级分析设置审计
+
+参考站访客临时tab2 `/settings/analysis/advanced`：默认5线程/320MB，说明内存每线程64MB；打开“解限”后推荐最大线程10→1024、内存512→1984MB；线程加号5→6令内存320→384，随后均恢复。仅UI联动V/能力文本O，不证明实际引擎/设备极限；手动范围和生命周期持久性U。更新证据、矩阵、缺口、交互规格、追溯、待办、CURRENT_STATE/HANDOFF。文档待diff check与中文单独commit，无Flutter测试/分析需求。核对进程仅App PID50598、runner PID50125；持续复用，不新开实例。下一步先看本机F24参数等价和全站剩余设置，继续推进。

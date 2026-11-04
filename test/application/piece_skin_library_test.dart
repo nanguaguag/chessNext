@@ -184,6 +184,112 @@ void main() {
   );
 
   test(
+    'collection import is all-or-none and selects the first chosen skin',
+    () async {
+      final engine = EngineSessionController(BoardSession(), null);
+      final prefs = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      await prefs.initialize();
+      final images = PieceImageLibraryController(
+        const CancelPieceImagePicker(),
+        MemoryPieceImageRepository(),
+      );
+      await images.initialize();
+      final repo = MemoryPieceSkinLibraryRepository();
+      final library = PieceSkinLibraryController(repo, images, prefs);
+      await library.initialize();
+      final packages = [
+        for (final name in ['集合甲', '集合乙'])
+          PieceSkinPackage(
+            profile: PieceSkinDefinition(
+              id: 'custom-exported${name == '集合甲' ? '01' : '02'}',
+              name: name,
+              baseSkin: PieceSkin.squareInk,
+              license: 'CC-BY-4.0',
+            ),
+            images: const {},
+          ),
+      ];
+
+      expect(await library.importPackages(packages), 2);
+      expect(library.profiles.map((profile) => profile.name), ['集合甲', '集合乙']);
+      expect(
+        library.profiles.every(
+          (profile) => profile.id != packages.first.profile.id,
+        ),
+        isTrue,
+      );
+      expect(library.profiles.first.license, 'CC-BY-4.0');
+      expect(prefs.value.selectedPieceSkinId, library.profiles.first.id);
+
+      final conflicting = await library.importPackages([
+        packages[0],
+        PieceSkinPackage(
+          profile: PieceSkinDefinition(
+            id: 'custom-exported03',
+            name: '集合甲',
+            baseSkin: PieceSkin.roundSeal,
+          ),
+          images: const {},
+        ),
+      ]);
+      expect(conflicting, 0);
+      expect(library.profiles, hasLength(2));
+      expect((await repo.load()).map((profile) => profile.name), [
+        '集合甲',
+        '集合乙',
+      ]);
+      library.dispose();
+      images.dispose();
+      prefs.dispose();
+      engine.dispose();
+    },
+  );
+
+  test(
+    'collection write failure removes every staged image and profile',
+    () async {
+      final engine = EngineSessionController(BoardSession(), null);
+      final prefs = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      await prefs.initialize();
+      final images = PieceImageLibraryController(
+        const CancelPieceImagePicker(),
+        MemoryPieceImageRepository(),
+      );
+      await images.initialize();
+      final repo = _FailingCatalog();
+      final library = PieceSkinLibraryController(repo, images, prefs);
+      await library.initialize();
+      final packages = [
+        for (var i = 1; i <= 2; i++)
+          PieceSkinPackage(
+            profile: PieceSkinDefinition(
+              id: 'custom-exported0$i',
+              name: '回滚皮肤$i',
+              baseSkin: PieceSkin.roundSeal,
+            ),
+            images: const {},
+          ),
+      ];
+      repo.failNext = true;
+      expect(await library.importPackages(packages), 0);
+      expect(library.profiles, isEmpty);
+      expect(images.snapshot, isEmpty);
+      expect(await repo.load(), isEmpty);
+      expect(prefs.value.selectedPieceSkinId, PieceSkin.roundSeal.name);
+      library.dispose();
+      images.dispose();
+      prefs.dispose();
+      engine.dispose();
+    },
+  );
+
+  test(
     'failed create and delete preserve the old selectable profile',
     () async {
       final engine = EngineSessionController(BoardSession(), null);

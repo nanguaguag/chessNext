@@ -838,3 +838,9 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 ## 2026-11-04 / E59 / F21,B24 棋盘皮肤新建页复审
 
 独立访客IAB临时标签10从棋盘选择器点新建。E59记录编辑页默认格点50/50、边距33/33/465/519、棋子缩放100%，重命名/导出/使用/保存入口（O）；本轮没触碰这些控件。点左上返回出现放弃确认，确认后回棋盘设置页，默认棋盘/棋子、100%、坐标开、倒置关仍显示（V）。仅确认取消，未验证保存/使用/导出成功和持久化。用户原tab1仍`#/settings`且未操作；临时tab10留在已恢复的`#/settings/board`（CUA仅列出了tab读/操作接口，未提供关闭tab方法）。无本机文件或账号/棋谱变化。审计未运行测试/analyze。后续按E59拆保存/应用可验收边界，继续B24/F21及其余全站项。
+
+## 2026-11-04 / M4-45 / F21,B24,ADR-079 多皮肤集合ZIP
+
+新增`PieceSkinCollectionPackageCodec`，定义项目collection ZIP：2–16套单皮肤schema1嵌套ZIP，总文件≤8MiB。先完整验证内外压缩路径、条目、身份、SHA和每张图片，再进入用户选择。皮肤库列表有checkbox，支持多选导出；导入多套包可选子集，展示许可/署名，预先禁选本机同名及64套容量外项目。`PieceSkinLibraryController.importPackages`先将所选皮肤图片写到新ID目录，最后一次保存定义列表；任一错误删除此前已装图片且不改变目录，成功追加并选中包顺序中第一项。
+
+专项`flutter test test/application/piece_skin_collection_package_codec_test.dart test/application/piece_skin_library_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`14/14；根`flutter test --reporter compact`535通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一`flutter run -d macos --no-pub`runner PID6602热重载成功（Reloaded 7 of 1740 libraries，2498ms），App PID6847仍唯一；根测试未启动App。CUA未做macOS应用窗口人工点选；站点多套ZIP格式未验证，项目collection格式不宣称兼容。

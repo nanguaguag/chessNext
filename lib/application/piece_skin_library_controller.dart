@@ -225,6 +225,73 @@ class PieceSkinLibraryController extends ChangeNotifier {
     }
   }
 
+  Future<int> importPackages(List<PieceSkinPackage> packages) async {
+    if (packages.isEmpty || loading || profiles.length + packages.length > 64) {
+      error = '所选皮肤数量无效或本机皮肤目录容量不足。';
+      notifyListeners();
+      return 0;
+    }
+    final names = <String>{
+      for (final profile in profiles) profile.name.toLowerCase(),
+    };
+    if (packages.any(
+      (package) => !names.add(package.profile.name.toLowerCase()),
+    )) {
+      error = '所选皮肤含重复名称，未导入任何内容。';
+      notifyListeners();
+      return 0;
+    }
+
+    loading = true;
+    error = null;
+    notifyListeners();
+    final imported = <PieceSkinDefinition>[];
+    final installedIds = <String>[];
+    try {
+      for (final package in packages) {
+        final id = _newId();
+        if (!await images.installPackageImages(id, package.images)) {
+          throw StateError('Collection image install failed');
+        }
+        installedIds.add(id);
+        final profile = package.profile;
+        imported.add(
+          PieceSkinDefinition(
+            id: id,
+            name: profile.name,
+            baseSkin: profile.baseSkin,
+            scalePercent: profile.scalePercent,
+            offsetXPercent: profile.offsetXPercent,
+            offsetYPercent: profile.offsetYPercent,
+            shadow: profile.shadow,
+            license: profile.license,
+            attribution: profile.attribution,
+          ),
+        );
+      }
+      await repository.save([...profiles, ...imported]);
+      profiles = List.unmodifiable([...profiles, ...imported]);
+      try {
+        final first = imported.first;
+        await preferences.selectPieceSkin(first.baseSkin, first.id);
+      } catch (_) {
+        error = '皮肤已导入，但自动选用第一套皮肤失败。';
+      }
+      return imported.length;
+    } catch (_) {
+      for (final id in installedIds.reversed) {
+        try {
+          await images.discardInstalledSkin(id);
+        } catch (_) {}
+      }
+      error = '集合导入失败，皮肤目录保持不变。';
+      return 0;
+    } finally {
+      loading = false;
+      if (!_disposed) notifyListeners();
+    }
+  }
+
   String _newId() =>
       'custom-${DateTime.now().microsecondsSinceEpoch.toRadixString(36)}-${Random.secure().nextInt(1 << 24).toRadixString(36)}';
 

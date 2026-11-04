@@ -10,6 +10,7 @@ import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/piece_skin_folder_picker.dart';
 import '../../ports/piece_skin_catalog.dart';
 import '../../application/piece_skin_package_codec.dart';
+import '../../application/piece_skin_collection_package_codec.dart';
 
 class PieceSkinLibraryDialog extends StatefulWidget {
   const PieceSkinLibraryDialog({
@@ -44,6 +45,7 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
   String? _remoteCacheStatus;
   int _remotePage = 1;
   int _remoteTotal = 0;
+  final Set<String> _exportSelection = {};
 
   @override
   void initState() {
@@ -302,7 +304,16 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
                     ),
                   for (final profile in _visibleProfiles())
                     ListTile(
-                      leading: const Icon(Icons.folder_copy_outlined),
+                      leading: Checkbox(
+                        value: _exportSelection.contains(profile.id),
+                        onChanged: (selected) => setState(() {
+                          if (selected == true) {
+                            _exportSelection.add(profile.id);
+                          } else {
+                            _exportSelection.remove(profile.id);
+                          }
+                        }),
+                      ),
                       title: Text(profile.name),
                       subtitle: Text(
                         profile.baseSkin == PieceSkin.roundSeal
@@ -390,6 +401,14 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
         ),
       ),
       actions: [
+        if (widget.exporter != null)
+          TextButton.icon(
+            onPressed: widget.library.loading || _exportSelection.length < 2
+                ? null
+                : () => _exportCollection(context),
+            icon: const Icon(Icons.archive_outlined),
+            label: Text('导出所选 ${_exportSelection.length} 套'),
+          ),
         TextButton.icon(
           onPressed: widget.library.loading || widget.picker == null
               ? null
@@ -682,12 +701,40 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
   ) async {
     final bytes = await pendingBytes;
     if (bytes == null || !context.mounted) return;
-    final skinPackage = PieceSkinPackageCodec.decode(bytes);
+    PieceSkinPackage? skinPackage;
+    PieceSkinCollectionPackage? collection;
+    try {
+      skinPackage = PieceSkinPackageCodec.decode(bytes);
+    } on FormatException {
+      collection = PieceSkinCollectionPackageCodec.decode(bytes);
+    }
+    if (collection != null) {
+      final selected = await _selectCollection(context, collection);
+      if (selected == null || selected.isEmpty || !context.mounted) return;
+      final count = await widget.library.importPackages([
+        for (var i = 0; i < collection.packages.length; i++)
+          if (selected.contains(i)) collection.packages[i],
+      ]);
+      if (!context.mounted) return;
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(
+          content: Text(
+            count == selected.length
+                ? '已导入并选用$count 套皮肤。'
+                : widget.library.error ?? '集合皮肤导入失败。',
+          ),
+        ),
+      );
+      return;
+    }
+    final singlePackage = skinPackage!;
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('导入${skinPackage.profile.name}？'),
-        content: Text('将新增一套本机皮肤，包含${skinPackage.images.length}张图片。导入后会选用该皮肤。'),
+        title: Text('导入${singlePackage.profile.name}？'),
+        content: Text(
+          '将新增一套本机皮肤，包含${singlePackage.images.length}张图片。导入后会选用该皮肤。',
+        ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
@@ -701,7 +748,7 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
       ),
     );
     if (confirmed != true || !context.mounted) return;
-    final imported = await widget.library.importPackage(skinPackage);
+    final imported = await widget.library.importPackage(singlePackage);
     if (!context.mounted) return;
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(
       SnackBar(
@@ -710,5 +757,138 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
         ),
       ),
     );
+  }
+
+  Future<Set<int>?> _selectCollection(
+    BuildContext context,
+    PieceSkinCollectionPackage collection,
+  ) {
+    final existingNames = widget.library.profiles
+        .map((profile) => profile.name.toLowerCase())
+        .toSet();
+    final remainingCapacity = 64 - widget.library.profiles.length;
+    final selected = <int>{};
+    for (var i = 0; i < collection.packages.length; i++) {
+      final name = collection.packages[i].profile.name.toLowerCase();
+      if (selected.length < remainingCapacity &&
+          !existingNames.contains(name)) {
+        selected.add(i);
+      }
+    }
+    return showDialog<Set<int>>(
+      context: context,
+      builder: (context) => StatefulBuilder(
+        builder: (context, setDialogState) => AlertDialog(
+          title: const Text('选择要导入的皮肤'),
+          content: SizedBox(
+            width: 380,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  '压缩包已完整校验，共${collection.packages.length}套；'
+                  '本机最多还可导入$remainingCapacity套，重名项不可选。'
+                  '确认导入即表示接受所选皮肤列出的许可和署名要求。',
+                ),
+                const SizedBox(height: 8),
+                ConstrainedBox(
+                  constraints: const BoxConstraints(maxHeight: 300),
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      for (var i = 0; i < collection.packages.length; i++)
+                        Builder(
+                          builder: (context) {
+                            final profile = collection.packages[i].profile;
+                            final duplicate = existingNames.contains(
+                              profile.name.toLowerCase(),
+                            );
+                            final atCapacity =
+                                selected.length >= remainingCapacity &&
+                                !selected.contains(i);
+                            return CheckboxListTile(
+                              value: selected.contains(i),
+                              title: Text(profile.name),
+                              subtitle: Text(
+                                duplicate
+                                    ? '本机已有同名皮肤'
+                                    : [
+                                        '${collection.packages[i].images.length} 张图片',
+                                        '许可：${profile.license.isEmpty ? '未提供' : profile.license}',
+                                        if (profile.attribution.isNotEmpty)
+                                          '署名：${profile.attribution}',
+                                      ].join(' · '),
+                              ),
+                              onChanged: duplicate || atCapacity
+                                  ? null
+                                  : (value) => setDialogState(() {
+                                      if (value == true) {
+                                        selected.add(i);
+                                      } else {
+                                        selected.remove(i);
+                                      }
+                                    }),
+                            );
+                          },
+                        ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: selected.isEmpty
+                  ? null
+                  : () => Navigator.pop(context, selected),
+              child: Text('接受许可并导入 ${selected.length} 套'),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Future<void> _exportCollection(BuildContext context) async {
+    final selected = widget.library.profiles
+        .where((profile) => _exportSelection.contains(profile.id))
+        .toList(growable: false);
+    try {
+      final bytes = PieceSkinCollectionPackageCodec.encode([
+        for (final profile in selected)
+          PieceSkinPackage(
+            profile: profile,
+            images: widget.library.images.imagesFor(profile.id),
+          ),
+      ]);
+      final result = await widget.exporter!.saveZip(
+        suggestedName: 'xiangqi-skins',
+        bytes: bytes,
+        cancellation: FileExportCancellation(),
+      );
+      if (!context.mounted || result == RecordFileExportResult.cancelled) {
+        return;
+      }
+      ScaffoldMessenger.maybeOf(
+        context,
+      )?.showSnackBar(SnackBar(content: Text('已导出${selected.length}套皮肤。')));
+    } on FormatException {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(
+          context,
+        )?.showSnackBar(const SnackBar(content: Text('所选皮肤集合超过项目ZIP限制，未导出。')));
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(
+          context,
+        )?.showSnackBar(const SnackBar(content: Text('皮肤集合导出失败，可重试。')));
+      }
+    }
   }
 }

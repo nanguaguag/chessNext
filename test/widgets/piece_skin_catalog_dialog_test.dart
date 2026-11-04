@@ -5,11 +5,15 @@ import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/piece_image_library_controller.dart';
 import 'package:chess_next/application/piece_skin_library_controller.dart';
 import 'package:chess_next/application/piece_skin_package_codec.dart';
+import 'package:chess_next/application/piece_skin_collection_package_codec.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/features/settings/piece_skin_library_dialog.dart';
 import 'package:chess_next/ports/piece_skin_catalog.dart';
 import 'package:chess_next/ports/piece_skin_library.dart';
+import 'package:chess_next/ports/piece_skin_package_picker.dart';
+import 'package:chess_next/ports/piece_skin_package_exporter.dart';
 import 'package:chess_next/ports/piece_images.dart';
+import 'package:chess_next/ports/record_file_exporter.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -66,7 +70,169 @@ class _Catalog implements PieceSkinCatalog {
   }) async => packageBytes;
 }
 
+class _StaticPackagePicker implements PieceSkinPackagePicker {
+  _StaticPackagePicker(this.bytes);
+  final Uint8List bytes;
+
+  @override
+  Future<Uint8List?> pickZip() async => bytes;
+}
+
+class _MemoryPackageExporter implements PieceSkinPackageExporter {
+  Uint8List? bytes;
+
+  @override
+  Future<RecordFileExportResult> saveZip({
+    required String suggestedName,
+    required Uint8List bytes,
+    required FileExportCancellation cancellation,
+  }) async {
+    this.bytes = Uint8List.fromList(bytes);
+    return RecordFileExportResult.saved;
+  }
+}
+
 void main() {
+  testWidgets('exports selected profiles as one validated collection ZIP', (
+    tester,
+  ) async {
+    final engine = EngineSessionController(BoardSession(), null);
+    final preferences = PreferencesController(
+      engine,
+      MemoryPreferencesRepository(),
+    );
+    await preferences.initialize();
+    final images = PieceImageLibraryController(
+      const CancelPieceImagePicker(),
+      MemoryPieceImageRepository(),
+    );
+    await images.initialize();
+    final skins = PieceSkinLibraryController(
+      MemoryPieceSkinLibraryRepository(),
+      images,
+      preferences,
+    );
+    await skins.initialize();
+    await skins.create(name: '导出皮肤甲');
+    await skins.create(name: '导出皮肤乙');
+    final exporter = _MemoryPackageExporter();
+    addTearDown(() {
+      skins.dispose();
+      images.dispose();
+      preferences.dispose();
+      engine.dispose();
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) =>
+                    PieceSkinLibraryDialog(library: skins, exporter: exporter),
+              ),
+              child: const Text('打开皮肤库'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('打开皮肤库'));
+    await tester.pumpAndSettle();
+    expect(
+      tester
+          .widget<TextButton>(find.widgetWithText(TextButton, '导出所选 0 套'))
+          .onPressed,
+      isNull,
+    );
+    await tester.tap(find.byType(Checkbox).at(0));
+    await tester.tap(find.byType(Checkbox).at(1));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('导出所选 2 套'));
+    await tester.pumpAndSettle();
+    final decoded = PieceSkinCollectionPackageCodec.decode(exporter.bytes!);
+    expect(decoded.packages.map((item) => item.profile.name).toSet(), {
+      '导出皮肤甲',
+      '导出皮肤乙',
+    });
+  });
+
+  testWidgets('validates a collection then imports only selected skins', (
+    tester,
+  ) async {
+    final engine = EngineSessionController(BoardSession(), null);
+    final preferences = PreferencesController(
+      engine,
+      MemoryPreferencesRepository(),
+    );
+    await preferences.initialize();
+    final images = PieceImageLibraryController(
+      const CancelPieceImagePicker(),
+      MemoryPieceImageRepository(),
+    );
+    await images.initialize();
+    final skins = PieceSkinLibraryController(
+      MemoryPieceSkinLibraryRepository(),
+      images,
+      preferences,
+    );
+    await skins.initialize();
+    final collection = PieceSkinCollectionPackageCodec.encode([
+      for (var i = 1; i <= 2; i++)
+        PieceSkinPackage(
+          profile: PieceSkinDefinition(
+            id: 'custom-exported0$i',
+            name: '集合皮肤$i',
+            baseSkin: PieceSkin.roundSeal,
+            license: i == 1 ? 'CC-BY-4.0' : '',
+            attribution: i == 1 ? '作者甲' : '',
+          ),
+          images: const {},
+        ),
+    ]);
+    addTearDown(() {
+      skins.dispose();
+      images.dispose();
+      preferences.dispose();
+      engine.dispose();
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () => showDialog<void>(
+                context: context,
+                builder: (_) => PieceSkinLibraryDialog(
+                  library: skins,
+                  picker: _StaticPackagePicker(collection),
+                ),
+              ),
+              child: const Text('打开皮肤库'),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('打开皮肤库'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('导入ZIP'));
+    await tester.pumpAndSettle();
+    expect(find.text('集合皮肤1'), findsOneWidget);
+    expect(find.text('集合皮肤2'), findsOneWidget);
+    expect(find.textContaining('许可：CC-BY-4.0'), findsOneWidget);
+    expect(find.textContaining('署名：作者甲'), findsOneWidget);
+    await tester.tap(find.byType(CheckboxListTile).at(1));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('接受许可并导入 1 套'));
+    await tester.pumpAndSettle();
+    expect(skins.profiles.map((profile) => profile.name), ['集合皮肤1']);
+    expect(preferences.value.selectedPieceSkinId, skins.profiles.single.id);
+  });
+
   testWidgets('saves self-hosted endpoint and shows license before import', (
     tester,
   ) async {

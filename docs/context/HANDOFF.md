@@ -4,9 +4,11 @@
 
 已提交：M4-39 `ae9858e`自建公开目录服务；M4-40 `c4c4aa6`只读客户端端口；M4-41 `38886a5`自建URL偏好、目录浏览/许可署名/离线状态；M4-42 `5b8384d`有界下载、摘要校验和许可确认导入；M4-43 `c6bc08e`自制样包loopback端到端集成测试；M4-44 `6712cdd`目录缓存和离线提示。
 
-M4-44（本次当前改动）按ADR-078新增`PieceSkinCatalogCache`端口及`FilePieceSkinCatalogCache`，只缓存成功协议页；每个查询页≤2MiB、最多24页、临时文件替换、查询键SHA-256文件名。请求仍先联网，只在传输不可达时回退完全相同查询缓存，并在列表显示“离线缓存”和抓取时间；HTTP拒绝/数据无效不会回退，包下载/许可确认不变。定向`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一runner PID6602成功热重载8/1739 libraries（2161ms），App PID6847仍唯一；无额外App。测试依赖官方Pikafish/NNUE的5项跳过。缓存/HTTP/UI增量待提交。
+M4-44（已提交`6712cdd`）按ADR-078新增`PieceSkinCatalogCache`端口及`FilePieceSkinCatalogCache`，只缓存成功协议页；每个查询页≤2MiB、最多24页、临时文件替换、查询键SHA-256文件名。请求仍先联网，只在传输不可达时回退完全相同查询缓存，并在列表显示“离线缓存”和抓取时间；HTTP拒绝/数据无效不会回退，包下载/许可确认不变。定向`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一runner PID6602成功热重载8/1739 libraries（2161ms），App PID6847仍唯一；无额外App。测试依赖官方Pikafish/NNUE的5项跳过。
 
-最新证据E59：独立IAB临时标签10在棋盘新建编辑页观察到保存/使用/导出入口但未点；只读返回确认可丢弃，默认棋盘设置恢复。保存/使用/导出结果仍U。用户原标签1未触碰；标签10留在`#/settings/board`，可继续用但不依赖此tab。下一步先审计/设计保存与应用的验收边界，再继续B24/F21和全站缺口。M4-44项目P缓存已提交；真实托管环境和手工macOS UI均未验。登录部分除外，其它在线能力仍在总范围，全站仍未对齐。当前唯一runner PID6602、App PID6847；无服务/测试后台。
+M4-45本次交付：`PieceSkinCollectionPackageCodec`项目自有2–16套/8MiB多皮肤ZIP；完整预校验后显示可选子集/许可署名，重名和容量超限不可选；本机多选导出，批次导入任何失败回滚暂存图片，成功使用新ID并选第一套。定向14/14；根`flutter test --reporter compact`535通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用PID6602 runner热重载7/1740 libraries成功（2498ms），PID6847仍唯一App，测试未新开App。无人工视觉验收。项目包不声称兼容源站未验证ZIP。
+
+最新证据E59：独立IAB临时标签10在棋盘新建编辑页观察到保存/使用/导出入口但未点；只读返回确认可丢弃，默认棋盘设置恢复。保存/使用/导出结果仍U。用户原标签1未触碰；标签10留在`#/settings/board`，可继续用但不依赖此tab。下一步继续B24/F21和全站缺口，另需审计保存/应用边界。真实托管环境和手工macOS UI均未验。登录部分除外，其它在线能力仍在总范围，全站仍未对齐。当前唯一runner PID6602、App PID6847；无服务/测试后台。
 
 # 会话交接
 

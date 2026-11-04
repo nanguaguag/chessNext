@@ -1,5 +1,9 @@
 # 当前状态
 
+## 最新交付 M4-45（2026-11-04）
+
+F21/B24按ADR-079支持本机用户皮肤集合ZIP：项目自有外层包2–16项/≤8MiB，嵌套单皮肤schema1包；全包路径、SHA、图片格式先校验，用户可勾选多套导出、导入选择子集；重名/容量不足项禁选，许可署名展示并保留，批次图片暂存失败全回滚，成功使用新ID并选中第一项。定向14/14；根`flutter test --reporter compact`535通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用PID6602 runner热重载7/1740 libraries（2498ms），PID6847仍唯一App；根测试未打开App。人工macOS窗口视觉未验。源站多套ZIP格式仍U，不声称兼容；F21/全站不完整。
+
 ## 最新交付 M4-44（2026-11-04）
 
 F21/B24按ADR-078为自建目录实现离线查询缓存：仅缓存通过schema校验的成功页，SHA-256查询键、每页≤2MiB、最多24页、临时文件替换；请求先联网，超时/传输不可达才按精确查询键回退，页面标“离线缓存”和抓取时间。HTTP拒绝/无效响应不使用旧页；包导入许可流程不变。定向9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用runner PID6602热重载Reloaded 8/1739 libraries（2161ms），App PID6847仍唯一实例；根测试未启动App。服务真实托管和UI人工现场点选未验证，F21/全站不完整。

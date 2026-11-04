@@ -652,3 +652,9 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 ## 2026-11-04 / E59 / F21,B24 新建棋盘草稿入口与退出确认
 
 参考站证据见`REFERENCE_EVIDENCE.md#e59--2026-11-04-新建棋盘皮肤控制与未修改草稿退出`。独立IAB临时标签10只读进入`#/settings/skins/edit/new?type=board`：确认格点/边距/棋子缩放初值和重命名、导出、使用、保存按钮存在（O），未操作它们。未改控件点返回后确实要求确认放弃，确认回`#/settings/board`且默认设置保留（V）。空新草稿为何提示未保存及保存/使用/导出结果仍U；没有用户/账号或棋谱改动。用户原标签1保持在`#/settings`未触碰；临时标签10留在已恢复的棋盘设置页。
+
+## 2026-11-04 / M4-45 / F21,B24,ADR-079 项目多皮肤集合ZIP
+
+新增`PieceSkinCollectionPackageCodec`项目格式：2–16个嵌套的既有schema1单皮肤ZIP，总压缩文件≤8MiB；外层和内层逐一验证包路径/条目/声明身份/SHA/图片。皮肤库为本机用户皮肤提供勾选多项导出；导入先全包预检，再选择子集，条目显示许可证/署名，已有同名和目录容量外条目不可选。Controller逐项写图暂存后一次保存定义列表，失败回滚所有已暂存图片；成功分配新ID、保留元数据并选中集合中的第一项。此项目包不声称兼容源站未知ZIP格式。
+
+定向`flutter test test/application/piece_skin_collection_package_codec_test.dart test/application/piece_skin_library_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`14/14；根`flutter test --reporter compact`535通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一macOS runner PID6602热重载成功（Reloaded 7 of 1740 libraries，2498ms），App PID6847不变。根测试未启动App。CUA人工视觉验收未做；参考站多套ZIP格式未知，项目格式不称兼容。

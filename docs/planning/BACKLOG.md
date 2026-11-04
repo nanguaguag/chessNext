@@ -269,3 +269,5 @@ M4-28 / F21,B24：macOS选择解压的项目schema1单皮肤文件夹，固定�
 M4-30 / F20,B25：按ADR-065为本机四类侧栏卡片提供拖动排序，偏好校验必须是恰好四项且唯一，持久化旧值兼容与读写竞态沿用PreferencesController；布局按实时顺序重建，不修改棋树/分析。参考站实际面板映射仍U，项目分组为P。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID77791、VM `127.0.0.1:51219`。CUA `getApp("chessNext")`超时，人工窗口视觉验收未做。
 
 M4-31 / F20,B25：按ADR-066在同一Material3侧栏面板设置中提供四卡片独立显隐；全部隐藏时仍可从AppBar设置恢复。偏好支持空列表/去重/坏值拒绝、旧schema默认全开和异步迟到读取合并。适配项目卡片，不冒充源站面板映射。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID78894、VM `127.0.0.1:51984`。CUA窗口超时，人工视觉验收未做。
+
+M4-32至M4-34 / F20,B25：逐步实现当前线路定时播放与步时、棋谱栏/播放按钮显隐、侧栏面板切换栏；每片独立提交`d476409`、`cce3558`、`f3a6517`。M4-34根测试508通过/5跳过，analyze无问题，单一macOS Debug runner PID85978/VM `127.0.0.1:58768`保留；后续使用此runner热重载，避免重复启动桌面App。M4-35继续按ADR-070实现项目支持的长按/右键快捷动作配置，参考站未验证的东萍/链接/搜索项保留U。

@@ -563,6 +563,10 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 
 `AppPreferences.showMoveList/showRecordPlaybackButton`独立持久化，旧偏好默认可见，设置开关即时生效。隐藏棋谱栏时只收起标题、空态和着法列表；保留其它导航控制。隐藏播放按钮立即停播，并从导航行移除播放入口。专项/根测试、分析与macOS实际运行证据见CURRENT_STATE/SESSION_LOG；源站开关联动及“棋谱栏”准确覆盖范围仍U，项目语义P。
 
+## 2026-11-04 / M4-35 / F20,B25 棋盘快捷菜单
+
+`AppPreferences.boardContextActions`保存唯一动作白名单，默认仅包含项目已有能力；设置编辑器用复选框调整。主棋盘长按/右键打开菜单，复制FEN和当前线路中文着法走TextClipboard，文字导入/导出及本地保存复用既有用例。定向10/10；根`flutter test --reporter compact`509通过/5跳过；`flutter analyze --no-pub`无问题；macOS Build/Sync成功PID87104/VM `127.0.0.1:60069`。CUA未做菜单人工验收；网站专有UBB/链接/搜索仍未实现或U。
+
 ## 2026-11-04 / M4-34 / F20,B25 本机侧栏面板切换栏
 
 新增`showPanelSwitchBar`及`activeSidePanel`本机设置。打开时在四个启用侧栏中显示分段选择器，并仅挂载当前选择面板；关闭时恢复原来的排序堆叠。全隐藏时提示从设置恢复，选择被隐藏时临时回落首个可见面板。功能定向/根测试、分析和macOS实际运行详见CURRENT_STATE/SESSION_LOG；项目分组与选择语义为P，站点对应关系U。

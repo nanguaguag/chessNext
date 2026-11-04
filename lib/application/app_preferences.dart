@@ -30,6 +30,22 @@ enum TextSizePreference { system, standard, large, extraLarge }
 
 enum SidePanel { play, analysis, review, candidates }
 
+enum BoardContextAction {
+  copyFen,
+  copyRecord,
+  importText,
+  exportText,
+  saveRecord,
+}
+
+const defaultBoardContextActions = <BoardContextAction>[
+  BoardContextAction.copyFen,
+  BoardContextAction.copyRecord,
+  BoardContextAction.importText,
+  BoardContextAction.exportText,
+  BoardContextAction.saveRecord,
+];
+
 const defaultSidePanelOrder = <SidePanel>[
   SidePanel.play,
   SidePanel.analysis,
@@ -89,6 +105,7 @@ final class AppPreferences {
     this.showRecordPlaybackButton = true,
     this.showPanelSwitchBar = false,
     this.activeSidePanel = SidePanel.play,
+    List<BoardContextAction> boardContextActions = defaultBoardContextActions,
     this.guideVersion = 0,
     List<SidePanel> sidePanelOrder = defaultSidePanelOrder,
     List<SidePanel> visibleSidePanels = defaultSidePanelOrder,
@@ -105,7 +122,8 @@ final class AppPreferences {
                    : const PieceSkinShadow.standard()),
        }),
        sidePanelOrder = List.unmodifiable(sidePanelOrder),
-       visibleSidePanels = List.unmodifiable(visibleSidePanels) {
+       visibleSidePanels = List.unmodifiable(visibleSidePanels),
+       boardContextActions = List.unmodifiable(boardContextActions) {
     if (pieceSizePercent < 10 ||
         pieceSizePercent > 200 ||
         pieceSizePercent % 5 != 0 ||
@@ -149,6 +167,10 @@ final class AppPreferences {
         this.visibleSidePanels.length) {
       throw ArgumentError('Invalid visible side panels');
     }
+    if (this.boardContextActions.toSet().length !=
+        this.boardContextActions.length) {
+      throw ArgumentError('Invalid board context actions');
+    }
   }
   final ThemePreference theme;
   final AnimationSpeed animationSpeed;
@@ -189,6 +211,7 @@ final class AppPreferences {
   final bool showMoveList, showRecordPlaybackButton;
   final bool showPanelSwitchBar;
   final SidePanel activeSidePanel;
+  final List<BoardContextAction> boardContextActions;
   final List<SidePanel> sidePanelOrder;
   final List<SidePanel> visibleSidePanels;
   AppPreferences copyWith({
@@ -232,6 +255,7 @@ final class AppPreferences {
     bool? showRecordPlaybackButton,
     bool? showPanelSwitchBar,
     SidePanel? activeSidePanel,
+    List<BoardContextAction>? boardContextActions,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
     List<SidePanel>? visibleSidePanels,
@@ -280,6 +304,7 @@ final class AppPreferences {
         showRecordPlaybackButton ?? this.showRecordPlaybackButton,
     showPanelSwitchBar: showPanelSwitchBar ?? this.showPanelSwitchBar,
     activeSidePanel: activeSidePanel ?? this.activeSidePanel,
+    boardContextActions: boardContextActions ?? this.boardContextActions,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
     visibleSidePanels: visibleSidePanels ?? this.visibleSidePanels,
@@ -352,6 +377,10 @@ final class AppPreferences {
     if (showPanelSwitchBar) 'showPanelSwitchBar': true,
     if (activeSidePanel != SidePanel.play)
       'activeSidePanel': activeSidePanel.name,
+    if (!_listEquals(boardContextActions, defaultBoardContextActions))
+      'boardContextActions': boardContextActions
+          .map((action) => action.name)
+          .toList(),
     if (guideVersion != 0) 'guideVersion': guideVersion,
     if (!_listEquals(sidePanelOrder, defaultSidePanelOrder))
       'sidePanelOrder': sidePanelOrder.map((panel) => panel.name).toList(),
@@ -413,6 +442,15 @@ final class AppPreferences {
             (json['activeSidePanel'] is! String ||
                 !SidePanel.values.any(
                   (panel) => panel.name == json['activeSidePanel'],
+                ))) ||
+        (json.containsKey('boardContextActions') &&
+            (json['boardContextActions'] is! List ||
+                (json['boardContextActions'] as List).any(
+                  (value) =>
+                      value is! String ||
+                      !BoardContextAction.values.any(
+                        (action) => action.name == value,
+                      ),
                 ))) ||
         (json.containsKey('sidePanelOrder') &&
             (json['sidePanelOrder'] is! List ||
@@ -513,6 +551,15 @@ final class AppPreferences {
           (panel) => panel.name == json['activeSidePanel'],
           orElse: () => SidePanel.play,
         ),
+        boardContextActions:
+            (json['boardContextActions'] as List?)
+                ?.map(
+                  (value) => BoardContextAction.values.firstWhere(
+                    (action) => action.name == value,
+                  ),
+                )
+                .toList() ??
+            defaultBoardContextActions,
         guideVersion: json['guideVersion'] as int? ?? 0,
         sidePanelOrder:
             (json['sidePanelOrder'] as List?)
@@ -617,6 +664,7 @@ final class AppPreferences {
       showRecordPlaybackButton == other.showRecordPlaybackButton &&
       showPanelSwitchBar == other.showPanelSwitchBar &&
       activeSidePanel == other.activeSidePanel &&
+      _listEquals(boardContextActions, other.boardContextActions) &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
       _listEquals(visibleSidePanels, other.visibleSidePanels);
   @override
@@ -666,6 +714,7 @@ final class AppPreferences {
     showRecordPlaybackButton,
     showPanelSwitchBar,
     activeSidePanel,
+    Object.hashAll(boardContextActions),
     Object.hashAll(sidePanelOrder),
     Object.hashAll(visibleSidePanels),
   ]);

@@ -209,6 +209,9 @@ class PreferencesController extends ChangeNotifier {
             activeSidePanel: _edited.contains('activeSidePanel')
                 ? previous.activeSidePanel
                 : null,
+            boardContextActions: _edited.contains('boardContextActions')
+                ? previous.boardContextActions
+                : null,
           ),
         );
         _persisted = stored;
@@ -256,6 +259,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(showPanelSwitchBar: visible));
   Future<void> setActiveSidePanel(SidePanel panel) =>
       apply(value.copyWith(activeSidePanel: panel));
+  Future<void> setBoardContextActions(List<BoardContextAction> actions) =>
+      apply(value.copyWith(boardContextActions: actions));
   Future<void> setSidePanelOrder(List<SidePanel> order) =>
       apply(value.copyWith(sidePanelOrder: order));
   Future<void> setSidePanelVisibility(SidePanel panel, bool visible) {
@@ -493,6 +498,9 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.activeSidePanel != value.activeSidePanel) {
       _edited.add('activeSidePanel');
+    }
+    if (!listEquals(next.boardContextActions, value.boardContextActions)) {
+      _edited.add('boardContextActions');
     }
   }
 

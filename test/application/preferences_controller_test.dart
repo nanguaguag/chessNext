@@ -71,6 +71,7 @@ void main() {
         'showMoveList': 1,
         'showPanelSwitchBar': 'yes',
         'activeSidePanel': 'unknown',
+        'boardContextActions': ['copyFen', 'unknown'],
         'sidePanelOrder': ['analysis', 'analysis', 'review', 'candidates'],
       }.entries) {
         expect(
@@ -149,6 +150,10 @@ void main() {
       );
       final enablingPanelBar = preferences.setShowPanelSwitchBar(true);
       final choosingPanel = preferences.setActiveSidePanel(SidePanel.review);
+      final choosingContextActions = preferences.setBoardContextActions(const [
+        BoardContextAction.copyFen,
+        BoardContextAction.saveRecord,
+      ]);
       final hidingReview = preferences.setSidePanelVisibility(
         SidePanel.review,
         false,
@@ -167,6 +172,7 @@ void main() {
       await hidingPlaybackButton;
       await enablingPanelBar;
       await choosingPanel;
+      await choosingContextActions;
       await hidingReview;
       await exiting;
       await preferences.flush();
@@ -177,6 +183,10 @@ void main() {
       expect(preferences.value.showRecordPlaybackButton, isFalse);
       expect(preferences.value.showPanelSwitchBar, isTrue);
       expect(preferences.value.activeSidePanel, SidePanel.review);
+      expect(preferences.value.boardContextActions, const [
+        BoardContextAction.copyFen,
+        BoardContextAction.saveRecord,
+      ]);
       expect(
         preferences.value.visibleSidePanels,
         isNot(contains(SidePanel.review)),

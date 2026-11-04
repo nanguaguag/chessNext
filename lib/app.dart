@@ -708,6 +708,81 @@ class _BoardPage extends StatelessWidget {
     );
   }
 
+  Future<void> _showBoardContextMenu(
+    BuildContext context,
+    Offset globalPosition,
+  ) async {
+    final actions = preferences.value.boardContextActions;
+    if (actions.isEmpty) return;
+    final selected = await showMenu<BoardContextAction>(
+      context: context,
+      position: RelativeRect.fromLTRB(
+        globalPosition.dx,
+        globalPosition.dy,
+        globalPosition.dx,
+        globalPosition.dy,
+      ),
+      items: [
+        for (final action in actions)
+          PopupMenuItem(
+            value: action,
+            child: Text(_contextActionLabel(action)),
+          ),
+      ],
+    );
+    if (selected == null || !context.mounted) return;
+    switch (selected) {
+      case BoardContextAction.copyFen:
+        await _copyContextText(
+          context,
+          session.position.toFen(),
+          '已复制当前局面（FEN）',
+        );
+      case BoardContextAction.copyRecord:
+        final text = RecordTextExchange.exportText(
+          session.tree,
+          session.metadata,
+          TextExportFormat.chinese,
+        );
+        await _copyContextText(context, text, '已复制当前线路着法');
+      case BoardContextAction.importText:
+        await _import(context);
+      case BoardContextAction.exportText:
+        await _export(context);
+      case BoardContextAction.saveRecord:
+        await _save(context);
+    }
+  }
+
+  Future<void> _copyContextText(
+    BuildContext context,
+    String value,
+    String successMessage,
+  ) async {
+    try {
+      await clipboard.write(value);
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(successMessage)));
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('剪贴板不可用，请使用导出文字功能。')));
+      }
+    }
+  }
+
+  String _contextActionLabel(BoardContextAction action) => switch (action) {
+    BoardContextAction.copyFen => '复制当前局面（FEN）',
+    BoardContextAction.copyRecord => '复制当前线路着法',
+    BoardContextAction.importText => '从文字或剪贴板导入',
+    BoardContextAction.exportText => '导出或复制文字',
+    BoardContextAction.saveRecord => '保存到本地棋谱库',
+  };
+
   Future<void> _exportImage(BuildContext context) async {
     final snapshot = BoardImageSnapshot.capture(
       session,
@@ -908,11 +983,21 @@ class _BoardPage extends StatelessWidget {
                             .firstOrNull,
                         frozen: !analysis.enabled && !analysis.playing,
                       ),
-                      child: XiangqiBoard(
-                        session: session,
-                        assessment: analysis.currentMoveAssessment,
-                        recommendation: analysis.recommended,
-                        reply: analysis.reply,
+                      child: GestureDetector(
+                        onLongPressStart: (details) => _showBoardContextMenu(
+                          context,
+                          details.globalPosition,
+                        ),
+                        onSecondaryTapUp: (details) => _showBoardContextMenu(
+                          context,
+                          details.globalPosition,
+                        ),
+                        child: XiangqiBoard(
+                          session: session,
+                          assessment: analysis.currentMoveAssessment,
+                          recommendation: analysis.recommended,
+                          reply: analysis.reply,
+                        ),
                       ),
                     ),
                   ),

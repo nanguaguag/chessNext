@@ -5,6 +5,7 @@ import 'package:chess_next/features/records/move_list.dart';
 import 'package:chess_next/features/analysis/analysis_panel.dart';
 import 'package:chess_next/features/play/play_panel.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
+import 'package:chess_next/ports/text_clipboard.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../support/branched_record.dart';
@@ -129,4 +130,37 @@ void main() {
       expect(session.dirty, isFalse);
     },
   );
+
+  testWidgets('board long press runs configured copy FEN action', (
+    tester,
+  ) async {
+    desktop(tester);
+    final store = MemoryPreferencesRepository()
+      ..value = AppPreferences(
+        boardContextActions: const [BoardContextAction.copyFen],
+      );
+    final clipboard = _FakeClipboard();
+    await tester.pumpWidget(
+      ChessNextApp(preferencesRepository: store, clipboard: clipboard),
+    );
+    await tester.pumpAndSettle();
+    final board = find.byType(XiangqiBoard);
+    await tester.longPressAt(tester.getCenter(board));
+    await tester.pumpAndSettle();
+    expect(find.text('复制当前局面（FEN）'), findsOneWidget);
+    await tester.tap(find.text('复制当前局面（FEN）'));
+    await tester.pumpAndSettle();
+    final session = tester.widget<XiangqiBoard>(board).session;
+    expect(clipboard.value, session.position.toFen());
+  });
+}
+
+class _FakeClipboard implements TextClipboard {
+  String? value;
+
+  @override
+  Future<String?> read() async => value;
+
+  @override
+  Future<void> write(String text) async => value = text;
 }

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../application/app_preferences.dart';
 import '../../application/preferences_controller.dart';
 
 class RecordPlaybackSettingsDialog extends StatelessWidget {
@@ -8,6 +9,14 @@ class RecordPlaybackSettingsDialog extends StatelessWidget {
   static const presets = [500, 1000, 2000, 3000];
   static String seconds(int milliseconds) =>
       '${(milliseconds / 1000).toStringAsFixed(milliseconds % 1000 == 0 ? 0 : 1)}秒';
+
+  static String actionLabel(BoardContextAction action) => switch (action) {
+    BoardContextAction.copyFen => '复制当前局面（FEN）',
+    BoardContextAction.copyRecord => '复制当前线路着法',
+    BoardContextAction.importText => '从文字或剪贴板导入',
+    BoardContextAction.exportText => '导出或复制文字',
+    BoardContextAction.saveRecord => '保存到本地棋谱库',
+  };
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
@@ -77,6 +86,27 @@ class RecordPlaybackSettingsDialog extends StatelessWidget {
                   value: preferences.value.showPanelSwitchBar,
                   onChanged: preferences.setShowPanelSwitchBar,
                 ),
+                const Divider(height: 24),
+                const Text('棋盘长按/右键快捷操作'),
+                for (final action in BoardContextAction.values)
+                  CheckboxListTile.adaptive(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(actionLabel(action)),
+                    value: preferences.value.boardContextActions.contains(
+                      action,
+                    ),
+                    onChanged: (enabled) {
+                      final actions = [
+                        ...preferences.value.boardContextActions,
+                      ];
+                      if (enabled == true) {
+                        actions.add(action);
+                      } else {
+                        actions.remove(action);
+                      }
+                      preferences.setBoardContextActions(actions);
+                    },
+                  ),
                 if (preferences.error case final error?)
                   Padding(
                     padding: const EdgeInsets.only(top: 8),

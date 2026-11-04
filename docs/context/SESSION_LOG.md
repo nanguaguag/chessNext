@@ -833,4 +833,8 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 
 新增`PieceSkinCatalogCache`端口和`FilePieceSkinCatalogCache`文件适配器。查询成功并完成schema校验后缓存原始响应，键含服务地址/query/sort/page/pageSize，文件名仅为SHA-256；单页最多2MiB、最多保留24页。原子临时文件写入，坏缓存视未命中。HTTP适配器先访问在线服务，只在超时/Socket/传输不可达时读取同查询缓存；HTTP拒绝/无效远程JSON不回退。皮肤库列表标注“离线缓存”和抓取时间；下载包仍需哈希、项目codec和许可确认。
 
-专项`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。唯一macOS runner PID6602热重载明确成功（Reloaded 8 of 1739 libraries，2161ms）；App PID6847仍唯一实例，测试没有启动App。无人工UI现场点选/视觉验收；真实托管环境未部署。M4-44当前待提交，接着继续审计/实现F21余项与其它全站缺口。
+专项`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。唯一macOS runner PID6602热重载明确成功（Reloaded 8 of 1739 libraries，2161ms）；App PID6847仍唯一实例，测试没有启动App。无人工UI现场点选/视觉验收；真实托管环境未部署。已提交`6712cdd feat(catalog): 增加离线目录缓存`。接着继续审计/实现F21余项与其它全站缺口。
+
+## 2026-11-04 / E59 / F21,B24 棋盘皮肤新建页复审
+
+独立访客IAB临时标签10从棋盘选择器点新建。E59记录编辑页默认格点50/50、边距33/33/465/519、棋子缩放100%，重命名/导出/使用/保存入口（O）；本轮没触碰这些控件。点左上返回出现放弃确认，确认后回棋盘设置页，默认棋盘/棋子、100%、坐标开、倒置关仍显示（V）。仅确认取消，未验证保存/使用/导出成功和持久化。用户原tab1仍`#/settings`且未操作；临时tab10留在已恢复的`#/settings/board`（CUA仅列出了tab读/操作接口，未提供关闭tab方法）。无本机文件或账号/棋谱变化。审计未运行测试/analyze。后续按E59拆保存/应用可验收边界，继续B24/F21及其余全站项。

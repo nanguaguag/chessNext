@@ -4,6 +4,10 @@
 
 F21/B24按ADR-078为自建目录实现离线查询缓存：仅缓存通过schema校验的成功页，SHA-256查询键、每页≤2MiB、最多24页、临时文件替换；请求先联网，超时/传输不可达才按精确查询键回退，页面标“离线缓存”和抓取时间。HTTP拒绝/无效响应不使用旧页；包导入许可流程不变。定向9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用runner PID6602热重载Reloaded 8/1739 libraries（2161ms），App PID6847仍唯一实例；根测试未启动App。服务真实托管和UI人工现场点选未验证，F21/全站不完整。
 
+## 最新审计 E59（2026-11-04）
+
+F21/B24新建棋盘皮肤编辑页显示格点50/50、边距33/33/465/519、棋子缩放100%，并有重命名/导出/使用/保存入口；均只记录可见状态，没有操作按钮。即便未改控件，返回仍提示“放弃修改”；确认后回`#/settings/board`，默认状态保持。保存/使用/导出结果及空草稿dirty原因仍U。证据见`REFERENCE_EVIDENCE.md` E59。用户原IAB tab1未动，独立审计tab10留在已恢复棋盘设置页。
+
 ## 已提交 M4-43（2026-11-04）
 
 F21/B24新增自建目录服务→HTTP客户端→分页搜索→有界下载/SHA→项目包codec→皮肤库许可元数据持久化的loopback集成验证。样包由测试自行生成，不含参考站资源。专项1/1；根`flutter test --reporter compact`526通过/5跳过；`flutter analyze --no-pub`通过。`flutter_tester`运行期间未启动新App；复核唯一runner PID6602/App PID6847。服务部署到真实托管环境及UI人工点选验收仍未做，F21/全站不完整。M4-43提交`c6bc08e`。

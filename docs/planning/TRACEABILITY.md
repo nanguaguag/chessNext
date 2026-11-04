@@ -648,3 +648,7 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 新增`PieceSkinCatalogCache`端口与`FilePieceSkinCatalogCache`。只保存HTTP成功且JSON schema已完整校验的列表页，key由endpoint、query、sort、page和pageSize组成，文件名为key的SHA-256；每页≤2MiB，最多24页，临时文件写后替换。每次操作先在线；只对请求超时/Socket或传输`HttpException`不可达时按精确key回退，页面显示“离线缓存”和原抓取时间。HTTP非200或远程格式错误不回退；离线页不会自动安装，下载包继续走SHA-256、codec和许可证二次确认。
 
 专项`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过（依赖官方Pikafish/NNUE环境）；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用`flutter run -d macos --no-pub`runner PID6602按`r`热重载成功（Reloaded 8 of 1739 libraries，2161ms），App PID6847仍是唯一实例。根测试使用flutter_tester，未启动App。未做人工作业现场UI验收，也未验证真实托管服务部署。
+
+## 2026-11-04 / E59 / F21,B24 新建棋盘草稿入口与退出确认
+
+参考站证据见`REFERENCE_EVIDENCE.md#e59--2026-11-04-新建棋盘皮肤控制与未修改草稿退出`。独立IAB临时标签10只读进入`#/settings/skins/edit/new?type=board`：确认格点/边距/棋子缩放初值和重命名、导出、使用、保存按钮存在（O），未操作它们。未改控件点返回后确实要求确认放弃，确认回`#/settings/board`且默认设置保留（V）。空新草稿为何提示未保存及保存/使用/导出结果仍U；没有用户/账号或棋谱改动。用户原标签1保持在`#/settings`未触碰；临时标签10留在已恢复的棋盘设置页。

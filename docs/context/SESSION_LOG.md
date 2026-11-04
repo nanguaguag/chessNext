@@ -739,4 +739,4 @@ M4-31 F20侧栏显隐：新增可空`visibleSidePanels`集合，拒绝重复/未
 
 在独立临时访客IAB标签（`https://xiangqiai.com/#/`，1280×720）继续操作，用户原设置标签未触碰。左侧上下分区AX 55→58；继续向上拖到边缘见25，往下拖至视口底部附近见72（72高值端是否完整饱和仍U）。右侧引擎/云库上下分区55→58，向上边缘见25、向下见75；继续拖到屏幕下沿无数值变化。点击“重置布局”，两个分区均回55。临时标签关闭，IAB仅保留用户原`#/settings`标签。
 
-据此更新E53、F20矩阵/缺口、B26待办和CURRENT_STATE/HANDOFF。工作树仅文档更改；`git diff --check`通过。无代码变更，因此本轮没有运行测试/analyze，也没有重启macOS App。待提交中文文档checkpoint；随后按证据实现F19/F20本机功能，遵守每功能根测试+analyze+唯一runner实际macOS运行+单独中文commit。全站仍未对齐。
+据此更新E53、F20矩阵/缺口、B26待办和CURRENT_STATE/HANDOFF。`git diff --check`通过；文档提交`a308cb0`，SESSION_LOG校订`e57891b`。无代码变更，因此本轮没有运行测试/analyze，也没有重启macOS App。随后按证据实现F19/F20本机功能，遵守每功能根测试+analyze+唯一runner实际macOS运行+单独中文commit。全站仍未对齐。

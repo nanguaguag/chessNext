@@ -52,6 +52,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
   late ThemePreference theme;
   late BoardLayoutPreset boardLayoutPreset;
   late int threads, hash, pv;
+  late bool autoHash;
   late double seconds;
   @override
   void initState() {
@@ -60,6 +61,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     theme = value.theme;
     boardLayoutPreset = value.boardLayoutPreset;
     threads = value.threads;
+    autoHash = value.autoHash;
     hash = value.hashMb;
     pv = value.multiPv;
     seconds = value.thinkTimeMs / 1000;
@@ -69,12 +71,20 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     String label,
     int value,
     int maximum,
-    ValueChanged<int> change,
-  ) => TextFormField(
+    ValueChanged<int> change, {
+    bool enabled = true,
+    String? helperText,
+    Key? key,
+  }) => TextFormField(
+    key: key,
     initialValue: '$value',
+    enabled: enabled,
     keyboardType: TextInputType.number,
     inputFormatters: [FilteringTextInputFormatter.digitsOnly],
-    decoration: InputDecoration(labelText: label, helperText: '1 – $maximum'),
+    decoration: InputDecoration(
+      labelText: label,
+      helperText: helperText ?? '1 – $maximum',
+    ),
     onChanged: (text) => change(int.tryParse(text) ?? 0),
     validator: (text) {
       final value = int.tryParse(text ?? '');
@@ -214,13 +224,41 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   '分析线程',
                   threads,
                   widget.preferences.engine.maxThreads,
-                  (value) => threads = value,
+                  (value) => setState(() {
+                    threads = value;
+                    if (autoHash) {
+                      hash = (value * 64).clamp(
+                        1,
+                        widget.preferences.engine.maxHash,
+                      );
+                    }
+                  }),
+                ),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('按线程自动分配内存'),
+                  subtitle: const Text('每个线程64 MB，并受引擎上限约束'),
+                  value: autoHash,
+                  onChanged: (value) => setState(() {
+                    autoHash = value;
+                    if (autoHash) {
+                      hash = (threads * 64).clamp(
+                        1,
+                        widget.preferences.engine.maxHash,
+                      );
+                    }
+                  }),
                 ),
                 number(
                   '分析内存（MB）',
                   hash,
                   widget.preferences.engine.maxHash,
                   (value) => hash = value,
+                  enabled: !autoHash,
+                  key: ValueKey('analysis-hash-$hash-$autoHash'),
+                  helperText: autoHash
+                      ? '$threads × 64 MB，受引擎上限约束'
+                      : '1 – ${widget.preferences.engine.maxHash}',
                 ),
                 number(
                   '多路变化数',
@@ -272,6 +310,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       theme: theme,
                       boardLayoutPreset: boardLayoutPreset,
                       threads: threads,
+                      autoHash: autoHash,
                       hashMb: hash,
                       multiPv: pv,
                       thinkTimeMs: (seconds * 1000).round(),

@@ -117,3 +117,5 @@ M4-42 / F21,B24（ADR-077）：HTTP目录适配器增加有界skin ZIP下载和S
 M4-44 / F21,B24（ADR-078）：`PieceSkinCatalogCache`端口及`FilePieceSkinCatalogCache`缓存成功解析的目录查询页，文件名为查询键SHA-256，最多24页/单页2MiB。仅传输不可达时按完全相同查询读取旧页；UI标出“离线缓存”和抓取时间，HTTP拒绝/无效响应不回退。在线包下载/校验与导入许可确认流程不受缓存改变。
 
 M4-45 / F21,B24（ADR-079）：`PieceSkinCollectionPackageCodec`为2–16个单皮肤schema1 ZIP提供外层collection ZIP，文件总上限8MiB；双层SHA/路径/图片全部校验后，用户可选导入子集。库Controller对重名/64套容量预检，逐皮肤图片暂存后一次保存目录，失败清理已暂存文件；成功用新ID加入并选择第一套。目录UI可勾选并将多个用户皮肤导出为collection ZIP；许可证/署名随profile保存且导入选择前显示。源站多套ZIP实际格式/成功行为仍U。
+
+M4-52 / ADR-084：PreferencesController支持分析线程×64MB自动Hash并按真实线程/Hash能力钳制；应用设置提供自动/手动切换，旧schema1无`autoHash`时兼容为手动并保持原Hash。分析面板的显式资源更改转为手动。

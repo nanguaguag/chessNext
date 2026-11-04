@@ -122,6 +122,7 @@ final class AppPreferences {
     this.lastMoveMarker = LastMoveMarkerStyle.halo,
     this.selectionStyle = SelectionStyle.lift,
     this.threads = 1,
+    this.autoHash = false,
     this.hashMb = 16,
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
@@ -243,6 +244,7 @@ final class AppPreferences {
       thinkTimeMs,
       recordPlaybackIntervalMs,
       guideVersion;
+  final bool autoHash;
   final bool showMoveList, showRecordPlaybackButton;
   final bool showPanelSwitchBar;
   final SidePanel activeSidePanel;
@@ -285,6 +287,7 @@ final class AppPreferences {
     LastMoveMarkerStyle? lastMoveMarker,
     SelectionStyle? selectionStyle,
     int? threads,
+    bool? autoHash,
     int? hashMb,
     int? multiPv,
     int? thinkTimeMs,
@@ -335,6 +338,7 @@ final class AppPreferences {
     lastMoveMarker: lastMoveMarker ?? this.lastMoveMarker,
     selectionStyle: selectionStyle ?? this.selectionStyle,
     threads: threads ?? this.threads,
+    autoHash: autoHash ?? this.autoHash,
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
     thinkTimeMs: thinkTimeMs ?? this.thinkTimeMs,
@@ -413,6 +417,7 @@ final class AppPreferences {
     if (!showMoveGrades) 'showMoveGrades': false,
     if (arrowHead != ArrowHeadStyle.standard) 'arrowHead': arrowHead.name,
     'threads': threads,
+    'autoHash': autoHash,
     'hashMb': hashMb,
     'multiPv': multiPv,
     'thinkTimeMs': thinkTimeMs,
@@ -495,6 +500,7 @@ final class AppPreferences {
             json['showRecordPlaybackButton'] is! bool) ||
         (json.containsKey('showPanelSwitchBar') &&
             json['showPanelSwitchBar'] is! bool) ||
+        (json.containsKey('autoHash') && json['autoHash'] is! bool) ||
         (json.containsKey('skinCatalogBaseUrl') &&
             json['skinCatalogBaseUrl'] is! String) ||
         (json.containsKey('activeSidePanel') &&
@@ -578,6 +584,7 @@ final class AppPreferences {
           json['textSize'] as String? ?? 'system',
         ),
         threads: json['threads'] as int,
+        autoHash: json['autoHash'] as bool? ?? false,
         showCoordinates: json['showCoordinates'] as bool? ?? true,
         rotateOppositePieces: json['rotateOppositePieces'] as bool? ?? false,
         boardSkin: BoardSkin.values.byName(
@@ -723,6 +730,7 @@ final class AppPreferences {
       squareInkPieceOffsetX == other.squareInkPieceOffsetX &&
       squareInkPieceOffsetY == other.squareInkPieceOffsetY &&
       threads == other.threads &&
+      autoHash == other.autoHash &&
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
       thinkTimeMs == other.thinkTimeMs &&
@@ -776,6 +784,7 @@ final class AppPreferences {
     squareInkPieceOffsetX,
     squareInkPieceOffsetY,
     threads,
+    autoHash,
     hashMb,
     multiPv,
     thinkTimeMs,

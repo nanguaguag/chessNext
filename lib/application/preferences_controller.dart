@@ -32,11 +32,16 @@ class PreferencesController extends ChangeNotifier {
     if (!_disposed) notifyListeners();
   }
 
-  AppPreferences _bounded(AppPreferences next) => next.copyWith(
-    threads: next.threads.clamp(1, engine.maxThreads),
-    hashMb: next.hashMb.clamp(1, engine.maxHash),
-    multiPv: next.multiPv.clamp(1, engine.maxPv),
-  );
+  AppPreferences _bounded(AppPreferences next) {
+    final threads = next.threads.clamp(1, engine.maxThreads);
+    final hash = next.autoHash ? threads * 64 : next.hashMb;
+    return next.copyWith(
+      threads: threads,
+      hashMb: hash.clamp(1, engine.maxHash),
+      multiPv: next.multiPv.clamp(1, engine.maxPv),
+    );
+  }
+
   void _applyEngine() {
     final current = engine.settings;
     if (current.threads == value.threads &&
@@ -193,6 +198,7 @@ class PreferencesController extends ChangeNotifier {
                 ? previous.visibleSidePanels
                 : null,
             threads: _edited.contains('threads') ? previous.threads : null,
+            autoHash: _edited.contains('autoHash') ? previous.autoHash : null,
             hashMb: _edited.contains('hashMb') ? previous.hashMb : null,
             multiPv: _edited.contains('multiPv') ? previous.multiPv : null,
             thinkTimeMs: _edited.contains('thinkTimeMs')
@@ -521,6 +527,7 @@ class PreferencesController extends ChangeNotifier {
       _edited.add('visibleSidePanels');
     }
     if (next.threads != value.threads) _edited.add('threads');
+    if (next.autoHash != value.autoHash) _edited.add('autoHash');
     if (next.hashMb != value.hashMb) _edited.add('hashMb');
     if (next.multiPv != value.multiPv) _edited.add('multiPv');
     if (next.thinkTimeMs != value.thinkTimeMs) _edited.add('thinkTimeMs');

@@ -97,6 +97,10 @@ void main() {
         AppPreferences.fromJson(legacy).boardLayoutPreset,
         BoardLayoutPreset.centered,
       );
+      final explicitLegacy = AppPreferences(hashMb: 96).toJson()
+        ..remove('autoHash');
+      expect(AppPreferences.fromJson(explicitLegacy).autoHash, isFalse);
+      expect(AppPreferences.fromJson(explicitLegacy).hashMb, 96);
       for (final entry in {
         'schema': 2,
         'theme': 'unknown',
@@ -120,6 +124,24 @@ void main() {
           throwsFormatException,
         );
       }
+    },
+  );
+  test(
+    'automatic hash follows threads and remains within engine limits',
+    () async {
+      await preferences.initialize();
+      await preferences.apply(
+        AppPreferences().copyWith(threads: 2, autoHash: true),
+      );
+      expect(preferences.value.hashMb, 128);
+      expect(engine.settings.hashMb, 128);
+      expect(repository.value!.autoHash, isTrue);
+
+      await preferences.apply(
+        preferences.value.copyWith(autoHash: false, hashMb: 80),
+      );
+      expect(preferences.value.hashMb, 80);
+      expect(engine.settings.hashMb, 80);
     },
   );
   test(

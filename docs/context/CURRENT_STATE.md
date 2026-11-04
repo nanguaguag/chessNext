@@ -1,5 +1,16 @@
 # 当前状态
 
+## 当前实现 M4-52（待门槛和提交）
+
+按E69/F24增加本机线程×64MB自动Hash模式与手动切换；基于EngineCapabilities/设备约束钳制，显式分析参数变更回手动。新`autoHash`可选偏好字段；旧schema1配置缺省时保留手动Hash。设置/控制器专项`flutter test test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过，`flutter analyze --no-pub`无问题，`git diff --check`通过。复用唯一App PID50598/runner50125，attach同步1086ms、热重启1055ms；锁屏未做人工视觉验收。门槛通过，代码/文档待本片单独中文提交。
+
+## 最新审计 E69（2026-11-05）
+
+访客高级分析页默认5线程/320MB；“解限”开关切换页面推荐上限10/512与1024/1984MB，线程5→6时自动内存320→384MB。仅UI操作，真实引擎能力U。纯文档审计已提交`417965e`。
+
+## 持续目标与进程
+
+继续B25/F27和登录外全站缺口，不宣称全站对齐。唯一macOS App PID50598/runner PID50125复用。根测试使用`--concurrency=1`只保留一个`flutter_tester`，不会启动chessNext GUI。
 ## 最新审计 E69（2026-11-05）
 
 访客高级分析设置默认5线程/320MB；“解限”开关使页面推荐最大值从10线程/512MB变为1024/1984MB，5→6线程时自动内存320→384MB。复原开关及默认线程/内存。只验证页面联动，不代表真实引擎/设备资源上限；内存步进、手动边界及刷新/重启持久性U。证据已追加RE/矩阵/缺口/交互/追溯/待办，纯文档变更待diff check与中文提交。继续核对本机F24等价实现及全站剩余设置，不停在审计片。

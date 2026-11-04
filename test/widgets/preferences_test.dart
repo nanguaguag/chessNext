@@ -5,6 +5,7 @@ import 'package:chess_next/features/play/play_panel.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import '../support/fake_engine.dart';
 
 void main() {
   testWidgets(
@@ -19,6 +20,7 @@ void main() {
         ChessNextApp(
           key: UniqueKey(),
           preferencesRepository: repository,
+          engineFactory: () async => FakeEngine(),
           deviceThreads: 4,
         ),
       );
@@ -70,6 +72,52 @@ void main() {
       await tester.pumpAndSettle();
     },
   );
+  testWidgets('automatic hash mode follows thread count and persists', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1120, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = MemoryPreferencesRepository();
+    await tester.pumpWidget(
+      ChessNextApp(
+        key: UniqueKey(),
+        preferencesRepository: repository,
+        engineFactory: () async => FakeEngine(),
+        deviceThreads: 4,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('应用设置'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('按线程自动分配内存'));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.widgetWithText(TextFormField, '分析线程'), '2');
+    await tester.tap(find.widgetWithText(FilledButton, '应用设置'));
+    await tester.pumpAndSettle();
+    expect(repository.value!.autoHash, isTrue);
+    expect(repository.value!.hashMb, 128);
+    await tester.ensureVisible(find.text('开始分析'));
+    await tester.tap(find.text('开始分析'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byTooltip('引擎参数'));
+    await tester.tap(find.byTooltip('引擎参数'));
+    await tester.pumpAndSettle();
+    expect(find.text('本地引擎参数'), findsOneWidget);
+    await tester.enterText(find.widgetWithText(TextFormField, '计算线程'), '2');
+    await tester.enterText(
+      find.widgetWithText(TextFormField, '置换表内存（MB）'),
+      '96',
+    );
+    await tester.tap(find.widgetWithText(FilledButton, '应用'));
+    await tester.pumpAndSettle();
+    expect(repository.value!.autoHash, isFalse);
+    expect(repository.value!.hashMb, 96);
+    expect(tester.takeException(), isNull);
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.pumpAndSettle();
+  });
   testWidgets(
     'settings remain scrollable and valid at 200 percent text on a narrow window',
     (tester) async {

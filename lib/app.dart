@@ -1412,7 +1412,10 @@ class _BoardPage extends StatelessWidget {
           };
           Widget panelContent(SidePanel panel) => switch (panel) {
             SidePanel.play => PlayPanel(engine: analysis),
-            SidePanel.analysis => AnalysisPanel(analysis: analysis),
+            SidePanel.analysis => AnalysisPanel(
+              analysis: analysis,
+              preferences: preferences,
+            ),
             SidePanel.review => ReviewPanel(
               engine: analysis,
               preferences: preferences,

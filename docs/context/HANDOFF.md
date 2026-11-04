@@ -1,5 +1,12 @@
 # 交接（2026-11-05 Asia/Shanghai）
 
+## 当前续接 M4-52 / F24,B25
+
+实现本机按线程×64MB自动Hash设置并保留手动模式；旧偏好`autoHash`缺字段时回落手动并保留Hash。最终专项`flutter test test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过，`flutter analyze --no-pub`无问题，`git diff --check`通过。复用PID50598/runner50125 attach同步1086ms、热重启1055ms；锁屏未人工视觉验收。门槛已过，中文feature commit待做。默认关闭自动模式以维持显式旧Hash。首轮根测试两项失败源于旧Hash被按自动解释，默认关闭自动后全量修复。
+
+E69源站高级页UI联动文档已提交`417965e`。实际浏览器/引擎上限仍U，浏览器推荐值不移植。访客IAB临时tab2在标记页，测试样本皮肤`local-e59de8ef-c7a7-4eda-b57a-4911a2309829`因不可逆删除警示仍需等用户明确答复，勿删除；用户tab1未触碰。
+
+继续全站（登录除外）设置/功能；离线优先但在线能力不删除，后端自建可替换并提供部署方案。不要在单项完成后停。
 ## 最新续接（E69 / F24）
 
 M4-51已提交`3b688f4 feat(settings): 对齐棋谱播放时长范围`。本轮E69观察高级分析页：默认5线程/320MB；解限开关将页面推荐上限10/512切到1024/1984；线程5→6自动内存320→384，已全部恢复。只验证UI联动，不宣称真实引擎能力；E69文档待diff check和中文docs提交。下一步核对本机F24参数边界，再继续F27与全站设置/功能缺口。

@@ -923,3 +923,14 @@ E66/E67仅更新文档，待`git diff --check`并以中文docs commit单独提�
 # 2026-11-05 / E69 / F24 高级分析设置审计
 
 参考站访客临时tab2 `/settings/analysis/advanced`：默认5线程/320MB，说明内存每线程64MB；打开“解限”后推荐最大线程10→1024、内存512→1984MB；线程加号5→6令内存320→384，随后均恢复。仅UI联动V/能力文本O，不证明实际引擎/设备极限；手动范围和生命周期持久性U。更新证据、矩阵、缺口、交互规格、追溯、待办、CURRENT_STATE/HANDOFF。文档待diff check与中文单独commit，无Flutter测试/分析需求。核对进程仅App PID50598、runner PID50125；持续复用，不新开实例。下一步先看本机F24参数等价和全站剩余设置，继续推进。
+
+
+# 2026-11-05 / M4-52 / F24,B25 自动Hash内存设置
+
+按E69增加应用设置的线程×64MB自动Hash/手动模式，自动按设备线程数、EngineCapabilities和既有应用上限钳制；分析参数面板直接改线程/Hash退出自动。增加AppPreferences可选schema1字段，旧数据缺字段按手动保留Hash。定向preferences controller+widget 9/9通过。首次默认自动的全量测试出现两个旧设置值回归（分别hash128→256、128→64）；检查表明显式历史Hash应按手动兼容，已将新设置默认关闭后重跑。当前根串行测试进行中；选`--concurrency=1`减少测试宿主数量，进程表显示单一flutter_tester及唯一App PID50598/runner50125。后续analyze、复用runner、最终检查与提交待完成。
+
+
+M4-52最终门槛：定向应用/设置测试9/9；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过，唯一flutter_tester串行运行，无新App；`flutter analyze --no-pub`无问题，`git diff --check`通过。复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/`同步1,119ms、热重启1,104ms；结束attach后确认App PID50598及原runner仍在。Mac锁屏，视觉验收not run。中文feature commit待执行。
+
+
+M4-52最终复核（最新代码）：controller+settings专项10/10；根串行`flutter test --concurrency=1 --reporter compact`551通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一PID50598/runner50125，attach sync1086ms、热重启1055ms；退出attach后PID核对仍唯一；系统锁屏，人工窗口验收not run。M4-52已完成全部自动化与可用macOS运行门槛，中文feature commit待做。全量测试期间单一flutter_tester；未启动额外chessNext。

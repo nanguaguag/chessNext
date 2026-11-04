@@ -3,11 +3,17 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../../application/engine_session_controller.dart';
+import '../../application/preferences_controller.dart';
 import '../../ports/engine_gateway.dart';
 
 class AnalysisPanel extends StatelessWidget {
-  const AnalysisPanel({super.key, required this.analysis});
+  const AnalysisPanel({
+    super.key,
+    required this.analysis,
+    required this.preferences,
+  });
   final EngineSessionController analysis;
+  final PreferencesController preferences;
   Future<void> _settings(BuildContext context) async {
     final form = GlobalKey<FormState>();
     var threads = analysis.settings.threads;
@@ -75,7 +81,16 @@ class AnalysisPanel extends StatelessWidget {
         ],
       ),
     );
-    if (value != null) await analysis.configure(value);
+    if (value != null) {
+      await preferences.apply(
+        preferences.value.copyWith(
+          threads: value.threads,
+          autoHash: false,
+          hashMb: value.hashMb,
+          multiPv: value.multiPv,
+        ),
+      );
+    }
   }
 
   String _score(EngineInfo info) {

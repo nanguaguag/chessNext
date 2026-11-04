@@ -725,3 +725,8 @@ E66在参考站访客临时棋盘皮肤草稿上用实际按钮/输入操作验�
 ## E69 / F24 高级分析设置联动（2026-11-05）
 
 访客参考页默认5线程/320MB，解限开关页面推荐最大值10/512→1024/1984，线程5→6时自动内存320→384并复原。仅控件操作验证，不证明真实资源上限；手动内存范围和生命周期持久性U。见REFERENCE_EVIDENCE E69与FEATURE_MATRIX F24。项目仍须使用EngineCapabilities/platform硬上限，不复制网站的1024线程提案。
+
+
+## M4-52 / F24,B25 / ADR-084 自动Hash内存
+
+改动`AppPreferences.autoHash`、PreferencesController资源钳制/并发字段合并、Material3应用设置自动/手动模式。默认维持原手动Hash，旧schema1缺字段按手动解码。自动线程×64MB受设备与真实UCI选项限制；分析面板显式改资源经PreferencesController同步持久化并退出自动模式。codec、自动公式、能力钳制、旧值、应用设置与面板切回手动均有测试。专项`flutter test test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用macOS PID50598/runner50125 attach同步1086ms/热重启1055ms，锁屏未视觉验收。E69只证网页联动，不是源站实引擎能力。

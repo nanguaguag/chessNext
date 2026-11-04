@@ -332,3 +332,8 @@ E54/E55文档审计分别提交：`149a153 docs(audit): 验证显示语言切换
 门槛：定向`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`5/5；根`flutter test --reporter compact`519通过/5跳过；`flutter analyze --no-pub`无问题。失败事实：第一轮定向夹具搜索仅1项却请求page2导致`List.single`失败，改为page1复跑5/5；首次analyze报告server一处缺大括号，补上通过；子包分析配置strict选项键位无效，改为analyzer.language后最终复跑无问题。`flutter pub get --offline`、服务器`dart pub get --offline`、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`均成功。编译服务macOS本机运行(127.0.0.1:18088)后curl health返回`{"status":"ok"}`、空目录列表schema1/count0成功；服务已停，临时目录/编译产物已清理。未运行Flutter macOS应用，因为只改独立服务端；此前唯一runner PID2226和App PID2479继续运行。测试全程没有新开chessNext。
 
 此时服务实现、测试、ADR/部署README/ARCHITECTURE/BACKLOG/矩阵/TRACEABILITY/CURRENT_STATE/HANDOFF/SESSION_LOG待单独提交。执行`git diff --check`及核工作树后用中文Conventional Commit。下一步继续客户端端口、URL配置、超时/缓存与无登录公开目录显示，之后接真实只读下载及安全验证；在线能力仍在总范围，登录后功能除外。F27全站语言资源仍待覆盖；全站未对齐。
+# 会话续接（2026-11-04 / E60）
+
+F21/B24访客审计E60确认新建棋盘皮肤草稿“使用”会立即创建并应用本地“我的棋盘”；随后已先应用默认棋盘、删除这次临时皮肤，并读回设置确认默认状态恢复。重载/重启持久性仍U，详情`docs/research/REFERENCE_EVIDENCE.md`。临时IAB tab10留在恢复后的`#/settings/board`，用户原tab1未动；CUA当前无关闭tab接口。
+
+当前工作树包含E60审计文档更新，尚未提交；完成`git diff --check`及中文docs commit。随后继续F21棋盘编辑器保存/导出边界及全站剩余缺口，不宣称全站对齐。macOS沿用现有runner PID6602/App PID6847；测试不会启动App，涉及macOS时先复用runner并核对实例，不重复`flutter run`。

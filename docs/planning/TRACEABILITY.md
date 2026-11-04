@@ -745,3 +745,9 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 ## M4-53 / F22 / ADR-085 分析界面AI单步
 
 按E71把站点AI走棋与人机对弈/只读分析的区分落实为本机独立一步动作（项目P）：1秒EngineRequest，绑定epoch/positionRevision/tree身份，过期/非法结果丢弃；停止、导航、切新文档时释放输入锁；原持续分析状态在新着法后恢复。棋谱容量失败不当作引擎故障。专项`flutter test --concurrency=1 test/application/engine_play_test.dart test/widgets/analysis_panel_test.dart --reporter expanded`16/16；最终根`flutter test --concurrency=1 --reporter compact`557通过/5跳过，`flutter analyze --no-pub`通过。macOS复用PID50598/runner50125，Flutter attach文件同步1,062ms、热重启1,003ms；锁屏未作视觉验收。站点完整难度、步时设置、最大深度和云库仍未实现/验证。
+
+## M4-54 / F22,F23 / ADR-086 AI走棋设置
+
+设置单独记忆AI走棋难度、时长、无限时最大深度；单步请求将难度转换为有限节点预算，不修改普通分析/人机对弈参数。项目的预算映射为P；E71只验证页面值域与预设，不证明对应棋力。开局/残局BookService及真实站点搜索行为仍缺实现/证据。
+
+专项`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`24/24；根串行`flutter test --concurrency=1 --reporter compact`558通过/5跳过；`flutter analyze --no-pub`通过。复用macOS PID50598/runner50125，attach同步1,090ms、热重启1,042ms；锁屏未人工视觉验收。

@@ -126,6 +126,9 @@ final class AppPreferences {
     this.hashMb = 16,
     this.multiPv = 1,
     this.thinkTimeMs = 1000,
+    this.aiWalkDifficulty = 20,
+    this.aiWalkTimeMs = 1000,
+    this.aiWalkMaxDepth = 60,
     this.recordPlaybackIntervalMs = 2000,
     this.showMoveList = true,
     this.showRecordPlaybackButton = true,
@@ -162,6 +165,14 @@ final class AppPreferences {
         multiPv > 256 ||
         thinkTimeMs < 50 ||
         thinkTimeMs > 600000 ||
+        aiWalkDifficulty < 0 ||
+        aiWalkDifficulty > 20 ||
+        aiWalkTimeMs < 0 ||
+        aiWalkTimeMs > 600000 ||
+        (aiWalkTimeMs != 0 && aiWalkTimeMs < 500) ||
+        (aiWalkTimeMs != 0 && aiWalkTimeMs % 500 != 0) ||
+        aiWalkMaxDepth < 1 ||
+        aiWalkMaxDepth > 255 ||
         !isValidRecordPlaybackInterval(recordPlaybackIntervalMs) ||
         !_validSkinCatalogBaseUrl(skinCatalogBaseUrl) ||
         guideVersion < 0 ||
@@ -242,6 +253,9 @@ final class AppPreferences {
       hashMb,
       multiPv,
       thinkTimeMs,
+      aiWalkDifficulty,
+      aiWalkTimeMs,
+      aiWalkMaxDepth,
       recordPlaybackIntervalMs,
       guideVersion;
   final bool autoHash;
@@ -291,6 +305,9 @@ final class AppPreferences {
     int? hashMb,
     int? multiPv,
     int? thinkTimeMs,
+    int? aiWalkDifficulty,
+    int? aiWalkTimeMs,
+    int? aiWalkMaxDepth,
     int? recordPlaybackIntervalMs,
     bool? showMoveList,
     bool? showRecordPlaybackButton,
@@ -342,6 +359,9 @@ final class AppPreferences {
     hashMb: hashMb ?? this.hashMb,
     multiPv: multiPv ?? this.multiPv,
     thinkTimeMs: thinkTimeMs ?? this.thinkTimeMs,
+    aiWalkDifficulty: aiWalkDifficulty ?? this.aiWalkDifficulty,
+    aiWalkTimeMs: aiWalkTimeMs ?? this.aiWalkTimeMs,
+    aiWalkMaxDepth: aiWalkMaxDepth ?? this.aiWalkMaxDepth,
     recordPlaybackIntervalMs:
         recordPlaybackIntervalMs ?? this.recordPlaybackIntervalMs,
     showMoveList: showMoveList ?? this.showMoveList,
@@ -421,6 +441,9 @@ final class AppPreferences {
     'hashMb': hashMb,
     'multiPv': multiPv,
     'thinkTimeMs': thinkTimeMs,
+    'aiWalkDifficulty': aiWalkDifficulty,
+    'aiWalkTimeMs': aiWalkTimeMs,
+    'aiWalkMaxDepth': aiWalkMaxDepth,
     if (recordPlaybackIntervalMs != 2000)
       'recordPlaybackIntervalMs': recordPlaybackIntervalMs,
     if (!showMoveList) 'showMoveList': false,
@@ -541,6 +564,11 @@ final class AppPreferences {
             json['squareInkPieceOffsetX'] is! int) ||
         (json.containsKey('squareInkPieceOffsetY') &&
             json['squareInkPieceOffsetY'] is! int) ||
+        (json.containsKey('aiWalkDifficulty') &&
+            json['aiWalkDifficulty'] is! int) ||
+        (json.containsKey('aiWalkTimeMs') && json['aiWalkTimeMs'] is! int) ||
+        (json.containsKey('aiWalkMaxDepth') &&
+            json['aiWalkMaxDepth'] is! int) ||
         ![
           'threads',
           'hashMb',
@@ -613,6 +641,9 @@ final class AppPreferences {
         hashMb: json['hashMb'] as int,
         multiPv: json['multiPv'] as int,
         thinkTimeMs: json['thinkTimeMs'] as int,
+        aiWalkDifficulty: json['aiWalkDifficulty'] as int? ?? 20,
+        aiWalkTimeMs: json['aiWalkTimeMs'] as int? ?? 1000,
+        aiWalkMaxDepth: json['aiWalkMaxDepth'] as int? ?? 60,
         recordPlaybackIntervalMs:
             json['recordPlaybackIntervalMs'] as int? ?? 2000,
         showMoveList: json['showMoveList'] as bool? ?? true,
@@ -734,6 +765,9 @@ final class AppPreferences {
       hashMb == other.hashMb &&
       multiPv == other.multiPv &&
       thinkTimeMs == other.thinkTimeMs &&
+      aiWalkDifficulty == other.aiWalkDifficulty &&
+      aiWalkTimeMs == other.aiWalkTimeMs &&
+      aiWalkMaxDepth == other.aiWalkMaxDepth &&
       guideVersion == other.guideVersion &&
       recordPlaybackIntervalMs == other.recordPlaybackIntervalMs &&
       showMoveList == other.showMoveList &&
@@ -788,6 +822,9 @@ final class AppPreferences {
     hashMb,
     multiPv,
     thinkTimeMs,
+    aiWalkDifficulty,
+    aiWalkTimeMs,
+    aiWalkMaxDepth,
     guideVersion,
     recordPlaybackIntervalMs,
     showMoveList,

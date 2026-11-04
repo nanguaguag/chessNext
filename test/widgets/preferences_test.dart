@@ -41,10 +41,20 @@ void main() {
         find.widgetWithText(TextFormField, 'AI每步用时（秒）'),
         '3',
       );
+      await tester.enterText(find.byKey(const ValueKey('ai-walk-time')), '2.5');
+      await tester.enterText(find.byKey(const ValueKey('ai-walk-time')), '0');
+      await tester.pumpAndSettle();
+      expect(find.widgetWithText(TextFormField, '不限时最大深度'), findsOneWidget);
+      await tester.enterText(
+        find.widgetWithText(TextFormField, '不限时最大深度'),
+        '42',
+      );
       await tester.tap(find.widgetWithText(FilledButton, '应用设置'));
       await tester.pumpAndSettle();
       expect(repository.value!.theme, ThemePreference.dark);
       expect(repository.value!.threads, 2);
+      expect(repository.value!.aiWalkTimeMs, 0);
+      expect(repository.value!.aiWalkMaxDepth, 42);
       expect(
         tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
         ThemeMode.dark,

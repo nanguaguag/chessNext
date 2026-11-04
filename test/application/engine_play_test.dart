@@ -78,6 +78,23 @@ void main() {
       expect(engine.status, 'AI 已走一着');
     },
   );
+  test(
+    'unlimited AI walk uses configured depth and local strength budget',
+    () async {
+      final walking = engine.walkOneMove(
+        moveTimeMs: 0,
+        difficulty: 7,
+        maxDepth: 42,
+      );
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+      expect(fake.requests.single.moveTimeMs, isNull);
+      expect(fake.requests.single.depth, 42);
+      expect(fake.requests.single.nodeLimit, 80000);
+      fake.results.single.complete(Move.parse('h2e2'));
+      await walking;
+    },
+  );
   test('analysis resumes on the new position after one AI walk', () async {
     await engine.enable();
     expect(fake.requests.single.moveTimeMs, isNull);

@@ -139,13 +139,17 @@ class AnalysisPanel extends StatelessWidget {
                 label: Text(analysis.enabled ? '停止分析' : '开始分析'),
               ),
               Tooltip(
-                message: '本地引擎限时思考1秒并添加一着；正在运行的分析会在新局面继续',
+                message: '按AI走棋设置调用本地引擎并添加一着；正在运行的分析会在新局面继续',
                 child: OutlinedButton.icon(
                   key: const ValueKey('analysis-ai-walk'),
                   onPressed: analysis.aiWalking
                       ? analysis.cancelAiWalk
                       : analysis.canWalkOneMove
-                      ? analysis.walkOneMove
+                      ? () => analysis.walkOneMove(
+                          moveTimeMs: preferences.value.aiWalkTimeMs,
+                          difficulty: preferences.value.aiWalkDifficulty,
+                          maxDepth: preferences.value.aiWalkMaxDepth,
+                        )
                       : null,
                   icon: Icon(
                     analysis.aiWalking ? Icons.stop : Icons.smart_toy_outlined,

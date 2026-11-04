@@ -204,6 +204,15 @@ class PreferencesController extends ChangeNotifier {
             thinkTimeMs: _edited.contains('thinkTimeMs')
                 ? previous.thinkTimeMs
                 : null,
+            aiWalkDifficulty: _edited.contains('aiWalkDifficulty')
+                ? previous.aiWalkDifficulty
+                : null,
+            aiWalkTimeMs: _edited.contains('aiWalkTimeMs')
+                ? previous.aiWalkTimeMs
+                : null,
+            aiWalkMaxDepth: _edited.contains('aiWalkMaxDepth')
+                ? previous.aiWalkMaxDepth
+                : null,
             recordPlaybackIntervalMs:
                 _edited.contains('recordPlaybackIntervalMs')
                 ? previous.recordPlaybackIntervalMs
@@ -531,6 +540,15 @@ class PreferencesController extends ChangeNotifier {
     if (next.hashMb != value.hashMb) _edited.add('hashMb');
     if (next.multiPv != value.multiPv) _edited.add('multiPv');
     if (next.thinkTimeMs != value.thinkTimeMs) _edited.add('thinkTimeMs');
+    if (next.aiWalkDifficulty != value.aiWalkDifficulty) {
+      _edited.add('aiWalkDifficulty');
+    }
+    if (next.aiWalkTimeMs != value.aiWalkTimeMs) {
+      _edited.add('aiWalkTimeMs');
+    }
+    if (next.aiWalkMaxDepth != value.aiWalkMaxDepth) {
+      _edited.add('aiWalkMaxDepth');
+    }
     if (next.recordPlaybackIntervalMs != value.recordPlaybackIntervalMs) {
       _edited.add('recordPlaybackIntervalMs');
     }

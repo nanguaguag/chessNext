@@ -49,11 +49,14 @@ class PreferencesDialog extends StatefulWidget {
 
 class _PreferencesDialogState extends State<PreferencesDialog> {
   final form = GlobalKey<FormState>();
+  late final TextEditingController aiWalkTimeController;
   late ThemePreference theme;
   late BoardLayoutPreset boardLayoutPreset;
   late int threads, hash, pv;
   late bool autoHash;
   late double seconds;
+  late double aiWalkSeconds;
+  late int aiWalkDifficulty, aiWalkMaxDepth;
   @override
   void initState() {
     super.initState();
@@ -65,6 +68,16 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     hash = value.hashMb;
     pv = value.multiPv;
     seconds = value.thinkTimeMs / 1000;
+    aiWalkSeconds = value.aiWalkTimeMs / 1000;
+    aiWalkTimeController = TextEditingController(text: '$aiWalkSeconds');
+    aiWalkDifficulty = value.aiWalkDifficulty;
+    aiWalkMaxDepth = value.aiWalkMaxDepth;
+  }
+
+  @override
+  void dispose() {
+    aiWalkTimeController.dispose();
+    super.dispose();
   }
 
   Widget number(
@@ -266,6 +279,71 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   widget.preferences.engine.maxPv,
                   (value) => pv = value,
                 ),
+                const Divider(height: 28),
+                const Text('分析界面 AI 走棋'),
+                Text('难度 $aiWalkDifficulty · 最高 20'),
+                const Text('本地按固定节点预算映射；级别与站点棋力算法不等同。'),
+                Slider(
+                  key: const ValueKey('ai-walk-difficulty'),
+                  min: 0,
+                  max: 20,
+                  divisions: 20,
+                  value: aiWalkDifficulty.toDouble(),
+                  label: '$aiWalkDifficulty',
+                  onChanged: (value) =>
+                      setState(() => aiWalkDifficulty = value.round()),
+                ),
+                Wrap(
+                  spacing: 6,
+                  children: [
+                    for (final seconds in [1, 3, 10])
+                      ActionChip(
+                        label: Text('$seconds 秒'),
+                        onPressed: () => setState(() {
+                          aiWalkSeconds = seconds.toDouble();
+                          aiWalkTimeController.text = '$aiWalkSeconds';
+                        }),
+                      ),
+                    ActionChip(
+                      label: const Text('不限时'),
+                      onPressed: () => setState(() {
+                        aiWalkSeconds = 0;
+                        aiWalkTimeController.text = '0';
+                      }),
+                    ),
+                  ],
+                ),
+                TextFormField(
+                  key: const ValueKey('ai-walk-time'),
+                  controller: aiWalkTimeController,
+                  keyboardType: const TextInputType.numberWithOptions(
+                    decimal: true,
+                  ),
+                  decoration: const InputDecoration(
+                    labelText: 'AI 每步用时（秒）',
+                    helperText: '0 为不限时；自定义0.5–600秒，步进0.5秒',
+                  ),
+                  onChanged: (text) => setState(
+                    () => aiWalkSeconds = double.tryParse(text) ?? -1,
+                  ),
+                  validator: (_) =>
+                      !aiWalkSeconds.isFinite ||
+                          aiWalkSeconds < 0 ||
+                          aiWalkSeconds > 600 ||
+                          (aiWalkSeconds != 0 &&
+                              aiWalkSeconds * 2 != (aiWalkSeconds * 2).round())
+                      ? '请输入0或0.5至600秒的0.5秒倍数'
+                      : null,
+                ),
+                if (aiWalkSeconds == 0)
+                  number(
+                    '不限时最大深度',
+                    aiWalkMaxDepth,
+                    255,
+                    (value) => aiWalkMaxDepth = value,
+                    helperText: '1 – 255；默认60',
+                  ),
+                const SizedBox(height: 12),
                 TextFormField(
                   initialValue: '$seconds',
                   keyboardType: const TextInputType.numberWithOptions(
@@ -314,6 +392,9 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       hashMb: hash,
                       multiPv: pv,
                       thinkTimeMs: (seconds * 1000).round(),
+                      aiWalkDifficulty: aiWalkDifficulty,
+                      aiWalkTimeMs: (aiWalkSeconds * 1000).round(),
+                      aiWalkMaxDepth: aiWalkMaxDepth,
                     ),
                   );
                   if (context.mounted && widget.preferences.error == null) {

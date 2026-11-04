@@ -66,10 +66,18 @@ extension EnginePlay on EngineSessionController {
 
   /// Searches the current analysis position once and applies only a fresh legal
   /// best move. A running continuous analysis is resumed on the new position.
-  Future<void> walkOneMove({int moveTimeMs = 1000}) async {
+  Future<void> walkOneMove({
+    int moveTimeMs = 1000,
+    int difficulty = 20,
+    int maxDepth = 60,
+  }) async {
     if (!canWalkOneMove ||
-        moveTimeMs < 1 ||
-        moveTimeMs > EngineRequest.maxMoveTimeMs) {
+        moveTimeMs < 0 ||
+        moveTimeMs > 600000 ||
+        difficulty < 0 ||
+        difficulty > 20 ||
+        maxDepth < 1 ||
+        maxDepth > EngineRequest.maxDepth) {
       return;
     }
     final source = session.tree;
@@ -109,7 +117,9 @@ extension EnginePlay on EngineSessionController {
           token: generation,
           gameId: epoch,
           tree: source,
-          moveTimeMs: moveTimeMs,
+          depth: moveTimeMs == 0 ? maxDepth : null,
+          moveTimeMs: moveTimeMs == 0 ? null : moveTimeMs,
+          nodeLimit: 10000 * (difficulty + 1),
           threads: _settings.threads,
           hashMb: _settings.hashMb,
           multiPv: 1,

@@ -59,6 +59,9 @@ void main() {
         hashMb: 128,
         multiPv: 5,
         thinkTimeMs: 3000,
+        aiWalkDifficulty: 7,
+        aiWalkTimeMs: 0,
+        aiWalkMaxDepth: 42,
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
       final catalog = AppPreferences().copyWith(
@@ -101,6 +104,9 @@ void main() {
         ..remove('autoHash');
       expect(AppPreferences.fromJson(explicitLegacy).autoHash, isFalse);
       expect(AppPreferences.fromJson(explicitLegacy).hashMb, 96);
+      expect(AppPreferences.fromJson(explicitLegacy).aiWalkDifficulty, 20);
+      expect(AppPreferences.fromJson(explicitLegacy).aiWalkTimeMs, 1000);
+      expect(AppPreferences.fromJson(explicitLegacy).aiWalkMaxDepth, 60);
       for (final entry in {
         'schema': 2,
         'theme': 'unknown',
@@ -108,6 +114,9 @@ void main() {
         'threads': 0,
         'multiPv': 257,
         'thinkTimeMs': 49,
+        'aiWalkDifficulty': 21,
+        'aiWalkTimeMs': 750,
+        'aiWalkMaxDepth': 0,
         'hashMb': 1.5,
         'recordPlaybackIntervalMs': 499,
         'showMoveList': 1,

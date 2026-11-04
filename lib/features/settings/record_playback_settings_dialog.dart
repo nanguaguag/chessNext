@@ -7,6 +7,18 @@ class RecordPlaybackSettingsDialog extends StatelessWidget {
   final PreferencesController preferences;
 
   static const presets = [500, 1000, 2000, 3000];
+  static const _customSteps = 120;
+  static double _sliderStepFor(int milliseconds) =>
+      milliseconds == AppPreferences.minRecordPlaybackIntervalMs
+      ? 0
+      : milliseconds / AppPreferences.recordPlaybackIntervalStepMs;
+  static int _intervalForSliderStep(double step) {
+    final index = step.round();
+    return index == 0
+        ? AppPreferences.minRecordPlaybackIntervalMs
+        : index * AppPreferences.recordPlaybackIntervalStepMs;
+  }
+
   static String seconds(int milliseconds) =>
       '${(milliseconds / 1000).toStringAsFixed(milliseconds % 1000 == 0 ? 0 : 1)}秒';
 
@@ -57,16 +69,18 @@ class RecordPlaybackSettingsDialog extends StatelessWidget {
                 Text('自定义：${seconds(value)}'),
                 Slider(
                   key: const ValueKey('record-playback-interval'),
-                  min: 500,
-                  max: 30000,
-                  divisions: 295,
-                  value: value.toDouble(),
+                  min: 0,
+                  max: _customSteps.toDouble(),
+                  divisions: _customSteps,
+                  value: _sliderStepFor(value),
                   label: seconds(value),
+                  semanticFormatterCallback: (step) =>
+                      seconds(_intervalForSliderStep(step)),
                   onChanged: (next) => preferences.setRecordPlaybackInterval(
-                    (next / 100).round() * 100,
+                    _intervalForSliderStep(next),
                   ),
                 ),
-                const Text('项目自定义范围为0.5–30秒，步进0.1秒。'),
+                const Text('自定义范围0.1–60秒；最低0.1秒，其后每步0.5秒。'),
                 const Divider(height: 24),
                 SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,

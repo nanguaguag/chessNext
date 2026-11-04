@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'app_preferences.dart';
 import 'board_session.dart';
 import 'engine_session_controller.dart';
 
@@ -29,7 +30,7 @@ class RecordPlaybackController extends ChangeNotifier {
   Duration get interval => _interval;
 
   static void _validateInterval(int milliseconds) {
-    if (milliseconds < 500 || milliseconds > 30000 || milliseconds % 100 != 0) {
+    if (!AppPreferences.isValidRecordPlaybackInterval(milliseconds)) {
       throw ArgumentError.value(milliseconds, 'milliseconds');
     }
   }

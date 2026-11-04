@@ -907,6 +907,12 @@ E67另建仅供本次审计的“我的棋盘”（ID `local-e59de8ef-c7a7-4eda-
 M4-50 `31740d3 feat(skins): 接入在线棋盘皮肤目录`已提交。根`flutter test --reporter compact`548通过/5跳过，`flutter analyze --no-pub`无问题，专项14/14。仅有chessNext App PID50598和runner PID50125；测试是flutter_tester，不开App。macOS复用现有实例已热重启（953ms）并成功；Mac锁屏，视觉验收not run。系统内存在多条遗留attach工具进程但无额外App。
 
 E66/E67仅更新文档，待`git diff --check`并以中文docs commit单独提交，不需Flutter门槛。继续B24几何/源站保存生命周期和其他设置/功能差距，不以M4-50或局部审计停止；用户目标为对齐全站除登录部分，在线能力仍在范围。工作树、临时标签与待确认删除样本见HANDOFF最上方。
+
+# 2026-11-05 / M4-51 / F20,B25,ADR-067 棋谱自定义步时范围对齐
+
+依据E68把本地Slider改为121级离散映射：索引0=100ms，索引1..120=500..60000ms，保持0.5/1/2/3秒预设。`AppPreferences`与`RecordPlaybackController`共享验证器接受100ms特殊值、源站主刻度和旧0.1秒增量至30秒偏好，不接受其它未支持值。设置文案明确0.1秒首档、其后每档0.5秒。新增codec兼容断言与Widget拖动端点/语义格式器测试。
+
+定向测试首轮在App通知到播放控制器时失败，因为定时器仍拒绝100/60000ms；修正controller统一使用偏好验证后定向两文件11/11通过。根`flutter test --reporter compact`549通过/5跳过（依赖未配置官方Pikafish/NNUE的项跳过）；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用已有macOS `flutter run` runner PID50125和App PID50598，attach sync 1,053ms、热重启1,026ms；无第二个App。Ctrl-C结束attach后复核App仍运行；Mac锁屏，人工视觉not run。TRACEABILITY/CURRENT_STATE/HANDOFF更新；M4-51代码/文档待diff复核与单独中文feature commit，不改播放线路策略（站点实际起点/循环仍U）。
 # 2026-11-05 / E68 / F20,B25 自定义棋谱步时实测
 
 参考站访客临时tab2 `https://xiangqiai.com/#/settings/operations`：预设初始2秒，切自定义页显示0.1–60秒；stepper减值从2到1.5/1/0.5/0.1并在0.1处禁用，2秒起加号116次到60且禁用，常规步进0.5秒。只操作设置，不启动播放。恢复预设2秒，确认切换到声音设置时操作初值已恢复；仅展开快捷操作观察复制FEN/局面与着法/棋谱/东萍/局面链接/粘贴/搜索/保存/导入/导出勾选项，未改变任何项。证据E68，源站播放实际时序、快捷动作效果及持久化仍U。

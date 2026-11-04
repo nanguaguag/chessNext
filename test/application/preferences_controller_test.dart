@@ -73,6 +73,25 @@ void main() {
         () => AppPreferences(skinCatalogBaseUrl: 'http://localhost:8080'),
         returnsNormally,
       );
+      expect(
+        AppPreferences(recordPlaybackIntervalMs: 100).recordPlaybackIntervalMs,
+        100,
+      );
+      expect(
+        AppPreferences(
+          recordPlaybackIntervalMs: 60000,
+        ).recordPlaybackIntervalMs,
+        60000,
+      );
+      expect(
+        AppPreferences(recordPlaybackIntervalMs: 700).recordPlaybackIntervalMs,
+        700,
+        reason: 'legacy 100ms-step values remain readable',
+      );
+      expect(
+        () => AppPreferences(recordPlaybackIntervalMs: 750),
+        throwsArgumentError,
+      );
       final legacy = AppPreferences().toJson()..remove('boardLayoutPreset');
       expect(
         AppPreferences.fromJson(legacy).boardLayoutPreset,

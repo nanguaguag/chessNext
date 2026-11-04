@@ -711,6 +711,12 @@ E66在参考站访客临时棋盘皮肤草稿上用实际按钮/输入操作验�
 
 测试样本已恢复默认选中，但“我的棋盘”仍保留；因删除弹窗说明不可恢复，已取消等待用户明确确认。源站reload/重启持久性与dirty语义仍U。文档审计不运行Flutter门槛；证据、矩阵、缺口、交互规格、ADR-054、BACKLOG及context待`git diff --check`后中文docs提交。
 
+## 2026-11-05 / M4-51 / F20,B25,ADR-067 棋谱自定义步时对齐
+
+按E68将`RecordPlaybackSettingsDialog`滑块建模为121级索引：0对应0.1秒，1–120按0.5秒步进映射到60秒；原0.5/1/2/3秒预设不变。偏好校验与`RecordPlaybackController`共用`AppPreferences.isValidRecordPlaybackInterval`：接受100ms特殊值、500ms格点至60秒，以及旧配置兼容的≤30秒100ms粒度值，拒绝不在集合中的数字。Slider语义格式器播报实际映射时间；设置文案解释下限例外。
+
+定向`flutter test test/application/preferences_controller_test.dart test/widgets/record_playback_test.dart --reporter expanded`11/11；第一次回归发现通知触发的运行时RecordPlaybackController旧值域校验失败，修复后定向重跑通过。根`flutter test --reporter compact`549通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。macOS复用PID50598/runner PID50125，attach sync 1,053ms、热重启1,026ms；结束attach后`ps`仍确认一个App和原runner，无额外GUI实例。Mac锁屏，未做人工窗口视觉验收。源站播放启动/循环/执行时序仍U。
+
 ## 2026-11-05 / E68 / F20,B25 棋谱自定义播放时间边界
 
 `#/settings/operations`初始预设2秒、其它页内显示项维持观察时默认。自定义控件标注0.1–60秒；stepper从2秒连续减至1.5/1/0.5/0.1，最小处减号禁用；从2秒连续增加116步到60秒，最大处加号禁用，常规步距0.5秒（V）。未执行棋谱播放，实际播放起点/间隔时序不作结论。将预设2秒重新选中恢复该设置；长按/右键动作只读枚举，未切换。证据确认项目M4-32原0.5–30秒/0.1秒配置差异，由M4-51修正。文档-only审计待`git diff --check`和单独中文docs commit，不运行Flutter验证或macOS。

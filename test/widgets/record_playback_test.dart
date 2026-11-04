@@ -41,6 +41,40 @@ void main() {
     await tap(tester, find.text('关闭'));
   });
 
+  testWidgets('custom playback interval reaches 0.1 and 60 seconds', (
+    tester,
+  ) async {
+    desktop(tester);
+    final store = MemoryPreferencesRepository();
+    await tester.pumpWidget(ChessNextApp(preferencesRepository: store));
+    await tester.pumpAndSettle();
+    await tap(tester, find.byTooltip('应用设置'));
+    await tap(tester, find.text('棋谱与操作'));
+
+    final sliderFinder = find.byKey(const ValueKey('record-playback-interval'));
+    var slider = tester.widget<Slider>(sliderFinder);
+    expect(slider.min, 0);
+    expect(slider.max, 120);
+    expect(slider.divisions, 120);
+    expect(slider.value, 4);
+    expect(find.text('自定义范围0.1–60秒；最低0.1秒，其后每步0.5秒。'), findsOneWidget);
+
+    await tester.drag(sliderFinder, const Offset(-1000, 0));
+    await tester.pumpAndSettle();
+    expect(store.value?.recordPlaybackIntervalMs, 100);
+    slider = tester.widget<Slider>(sliderFinder);
+    expect(slider.value, 0);
+    expect(slider.semanticFormatterCallback!(0), '0.1秒');
+
+    await tester.drag(sliderFinder, const Offset(1000, 0));
+    await tester.pumpAndSettle();
+    expect(store.value?.recordPlaybackIntervalMs, 60000);
+    slider = tester.widget<Slider>(sliderFinder);
+    expect(slider.value, 120);
+    expect(slider.semanticFormatterCallback!(120), '60秒');
+    await tap(tester, find.text('关闭'));
+  });
+
   testWidgets('move list and playback button visibility persist and apply', (
     tester,
   ) async {

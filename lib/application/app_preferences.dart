@@ -83,6 +83,10 @@ extension TextSizeScale on TextSizePreference {
 
 /// Versioned, platform-neutral settings. AI roles and active searches are excluded.
 final class AppPreferences {
+  static const minRecordPlaybackIntervalMs = 100;
+  static const maxRecordPlaybackIntervalMs = 60000;
+  static const recordPlaybackIntervalStepMs = 500;
+
   AppPreferences({
     this.theme = ThemePreference.system,
     this.boardLayoutPreset = BoardLayoutPreset.centered,
@@ -157,9 +161,7 @@ final class AppPreferences {
         multiPv > 256 ||
         thinkTimeMs < 50 ||
         thinkTimeMs > 600000 ||
-        recordPlaybackIntervalMs < 500 ||
-        recordPlaybackIntervalMs > 30000 ||
-        recordPlaybackIntervalMs % 100 != 0 ||
+        !isValidRecordPlaybackInterval(recordPlaybackIntervalMs) ||
         !_validSkinCatalogBaseUrl(skinCatalogBaseUrl) ||
         guideVersion < 0 ||
         guideVersion > 1000000 ||
@@ -195,6 +197,14 @@ final class AppPreferences {
       throw ArgumentError('Invalid board context actions');
     }
   }
+
+  static bool isValidRecordPlaybackInterval(int milliseconds) =>
+      milliseconds == minRecordPlaybackIntervalMs ||
+      (milliseconds >= 500 &&
+          milliseconds <= maxRecordPlaybackIntervalMs &&
+          (milliseconds % recordPlaybackIntervalStepMs == 0 ||
+              (milliseconds <= 30000 && milliseconds % 100 == 0)));
+
   final ThemePreference theme;
   final BoardLayoutPreset boardLayoutPreset;
   final AnimationSpeed animationSpeed;

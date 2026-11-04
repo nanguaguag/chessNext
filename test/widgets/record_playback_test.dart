@@ -2,6 +2,8 @@ import 'package:chess_next/app.dart';
 import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/features/records/move_list.dart';
+import 'package:chess_next/features/analysis/analysis_panel.dart';
+import 'package:chess_next/features/play/play_panel.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -54,8 +56,16 @@ void main() {
     await tap(tester, find.text('显示播放按钮'));
     expect(find.byTooltip('播放棋谱'), findsNothing);
     expect(store.value?.showRecordPlaybackButton, isFalse);
+    await tap(tester, find.text('显示面板切换栏'));
     await tap(tester, find.text('关闭'));
     await tap(tester, find.text('取消'));
+    expect(find.byType(SegmentedButton<SidePanel>), findsOneWidget);
+    expect(find.byType(PlayPanel), findsOneWidget);
+    expect(find.byType(AnalysisPanel), findsNothing);
+    await tap(tester, find.text('分析'));
+    expect(store.value?.activeSidePanel, SidePanel.analysis);
+    expect(find.byType(AnalysisPanel), findsOneWidget);
+    expect(find.byType(PlayPanel), findsNothing);
   });
 
   testWidgets(

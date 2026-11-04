@@ -1178,6 +1178,28 @@ class _BoardPage extends StatelessWidget {
               ),
             ),
           );
+          final visibleSidePanels = preferences.value.sidePanelOrder
+              .where(preferences.value.visibleSidePanels.contains)
+              .toList();
+          final activeSidePanel =
+              visibleSidePanels.contains(preferences.value.activeSidePanel)
+              ? preferences.value.activeSidePanel
+              : visibleSidePanels.firstOrNull;
+          String panelLabel(SidePanel panel) => switch (panel) {
+            SidePanel.play => '对弈',
+            SidePanel.analysis => '分析',
+            SidePanel.review => '复盘',
+            SidePanel.candidates => '候选',
+          };
+          Widget panelContent(SidePanel panel) => switch (panel) {
+            SidePanel.play => PlayPanel(engine: analysis),
+            SidePanel.analysis => AnalysisPanel(analysis: analysis),
+            SidePanel.review => ReviewPanel(
+              engine: analysis,
+              preferences: preferences,
+            ),
+            SidePanel.candidates => CandidatePanel(engine: analysis),
+          };
           final sidePanel = Column(
             children: [
               if (preferences.error != null)
@@ -1208,17 +1230,30 @@ class _BoardPage extends StatelessWidget {
                 ),
               panel,
               const SizedBox(height: 12),
-              for (final panel in preferences.value.sidePanelOrder)
-                if (preferences.value.visibleSidePanels.contains(panel)) ...[
-                  switch (panel) {
-                    SidePanel.play => PlayPanel(engine: analysis),
-                    SidePanel.analysis => AnalysisPanel(analysis: analysis),
-                    SidePanel.review => ReviewPanel(
-                      engine: analysis,
-                      preferences: preferences,
-                    ),
-                    SidePanel.candidates => CandidatePanel(engine: analysis),
-                  },
+              if (preferences.value.showPanelSwitchBar &&
+                  visibleSidePanels.isNotEmpty) ...[
+                SegmentedButton<SidePanel>(
+                  showSelectedIcon: false,
+                  segments: visibleSidePanels
+                      .map(
+                        (item) => ButtonSegment<SidePanel>(
+                          value: item,
+                          label: Text(panelLabel(item)),
+                        ),
+                      )
+                      .toList(),
+                  selected: {activeSidePanel!},
+                  onSelectionChanged: (selected) =>
+                      preferences.setActiveSidePanel(selected.single),
+                ),
+                const SizedBox(height: 12),
+                panelContent(activeSidePanel),
+                const SizedBox(height: 12),
+              ] else if (preferences.value.showPanelSwitchBar) ...[
+                const Text('没有已启用的侧栏面板。可在应用设置中重新启用。'),
+              ] else
+                for (final item in visibleSidePanels) ...[
+                  panelContent(item),
                   const SizedBox(height: 12),
                 ],
             ],

@@ -19,67 +19,76 @@ class RecordPlaybackSettingsDialog extends StatelessWidget {
         title: const Text('棋谱与操作'),
         content: SizedBox(
           width: 420,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              const Text('自动播放时，两步之间的等待时间。'),
-              const SizedBox(height: 16),
-              SegmentedButton<int>(
-                emptySelectionAllowed: true,
-                segments: presets
-                    .map(
-                      (milliseconds) => ButtonSegment<int>(
-                        value: milliseconds,
-                        label: Text(seconds(milliseconds)),
-                      ),
-                    )
-                    .toList(),
-                selected: isPreset ? {value} : const {},
-                onSelectionChanged: (selected) {
-                  if (selected.isNotEmpty) {
-                    preferences.setRecordPlaybackInterval(selected.single);
-                  }
-                },
-              ),
-              const SizedBox(height: 12),
-              Text('自定义：${seconds(value)}'),
-              Slider(
-                key: const ValueKey('record-playback-interval'),
-                min: 500,
-                max: 30000,
-                divisions: 295,
-                value: value.toDouble(),
-                label: seconds(value),
-                onChanged: (next) => preferences.setRecordPlaybackInterval(
-                  (next / 100).round() * 100,
+          height: MediaQuery.sizeOf(context).height * 0.65,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const Text('自动播放时，两步之间的等待时间。'),
+                const SizedBox(height: 16),
+                SegmentedButton<int>(
+                  emptySelectionAllowed: true,
+                  segments: presets
+                      .map(
+                        (milliseconds) => ButtonSegment<int>(
+                          value: milliseconds,
+                          label: Text(seconds(milliseconds)),
+                        ),
+                      )
+                      .toList(),
+                  selected: isPreset ? {value} : const {},
+                  onSelectionChanged: (selected) {
+                    if (selected.isNotEmpty) {
+                      preferences.setRecordPlaybackInterval(selected.single);
+                    }
+                  },
                 ),
-              ),
-              const Text('项目自定义范围为0.5–30秒，步进0.1秒。'),
-              const Divider(height: 24),
-              SwitchListTile.adaptive(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('显示棋谱栏'),
-                value: preferences.value.showMoveList,
-                onChanged: preferences.setShowMoveList,
-              ),
-              SwitchListTile.adaptive(
-                contentPadding: EdgeInsets.zero,
-                title: const Text('显示播放按钮'),
-                value: preferences.value.showRecordPlaybackButton,
-                onChanged: preferences.setShowRecordPlaybackButton,
-              ),
-              if (preferences.error case final error?)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    error,
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.error,
-                    ),
+                const SizedBox(height: 12),
+                Text('自定义：${seconds(value)}'),
+                Slider(
+                  key: const ValueKey('record-playback-interval'),
+                  min: 500,
+                  max: 30000,
+                  divisions: 295,
+                  value: value.toDouble(),
+                  label: seconds(value),
+                  onChanged: (next) => preferences.setRecordPlaybackInterval(
+                    (next / 100).round() * 100,
                   ),
                 ),
-            ],
+                const Text('项目自定义范围为0.5–30秒，步进0.1秒。'),
+                const Divider(height: 24),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('显示棋谱栏'),
+                  value: preferences.value.showMoveList,
+                  onChanged: preferences.setShowMoveList,
+                ),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('显示播放按钮'),
+                  value: preferences.value.showRecordPlaybackButton,
+                  onChanged: preferences.setShowRecordPlaybackButton,
+                ),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('显示面板切换栏'),
+                  value: preferences.value.showPanelSwitchBar,
+                  onChanged: preferences.setShowPanelSwitchBar,
+                ),
+                if (preferences.error case final error?)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 8),
+                    child: Text(
+                      error,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
+                    ),
+                  ),
+              ],
+            ),
           ),
         ),
         actions: [

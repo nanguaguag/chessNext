@@ -87,6 +87,8 @@ final class AppPreferences {
     this.recordPlaybackIntervalMs = 2000,
     this.showMoveList = true,
     this.showRecordPlaybackButton = true,
+    this.showPanelSwitchBar = false,
+    this.activeSidePanel = SidePanel.play,
     this.guideVersion = 0,
     List<SidePanel> sidePanelOrder = defaultSidePanelOrder,
     List<SidePanel> visibleSidePanels = defaultSidePanelOrder,
@@ -185,6 +187,8 @@ final class AppPreferences {
       recordPlaybackIntervalMs,
       guideVersion;
   final bool showMoveList, showRecordPlaybackButton;
+  final bool showPanelSwitchBar;
+  final SidePanel activeSidePanel;
   final List<SidePanel> sidePanelOrder;
   final List<SidePanel> visibleSidePanels;
   AppPreferences copyWith({
@@ -226,6 +230,8 @@ final class AppPreferences {
     int? recordPlaybackIntervalMs,
     bool? showMoveList,
     bool? showRecordPlaybackButton,
+    bool? showPanelSwitchBar,
+    SidePanel? activeSidePanel,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
     List<SidePanel>? visibleSidePanels,
@@ -272,6 +278,8 @@ final class AppPreferences {
     showMoveList: showMoveList ?? this.showMoveList,
     showRecordPlaybackButton:
         showRecordPlaybackButton ?? this.showRecordPlaybackButton,
+    showPanelSwitchBar: showPanelSwitchBar ?? this.showPanelSwitchBar,
+    activeSidePanel: activeSidePanel ?? this.activeSidePanel,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
     visibleSidePanels: visibleSidePanels ?? this.visibleSidePanels,
@@ -341,6 +349,9 @@ final class AppPreferences {
       'recordPlaybackIntervalMs': recordPlaybackIntervalMs,
     if (!showMoveList) 'showMoveList': false,
     if (!showRecordPlaybackButton) 'showRecordPlaybackButton': false,
+    if (showPanelSwitchBar) 'showPanelSwitchBar': true,
+    if (activeSidePanel != SidePanel.play)
+      'activeSidePanel': activeSidePanel.name,
     if (guideVersion != 0) 'guideVersion': guideVersion,
     if (!_listEquals(sidePanelOrder, defaultSidePanelOrder))
       'sidePanelOrder': sidePanelOrder.map((panel) => panel.name).toList(),
@@ -396,6 +407,13 @@ final class AppPreferences {
         (json.containsKey('showMoveList') && json['showMoveList'] is! bool) ||
         (json.containsKey('showRecordPlaybackButton') &&
             json['showRecordPlaybackButton'] is! bool) ||
+        (json.containsKey('showPanelSwitchBar') &&
+            json['showPanelSwitchBar'] is! bool) ||
+        (json.containsKey('activeSidePanel') &&
+            (json['activeSidePanel'] is! String ||
+                !SidePanel.values.any(
+                  (panel) => panel.name == json['activeSidePanel'],
+                ))) ||
         (json.containsKey('sidePanelOrder') &&
             (json['sidePanelOrder'] is! List ||
                 (json['sidePanelOrder'] as List).any(
@@ -490,6 +508,11 @@ final class AppPreferences {
         showMoveList: json['showMoveList'] as bool? ?? true,
         showRecordPlaybackButton:
             json['showRecordPlaybackButton'] as bool? ?? true,
+        showPanelSwitchBar: json['showPanelSwitchBar'] as bool? ?? false,
+        activeSidePanel: SidePanel.values.firstWhere(
+          (panel) => panel.name == json['activeSidePanel'],
+          orElse: () => SidePanel.play,
+        ),
         guideVersion: json['guideVersion'] as int? ?? 0,
         sidePanelOrder:
             (json['sidePanelOrder'] as List?)
@@ -592,6 +615,8 @@ final class AppPreferences {
       recordPlaybackIntervalMs == other.recordPlaybackIntervalMs &&
       showMoveList == other.showMoveList &&
       showRecordPlaybackButton == other.showRecordPlaybackButton &&
+      showPanelSwitchBar == other.showPanelSwitchBar &&
+      activeSidePanel == other.activeSidePanel &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
       _listEquals(visibleSidePanels, other.visibleSidePanels);
   @override
@@ -639,6 +664,8 @@ final class AppPreferences {
     recordPlaybackIntervalMs,
     showMoveList,
     showRecordPlaybackButton,
+    showPanelSwitchBar,
+    activeSidePanel,
     Object.hashAll(sidePanelOrder),
     Object.hashAll(visibleSidePanels),
   ]);

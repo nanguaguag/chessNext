@@ -69,6 +69,8 @@ void main() {
         'hashMb': 1.5,
         'recordPlaybackIntervalMs': 499,
         'showMoveList': 1,
+        'showPanelSwitchBar': 'yes',
+        'activeSidePanel': 'unknown',
         'sidePanelOrder': ['analysis', 'analysis', 'review', 'candidates'],
       }.entries) {
         expect(
@@ -145,6 +147,8 @@ void main() {
       final hidingPlaybackButton = preferences.setShowRecordPlaybackButton(
         false,
       );
+      final enablingPanelBar = preferences.setShowPanelSwitchBar(true);
+      final choosingPanel = preferences.setActiveSidePanel(SidePanel.review);
       final hidingReview = preferences.setSidePanelVisibility(
         SidePanel.review,
         false,
@@ -161,6 +165,8 @@ void main() {
       await choosingPlayback;
       await hidingMoveList;
       await hidingPlaybackButton;
+      await enablingPanelBar;
+      await choosingPanel;
       await hidingReview;
       await exiting;
       await preferences.flush();
@@ -169,6 +175,8 @@ void main() {
       expect(preferences.value.recordPlaybackIntervalMs, 500);
       expect(preferences.value.showMoveList, isFalse);
       expect(preferences.value.showRecordPlaybackButton, isFalse);
+      expect(preferences.value.showPanelSwitchBar, isTrue);
+      expect(preferences.value.activeSidePanel, SidePanel.review);
       expect(
         preferences.value.visibleSidePanels,
         isNot(contains(SidePanel.review)),

@@ -203,6 +203,12 @@ class PreferencesController extends ChangeNotifier {
                 _edited.contains('showRecordPlaybackButton')
                 ? previous.showRecordPlaybackButton
                 : null,
+            showPanelSwitchBar: _edited.contains('showPanelSwitchBar')
+                ? previous.showPanelSwitchBar
+                : null,
+            activeSidePanel: _edited.contains('activeSidePanel')
+                ? previous.activeSidePanel
+                : null,
           ),
         );
         _persisted = stored;
@@ -246,6 +252,10 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(showMoveList: visible));
   Future<void> setShowRecordPlaybackButton(bool visible) =>
       apply(value.copyWith(showRecordPlaybackButton: visible));
+  Future<void> setShowPanelSwitchBar(bool visible) =>
+      apply(value.copyWith(showPanelSwitchBar: visible));
+  Future<void> setActiveSidePanel(SidePanel panel) =>
+      apply(value.copyWith(activeSidePanel: panel));
   Future<void> setSidePanelOrder(List<SidePanel> order) =>
       apply(value.copyWith(sidePanelOrder: order));
   Future<void> setSidePanelVisibility(SidePanel panel, bool visible) {
@@ -477,6 +487,12 @@ class PreferencesController extends ChangeNotifier {
     if (next.showMoveList != value.showMoveList) _edited.add('showMoveList');
     if (next.showRecordPlaybackButton != value.showRecordPlaybackButton) {
       _edited.add('showRecordPlaybackButton');
+    }
+    if (next.showPanelSwitchBar != value.showPanelSwitchBar) {
+      _edited.add('showPanelSwitchBar');
+    }
+    if (next.activeSidePanel != value.activeSidePanel) {
+      _edited.add('activeSidePanel');
     }
   }
 

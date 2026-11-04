@@ -184,4 +184,8 @@ E71追加实操：难度通过Home/End分别到0/20并恢复20（V）；自定�
 
 ## M4-55 / F15,F22,F23 / ADR-087 自建云库服务端首片
 
-现有自建服务增加可选的operator-supplied `book.json`和`POST /v1/book/query`。位置键严格包含opening/endgame、完整FEN及历史着法；返回候选、miss及license/attribution。body≤32KiB，历史≤512着，候选≤32，manifest≤128MiB；不带数据、不记录或持久化用户查询。服务端测试10/10。客户端、真实云库内容/许可、随机策略、离线回退与AI单步集成尚未完成；此片不能算端到端云库对标。
+现有自建服务增加可选的operator-supplied `book.json`和`POST /v1/book/query`。位置键严格包含opening/endgame、完整FEN及历史着法；返回候选、miss及license/attribution。body≤32KiB，历史≤512着，候选≤32，manifest≤128MiB；不带数据、不记录或持久化用户查询。服务端专项12/12。真实云库内容/许可、随机策略、离线回退与AI单步集成尚未完成；此片不能算端到端云库对标。
+
+## M4-56 / F15,F22,F23 / ADR-088 云库客户端传输层
+
+新增平台无关BookService端口和HTTP适配器；公网只接受HTTPS，本机HTTP限loopback；5秒超时、请求/响应≤32KiB、历史≤512着、候选≤32；校验键回显、协议schema、候选格式/唯一性和数据集来源。服务地址只由调用方显式传入，未配地址时不会联网。专项HTTP fixture 4/4；根串行`flutter test --concurrency=1 --reporter compact`568通过/5跳过，analyze无问题。当前尚未接入应用composition root、设置服务地址、AI策略、缓存、合法性复核或引擎回退，不能称端到端已对齐。

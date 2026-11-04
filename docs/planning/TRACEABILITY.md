@@ -754,4 +754,8 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 
 ## M4-55 / F15,F22,F23 / ADR-087 自建云库服务端首片
 
-`CHESSNEXT_BOOK_ROOT`可选装载operator-supplied schema1开局/残局库；`POST /v1/book/query`以FEN+完整历史精确匹配，返回候选/明确miss和许可署名。客户端必须再次校验着法合法性，不将服务端候选直接视作棋步。服务器专项`flutter test --concurrency=1 test/server/book_catalog_server_test.dart test/server/skin_catalog_server_test.dart --reporter expanded`10/10。独立Dart服务未运行，真实部署/运营数据和端到端客户端未验。
+`CHESSNEXT_BOOK_ROOT`可选装载operator-supplied schema1开局/残局库；`POST /v1/book/query`以FEN+完整历史精确匹配，返回候选/明确miss和许可署名。客户端必须再次校验着法合法性，不将服务端候选直接视作棋步。服务器专项`flutter test --concurrency=1 test/server/book_catalog_server_test.dart test/server/skin_catalog_server_test.dart --reporter expanded`12/12。独立Dart服务未运行，真实部署/运营数据和端到端客户端未验。
+
+## M4-56 / F15,F22,F23 / ADR-088 云库客户端传输首片
+
+新增`BookService`精确局面查询端口和`HttpBookService` HTTP POST适配器；公网HTTPS、本机loopback HTTP，5秒超时，32KiB请求/响应边界。严格核对schema、kind/FEN/history回显、候选格式/唯一性及license/attribution，网络不可达/服务拒绝/无效协议分开类型化。调用方须显式提供endpoint，未接composition root，当前不会联网。专项`flutter test --concurrency=1 test/adapters/network/http_book_service_test.dart --reporter expanded`4/4；根串行`flutter test --concurrency=1 --reporter compact`568通过/5跳过；`flutter analyze --no-pub`通过。未改App/UI/平台代码，未运行macOS。

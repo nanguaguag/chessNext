@@ -113,3 +113,5 @@ M4-41 / F21,B24（ADR-076）：AppPreferences/PreferencesController保存经过H
 
 
 M4-42 / F21,B24（ADR-077）：HTTP目录适配器增加有界skin ZIP下载和SHA-256校验；详情页下载后复用项目包codec，再展示显式许可确认，确认后才新建本机皮肤。`PieceSkinDefinition`可持久保存license/attribution并随导出保留。
+
+M4-44 / F21,B24（ADR-078）：`PieceSkinCatalogCache`端口及`FilePieceSkinCatalogCache`缓存成功解析的目录查询页，文件名为查询键SHA-256，最多24页/单页2MiB。仅传输不可达时按完全相同查询读取旧页；UI标出“离线缓存”和抓取时间，HTTP拒绝/无效响应不回退。在线包下载/校验与导入许可确认流程不受缓存改变。

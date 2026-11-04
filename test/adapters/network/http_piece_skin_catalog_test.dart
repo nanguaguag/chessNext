@@ -6,16 +6,21 @@ import 'package:crypto/crypto.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:chess_next/adapters/network/http_piece_skin_catalog.dart';
+import 'package:chess_next/adapters/storage/file_piece_skin_catalog_cache.dart';
 import 'package:chess_next/ports/piece_skin_catalog.dart';
 
 void main() {
   late HttpServer server;
   late HttpPieceSkinCatalog catalog;
+  late Directory cacheDirectory;
   late List<Uri> requests;
   final packageBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
 
   setUp(() async {
     requests = [];
+    cacheDirectory = await Directory.systemTemp.createTemp(
+      'skin-catalog-http-cache-',
+    );
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server.listen((request) async {
       requests.add(request.uri);
@@ -53,12 +58,16 @@ void main() {
       );
       await request.response.close();
     });
-    catalog = HttpPieceSkinCatalog(timeout: const Duration(seconds: 2));
+    catalog = HttpPieceSkinCatalog(
+      timeout: const Duration(seconds: 2),
+      cache: FilePieceSkinCatalogCache(() async => cacheDirectory),
+    );
   });
 
   tearDown(() async {
     catalog.close();
     await server.close(force: true);
+    await cacheDirectory.delete(recursive: true);
   });
 
   test('encodes query and sort and decodes license metadata', () async {
@@ -107,6 +116,35 @@ void main() {
       throwsA(isA<PieceSkinCatalogUnavailable>()),
     );
   });
+
+  test(
+    'uses persisted last successful page when the server is unavailable',
+    () async {
+      final endpoint = Uri.parse('http://127.0.0.1:${server.port}');
+      final online = await catalog.search(
+        endpoint: endpoint,
+        query: '红章',
+        sort: PublicPieceSkinSort.likes,
+      );
+      expect(online.isStale, isFalse);
+      final savedPort = server.port;
+      await server.close(force: true);
+
+      final reopenedCatalog = HttpPieceSkinCatalog(
+        timeout: const Duration(milliseconds: 100),
+        cache: FilePieceSkinCatalogCache(() async => cacheDirectory),
+      );
+      addTearDown(reopenedCatalog.close);
+      final cached = await reopenedCatalog.search(
+        endpoint: Uri.parse('http://127.0.0.1:$savedPort'),
+        query: '红章',
+        sort: PublicPieceSkinSort.likes,
+      );
+      expect(cached.isStale, isTrue);
+      expect(cached.cachedAt, isNotNull);
+      expect(cached.items.single.id, 'original-red');
+    },
+  );
 
   test('downloads only the expected bounded package digest', () async {
     final bytes = await catalog.downloadPackage(

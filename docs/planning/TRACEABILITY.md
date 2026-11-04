@@ -642,3 +642,9 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 新增`test/server/skin_catalog_client_roundtrip_test.dart`。测试自行构造schema1皮肤ZIP与临时schema1目录元数据，在ephemeral loopback端口启动`SkinCatalogHttpServer`，由`HttpPieceSkinCatalog`搜索并下载，再验证SHA/项目codec、经`PieceSkinLibraryController`导入，断言条目、选中ID及许可证/署名元数据已保存。样包完全自制，不含参考站资源。该证据只证明本机服务与客户端/本机库契约互通；真实托管部署及人工UI点击未验证。
 
 专项`flutter test test/server/skin_catalog_client_roundtrip_test.dart --reporter expanded`1/1；根`flutter test --reporter compact`526通过/5跳过（5项需要官方Pikafish/NNUE环境）；`flutter analyze --no-pub`无问题。测试使用Flutter测试宿主，不启动`chessNext.app`；复核唯一runner PID6602/App PID6847仍在运行。
+
+## 2026-11-04 / M4-44 / F21,B24,ADR-078 自建目录查询页离线缓存
+
+新增`PieceSkinCatalogCache`端口与`FilePieceSkinCatalogCache`。只保存HTTP成功且JSON schema已完整校验的列表页，key由endpoint、query、sort、page和pageSize组成，文件名为key的SHA-256；每页≤2MiB，最多24页，临时文件写后替换。每次操作先在线；只对请求超时/Socket或传输`HttpException`不可达时按精确key回退，页面显示“离线缓存”和原抓取时间。HTTP非200或远程格式错误不回退；离线页不会自动安装，下载包继续走SHA-256、codec和许可证二次确认。
+
+专项`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过（依赖官方Pikafish/NNUE环境）；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用`flutter run -d macos --no-pub`runner PID6602按`r`热重载成功（Reloaded 8 of 1739 libraries，2161ms），App PID6847仍是唯一实例。根测试使用flutter_tester，未启动App。未做人工作业现场UI验收，也未验证真实托管服务部署。

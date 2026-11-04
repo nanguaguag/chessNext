@@ -34,11 +34,26 @@ final class PieceSkinCatalogPage {
     required this.page,
     required this.pageSize,
     required this.total,
+    this.isStale = false,
+    this.cachedAt,
   });
   final List<PublicPieceSkin> items;
   final int page;
   final int pageSize;
   final int total;
+  final bool isStale;
+  final DateTime? cachedAt;
+}
+
+final class CachedPieceSkinCatalogResponse {
+  const CachedPieceSkinCatalogResponse(this.body, this.cachedAt);
+  final String body;
+  final DateTime cachedAt;
+}
+
+abstract interface class PieceSkinCatalogCache {
+  Future<CachedPieceSkinCatalogResponse?> read(String key);
+  Future<void> write(String key, String body, DateTime cachedAt);
 }
 
 abstract interface class PieceSkinCatalog {

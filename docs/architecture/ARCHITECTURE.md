@@ -103,3 +103,8 @@ AppPreferences记忆自建目录URL，PreferencesController验证并保护异步
 ## M4-42：目录皮肤包下载和本机导入
 
 目录端口按预期SHA-256下载有界ZIP，`PieceSkinPackageCodec`完成二次结构校验；随后要求用户确认许可/署名，再由PieceSkinLibraryController安全导入。PieceSkinDefinition保存license/attribution并随本机清单/导出包保留。取消/失败无写入。见ADR-077。
+
+
+## M4-44：自建目录页离线缓存
+
+`HttpPieceSkinCatalog`仅缓存协议完整校验的目录页，由`PieceSkinCatalogCache`端口注入文件存储适配器。查询键包含服务地址及搜索/排序/页码参数；存储名仅使用SHA-256。最多24页，每页2MiB，临时文件替换；网络不可达时按完全相同查询键返回旧页，并在界面显示“离线缓存”和抓取时间。HTTP拒绝及无效响应不会用旧数据覆盖，包仍需下载校验和用户许可确认。缓存不设置隐式过期，用户明确看到旧内容时间。见ADR-078。

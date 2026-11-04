@@ -14,10 +14,12 @@ const _maxSkinPackageBytes = 8 * 1024 * 1024;
 final class HttpPieceSkinCatalog implements PieceSkinCatalog {
   HttpPieceSkinCatalog({
     HttpClient? client,
+    this.cache,
     this.timeout = const Duration(seconds: 8),
   }) : _client = client ?? HttpClient();
 
   final HttpClient _client;
+  final PieceSkinCatalogCache? cache;
   final Duration timeout;
 
   void close() => _client.close(force: true);
@@ -72,18 +74,48 @@ final class HttpPieceSkinCatalog implements PieceSkinCatalog {
         }
         bytes.addAll(chunk);
       }
-      return _decode(utf8.decode(bytes));
+      final body = utf8.decode(bytes);
+      final pageResult = _decode(body);
+      try {
+        await cache?.write(uri.toString(), body, DateTime.now().toUtc());
+      } catch (_) {
+        // A cache write must never turn a successful online response into an
+        // unavailable result.
+      }
+      return pageResult;
     } on PieceSkinCatalogException {
       rethrow;
     } on TimeoutException {
-      throw const PieceSkinCatalogUnavailable();
+      return _cachedOrUnavailable(uri);
     } on SocketException {
-      throw const PieceSkinCatalogUnavailable();
+      return _cachedOrUnavailable(uri);
     } on HttpException {
-      throw const PieceSkinCatalogUnavailable();
+      return _cachedOrUnavailable(uri);
     } on FormatException {
       throw const PieceSkinCatalogInvalidResponse();
     }
+  }
+
+  Future<PieceSkinCatalogPage> _cachedOrUnavailable(Uri uri) async {
+    if (cache != null) {
+      try {
+        final saved = await cache!.read(uri.toString());
+        if (saved != null) {
+          final page = _decode(saved.body);
+          return PieceSkinCatalogPage(
+            items: page.items,
+            page: page.page,
+            pageSize: page.pageSize,
+            total: page.total,
+            isStale: true,
+            cachedAt: saved.cachedAt,
+          );
+        }
+      } catch (_) {
+        // Corrupt/unreadable cache is treated as a miss.
+      }
+    }
+    throw const PieceSkinCatalogUnavailable();
   }
 
   @override

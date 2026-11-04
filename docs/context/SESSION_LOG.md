@@ -827,4 +827,10 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 
 ## 2026-11-04 / M4-43 / F21,B24 自建目录端到端集成回归
 
-新增`test/server/skin_catalog_client_roundtrip_test.dart`，以自制schema1样包验证loopback服务→搜索/下载客户端→SHA及codec→皮肤库许可/署名持久化。定向1/1；根`flutter test --reporter compact`526通过/5跳过；`flutter analyze --no-pub`通过。测试期间只见flutter_tester，无新App；复核runner PID6602及唯一App PID6847。没有验证真实托管部署或人工UI流程；M4-43测试/追踪文档待提交。后续继续B24缓存和FEATURE_GAPS剩余项。
+新增`test/server/skin_catalog_client_roundtrip_test.dart`，以自制schema1样包验证loopback服务→搜索/下载客户端→SHA及codec→皮肤库许可/署名持久化。定向1/1；根`flutter test --reporter compact`526通过/5跳过；`flutter analyze --no-pub`通过。测试期间只见flutter_tester，无新App；复核runner PID6602及唯一App PID6847。没有验证真实托管部署或人工UI流程。提交`c6bc08e test(catalog): 验证自建目录导入全链路`。
+
+## 2026-11-04 / M4-44 / F21,B24,ADR-078 自建皮肤目录离线缓存
+
+新增`PieceSkinCatalogCache`端口和`FilePieceSkinCatalogCache`文件适配器。查询成功并完成schema校验后缓存原始响应，键含服务地址/query/sort/page/pageSize，文件名仅为SHA-256；单页最多2MiB、最多保留24页。原子临时文件写入，坏缓存视未命中。HTTP适配器先访问在线服务，只在超时/Socket/传输不可达时读取同查询缓存；HTTP拒绝/无效远程JSON不回退。皮肤库列表标注“离线缓存”和抓取时间；下载包仍需哈希、项目codec和许可确认。
+
+专项`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。唯一macOS runner PID6602热重载明确成功（Reloaded 8 of 1739 libraries，2161ms）；App PID6847仍唯一实例，测试没有启动App。无人工UI现场点选/视觉验收；真实托管环境未部署。M4-44当前待提交，接着继续审计/实现F21余项与其它全站缺口。

@@ -41,6 +41,7 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
   List<PublicPieceSkin> _remoteItems = const [];
   bool _remoteLoading = false;
   String? _remoteError;
+  String? _remoteCacheStatus;
   int _remotePage = 1;
   int _remoteTotal = 0;
 
@@ -184,6 +185,14 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
                   ],
                 ),
                 if (_remoteLoading) const LinearProgressIndicator(),
+                if (_remoteCacheStatus != null)
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      _remoteCacheStatus!,
+                      style: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  ),
                 if (_remoteError != null)
                   Text(
                     _remoteError!,
@@ -474,6 +483,7 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
     setState(() {
       _remoteLoading = true;
       _remoteError = null;
+      _remoteCacheStatus = null;
     });
     try {
       final result = await widget.catalog!.search(
@@ -486,6 +496,9 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
       setState(() {
         _remoteItems = result.items;
         _remoteTotal = result.total;
+        _remoteCacheStatus = result.isStale
+            ? '离线缓存 · ${result.cachedAt?.toLocal().toString() ?? '时间未知'}'
+            : null;
         _remoteError = result.items.isEmpty ? '目录当前没有公开皮肤。' : null;
       });
     } on PieceSkinCatalogUnavailable {

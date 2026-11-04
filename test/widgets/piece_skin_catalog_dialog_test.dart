@@ -16,6 +16,7 @@ import 'package:flutter_test/flutter_test.dart';
 
 class _Catalog implements PieceSkinCatalog {
   bool unavailable = false;
+  bool stale = false;
   Uri? requestedEndpoint;
   Uint8List packageBytes = PieceSkinPackageCodec.encode(
     PieceSkinDefinition(
@@ -52,6 +53,8 @@ class _Catalog implements PieceSkinCatalog {
       page: page,
       pageSize: pageSize,
       total: 1,
+      isStale: stale,
+      cachedAt: stale ? DateTime.utc(2026, 11, 4, 8) : null,
     );
   }
 
@@ -120,6 +123,10 @@ void main() {
     expect(catalog.requestedEndpoint?.host, 'skins.example.org');
     expect(find.textContaining('许可：CC-BY-4.0'), findsOneWidget);
     expect(find.textContaining('署名：作者甲 / 棋友社区'), findsOneWidget);
+    catalog.stale = true;
+    await tester.tap(find.byTooltip('刷新在线目录'));
+    await tester.pumpAndSettle();
+    expect(find.textContaining('离线缓存 ·'), findsOneWidget);
     await tester.tap(find.text('原创红章'));
     await tester.pumpAndSettle();
     expect(find.textContaining('当前不会自动写入本机'), findsOneWidget);

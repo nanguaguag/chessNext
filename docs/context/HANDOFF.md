@@ -2,11 +2,11 @@
 
 用户持续授权登录部分以外功能/设置对齐，不因单项停下。在线功能仍在总范围，离线优先只是推进顺序；在线采用自建可替换后端并提供部署方案。无分代理授权；许可决策暂缓，不阻挡本地开发。每个功能根目录`flutter test`、`flutter analyze`通过后中文Conventional Commit；macOS运行复用唯一交互runner/app。不能宣称全站已对齐。
 
-已提交：M4-39 `ae9858e`自建公开目录服务；M4-40 `c4c4aa6`只读客户端端口；M4-41 `38886a5`自建URL偏好、目录浏览/许可署名/离线状态；M4-42 `5b8384d`有界下载、摘要校验和许可确认导入。
+已提交：M4-39 `ae9858e`自建公开目录服务；M4-40 `c4c4aa6`只读客户端端口；M4-41 `38886a5`自建URL偏好、目录浏览/许可署名/离线状态；M4-42 `5b8384d`有界下载、摘要校验和许可确认导入；M4-43 `c6bc08e`自制样包loopback端到端集成测试。
 
-M4-43新增`test/server/skin_catalog_client_roundtrip_test.dart`：自制schema1样包经真实loopback `SkinCatalogHttpServer`、HTTP客户端、摘要/codec校验和`PieceSkinLibraryController`导入，断言许可/署名持久化。专项`flutter test test/server/skin_catalog_client_roundtrip_test.dart --reporter expanded`1/1；根`flutter test --reporter compact`526通过/5跳过；`flutter analyze --no-pub`通过。只新增集成测试与追踪文档，待提交。进程核对唯一runner PID6602/App PID6847；测试只运行flutter_tester，没有打开新App。之前macOS系统`open returned 1`，无人工视觉验收。无后台目录服务或临时制品。
+M4-44（本次当前改动）按ADR-078新增`PieceSkinCatalogCache`端口及`FilePieceSkinCatalogCache`，只缓存成功协议页；每个查询页≤2MiB、最多24页、临时文件替换、查询键SHA-256文件名。请求仍先联网，只在传输不可达时回退完全相同查询缓存，并在列表显示“离线缓存”和抓取时间；HTTP拒绝/数据无效不会回退，包下载/许可确认不变。定向`flutter test test/adapters/network/http_piece_skin_catalog_test.dart test/adapters/storage/file_piece_skin_catalog_cache_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`9/9；根`flutter test --reporter compact`529通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一runner PID6602成功热重载8/1739 libraries（2161ms），App PID6847仍唯一；无额外App。测试依赖官方Pikafish/NNUE的5项跳过。缓存/HTTP/UI增量待提交。
 
-下一步：提交M4-43为`test(catalog): 验证自建目录导入全链路`；继续B24实现离线目录/包缓存与明确新鲜度策略，然后解决FEATURE_GAPS其余缺口。集成夹具验证了本机HTTP服务链路，但真实托管部署和UI人工点选仍未验证。登录相关不实现，全站对齐仍未达成。
+下一步：提交M4-44为`feat(catalog): 增加离线目录缓存`；然后继续B24/F21源站复核和全站其它缺口。缓存刷新保留服务器优先及可见时间戳策略；真实托管部署和UI人工现场点选仍未验证。登录相关不实现，全站对齐仍未达成。当前后台只保留runner PID6602与单一app PID6847；无临时服务。
 
 # 会话交接
 

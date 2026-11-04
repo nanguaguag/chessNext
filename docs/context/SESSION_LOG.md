@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-57 / F15,F22,F23 / ADR-089 云库策略接入AI单步
+
+持久化自建BookService根地址、开局关闭/最佳/分差随机、残局开关、离库步数。只对分析界面AI单步请求；空地址不联网，并在设置中说明提交当前局面及完整历史。默认best/残局开/10个已完成全回合。保留epoch/positionRevision/tree结果校验；BookService候选逐个解析后经本机legalMoves复核；miss/服务失败/非法候选调用本机引擎。源站随机差距/残局定义/离库上界未知，项目P暂用100cp、≤8非将棋子、1–255全回合数（ADR-089）。
+
+定向`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart test/adapters/network/http_book_service_test.dart --reporter expanded`32/32；根`flutter test --concurrency=1 --reporter compact`572通过/5跳过；`flutter analyze --no-pub`和`git diff --check`通过。复用PID50598/runner50125 `flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`同步1047ms、热重启993ms；退出attach后App/runner仍唯一。锁屏未做人工视觉验收。feature提交`7b582ae feat(book): 接入AI走棋云库策略`；交接单独docs commit待做。下一步继续登录外差距，不宣称全站对齐。
+
 ## 2026-11-04 / M4-29 / F28,B23 主棋盘棋子移动动画
 
 按ADR-064，将项目AnimationSpeed从末步标记/落点皮肤图扩展到主棋盘走棋子。显示棋步身份变化后获取当前落点棋子并以动画overlay从from平移到to，暂时隐藏落点格视觉；IgnorePointer和ExcludeSemantics避免重复交互/读屏，逻辑棋盘立即落在最终局面。Reduce Motion/关档静态；新局/无Move停止；非主棋盘BoardSurface默认不动，故分析/编辑/PNG/GIF静态。源站真实动效范围和速度映射仍U。未增加依赖/资源。

@@ -1,5 +1,13 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-57 当前进展（已提交7b582ae）
+
+把BookService配置接入持久化偏好和分析AI单步；开局/残局模式、地址、离库步数；地址空不联网，并明示查询会发当前FEN及完整历史。当前局面、规则合法性、epoch/positionRevision/tree门控仍有效；服务miss/网络/协议异常或候选非法回退本机引擎。站点随机分差/残局识别/上界未知，项目暂定100cp、非将棋子≤8、已完成全回合计数、最多255（P），见ADR-089。
+
+定向32/32；根串行`flutter test --concurrency=1 --reporter compact`572通过/5跳过；`flutter analyze --no-pub`和diff check通过。复用App PID50598/runner50125 attach同步1047ms、热重启993ms；锁屏无法人工视觉验收，无新App。feature已提交`7b582ae feat(book): 接入AI走棋云库策略`；本交接另做中文docs commit。
+
+下一步继续E71其余控制边界与实际搜索外行为（避免凭未知规则冒充源站），随后按剩余功能矩阵推进F21格点/边距边界、F27/F31支持等登录外功能；后端数据授权与部署联调仍待用户配置实际数据/环境。不要因连续几个F22切片而宣称全站对齐。
+
 ## M4-56 当前进展（已提交7bf3b2d）
 
 在已提交M4-55服务端`4f515e9`上增加`BookService`端口和`HttpBookService`适配器（ADR-088）。只在调用方显式传入endpoint时请求；公网HTTPS、loopback HTTP，5秒超时、request/response 32KiB、history 512、候选32；核对请求键回显、候选格式/唯一性和数据集署名。HTTP failure按Unavailable/Rejected/InvalidResponse区分，不落子/不缓存/不重试。专项4/4；根测试568通过/5跳过；Flutter/Dart analyze与diff check通过。未接app composition root/设置/AI走棋，无macOS运行需要；未新增chessNext。

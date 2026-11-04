@@ -860,3 +860,9 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 ## 2026-11-05 / M4-46 / F21,B24 本机棋盘皮肤库（进行中）
 
 新加自定义棋盘皮肤清单schema1/文件适配器、控制器、设置管理UI，支持复制当前外观并即时应用、选择、重命名、删除；几何/图片按用户ID持久隔离，预览与PNG/GIF共用。首轮全量测试539通过/5跳过/1失败：旧控件测试按DropdownButtonFormField<String>全局唯一查找，现因棋盘和棋子皮肤各有一个而失败；改为ValueKey后定向`test/widgets/piece_skin_images_test.dart`6/6。第二次根`flutter test --reporter compact`541通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过；测试期间未启动App。唯一`flutter run -d macos --no-pub`Build/Sync成功、App PID50598/VM `127.0.0.1:61589`；`open returned 1`所以窗口视觉未验，保留单实例runner复用。代码及追踪待中文单独commit。用户明确要求继续推进全站而非交付此项后停下。
+
+## 2026-11-05 / M4-47 / F21,B24,ADR-081 本机棋盘皮肤项目ZIP
+
+新增固定项目schema1棋盘皮肤ZIP编解码（board-skin.json、四图层白名单、SHA、图像真实字节验证、8MiB ZIP/7MiB图像总量/单图512KiB），自定义皮肤可导出；导入解码预览后二次确认，以新ID落盘并立即应用，图像或清单失败会清理暂存项。源站ZIP/文件夹兼容明确未知。
+
+定向`flutter test test/application/board_skin_package_codec_test.dart test/application/board_skin_library_test.dart test/application/board_skin_image_library_test.dart test/widgets/board_skin_library_dialog_test.dart test/widgets/board_coordinates_test.dart --reporter expanded`20/20；根`flutter test --reporter compact`544通过/5跳过（官方Pikafish/NNUE环境未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。初次target/analyze发现测试image API不支持clear(color:)及SelectedPieceImage未导入，修正后通过。macOS复用唯一PID50598/VM61589，通过`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/`同步，热重载称0库/569ms，然后热重启907ms成功。未启动第二个App；人工窗口视觉not run。M4-47文档更新已做，尚待复核diff并以中文Conventional Commit单独提交。之后继续B24及全站剩余差距，不停于本片。

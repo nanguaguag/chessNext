@@ -1,5 +1,9 @@
 # 交接（2026-11-04 Asia/Shanghai）
 
+## 当前续记（2026-11-05 / M4-47）
+
+M4-46已提交`4a64a19`。M4-47棋盘皮肤schema1项目ZIP导入/导出代码和文档已完成、待中文commit：专项20/20，根`flutter test --reporter compact`544通过/5跳过，`flutter analyze --no-pub`通过，`git diff --check`通过。测试仅flutter_tester；macOS复用了M4-46 App PID50598/VM `127.0.0.1:61589`，attach后热重载和热重启成功，无额外App；人工窗口视觉未验。先核对工作树后commit，再继续B24及其它全站功能/设置。棋盘包是项目自有格式，不称兼容参考站；源站保存脏态/包/几何行为仍U，F21与全站未对齐。
+
 ## 当前交接续记（2026-11-05 / M4-46）
 
 M4-46代码、测试、追踪文档已完成待commit。根全量`flutter test --reporter compact`541通过/5跳过；analyze无问题；macOS `flutter run -d macos --no-pub` Build/Sync成功但`open returned 1`，唯一App PID50598/VM `127.0.0.1:61589`，没有人工视觉验收。测试运行的是flutter_tester，没有启动App；macOS阶段只启动了一次实例，后续复用。首轮失败为piece_skin_images_test测试查找器非唯一，已按控件key修正且定向6/6。提交`git diff --check`已通过。ADR-080。commit后立即继续B24；棋盘皮肤包导出/导入、独立编辑草稿与源站真实成功语义未完成；F21与全站未对齐。

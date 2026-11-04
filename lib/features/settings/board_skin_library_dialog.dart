@@ -1,13 +1,98 @@
 import 'package:flutter/material.dart';
 
 import '../../application/board_skin_library_controller.dart';
+import '../../application/board_skin_package_codec.dart';
 import '../../ports/board_skin_images.dart';
 import '../../ports/board_skin_library.dart';
+import '../../ports/piece_skin_package_exporter.dart';
+import '../../ports/piece_skin_package_picker.dart';
+import '../../ports/record_file_exporter.dart';
 
 final class BoardSkinLibraryDialog extends StatelessWidget {
-  const BoardSkinLibraryDialog({super.key, required this.library});
+  const BoardSkinLibraryDialog({
+    super.key,
+    required this.library,
+    this.exporter,
+    this.picker,
+  });
 
   final BoardSkinLibraryController library;
+  final PieceSkinPackageExporter? exporter;
+  final PieceSkinPackagePicker? picker;
+
+  Future<void> _export(BuildContext context, BoardSkinDefinition profile) async {
+    if (exporter == null) return;
+    try {
+      final bytes = library.exportPackage(profile.id);
+      final safeName = profile.name
+          .replaceAll(RegExp(r'[^\p{L}\p{N}_-]+', unicode: true), '-')
+          .replaceAll(RegExp(r'^-+|-+$'), '');
+      final result = await exporter!.saveZip(
+        suggestedName: safeName.isEmpty ? 'xiangqi-board-skin' : safeName,
+        bytes: bytes,
+        cancellation: FileExportCancellation(),
+      );
+      if (!context.mounted || result == RecordFileExportResult.cancelled) return;
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        const SnackBar(content: Text('棋盘皮肤包已导出。')),
+      );
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(content: Text('棋盘皮肤导出失败，请检查本机存储后重试。')),
+        );
+      }
+    }
+  }
+
+  Future<void> _import(BuildContext context) async {
+    if (picker == null) return;
+    try {
+      final bytes = await picker!.pickZip();
+      if (bytes == null || !context.mounted) return;
+      final package = BoardSkinPackageCodec.decode(bytes);
+      final accepted = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('导入棋盘皮肤包'),
+          content: Text(
+            '项目格式皮肤包：${package.profile.name}\n'
+            '包含${package.images.length}张自定义图片和独立格网设置。导入后会新增并立即使用，不覆盖现有皮肤。',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('导入并使用'),
+            ),
+          ],
+        ),
+      );
+      if (accepted != true || !context.mounted) return;
+      final imported = await library.importPackage(package);
+      if (!context.mounted) return;
+      if (!imported) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(content: Text(library.error ?? '棋盘皮肤导入失败。')),
+        );
+      }
+    } on FormatException {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(content: Text('棋盘皮肤包无效或超过大小限制，本机皮肤未更改。')),
+        );
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(content: Text('无法读取棋盘皮肤包，本机皮肤未更改。')),
+        );
+      }
+    }
+  }
 
   Future<String?> _name(
     BuildContext context, {
@@ -115,6 +200,13 @@ final class BoardSkinLibraryDialog extends StatelessWidget {
                     icon: const Icon(Icons.add),
                     label: const Text('新建并使用'),
                   ),
+                  IconButton(
+                    tooltip: '导入棋盘皮肤包',
+                    onPressed: picker == null || library.loading
+                        ? null
+                        : () => _import(context),
+                    icon: const Icon(Icons.archive_outlined),
+                  ),
                 ],
               ),
               if (library.profiles.isEmpty)
@@ -153,6 +245,13 @@ final class BoardSkinLibraryDialog extends StatelessWidget {
                             ? null
                             : () => _delete(context, profile),
                         icon: const Icon(Icons.delete_outline),
+                      ),
+                      IconButton(
+                        tooltip: '导出${profile.name}',
+                        onPressed: exporter == null || library.loading
+                            ? null
+                            : () => _export(context, profile),
+                        icon: const Icon(Icons.file_upload_outlined),
                       ),
                     ],
                   ),

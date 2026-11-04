@@ -34,6 +34,8 @@ class BoardDisplayDialog extends StatelessWidget {
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
     this.pieceSkinCatalog,
+    this.boardSkinPackageExporter,
+    this.boardSkinPackagePicker,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
@@ -45,6 +47,8 @@ class BoardDisplayDialog extends StatelessWidget {
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
   final PieceSkinCatalog? pieceSkinCatalog;
+  final PieceSkinPackageExporter? boardSkinPackageExporter;
+  final PieceSkinPackagePicker? boardSkinPackagePicker;
 
   PieceSkinDefinition? _activeProfile(PreferencesController preferences) =>
       pieceSkins?.definitionFor(preferences.value.selectedPieceSkinId);
@@ -441,13 +445,17 @@ class BoardDisplayDialog extends StatelessWidget {
                         : () => showDialog<void>(
                             context: context,
                             builder: (_) =>
-                                BoardSkinLibraryDialog(library: boardSkins!),
+                                BoardSkinLibraryDialog(
+                                  library: boardSkins!,
+                                  exporter: boardSkinPackageExporter,
+                                  picker: boardSkinPackagePicker,
+                                ),
                           ),
                     icon: const Icon(Icons.collections_bookmark_outlined),
                     label: const Text('管理棋盘皮肤库'),
                   ),
                 ),
-                const Text('棋盘图片覆盖保存在本机。棋子皮肤支持项目格式的ZIP导入/导出；棋盘皮肤包导入/导出、站点ZIP及文件夹格式仍待实现。'),
+                const Text('棋盘与棋子皮肤均支持项目格式的ZIP导入/导出；站点皮肤ZIP及文件夹格式未确认。'),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(

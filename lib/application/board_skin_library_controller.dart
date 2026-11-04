@@ -6,6 +6,7 @@ import '../ports/board_skin_images.dart';
 import '../ports/board_skin_library.dart';
 import 'board_skin_geometry.dart';
 import 'board_skin_image_library_controller.dart';
+import 'board_skin_package_codec.dart';
 import 'preferences_controller.dart';
 
 final class BoardSkinLibraryController extends ChangeNotifier {
@@ -166,6 +167,57 @@ final class BoardSkinLibraryController extends ChangeNotifier {
           )
           .toList(),
     );
+  }
+
+  Uint8List exportPackage(String id) {
+    final profile = definitionFor(id);
+    if (profile == null) throw ArgumentError.value(id, 'id');
+    return BoardSkinPackageCodec.encode(profile, images.imagesFor(id));
+  }
+
+  Future<bool> importPackage(BoardSkinPackage package) async {
+    final source = package.profile;
+    try {
+      BoardSkinPackageCodec.encode(source, package.images);
+    } on FormatException {
+      error = '棋盘皮肤包图片或清单无效。';
+      _notify();
+      return false;
+    }
+    if (loading ||
+        profiles.length >= 64 ||
+        profiles.any((item) => item.name.toLowerCase() == source.name.toLowerCase())) {
+      error = '棋盘皮肤名称重复或本机皮肤库已达64套。';
+      _notify();
+      return false;
+    }
+    loading = true;
+    error = null;
+    _notify();
+    final id = _newId();
+    final imported = BoardSkinDefinition(
+      id: id,
+      name: source.name,
+      baseSkin: source.baseSkin,
+      geometry: source.geometry,
+    );
+    try {
+      await images.importImages(id, package.images);
+      final next = [...profiles, imported];
+      await repository.save(next);
+      profiles = List.unmodifiable(next);
+      await preferences.selectBoardSkin(imported.baseSkin, id);
+      return true;
+    } catch (_) {
+      try {
+        await images.removeSkin(id);
+      } catch (_) {}
+      error = '棋盘皮肤导入失败，本机列表保持不变。';
+      return false;
+    } finally {
+      loading = false;
+      _notify();
+    }
   }
 
   Future<bool> delete(String id) async {

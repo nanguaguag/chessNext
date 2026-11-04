@@ -176,6 +176,10 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                           pieceSkinPackagePicker: widget.pieceSkinPackagePicker,
                           pieceSkinFolderPicker: widget.pieceSkinFolderPicker,
                           pieceSkinCatalog: widget.pieceSkinCatalog,
+                          boardSkinPackageExporter:
+                              widget.pieceSkinPackageExporter,
+                          boardSkinPackagePicker:
+                              widget.pieceSkinPackagePicker,
                         ),
                       ),
                       icon: const Icon(Icons.grid_on),

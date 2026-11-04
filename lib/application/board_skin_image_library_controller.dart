@@ -1,7 +1,8 @@
 import 'package:flutter/foundation.dart';
 
 import '../ports/board_skin_images.dart';
-import '../ports/piece_images.dart' show PieceImageException, PieceImagePicker;
+import '../ports/piece_images.dart'
+    show PieceImageException, PieceImagePicker, SelectedPieceImage;
 import 'piece_image_validator.dart';
 
 class BoardSkinImageLibraryController extends ChangeNotifier {
@@ -45,6 +46,56 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
       ..remove(skinId);
     _images = Map.unmodifiable(next);
     _notify();
+  }
+
+  Future<void> importImages(
+    String skinId,
+    Map<BoardSkinImageSlot, Uint8List> images,
+  ) async {
+    final saved = <BoardSkinImageSlot>[];
+    try {
+      for (final entry in images.entries) {
+        final extension = _extension(entry.value);
+        PieceImageValidator.validate(
+          SelectedPieceImage(extension, entry.value),
+        );
+        await repository.save(skinId, entry.key, extension, entry.value);
+        saved.add(entry.key);
+      }
+    } catch (_) {
+      for (final slot in saved.reversed) {
+        try {
+          await repository.remove(skinId, slot);
+        } catch (_) {}
+      }
+      rethrow;
+    }
+    if (_disposed) return;
+    final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_images);
+    next[skinId] = {
+      ...?next[skinId],
+      for (final entry in images.entries)
+        entry.key: Uint8List.fromList(entry.value).asUnmodifiableView(),
+    };
+    _images = Map.unmodifiable(next);
+    _notify();
+  }
+
+  String _extension(Uint8List bytes) {
+    if (bytes.length >= 8 &&
+        bytes[0] == 0x89 &&
+        bytes[1] == 0x50 &&
+        bytes[2] == 0x4e &&
+        bytes[3] == 0x47) {
+      return 'png';
+    }
+    if (bytes.length >= 3 &&
+        bytes[0] == 0xff &&
+        bytes[1] == 0xd8 &&
+        bytes[2] == 0xff) {
+      return 'jpg';
+    }
+    throw const FormatException('Unsupported board skin image');
   }
 
   Map<String, Map<BoardSkinImageSlot, Uint8List>> get snapshot =>

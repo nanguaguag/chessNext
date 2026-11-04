@@ -6,6 +6,7 @@ import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/application/board_skin_geometry.dart';
 import 'package:chess_next/application/board_skin_image_library_controller.dart';
 import 'package:chess_next/application/board_skin_library_controller.dart';
+import 'package:chess_next/application/board_skin_package_codec.dart';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/ports/board_skin_images.dart';
@@ -163,6 +164,66 @@ void main() {
       expect(await controller.create(name: '  '), isFalse);
       expect(await controller.create(name: 'Same'), isTrue);
       expect(await controller.create(name: 'same'), isFalse);
+    } finally {
+      controller.dispose();
+      boardImages.dispose();
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
+
+  test('package import allocates a fresh id and selects the new profile', () async {
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final preferences = PreferencesController(
+      engine,
+      MemoryPreferencesRepository(),
+    );
+    final repository = MemoryBoardSkinLibraryRepository();
+    final imageRepository = MemoryBoardSkinImageRepository();
+    final boardImages = BoardSkinImageLibraryController(
+      _NoopPicker(),
+      imageRepository,
+    );
+    final controller = BoardSkinLibraryController(
+      repository,
+      boardImages,
+      preferences,
+    );
+    try {
+      await preferences.initialize();
+      await boardImages.initialize();
+      await controller.initialize();
+      final source = BoardSkinDefinition(
+        id: 'custom-12345678-abcd',
+        name: '外来棋盘',
+        baseSkin: BoardSkin.jade,
+        geometry: const BoardSkinGeometry.standard().copyWith(
+          rotateLandingMarker: true,
+        ),
+      );
+      final image = _png();
+      expect(
+        await controller.importPackage(
+          BoardSkinPackage(
+            profile: source,
+            images: {BoardSkinImageSlot.landingMarker: image},
+          ),
+        ),
+        isTrue,
+      );
+      final imported = controller.profiles.single;
+      expect(imported.id, isNot(source.id));
+      expect(imported.name, source.name);
+      expect(imported.geometry, source.geometry);
+      expect(preferences.value.selectedBoardSkinId, imported.id);
+      expect(
+        (await imageRepository.load())[imported.id]![
+          BoardSkinImageSlot.landingMarker
+        ],
+        orderedEquals(image),
+      );
     } finally {
       controller.dispose();
       boardImages.dispose();

@@ -1,5 +1,9 @@
 # 当前状态
 
+## 当前推进 M4-47 已实现待提交（2026-11-05）
+
+刚提交M4-46 `4a64a19 feat(skins): 增加本机棋盘皮肤库`。继续M4-47：用户棋盘皮肤项目schema1 ZIP导入/导出，四层图片白名单、SHA/实图校验、8MiB压缩包/7MiB总图/512KiB单图边界、导入确认/新ID/失败回滚。专项20/20，根测试544通过/5跳过，analyze无问题，diff check通过。macOS复用唯一App PID50598/VM61589，attach后热重载+热重启907ms；未启动第二个App，窗口视觉未验。此片文档待diff复核和单独中文commit。站点未知ZIP/文件夹、保存与编辑脏态及E59–E61几何语义仍U；F21/全站未对齐。commit后继续B24和全站剩余缺口，不停在本片。
+
 ## 当前推进 M4-46（2026-11-05）
 
 工作树正在实现F21/B24本机用户棋盘皮肤库（验证完毕待提交）：创建复制当前皮肤格网和图片并即时应用，支持选择/改名/删除，用户格网独立保存且进入主盘、编辑器、PNG/GIF。根`flutter test --reporter compact`541通过/5跳过；`flutter analyze --no-pub`无问题。首轮唯一失败为已有piece皮肤Widget测试使用不唯一的String下拉框查找器，按ValueKey修复后定向6/6并全量通过。测试期间未启动chessNext App。唯一`flutter run -d macos --no-pub` Build/Sync成功，App PID50598、VM `127.0.0.1:61589`；`open returned 1`，窗口视觉验收未完成，保留runner复用。E59–E61源站几何持久化、包导出、草稿语义和旋转实际效果仍U；F21/全站未完成。ADR-080与追踪文档已更新，本片commit后继续B24，不因M4-46停工。

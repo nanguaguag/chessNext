@@ -666,3 +666,11 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 定向`flutter test test/application/board_skin_library_test.dart test/application/board_skin_image_library_test.dart test/application/board_skin_geometry_test.dart test/widgets/board_skin_library_dialog_test.dart test/widgets/board_coordinates_test.dart --reporter expanded`尚未单独执行；功能用例由根全量覆盖。根首轮`flutter test --reporter compact`539通过/5跳过/1失败，原因是旧测试对String下拉框使用不唯一查找器；改用控件key后定向`flutter test test/widgets/piece_skin_images_test.dart --reporter expanded`6/6。其后根`flutter test --reporter compact`541通过/5跳过；`flutter analyze --no-pub`无问题。`git diff --check`通过。测试宿主仅为flutter_tester，未启动chessNext App。`flutter run -d macos --no-pub` Build/Sync成功，唯一App PID50598、VM `127.0.0.1:61589`；`open returned 1`，窗口人工视觉验收未完成。保留该runner复用，不重叠启动。
 
 源站自定义棋盘皮肤的几何保存内容/重载恢复、导入导出包、草稿脏态语义及落点图旋转效果仍U；全站功能仍开放。后续B24继续棋盘皮肤项目包与保存/应用边界，然后按差距矩阵继续全站功能/设置审计。
+
+## 2026-11-05 / M4-47 / F21,B24,ADR-081 本机棋盘皮肤ZIP导入导出
+
+新增`BoardSkinPackageCodec`项目schema1 ZIP：`board-skin.json`、内置棋盘基底/名称/独立几何、四种棋盘图片槽、SHA-256和图片真实内容校验；压缩包≤8MiB、图片合计≤7MiB、单图沿用512KiB限制，拒绝未知路径/目录/链接/重复或未引用条目。管理库可导出单个用户棋盘皮肤；导入先解码预览并二次确认，名称冲突/容量不足拒绝，创建新ID，图片安全写入后保存定义并即时选中，失败清除暂存图层。
+
+专项`flutter test test/application/board_skin_package_codec_test.dart test/application/board_skin_library_test.dart test/application/board_skin_image_library_test.dart test/widgets/board_skin_library_dialog_test.dart test/widgets/board_coordinates_test.dart --reporter expanded`20/20；根`flutter test --reporter compact`544通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。macOS沿用M4-46唯一App PID50598/VM `127.0.0.1:61589`，`flutter attach --debug-url=...`后热重载，再热重启907ms成功，无新App实例；`flutter run`此前Build/Sync成功但`open returned 1`，窗口人工视觉验收not run。测试宿主是flutter_tester，没有生成App实例。
+
+项目ZIP不声称兼容站点“主流格式”或任意ZIP/文件夹；源站包结构、冲突、保存/应用差异与重新加载持久性继续U。F21及全站未完成，下一审计/实现按BACKLOG继续B24和矩阵的其它缺口。

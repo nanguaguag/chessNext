@@ -14,6 +14,15 @@ class DelayedStopFake extends FakeEngine {
   }
 }
 
+class FailedStopFake extends FakeEngine {
+  bool failStop = false;
+  @override
+  Future<void> stop() async {
+    if (failStop) throw StateError('stop failed');
+    await super.stop();
+  }
+}
+
 Future<void> tick() => Future<void>.delayed(const Duration(milliseconds: 180));
 void main() {
   late BoardSession session;
@@ -49,6 +58,84 @@ void main() {
       expect(engine.aiSides, {Side.black});
     },
   );
+  test(
+    'analysis AI walk applies one fresh legal move with its own time limit',
+    () async {
+      final walking = engine.walkOneMove();
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+      expect(fake.requests.single.moveTimeMs, 1000);
+      expect(fake.requests.single.depth, isNull);
+      expect(engine.aiWalking, isTrue);
+      expect(session.inputLocked, isTrue);
+
+      fake.results.single.complete(Move.parse('h2e2'));
+      await walking;
+      expect(session.moves, [Move.parse('h2e2')]);
+      expect(engine.aiWalking, isFalse);
+      expect(engine.playing, isFalse);
+      expect(session.inputLocked, isFalse);
+      expect(engine.status, 'AI 已走一着');
+    },
+  );
+  test('analysis resumes on the new position after one AI walk', () async {
+    await engine.enable();
+    expect(fake.requests.single.moveTimeMs, isNull);
+    final walking = engine.walkOneMove(moveTimeMs: 3000);
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+    expect(fake.requests.last.moveTimeMs, 3000);
+    fake.results.last.complete(Move.parse('h2e2'));
+    await walking;
+    expect(session.moves, [Move.parse('h2e2')]);
+    expect(engine.enabled, isTrue);
+    await tick();
+    expect(fake.requests.last.moveTimeMs, isNull);
+    expect(engine.status, '本地分析中');
+  });
+  test(
+    'cancelling analysis AI walk does not apply a stale best move',
+    () async {
+      fake.stopMove = Move.parse('h2e2');
+      final walking = engine.walkOneMove();
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+      expect(engine.aiWalking, isTrue);
+      await engine.cancelAiWalk();
+      await walking;
+      expect(session.moves, isEmpty);
+      expect(engine.aiWalking, isFalse);
+      expect(session.inputLocked, isFalse);
+      expect(engine.status, 'AI 走棋已取消');
+    },
+  );
+  test('navigating to another position cancels the pending AI walk', () async {
+    session.playMove(Move.parse('h2e2'));
+    final walking = engine.walkOneMove();
+    await Future<void>.delayed(Duration.zero);
+    await Future<void>.delayed(Duration.zero);
+    expect(engine.aiWalking, isTrue);
+    await engine.navigateToNode('n0');
+    await walking;
+    expect(session.tree.cursorId, 'n0');
+    expect(engine.aiWalking, isFalse);
+    expect(session.inputLocked, isFalse);
+    expect(fake.requests.length, 1);
+  });
+  test('failed stop blocks a second search during AI walk', () async {
+    final failedStop = FailedStopFake();
+    engine.dispose();
+    fake = failedStop;
+    engine = EngineSessionController(session, () => Future.value(failedStop));
+    await engine.enable();
+    expect(failedStop.requests.length, 1);
+    failedStop.failStop = true;
+    await engine.walkOneMove();
+    expect(failedStop.requests.length, 1);
+    expect(engine.aiWalking, isFalse);
+    expect(engine.enabled, isFalse);
+    expect(session.inputLocked, isFalse);
+  });
   test(
     'stopping discards the bestmove returned by stop, while immediate move adopts it',
     () async {

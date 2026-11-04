@@ -4,6 +4,13 @@ extension EnginePlay on EngineSessionController {
   Set<Side> get aiSides => Set.unmodifiable(_aiSides);
   bool get playing => _aiSides.isNotEmpty;
   bool get thinking => _thinking;
+  bool get aiWalking => _aiWalking;
+  bool get canWalkOneMove =>
+      !_disposed &&
+      !_aiWalking &&
+      !playing &&
+      !batching &&
+      !session.outcome.isTerminal;
   int get thinkTimeMs => _thinkTimeMs;
   bool get canImmediate =>
       _thinking && _playSearch?.token == _generation && !_changingAlternative;
@@ -32,6 +39,8 @@ extension EnginePlay on EngineSessionController {
 
   Future<void> setAiSide(Side side, bool active) async {
     if (_disposed) return;
+    if (_aiWalking) await cancelAiWalk();
+    if (_disposed) return;
     if (batching) {
       final stopping = disable();
       final intent = _generation;
@@ -54,6 +63,111 @@ extension EnginePlay on EngineSessionController {
 
   Future<void> setThinkTime(int milliseconds) =>
       configureSession(_settings, milliseconds);
+
+  /// Searches the current analysis position once and applies only a fresh legal
+  /// best move. A running continuous analysis is resumed on the new position.
+  Future<void> walkOneMove({int moveTimeMs = 1000}) async {
+    if (!canWalkOneMove ||
+        moveTimeMs < 1 ||
+        moveTimeMs > EngineRequest.maxMoveTimeMs) {
+      return;
+    }
+    final source = session.tree;
+    final epoch = session.epoch;
+    final positionRevision = session.positionRevision;
+    final resumeAnalysis = _enabled;
+    await disable();
+    if (_disposed || _stopFailedGeneration == _generation) return;
+    if (session.epoch != epoch ||
+        session.positionRevision != positionRevision ||
+        !identical(session.tree, source)) {
+      if (resumeAnalysis && !_disposed) await enable();
+      return;
+    }
+
+    final generation = ++_generation;
+    _aiWalking = true;
+    _resumeAnalysisAfterAiWalk = resumeAnalysis;
+    _error = null;
+    _busy = true;
+    _status = '本地 AI 正在走棋';
+    session.setInputLocked(true);
+    _notify();
+    bool current() =>
+        !_disposed &&
+        _aiWalking &&
+        generation == _generation &&
+        session.epoch == epoch &&
+        session.positionRevision == positionRevision &&
+        identical(session.tree, source);
+
+    try {
+      final engine = await _getEngine();
+      if (!current()) return;
+      final search = await engine.start(
+        EngineRequest.fromTree(
+          token: generation,
+          gameId: epoch,
+          tree: source,
+          moveTimeMs: moveTimeMs,
+          threads: _settings.threads,
+          hashMb: _settings.hashMb,
+          multiPv: 1,
+        ),
+      );
+      if (!current()) return;
+      final move = await search.bestMove;
+      if (!current()) return;
+      if (move == null || !session.isLegalMove(move)) {
+        throw StateError('本地引擎没有返回合法着法');
+      }
+
+      _aiWalking = false;
+      _resumeAnalysisAfterAiWalk = false;
+      _enabled = resumeAnalysis;
+      session.setInputLocked(false);
+      if (!session.playMove(move, fromEngine: true)) {
+        _busy = false;
+        _status = session.moveRejection == MoveRejection.capacity
+            ? '棋谱容量已满，未添加AI着法'
+            : 'AI着法未能应用';
+        _notify();
+        if (resumeAnalysis) await _run(++_generation);
+        return;
+      }
+      _busy = false;
+      _status = 'AI 已走一着';
+      _notify();
+    } catch (e) {
+      if (!_disposed && generation == _generation) {
+        _aiWalking = false;
+        _resumeAnalysisAfterAiWalk = false;
+        session.setInputLocked(false);
+        _failed(e, generation);
+      }
+    }
+  }
+
+  Future<void> cancelAiWalk() async {
+    if (!_aiWalking) return;
+    final resumeAnalysis = _resumeAnalysisAfterAiWalk;
+    _aiWalking = false;
+    _resumeAnalysisAfterAiWalk = false;
+    _enabled = resumeAnalysis;
+    session.setInputLocked(false);
+    _busy = false;
+    _status = 'AI 走棋已取消';
+    final generation = ++_generation;
+    _notify();
+    try {
+      await _engine?.stop();
+      if (!_disposed && generation == _generation && resumeAnalysis) {
+        await _run(generation);
+      }
+    } catch (e) {
+      _failed(e, generation);
+    }
+  }
 
   Future<void> _stopPlay(int generation) async {
     try {

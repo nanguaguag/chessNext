@@ -141,6 +141,8 @@ class EngineSessionController extends ChangeNotifier {
   int _searchRevision = 0;
   final Set<Side> _aiSides = {};
   bool _thinking = false;
+  bool _aiWalking = false;
+  bool _resumeAnalysisAfterAiWalk = false;
   bool _changingAlternative = false;
   bool _suppressRestart = false;
   bool _applyingEngine = false;
@@ -186,6 +188,13 @@ class EngineSessionController extends ChangeNotifier {
     _updateHistorySource();
     _clear();
     _restart?.cancel();
+    if (_aiWalking) {
+      _aiWalking = false;
+      _enabled = _resumeAnalysisAfterAiWalk;
+      _resumeAnalysisAfterAiWalk = false;
+      session.setInputLocked(false);
+      unawaited(_engine?.stop().catchError((Object _) {}));
+    }
     if (_suppressRestart) return;
     if (_lastSessionEpoch != session.epoch) {
       _lastSessionEpoch = session.epoch;
@@ -342,6 +351,7 @@ class EngineSessionController extends ChangeNotifier {
   }
 
   Future<void> enable() async {
+    if (_aiWalking) await cancelAiWalk();
     if (_disposed || _enabled) return;
     if (batching) {
       final stopping = disable();
@@ -444,6 +454,8 @@ class EngineSessionController extends ChangeNotifier {
     if (stoppingReview) _review = _review!.copy(phase: ReviewPhase.stopping);
     _aiSides.clear();
     _thinking = false;
+    _aiWalking = false;
+    _resumeAnalysisAfterAiWalk = false;
     _playSearch = null;
     session.setInputLocked(false);
     _enabled = false;

@@ -3,9 +3,30 @@ import 'package:chess_next/ports/engine_gateway.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:xiangqi_core/xiangqi_core.dart';
 import '../support/fake_engine.dart';
 
 void main() {
+  testWidgets('analysis panel can ask the engine to add one move', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1120, 1200);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final engine = FakeEngine();
+    await tester.pumpWidget(ChessNextApp(engineFactory: () async => engine));
+    final action = find.byKey(const ValueKey('analysis-ai-walk'));
+    await tester.ensureVisible(action);
+    await tester.tap(action);
+    await tester.pump();
+    await tester.pump();
+    expect(engine.requests.single.moveTimeMs, 1000);
+    engine.results.single.complete(Move.parse('h2e2'));
+    await tester.pumpAndSettle();
+    expect(find.text('AI 已走一着'), findsOneWidget);
+  });
+
   testWidgets('analysis panel starts, normalizes the score on flip and stops', (
     tester,
   ) async {

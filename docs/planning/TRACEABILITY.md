@@ -741,3 +741,7 @@ E66在参考站访客临时棋盘皮肤草稿上用实际按钮/输入操作验�
 `#/settings/play`明确描述分析界面AI走棋设置，不影响人机对弈/分析。难度当前20（四级标签可见）、步时默认1秒、云库最佳着法、残局云库开（O）；高级页深度60、离库10步（O）。离库步数减至1后按钮禁用，增回9次复核10（V）。难度预算映射、其余值域、实际搜索/云库行为及持久性U；审计时没有发起搜索或联网。详REFERENCE_EVIDENCE E71。
 
 E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5秒到0（不限时），不限时才显示最大深度60；切回预设1秒并复核默认状态。自定义上限、实际搜索效果仍U。
+
+## M4-53 / F22 / ADR-085 分析界面AI单步
+
+按E71把站点AI走棋与人机对弈/只读分析的区分落实为本机独立一步动作（项目P）：1秒EngineRequest，绑定epoch/positionRevision/tree身份，过期/非法结果丢弃；停止、导航、切新文档时释放输入锁；原持续分析状态在新着法后恢复。棋谱容量失败不当作引擎故障。专项`flutter test --concurrency=1 test/application/engine_play_test.dart test/widgets/analysis_panel_test.dart --reporter expanded`16/16；最终根`flutter test --concurrency=1 --reporter compact`557通过/5跳过，`flutter analyze --no-pub`通过。macOS复用PID50598/runner50125，Flutter attach文件同步1,062ms、热重启1,003ms；锁屏未作视觉验收。站点完整难度、步时设置、最大深度和云库仍未实现/验证。

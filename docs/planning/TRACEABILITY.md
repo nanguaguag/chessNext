@@ -25,6 +25,8 @@
 | T05 云端/识别/认证 | F09,F15,F30 | E01,E04 | 可替换服务contract+离线/隐私 |
 | T06 体验/支持 | F19–F21,F26–F29,F31 | E01,E08 | 明暗/字号/键盘/读屏/平台菜单 |
 
+M4-36 F19/B26/ADR-071：`lib/app.dart`；`test/widgets/floating_workspace_test.dart`（切换、底部操作、退出往返）。专项通过；根测试510通过/5跳过；analyze通过；macOS现有runner热重载通过，CUA人工点击not run（`noWindowsAvailable`）。仍待四分隔条实现、原生窗口语义与键盘/触屏验收。
+
 每次实现新增记录：F-ID、证据版本、ADR、变更提交、测试名称/命令、平台、结果、未解问题。无提交/命令不得填通过。本轮所有 T 组未执行。
 
 ## 离线修订

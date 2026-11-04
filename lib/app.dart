@@ -141,6 +141,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final BoardSkinImageLibraryController boardSkinImages;
   late final EngineSessionController analysis;
   BoardGifSettings gifSettings = BoardGifSettings();
+  bool floatingWorkspace = false;
   @override
   void initState() {
     super.initState();
@@ -422,6 +423,9 @@ class _ChessNextAppState extends State<ChessNextApp>
       ),
     ),
     home: _BoardPage(
+      floatingWorkspace: floatingWorkspace,
+      onFloatingWorkspaceChanged: (value) =>
+          setState(() => floatingWorkspace = value),
       drafts: drafts,
       preferences: preferences,
       recordPlayback: recordPlayback,
@@ -454,8 +458,14 @@ class _ChessNextAppState extends State<ChessNextApp>
   );
 }
 
+enum _WorkspaceMode { analysis, floating }
+
+enum _FloatingAction { newGame, flipBoard, editPosition, exit }
+
 class _BoardPage extends StatelessWidget {
   const _BoardPage({
+    required this.floatingWorkspace,
+    required this.onFloatingWorkspaceChanged,
     required this.session,
     required this.clipboard,
     this.filePicker,
@@ -481,6 +491,8 @@ class _BoardPage extends StatelessWidget {
     this.pieceSkinFolderPicker,
     required this.boardSkinImages,
   });
+  final bool floatingWorkspace;
+  final ValueChanged<bool> onFloatingWorkspaceChanged;
   final PreferencesController preferences;
   final RecordPlaybackController recordPlayback;
   final AudioLibraryController? audioLibrary;
@@ -884,6 +896,23 @@ class _BoardPage extends StatelessWidget {
     if (context.mounted) drafts?.restore(replaceCurrent: replace);
   }
 
+  void _showPreferences(BuildContext context) {
+    session.setCurrentVariationArrows(false);
+    showDialog<void>(
+      context: context,
+      builder: (_) => PreferencesDialog(
+        preferences: preferences,
+        audioLibrary: audioLibrary,
+        pieceImages: pieceImages,
+        pieceSkins: pieceSkins,
+        pieceSkinPackageExporter: pieceSkinPackageExporter,
+        pieceSkinPackagePicker: pieceSkinPackagePicker,
+        pieceSkinFolderPicker: pieceSkinFolderPicker,
+        boardSkinImages: boardSkinImages,
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: Listenable.merge([
@@ -894,50 +923,120 @@ class _BoardPage extends StatelessWidget {
       ?drafts,
     ]),
     builder: (context, _) => Scaffold(
-      appBar: AppBar(
-        title: const Text('chessNext'),
-        actions: [
-          IconButton(
-            tooltip: '帮助与按钮说明',
-            icon: const Icon(Icons.help_outline),
-            onPressed: () async {
-              final action = await showDialog<HelpAction>(
-                context: context,
-                builder: (_) => const OfflineHelpDialog(),
-              );
-              if (action == HelpAction.guide && context.mounted) {
-                await showGuide();
-              }
-            },
-          ),
-          IconButton(
-            tooltip: '应用设置',
-            icon: const Icon(Icons.settings_outlined),
-            onPressed: () {
-              session.setCurrentVariationArrows(false);
-              showDialog<void>(
-                context: context,
-                builder: (_) => PreferencesDialog(
-                  preferences: preferences,
-                  audioLibrary: audioLibrary,
-                  pieceImages: pieceImages,
-                  pieceSkins: pieceSkins,
-                  pieceSkinPackageExporter: pieceSkinPackageExporter,
-                  pieceSkinPackagePicker: pieceSkinPackagePicker,
-                  pieceSkinFolderPicker: pieceSkinFolderPicker,
-                  boardSkinImages: boardSkinImages,
+      appBar: floatingWorkspace
+          ? null
+          : AppBar(
+              title: const Text('chessNext'),
+              actions: [
+                PopupMenuButton<_WorkspaceMode>(
+                  tooltip: '显示模式',
+                  icon: const Icon(Icons.view_agenda_outlined),
+                  onSelected: (mode) => onFloatingWorkspaceChanged(
+                    mode == _WorkspaceMode.floating,
+                  ),
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: _WorkspaceMode.analysis,
+                      child: Text('分析 · 引擎面板与着法列表'),
+                    ),
+                    PopupMenuItem(
+                      value: _WorkspaceMode.floating,
+                      child: Text('悬浮窗 · 棋盘与状态行'),
+                    ),
+                  ],
                 ),
-              );
-            },
-          ),
-          IconButton(
-            onPressed: toggleTheme,
-            tooltip: '切换明暗主题',
-            icon: const Icon(Icons.brightness_6_outlined),
-          ),
-          const SizedBox(width: 12),
-        ],
-      ),
+                IconButton(
+                  tooltip: '帮助与按钮说明',
+                  icon: const Icon(Icons.help_outline),
+                  onPressed: () async {
+                    final action = await showDialog<HelpAction>(
+                      context: context,
+                      builder: (_) => const OfflineHelpDialog(),
+                    );
+                    if (action == HelpAction.guide && context.mounted) {
+                      await showGuide();
+                    }
+                  },
+                ),
+                IconButton(
+                  tooltip: '应用设置',
+                  icon: const Icon(Icons.settings_outlined),
+                  onPressed: () => _showPreferences(context),
+                ),
+                IconButton(
+                  onPressed: toggleTheme,
+                  tooltip: '切换明暗主题',
+                  icon: const Icon(Icons.brightness_6_outlined),
+                ),
+                const SizedBox(width: 12),
+              ],
+            ),
+      bottomNavigationBar: floatingWorkspace
+          ? SafeArea(
+              top: false,
+              child: Center(
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(maxWidth: 600),
+                  child: Row(
+                    children: [
+                      const SizedBox(width: 12),
+                      Expanded(
+                        child: Text(
+                          analysis.enabled ? '引擎分析中' : '引擎未开启',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: '应用设置',
+                        onPressed: () => _showPreferences(context),
+                        icon: const Icon(Icons.settings_outlined),
+                      ),
+                      IconButton(
+                        tooltip: '悔棋',
+                        onPressed: session.canUndo ? session.undo : null,
+                        icon: const Icon(Icons.undo),
+                      ),
+                      PopupMenuButton<_FloatingAction>(
+                        tooltip: '更多',
+                        onSelected: (action) {
+                          switch (action) {
+                            case _FloatingAction.newGame:
+                              unawaited(_newGame(context));
+                            case _FloatingAction.flipBoard:
+                              session.flip();
+                            case _FloatingAction.editPosition:
+                              unawaited(_edit(context));
+                            case _FloatingAction.exit:
+                              onFloatingWorkspaceChanged(false);
+                          }
+                        },
+                        itemBuilder: (context) => const [
+                          PopupMenuItem(
+                            value: _FloatingAction.newGame,
+                            child: Text('新局'),
+                          ),
+                          PopupMenuItem(
+                            value: _FloatingAction.flipBoard,
+                            child: Text('翻转棋盘'),
+                          ),
+                          PopupMenuItem(
+                            value: _FloatingAction.editPosition,
+                            child: Text('编辑局面'),
+                          ),
+                          PopupMenuDivider(),
+                          PopupMenuItem(
+                            value: _FloatingAction.exit,
+                            child: Text('退出悬浮窗模式'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          : null,
       body: LayoutBuilder(
         builder: (context, constraints) {
           final wide = constraints.maxWidth >= 900;
@@ -966,12 +1065,15 @@ class _BoardPage extends StatelessWidget {
                 SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
                   child: SizedBox(
-                    width: (constraints.maxWidth - 48 - (wide ? 344 : 0))
-                        .clamp(
-                          preferences.value.showEvaluationBar ? 492 : 464,
-                          540,
-                        )
-                        .toDouble(),
+                    width:
+                        (constraints.maxWidth -
+                                48 -
+                                (wide && !floatingWorkspace ? 344 : 0))
+                            .clamp(
+                              preferences.value.showEvaluationBar ? 492 : 464,
+                              540,
+                            )
+                            .toDouble(),
                     child: EvaluationBoard(
                       visible: preferences.value.showEvaluationBar,
                       flipped: session.flipped,
@@ -1343,6 +1445,16 @@ class _BoardPage extends StatelessWidget {
                 ],
             ],
           );
+          if (floatingWorkspace) {
+            return Center(
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Align(alignment: Alignment.center, child: board),
+                ),
+              ),
+            );
+          }
           return Center(
             child: ConstrainedBox(
               constraints: const BoxConstraints(maxWidth: 1120),

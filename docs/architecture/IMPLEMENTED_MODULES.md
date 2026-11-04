@@ -98,3 +98,5 @@ M4-02 / ADR-040：BoardImageSnapshot仅持打开时Position、末步、可靠评
 M4-03 / ADR-041：ImageClipboard与TextClipboard分离，接收已有PngImage及独立取消令牌；BoardImageDialog保存/复制共享缓存但UI不接触平台。MacOsImageClipboard经独立MethodChannel交ImageClipboardBridge，原生ImageIO解码后在主线程声明PNG NSPasteboard类型、写入并读回核对。生产使用general pasteboard；native fixture使用命名pasteboard保护用户剪贴板。其它平台未注入并明确禁复制。
 
 M4-04 / ADR-042：BoardGifSnapshot冻结根到当前所选线路末端、方向和显示偏好，最多64帧，超限不截断。BoardGifDialog逐帧原创BoardSurface渲染并在后台Isolate用image 4.12.0编码；首末帧停留替代对应步时，预览缓存后交独立GifFileExporter。macOS chooser后经RecordFileWriter.writeGifAtomic，12MiB/64帧/1024边长和0.2–30秒边界检查、ImageIO逐帧解码、Foundation atomic；其它平台不注入保存适配器。系统分享、长线路分段/其它平台未实现。
+
+M4-36 / ADR-071：_BoardPage通过显示模式PopupMenu切换普通分析工作区/进程内浮动工作区。浮动态隐藏AppBar与侧栏，居中棋盘，底栏提供引擎状态/设置/悔棋/新局/翻转/编辑/退出。该展示状态不持久化且不改文档与搜索；不调用原生窗口置顶API，不表达独立窗口能力。测试覆盖进入、必要底栏、退出回常规布局；macOS热重载通过，CUA点击未能执行，人工macOS交互not verified。

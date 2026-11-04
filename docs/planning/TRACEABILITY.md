@@ -576,3 +576,12 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 ## 2026-11-04 / E51 / F19 显示模式入口补审
 
 在访客桌面IAB从设置返回主棋盘后打开菜单“显示模式”，AX/截图列出分析（引擎面板+着法列表）和悬浮窗（棋盘+一行分数）。仅观察弹层，未选择。页面返回后URL仍显示`#/settings/language`，与可见主棋盘不一致；以可见页面为准并标记路由U。源站效果没有验证。
+
+
+## 2026-11-04 / M4-37 / F20,B26,ADR-072 四处分隔桌面工作区
+
+实现：`lib/app.dart`拆分控制与记录区域并适配900–1279dp双栏、≥1280dp三栏；`lib/features/workspace/resizable_workspace.dart`提供左栏宽/棋盘宽/左上下/右上下4个48dp可交互分隔区、可用宽度约束、方向键及Slider增减语义和22/70/55/55重置；`test/widgets/resizable_workspace_test.dart`覆盖三栏装配、拖动改变实际面板大小、重置及语义动作。范围为项目P，站点边界仍U。
+
+专项`flutter test test/widgets/resizable_workspace_test.dart --reporter expanded`2/2通过；根`flutter test --reporter compact`512通过/5跳过（本机未配置官方Pikafish/NNUE）；`flutter analyze --no-pub`无问题。复用现存`flutter run -d macos`runner PID86855热重载3/1736库、2231ms，运行App PID87104保持唯一。没有新增启动。最初布局试验曾使1120dp/200%字号用例溢出、草稿状态条不在视口；提高三栏断点、恢复状态条顶部后通过。另有测试夹具Semantics API编译/释放问题，改为检查SemanticsData增减动作后通过。
+
+未做CUA现场交互验收；三栏阈值/项目值域不宣称复刻源站；触屏、其它显示器、重启持久化、源站完整几何和F19 OS置顶/独立窗仍未验证。

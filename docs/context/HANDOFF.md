@@ -1,5 +1,16 @@
 # 会话交接
 
+## 2026-11-04 / M4-37 / F20,B26 四处分隔桌面工作区
+
+本轮按ADR-072实现≥1280dp三栏工作区，左操作/记录、中棋盘、右侧可见侧栏上下分区。四个分隔条支持48dp拖动区、方向键及Slider读屏增减动作，重置22/70/55/55。范围为P：左栏19–34%，棋盘占剩余宽度60–80%，左右分区25–72/25–75%，并受可用尺寸保护。站点完整范围/算法U。比例只保留当前工作区，不持久化。
+
+代码：`lib/app.dart`、`lib/features/workspace/resizable_workspace.dart`；专项测试`test/widgets/resizable_workspace_test.dart`验证装配、拖动改变实际pane尺寸、重置、Slider语义。专项`flutter test test/widgets/resizable_workspace_test.dart --reporter expanded`2/2；根`flutter test --reporter compact`512通过/5跳过（需要官方Pikafish/NNUE环境）；`flutter analyze --no-pub`无问题。复用唯一runner PID86855热重载成功（Reloaded 3 of 1736 libraries，2231ms），App PID87104仍唯一实例；CUA现场拖动/键盘未验。
+
+用户关心的测试实例：`flutter test`只运行`flutter_tester`，不会启动`chessNext.app`；重复实例来源是重复`flutter run -d macos`。后续继续复用runner并核实PID数。
+
+下一步仍继续全站目标（登录后功能除外），不把M4-37当成完成目标。B26的源站几何范围、触屏及重启持久化、F19原生窗口语义保留U；随后继续B25/F27设置审计与项目实现、B24自建在线目录/部署和功能矩阵剩余缺口。
+
+
 ## 2026-11-04 / 用户要求继续全站对齐：M4-32至M4-35 / B25
 
 用户明确续跑持续开发；排除登录部分，其它在线能力保留范围，后续采用自建可替换后端与部署方案。无代理授权；许可决策暂缓不阻挡离线开发。不要在单功能后停止，不要宣称全站已对齐。启动本轮前重新读了项目要求文档和相应skills；以磁盘/命令输出为准。

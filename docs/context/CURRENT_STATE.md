@@ -1,6 +1,15 @@
 # 当前状态
 
-## 最新交付 M4-36（2026-11-04 14:03 CST）
+## 最新交付 M4-37（2026-11-04）
+
+按E52/E53、ADR-072将B26/F20从两栏扩为≥1280dp三栏：左操作/记录、棋盘、右侧栏上下区域。四个48dp分隔抓手可拖动，键盘方向键与Slider无障碍增减动作可调；“重置布局”恢复22/70/55/55。项目P范围：左栏19–34、棋盘占余宽60–80、上下分区左25–72/右25–75；空间约束保留至少492dp棋盘及220dp右栏。比例为当前工作区内存态。参考站完整边界/算法、跨尺寸/触屏/重启行为仍U。
+
+代码`lib/features/workspace/resizable_workspace.dart`；专项`test/widgets/resizable_workspace_test.dart`覆盖三栏装配、四隔条拖动、真实pane尺寸变化、重置和读屏增量。最终专项`flutter test test/widgets/resizable_workspace_test.dart --reporter expanded`2/2；根`flutter test --reporter compact`512通过/5跳过（缺官方Pikafish/NNUE环境），`flutter analyze --no-pub`无问题。复用唯一macOS runner PID86855热重载成功（Reloaded 3 of 1736 libraries，2231ms），App PID87104；测试没有启动App，也未新增实例。CUA人工拖动/键盘验收未做。
+
+B26剩余：源站完整尺寸/纵横触控/持久化行为未知，原生置顶/独立窗口语义U。全站仍未对齐，后续继续审计F20语言/其它设置和其余功能缺口。
+
+
+## 上一交付 M4-36（2026-11-04 14:03 CST）
 
 M4-36 `5048330 feat(workspace): 增加棋盘悬浮工作区`按ADR-071、F19/B26实现本机悬浮工作区（临时进程状态）：AppBar“显示模式”在分析/悬浮窗之间切换；悬浮态隐藏常规侧栏，居中显示棋盘，底部有引擎状态/设置/悔棋/更多；更多菜单有新局、翻转、编辑、退出。未模拟OS置顶或独立窗口，站点这部分仍U。专项`flutter test test/widgets/floating_workspace_test.dart --reporter expanded`通过；根`flutter test --reporter compact`510通过/5跳过；`flutter analyze --no-pub`无问题。现有macOS runner PID86855热重载成功（Reloaded 2 of 1735 libraries）；PID87104仍唯一App。CUA能截取当前标准工作区并看到显示模式入口，但点击报`noWindowsAvailable`，悬浮态macOS现场交互未验；以widget测试作为行为证据。没有新启动App。
 

@@ -65,6 +65,7 @@ import 'application/board_skin_image_library_controller.dart';
 import 'ports/board_skin_images.dart';
 import 'ports/piece_skin_library.dart';
 import 'application/piece_skin_library_controller.dart';
+import 'features/workspace/resizable_workspace.dart';
 
 class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
@@ -1040,6 +1041,7 @@ class _BoardPage extends StatelessWidget {
       body: LayoutBuilder(
         builder: (context, constraints) {
           final wide = constraints.maxWidth >= 900;
+          final threeColumn = constraints.maxWidth >= 1280;
           final board = ConstrainedBox(
             constraints: const BoxConstraints(maxWidth: 540),
             child: Column(
@@ -1068,7 +1070,9 @@ class _BoardPage extends StatelessWidget {
                     width:
                         (constraints.maxWidth -
                                 48 -
-                                (wide && !floatingWorkspace ? 344 : 0))
+                                (wide && !threeColumn && !floatingWorkspace
+                                    ? 344
+                                    : 0))
                             .clamp(
                               preferences.value.showEvaluationBar ? 492 : 464,
                               540,
@@ -1116,255 +1120,243 @@ class _BoardPage extends StatelessWidget {
               ],
             ),
           );
-          final panel = Card.outlined(
+          Widget workspaceCard(List<Widget> children) => Card.outlined(
             child: Padding(
               padding: const EdgeInsets.all(24),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    '本地棋盘',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    '自由对弈 · 离线运行',
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.onSurfaceVariant,
-                    ),
-                  ),
-                  const SizedBox(height: 24),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      FilledButton.icon(
-                        onPressed: () => _newGame(context),
-                        icon: const Icon(Icons.add),
-                        label: const Text('新局'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: session.canUndo
-                            ? () => analysis.playing
-                                  ? analysis.undoForPlay()
-                                  : session.undo()
-                            : null,
-                        icon: const Icon(Icons.undo),
-                        label: const Text('悔棋'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: session.flip,
-                        icon: const Icon(Icons.flip_camera_android_outlined),
-                        label: const Text('翻转'),
-                      ),
-                      Tooltip(
-                        message: '左右镜像，只改变显示方向',
-                        child: Semantics(
-                          toggled: session.mirrored,
-                          child: OutlinedButton.icon(
-                            onPressed: session.mirror,
-                            icon: const Icon(Icons.flip),
-                            label: const Text('左右翻转'),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 12),
-                  Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: [
-                      OutlinedButton.icon(
-                        onPressed: library.busy ? null : () => _import(context),
-                        icon: const Icon(Icons.input),
-                        label: const Text('导入文字'),
-                      ),
-                      if (filePicker != null)
-                        OutlinedButton.icon(
-                          onPressed: library.busy
-                              ? null
-                              : () => _import(context, fromFile: true),
-                          icon: const Icon(Icons.file_open_outlined),
-                          label: const Text('导入文件'),
-                        ),
-                      OutlinedButton.icon(
-                        onPressed: () => _export(context),
-                        icon: const Icon(Icons.ios_share),
-                        label: const Text('导出文字'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: () => _exportImage(context),
-                        icon: const Icon(Icons.image_outlined),
-                        label: const Text('导出图片'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: () => _exportGif(context),
-                        icon: const Icon(Icons.gif_box_outlined),
-                        label: const Text('导出动态图'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: library.busy ? null : () => _edit(context),
-                        icon: const Icon(Icons.edit_outlined),
-                        label: const Text('编辑局面'),
-                      ),
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.description_outlined),
-                        label: const Text('棋谱资料'),
-                        onPressed: library.busy
-                            ? null
-                            : () => showDialog<void>(
-                                context: context,
-                                builder: (_) =>
-                                    RecordMetadataDialog(session: session),
-                              ),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: library.busy ? null : () => _save(context),
-                        icon: const Icon(Icons.save_outlined),
-                        label: const Text('保存棋谱'),
-                      ),
-                      OutlinedButton.icon(
-                        onPressed: library.busy
-                            ? null
-                            : () => showDialog<void>(
-                                context: context,
-                                builder: (context) =>
-                                    LibraryDialog(library: library),
-                              ),
-                        icon: const Icon(Icons.folder_open),
-                        label: const Text('棋谱库'),
-                      ),
-                      OutlinedButton.icon(
-                        icon: const Icon(Icons.history),
-                        label: const Text('最近阅读'),
-                        onPressed: library.busy
-                            ? null
-                            : () => showDialog<void>(
-                                context: context,
-                                builder: (_) =>
-                                    RecentReadingDialog(readings: readings),
-                              ),
-                      ),
-                    ],
-                  ),
-                  if (library.busy) const LinearProgressIndicator(),
-                  if (library.error != null)
-                    Text(
-                      library.error!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
-                      ),
-                    ),
-                  if (preferences.value.showMoveList) ...[
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 20),
-                      child: Divider(),
-                    ),
-                    Text(
-                      '着法记录',
-                      style: Theme.of(context).textTheme.titleMedium,
-                    ),
-                    const SizedBox(height: 12),
-                    if (!session.hasMoves) const Text('尚无着法，选择棋子开始对局。'),
-                    MoveList(
-                      session: session,
-                      onNavigate: analysis.navigateToNode,
-                    ),
-                    const SizedBox(height: 16),
-                  ],
-                  Wrap(
-                    spacing: 4,
-                    children: [
-                      if (preferences.value.showRecordPlaybackButton)
-                        IconButton(
-                          onPressed: recordPlayback.playing
-                              ? recordPlayback.stop
-                              : recordPlayback.canPlay
-                              ? recordPlayback.start
-                              : null,
-                          tooltip: recordPlayback.playing ? '暂停播放' : '播放棋谱',
-                          icon: Icon(
-                            recordPlayback.playing
-                                ? Icons.pause
-                                : Icons.play_arrow,
-                          ),
-                        ),
-                      IconButton(
-                        onPressed: session.canUndo
-                            ? () =>
-                                  analysis.navigateToNode(session.tree.root.id)
-                            : null,
-                        tooltip: '回到开始',
-                        icon: const Icon(Icons.first_page),
-                      ),
-                      _branchButton(
-                        session.readingNavigation.previousBranchId,
-                        '上一分支点或开始',
-                        Icons.keyboard_double_arrow_left,
-                      ),
-                      IconButton(
-                        onPressed: session.canUndo
-                            ? () => analysis.navigateToNode(
-                                session.tree.current.parentId!,
-                              )
-                            : null,
-                        tooltip: '上一着',
-                        icon: const Icon(Icons.chevron_left),
-                      ),
-                      IconButton(
-                        onPressed: session.canForward
-                            ? () => analysis.navigateToNode(session.nextNodeId!)
-                            : null,
-                        tooltip: '下一着',
-                        icon: const Icon(Icons.chevron_right),
-                      ),
-                      _branchButton(
-                        session.readingNavigation.nextBranchId,
-                        '下一分支点或末尾',
-                        Icons.keyboard_double_arrow_right,
-                      ),
-                      IconButton(
-                        onPressed: session.canForward
-                            ? () => analysis.navigateToNode(
-                                session.tree.currentLine.last.id,
-                              )
-                            : null,
-                        tooltip: '当前线路末尾',
-                        icon: const Icon(Icons.last_page),
-                      ),
-                    ],
-                  ),
-                  TextFormField(
-                    key: ValueKey('comment-${session.tree.cursorId}'),
-                    initialValue: session.tree.current.comment,
-                    inputFormatters: [
-                      TextInputFormatter.withFunction(
-                        (oldValue, newValue) =>
-                            newValue.text.length <= 10000 ? newValue : oldValue,
-                      ),
-                    ],
-                    decoration: const InputDecoration(
-                      labelText: '当前局面注释',
-                      helperText: '注释按局面保留，回退后走新棋会创建变着',
-                    ),
-                    maxLines: 3,
-                    onChanged: session.annotate,
-                  ),
-                  VariationPanel(session: session, engine: analysis),
-                  const SizedBox(height: 24),
-                  Text(
-                    session.dirty
-                        ? '有未保存到棋谱库的修改。'
-                        : library.currentId == null
-                        ? '保存到本地棋谱库，可在下次打开时继续。'
-                        : '已保存到本地 · ${library.title}',
-                    style: Theme.of(context).textTheme.bodySmall,
-                  ),
-                ],
+                children: children,
               ),
             ),
           );
+          final panelUpper = workspaceCard([
+            Text('本地棋盘', style: Theme.of(context).textTheme.headlineSmall),
+            const SizedBox(height: 8),
+            Text(
+              '自由对弈 · 离线运行',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+            ),
+            const SizedBox(height: 24),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                FilledButton.icon(
+                  onPressed: () => _newGame(context),
+                  icon: const Icon(Icons.add),
+                  label: const Text('新局'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: session.canUndo
+                      ? () => analysis.playing
+                            ? analysis.undoForPlay()
+                            : session.undo()
+                      : null,
+                  icon: const Icon(Icons.undo),
+                  label: const Text('悔棋'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: session.flip,
+                  icon: const Icon(Icons.flip_camera_android_outlined),
+                  label: const Text('翻转'),
+                ),
+                Tooltip(
+                  message: '左右镜像，只改变显示方向',
+                  child: Semantics(
+                    toggled: session.mirrored,
+                    child: OutlinedButton.icon(
+                      onPressed: session.mirror,
+                      icon: const Icon(Icons.flip),
+                      label: const Text('左右翻转'),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: [
+                OutlinedButton.icon(
+                  onPressed: library.busy ? null : () => _import(context),
+                  icon: const Icon(Icons.input),
+                  label: const Text('导入文字'),
+                ),
+                if (filePicker != null)
+                  OutlinedButton.icon(
+                    onPressed: library.busy
+                        ? null
+                        : () => _import(context, fromFile: true),
+                    icon: const Icon(Icons.file_open_outlined),
+                    label: const Text('导入文件'),
+                  ),
+                OutlinedButton.icon(
+                  onPressed: () => _export(context),
+                  icon: const Icon(Icons.ios_share),
+                  label: const Text('导出文字'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => _exportImage(context),
+                  icon: const Icon(Icons.image_outlined),
+                  label: const Text('导出图片'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: () => _exportGif(context),
+                  icon: const Icon(Icons.gif_box_outlined),
+                  label: const Text('导出动态图'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: library.busy ? null : () => _edit(context),
+                  icon: const Icon(Icons.edit_outlined),
+                  label: const Text('编辑局面'),
+                ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.description_outlined),
+                  label: const Text('棋谱资料'),
+                  onPressed: library.busy
+                      ? null
+                      : () => showDialog<void>(
+                          context: context,
+                          builder: (_) =>
+                              RecordMetadataDialog(session: session),
+                        ),
+                ),
+                OutlinedButton.icon(
+                  onPressed: library.busy ? null : () => _save(context),
+                  icon: const Icon(Icons.save_outlined),
+                  label: const Text('保存棋谱'),
+                ),
+                OutlinedButton.icon(
+                  onPressed: library.busy
+                      ? null
+                      : () => showDialog<void>(
+                          context: context,
+                          builder: (context) => LibraryDialog(library: library),
+                        ),
+                  icon: const Icon(Icons.folder_open),
+                  label: const Text('棋谱库'),
+                ),
+                OutlinedButton.icon(
+                  icon: const Icon(Icons.history),
+                  label: const Text('最近阅读'),
+                  onPressed: library.busy
+                      ? null
+                      : () => showDialog<void>(
+                          context: context,
+                          builder: (_) =>
+                              RecentReadingDialog(readings: readings),
+                        ),
+                ),
+              ],
+            ),
+            if (library.busy) const LinearProgressIndicator(),
+            if (library.error != null)
+              Text(
+                library.error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+          ]);
+          final panelLower = workspaceCard([
+            if (preferences.value.showMoveList) ...[
+              const Padding(
+                padding: EdgeInsets.symmetric(vertical: 20),
+                child: Divider(),
+              ),
+              Text('着法记录', style: Theme.of(context).textTheme.titleMedium),
+              const SizedBox(height: 12),
+              if (!session.hasMoves) const Text('尚无着法，选择棋子开始对局。'),
+              MoveList(session: session, onNavigate: analysis.navigateToNode),
+              const SizedBox(height: 16),
+            ],
+            Wrap(
+              spacing: 4,
+              children: [
+                if (preferences.value.showRecordPlaybackButton)
+                  IconButton(
+                    onPressed: recordPlayback.playing
+                        ? recordPlayback.stop
+                        : recordPlayback.canPlay
+                        ? recordPlayback.start
+                        : null,
+                    tooltip: recordPlayback.playing ? '暂停播放' : '播放棋谱',
+                    icon: Icon(
+                      recordPlayback.playing ? Icons.pause : Icons.play_arrow,
+                    ),
+                  ),
+                IconButton(
+                  onPressed: session.canUndo
+                      ? () => analysis.navigateToNode(session.tree.root.id)
+                      : null,
+                  tooltip: '回到开始',
+                  icon: const Icon(Icons.first_page),
+                ),
+                _branchButton(
+                  session.readingNavigation.previousBranchId,
+                  '上一分支点或开始',
+                  Icons.keyboard_double_arrow_left,
+                ),
+                IconButton(
+                  onPressed: session.canUndo
+                      ? () => analysis.navigateToNode(
+                          session.tree.current.parentId!,
+                        )
+                      : null,
+                  tooltip: '上一着',
+                  icon: const Icon(Icons.chevron_left),
+                ),
+                IconButton(
+                  onPressed: session.canForward
+                      ? () => analysis.navigateToNode(session.nextNodeId!)
+                      : null,
+                  tooltip: '下一着',
+                  icon: const Icon(Icons.chevron_right),
+                ),
+                _branchButton(
+                  session.readingNavigation.nextBranchId,
+                  '下一分支点或末尾',
+                  Icons.keyboard_double_arrow_right,
+                ),
+                IconButton(
+                  onPressed: session.canForward
+                      ? () => analysis.navigateToNode(
+                          session.tree.currentLine.last.id,
+                        )
+                      : null,
+                  tooltip: '当前线路末尾',
+                  icon: const Icon(Icons.last_page),
+                ),
+              ],
+            ),
+            TextFormField(
+              key: ValueKey('comment-${session.tree.cursorId}'),
+              initialValue: session.tree.current.comment,
+              inputFormatters: [
+                TextInputFormatter.withFunction(
+                  (oldValue, newValue) =>
+                      newValue.text.length <= 10000 ? newValue : oldValue,
+                ),
+              ],
+              decoration: const InputDecoration(
+                labelText: '当前局面注释',
+                helperText: '注释按局面保留，回退后走新棋会创建变着',
+              ),
+              maxLines: 3,
+              onChanged: session.annotate,
+            ),
+            VariationPanel(session: session, engine: analysis),
+            const SizedBox(height: 24),
+            Text(
+              session.dirty
+                  ? '有未保存到棋谱库的修改。'
+                  : library.currentId == null
+                  ? '保存到本地棋谱库，可在下次打开时继续。'
+                  : '已保存到本地 · ${library.title}',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+          ]);
           final visibleSidePanels = preferences.value.sidePanelOrder
               .where(preferences.value.visibleSidePanels.contains)
               .toList();
@@ -1387,7 +1379,7 @@ class _BoardPage extends StatelessWidget {
             ),
             SidePanel.candidates => CandidatePanel(engine: analysis),
           };
-          final sidePanel = Column(
+          final workspaceStatus = Column(
             children: [
               if (preferences.error != null)
                 Card.outlined(
@@ -1415,8 +1407,10 @@ class _BoardPage extends StatelessWidget {
                   drafts: drafts!,
                   onRestore: () => _restoreDraft(context),
                 ),
-              panel,
-              const SizedBox(height: 12),
+            ],
+          );
+          final rightHeader = Column(
+            children: [
               if (preferences.value.showPanelSwitchBar &&
                   visibleSidePanels.isNotEmpty) ...[
                 SegmentedButton<SidePanel>(
@@ -1433,16 +1427,36 @@ class _BoardPage extends StatelessWidget {
                   onSelectionChanged: (selected) =>
                       preferences.setActiveSidePanel(selected.single),
                 ),
-                const SizedBox(height: 12),
-                panelContent(activeSidePanel),
-                const SizedBox(height: 12),
               ] else if (preferences.value.showPanelSwitchBar) ...[
                 const Text('没有已启用的侧栏面板。可在应用设置中重新启用。'),
-              ] else
-                for (final item in visibleSidePanels) ...[
-                  panelContent(item),
-                  const SizedBox(height: 12),
-                ],
+              ],
+            ],
+          );
+          final rightPanels = preferences.value.showPanelSwitchBar
+              ? <Widget>[
+                  if (activeSidePanel != null) panelContent(activeSidePanel),
+                  const SizedBox.shrink(),
+                ]
+              : <Widget>[
+                  if (visibleSidePanels.isEmpty) const SizedBox.shrink(),
+                  for (final item in visibleSidePanels) panelContent(item),
+                ];
+          final splitAt = (rightPanels.length / 2).ceil();
+          final rightTop = rightPanels.take(splitAt).toList();
+          final rightBottom = rightPanels.skip(splitAt).toList();
+          final sidePanel = Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              workspaceStatus,
+              panelUpper,
+              const SizedBox(height: 12),
+              panelLower,
+              const SizedBox(height: 12),
+              rightHeader,
+              for (final item in rightPanels) ...[
+                item,
+                const SizedBox(height: 12),
+              ],
             ],
           );
           if (floatingWorkspace) {
@@ -1457,10 +1471,21 @@ class _BoardPage extends StatelessWidget {
           }
           return Center(
             child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 1120),
+              constraints: const BoxConstraints(maxWidth: 1440),
               child: Padding(
                 padding: const EdgeInsets.all(24),
-                child: wide
+                child: threeColumn
+                    ? ResizableWorkspace(
+                        leftTop: Column(
+                          children: [workspaceStatus, panelUpper],
+                        ),
+                        leftBottom: panelLower,
+                        board: board,
+                        rightHeader: rightHeader,
+                        rightTop: Column(children: rightTop),
+                        rightBottom: Column(children: rightBottom),
+                      )
+                    : wide
                     ? Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [

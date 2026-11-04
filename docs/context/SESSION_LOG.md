@@ -748,3 +748,14 @@ M4-31 F20侧栏显隐：新增可空`visibleSidePanels`集合，拒绝重复/未
 新增`test/widgets/floating_workspace_test.dart`覆盖标准→悬浮、底栏存在、更多/退出和返回标准工作区。专项`flutter test test/widgets/floating_workspace_test.dart --reporter expanded`通过；根`flutter test --reporter compact`510通过/5跳过（官方Pikafish/NNUE需配置）；`flutter analyze --no-pub`无问题。使用已运行PID86855 runner键入`r`热重载成功：Reloaded 2 of 1735 libraries in 6.3s，现有App PID87104。CUA截图确认当前AppBar出现显示模式入口；尝试真实点击时工具报`noWindowsAvailable`，悬浮态macOS交互未验，未重启/未新开实例。
 
 更新ADR-071、CURRENT_STATE、HANDOFF、FEATURE_MATRIX/GAPS、BACKLOG、TRACEABILITY、IMPLEMENTED_MODULES。功能代码/研究提交`5048330 feat(workspace): 增加棋盘悬浮工作区`；状态交接补记该提交。B26后续继续本机四分隔条与重置，不因本片停止全站推进；原生窗口、全值域、键盘/触屏及全站其余差距保持开放。
+
+
+## 2026-11-04 / M4-37 / F20,B26 三栏布局与四处分隔
+
+按E52/E53和ADR-072，将原侧栏卡分为左侧操作、记录/注释两区；宽屏≥1280dp展示左栏、棋盘、中右面板三栏，右侧当前可见面板按顺序上下拆分。四个48dp分隔区分别改左栏比例、剩余空间内棋盘比例、左上下、右上下。鼠标拖动、箭头键Shortcut、Semantics Slider增减和重置22/70/55/55已接入。项目比例P：左19–34%，棋盘60–80%，左上下25–72%，右上下25–75%，并计算最小492dp棋盘/220dp右栏；本工作区临时状态。源站精确算法/值域U。
+
+首次全量验证捕获三栏在1120dp/200%字号下挤压、状态条后移；将三栏断点放到1280dp、保留旧双栏范围并把状态置顶后相关测试通过。后续发现测试夹具导入SemanticsAction/旧pipelineOwner API警告及SemanticsHandle释放问题；最终用SemanticsData验证增减动作，专项全部通过。最终命令及结果：`flutter test test/widgets/resizable_workspace_test.dart --reporter expanded`2/2；`flutter test --reporter compact`512通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。最终门槛前一次全量运行中，`analysis_controller_test.dart`有一项异步等待用例单次失败；隔离复跑该文件4/4通过，随后最终全量复跑512通过/5跳过，记为未复现测试波动。
+
+macOS没有重复启动。复用runner会话27500/PID86855发送热重载，报告Reloaded 3 of 1736 libraries in 2231ms；App PID87104仍唯一。全量`flutter test`期间亦无新增`chessNext.app`。CUA手工拖动/键盘操作未验。
+
+下一步继续用户授权的登录后功能以外全站对齐，不停止于M4-37：先推进B25/F27语言和剩余设置的证据/完整本地化，再做B24自建可替换在线皮肤目录与部署方案及功能矩阵其他缺口。F19原生窗口和F20全源站几何范围仍U。

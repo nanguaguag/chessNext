@@ -8,9 +8,9 @@
 
 **进程说明（回应用户）：**`flutter test`使用`flutter_tester`宿主，本轮根测试期间进程表没有`chessNext.app`；这些测试不会启动多份桌面App。`flutter run -d macos`才会启动真实App。之前每个功能重复`flutter run`导致多次实例可能留存；本轮清理到单例，并保留一个TTY交互runner。后续通过该runner热重载；如果runner失效，先查进程数量、停旧runner/App，再只启动一个。当前GUI App PID87104、Flutter runner会话27500。
 
-E50操作设置本轮项目行为已补播放、棋谱栏/播放按钮显隐、侧栏切换、动作菜单；源站执行策略和面板映射仍U/P，未动源站偏好。新增E51：主菜单显示模式列“分析（引擎面板+着法列表）”与“悬浮窗（棋盘+一行分数）”，仅观察没选择；访问时路由错报为`#/settings/language`但内容为主棋盘，后经菜单正常返回`#/settings`。E51/B26文档更新待checkpoint提交。
+E50操作设置本轮项目行为已补播放、棋谱栏/播放按钮显隐、侧栏切换、动作菜单；源站执行策略和面板映射仍U/P，未动源站偏好。E51入口观察由E52实操补全：悬浮模式显示居中棋盘+底部状态/工具行，“⋯”菜单可返回多栏工作区；原生置顶/独立窗口U。E52计数4个splitter，左栏调整和重置可见，两个上下分区尚待范围/重置核验。测试用临时标签已关闭，用户标签仍在`#/settings`。
 
-下一步：提交E51+B26及CURRENT_STATE/HANDOFF/SESSION_LOG文档；之后继续B26/F19,F20补查布局分隔条/重置和显示模式的实际动作，再推进矩阵中其它本地功能、F27翻译、自建在线后端/部署方案及全站可确认差距。相应技能：`feature-audit`审计、`flutter-feature`实现、`quality-gate`验收、`session-handoff`交接；按当前子任务读取，不需一次读完。
+下一步：提交E52及CURRENT_STATE/HANDOFF/SESSION_LOG文档checkpoint；继续B26补测其它分隔条范围及重置，再按证据实现本机对齐并推进矩阵中其它本地功能、F27翻译、自建在线后端/部署方案及全站可确认差距。相应技能：`feature-audit`审计、`flutter-feature`实现、`quality-gate`验收、`session-handoff`交接；按当前子任务读取，不需一次读完。
 
 ## 2026-11-04 / B25 持续交付：M4-31侧栏面板显隐
 

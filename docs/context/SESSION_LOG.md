@@ -724,3 +724,13 @@ M4-31 F20侧栏显隐：新增可空`visibleSidePanels`集合，拒绝重复/未
 用户询问每次测试是否启动App。执行`ps`/`pgrep`核验：`flutter test`期间有`flutter_tester`和`flutter_tools.snapshot test`，没有`chessNext.app`；真实桌面App来自我此前每功能单独运行的`flutter run -d macos`。清理后只保留一个最终runner/App。旧runner stdin关闭，故杀掉该唯一实例后以TTY启动单一runner；后续可尝试TTY hot reload避免重复App。当前app PID87104、runner会话27500。5项根测试跳过需官方Pikafish/NNUE环境；flutter_tts有SwiftPM未来兼容warning。没有用CUA对桌面右键菜单作视觉确认。
 
 附加只读审计E51：参考站主菜单“显示模式”候选分析（引擎面板+着法列表）/悬浮窗（棋盘+一行分数）；没选择模式，应用结果/置顶为U。操作时页面route报告`#/settings/language`但实画面是主棋盘；最终恢复浏览器至用户原始`#/settings`首页，未修改站点偏好。E51、B26、CURRENT_STATE、HANDOFF、SESSION_LOG需文档checkpoint独立提交。
+
+# 2026-11-04 / E52 / B26 F19,F20 显示模式与布局审计
+
+用户指出不应在单功能后停；同时再次确认避免反复启动macOS App。新查`pgrep`：仅一个`flutter run -d macos` runner PID86855（frontend 86897）和一个`chessNext.app` PID87104；本轮没有执行测试或新启App。`flutter test`使用`flutter_tester`，不是上次多实例来源；多实例来自反复`flutter run`。
+
+最初绑定用户IAB标签报错，随后在同一IAB创建独立临时审计标签读取现场；原用户标签`https://xiangqiai.com/#/settings`全程未修改，审计标签最后关闭。访客桌面，URL `https://xiangqiai.com/#/`，视口1280×720。AX列出4个splitter（左栏宽、棋盘宽、两处上下分区；四者初始可见值22/70/55/55），因此纠正“3处分隔条”旧描述。左栏拖动后22→24，棋盘70→71；左栏向屏幕边缘拖动停于19.132652282714844，继续操作值不变；“重置布局”恢复左栏22/棋盘70。没有改动两个上下分区，故它们的重置/边界仍U。
+
+主菜单→显示模式→悬浮窗，现场实际切换为居中棋盘与底部状态/工具行；页面提示右下角“⋯”退出，菜单含新局/翻转/编辑/退出悬浮窗；点击退出回普通多栏区；主菜单显示模式回报分析。该结果支持App内悬浮布局V，不支持原生OS置顶/独立窗口结论（U）。临时标签关闭后，浏览器仅保留用户原settings标签。
+
+更新`REFERENCE_EVIDENCE.md` E52、`FEATURE_MATRIX.md` F19/F20、`FEATURE_GAPS.md`及`BACKLOG.md` B26，并修正CURRENT_STATE/HANDOFF此前把已提交E51说成待提交的陈述。此为审计文档改动，无业务源码，未跑测试/分析、不需macOS重启。待commit：`docs(audit): 记录显示模式与布局分隔条证据`。下一步补测两个上下分区范围/重置后，落实B26功能实现。

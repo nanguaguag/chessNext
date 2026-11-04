@@ -1,4 +1,4 @@
-# Self hosted piece skin catalog
+# Self hosted skin catalog with optional book service
 
 This service exposes a public, read only catalog. It has no account system,
 upload endpoint, likes endpoint, or connection to xiangqiai.com. The operator
@@ -109,9 +109,33 @@ to the catalog directory.
 - `GET /v1/board-catalog?q=&sort=default|likes|name|author|recent&page=1&pageSize=24` (optional board root)
 - `GET /v1/board-catalog/{id}`
 - `GET /v1/board-catalog/{id}/package`
+- `POST /v1/book/query` (optional book root, JSON schema 1)
 
-Only GET/HEAD and CORS preflight are accepted. The API has bounded query,
+Only GET/HEAD, the bounded book-query POST, and CORS preflight are accepted. The API has bounded query,
 pagination, manifest and package sizes. Package responses use a content hash as
 an ETag and immutable cache key. There are no mutations, tokens, or user
 profiles. API response schema is versioned independently from the downloadable
 application skin ZIP schema.
+
+## Optional operator supplied book data
+
+Set `CHESSNEXT_BOOK_ROOT` to a directory containing `book.json`. The schema is
+1 and includes `dataset: {id, license, attribution}` plus
+`entries: [{kind, fen, history, moves}]`. `kind` is `opening` or `endgame`;
+each move contains coordinate `move`, side-to-move `scoreCp`, and positive
+`weight`. Lookups match exact FEN plus complete ICCS/UCI history. Candidate
+selection and legality are left to the client. An empty manifest is an empty
+service, not a populated book. This repository includes no game corpus; publish
+only data you own or are authorized to redistribute, with license and
+attribution.
+
+`book.example.json` is an empty protocol template with placeholder metadata;
+it contains no positions and is not a usable chess book. Replace the license
+and attribution placeholders and add only authorized records before exposing
+the service.
+
+The service loads the manifest at startup. Replace it atomically and restart to
+publish changes. Requests are bounded to 32 KiB and are neither logged nor
+persisted. Queries contain the current position and move history, so the app
+must use an endpoint the user explicitly configured. The supplied Nginx sample
+allows a 32 KiB request body for this endpoint.

@@ -738,7 +738,7 @@ E66在参考站访客临时棋盘皮肤草稿上用实际按钮/输入操作验�
 
 ## E71 / F22,F23 AI走棋设置（2026-11-05）
 
-`#/settings/play`明确描述分析界面AI走棋设置，不影响人机对弈/分析。难度当前20（四级标签可见）、步时默认1秒、云库最佳着法、残局云库开（O）；高级页深度60、离库10步（O）。离库步数减至1后按钮禁用，增回9次复核10（V）。难度预算映射、其余值域、实际搜索/云库行为及持久性U；审计时没有发起搜索或联网。详REFERENCE_EVIDENCE E71。
+`#/settings/play`明确描述分析界面AI走棋设置，不影响人机对弈/分析。难度当前20（四级标签可见）、步时默认1秒、开局库默认最佳着法、残局云库开（O）；开局库菜单还可选关闭或分差内随机（O，随机差值/算法U）。高级页深度60、离库10步（O）。离库步数减至1后按钮禁用，增回9次复核10（V）。难度预算映射、其余值域、实际搜索/云库行为及持久性U；审计时没有发起搜索或联网。详REFERENCE_EVIDENCE E71。
 
 E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5秒到0（不限时），不限时才显示最大深度60；切回预设1秒并复核默认状态。自定义上限、实际搜索效果仍U。
 
@@ -751,3 +751,7 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 设置单独记忆AI走棋难度、时长、无限时最大深度；单步请求将难度转换为有限节点预算，不修改普通分析/人机对弈参数。项目的预算映射为P；E71只验证页面值域与预设，不证明对应棋力。开局/残局BookService及真实站点搜索行为仍缺实现/证据。
 
 专项`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`24/24；根串行`flutter test --concurrency=1 --reporter compact`558通过/5跳过；`flutter analyze --no-pub`通过。复用macOS PID50598/runner50125，attach同步1,090ms、热重启1,042ms；锁屏未人工视觉验收。
+
+## M4-55 / F15,F22,F23 / ADR-087 自建云库服务端首片
+
+`CHESSNEXT_BOOK_ROOT`可选装载operator-supplied schema1开局/残局库；`POST /v1/book/query`以FEN+完整历史精确匹配，返回候选/明确miss和许可署名。客户端必须再次校验着法合法性，不将服务端候选直接视作棋步。服务器专项`flutter test --concurrency=1 test/server/book_catalog_server_test.dart test/server/skin_catalog_server_test.dart --reporter expanded`10/10。独立Dart服务未运行，真实部署/运营数据和端到端客户端未验。

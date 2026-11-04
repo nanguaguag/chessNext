@@ -8,8 +8,214 @@ import 'package:crypto/crypto.dart';
 const _maxManifestBytes = 4 * 1024 * 1024;
 const _maxPageSize = 100;
 const _maxPackageBytes = 8 * 1024 * 1024;
+const _maxBookManifestBytes = 128 * 1024 * 1024;
+const _maxBookRequestBytes = 32 * 1024;
+const _maxBookEntries = 2000000;
 final _idPattern = RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$');
 final _sha256Pattern = RegExp(r'^[0-9a-f]{64}$');
+final _xiangqiMovePattern = RegExp(r'^[a-i][0-9][a-i][0-9]$');
+
+enum BookKind { opening, endgame }
+
+final class BookCandidate {
+  const BookCandidate({
+    required this.move,
+    required this.scoreCp,
+    required this.weight,
+  });
+  final String move;
+  final int scoreCp;
+  final int weight;
+
+  Map<String, Object> toJson() => {
+    'move': move,
+    'scoreCp': scoreCp,
+    'weight': weight,
+  };
+
+  factory BookCandidate.fromJson(Object? value) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'move',
+          'scoreCp',
+          'weight',
+        }).isNotEmpty ||
+        value['move'] is! String ||
+        !_xiangqiMovePattern.hasMatch(value['move'] as String) ||
+        value['scoreCp'] is! int ||
+        (value['scoreCp'] as int).abs() > 1000000 ||
+        value['weight'] is! int ||
+        (value['weight'] as int) < 1 ||
+        (value['weight'] as int) > 1000000000) {
+      throw const FormatException('Invalid book candidate');
+    }
+    return BookCandidate(
+      move: value['move'] as String,
+      scoreCp: value['scoreCp'] as int,
+      weight: value['weight'] as int,
+    );
+  }
+}
+
+final class BookEntry {
+  const BookEntry({
+    required this.kind,
+    required this.fen,
+    required this.history,
+    required this.moves,
+  });
+  final BookKind kind;
+  final String fen;
+  final List<String> history;
+  final List<BookCandidate> moves;
+
+  factory BookEntry.fromJson(Object? value) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'kind',
+          'fen',
+          'history',
+          'moves',
+        }).isNotEmpty ||
+        value['kind'] is! String ||
+        value['fen'] is! String ||
+        (value['fen'] as String).isEmpty ||
+        (value['fen'] as String).length > 256 ||
+        value['history'] is! List ||
+        (value['history'] as List).length > 512 ||
+        (value['history'] as List).any(
+          (move) => move is! String || !_xiangqiMovePattern.hasMatch(move),
+        ) ||
+        value['moves'] is! List ||
+        (value['moves'] as List).isEmpty ||
+        (value['moves'] as List).length > 32) {
+      throw const FormatException('Invalid book entry');
+    }
+    final kind = switch (value['kind']) {
+      'opening' => BookKind.opening,
+      'endgame' => BookKind.endgame,
+      _ => throw const FormatException('Invalid book kind'),
+    };
+    final moves = (value['moves'] as List)
+        .map(BookCandidate.fromJson)
+        .toList(growable: false);
+    if (moves.map((candidate) => candidate.move).toSet().length !=
+        moves.length) {
+      throw const FormatException('Duplicate book move');
+    }
+    return BookEntry(
+      kind: kind,
+      fen: (value['fen'] as String).trim(),
+      history: List.unmodifiable((value['history'] as List).cast<String>()),
+      moves: List.unmodifiable(moves),
+    );
+  }
+}
+
+final class BookQueryResult {
+  const BookQueryResult({
+    required this.kind,
+    required this.fen,
+    required this.history,
+  });
+  final BookKind kind;
+  final String fen;
+  final List<String> history;
+}
+
+/// Operator supplied, exact-position book data. No third-party corpus ships
+/// with this package and the service never writes user queries to disk.
+final class BookDatabase {
+  BookDatabase._({
+    required this.id,
+    required this.license,
+    required this.attribution,
+    required List<BookEntry> entries,
+  }) : _entries = Map.unmodifiable({
+         for (final entry in entries)
+           _key(entry.kind, entry.fen, entry.history): entry,
+       });
+
+  final String id;
+  final String license;
+  final String attribution;
+  final Map<String, BookEntry> _entries;
+  int get entryCount => _entries.length;
+
+  static Future<BookDatabase> load(
+    Directory root, {
+    String fileName = 'book.json',
+  }) async {
+    if (await FileSystemEntity.type(root.path, followLinks: false) !=
+            FileSystemEntityType.directory ||
+        !RegExp(r'^[a-z][a-z0-9_-]{0,63}\.json$').hasMatch(fileName)) {
+      throw const FormatException('Invalid book data root');
+    }
+    final file = File('${root.path}/$fileName');
+    if (await FileSystemEntity.type(file.path, followLinks: false) !=
+            FileSystemEntityType.file ||
+        await file.length() > _maxBookManifestBytes) {
+      throw const FormatException('Book manifest unavailable or too large');
+    }
+    final decoded = jsonDecode(await file.readAsString());
+    if (decoded is! Map<String, dynamic> ||
+        decoded.keys.toSet().difference({
+          'schema',
+          'dataset',
+          'entries',
+        }).isNotEmpty ||
+        decoded['schema'] != 1 ||
+        decoded['dataset'] is! Map<String, dynamic> ||
+        decoded['entries'] is! List) {
+      throw const FormatException('Invalid book manifest');
+    }
+    final dataset = decoded['dataset'] as Map<String, dynamic>;
+    if (dataset.keys.toSet().difference({
+          'id',
+          'license',
+          'attribution',
+        }).isNotEmpty ||
+        dataset['id'] is! String ||
+        !RegExp(
+          r'^[a-z0-9][a-z0-9-]{0,63}$',
+        ).hasMatch(dataset['id'] as String) ||
+        !_boundedText(
+          dataset['license'] is String ? dataset['license'] as String : '',
+          1,
+          120,
+        ) ||
+        !_boundedText(
+          dataset['attribution'] is String
+              ? dataset['attribution'] as String
+              : '',
+          0,
+          500,
+        )) {
+      throw const FormatException('Book license metadata is required');
+    }
+    final rawEntries = decoded['entries'] as List;
+    if (rawEntries.length > _maxBookEntries) {
+      throw const FormatException('Book manifest has too many entries');
+    }
+    final entries = rawEntries.map(BookEntry.fromJson).toList(growable: false);
+    final keys = entries.map((e) => _key(e.kind, e.fen, e.history)).toSet();
+    if (keys.length != entries.length) {
+      throw const FormatException('Duplicate book position');
+    }
+    return BookDatabase._(
+      id: dataset['id'] as String,
+      license: dataset['license'] as String,
+      attribution: dataset['attribution'] as String,
+      entries: entries,
+    );
+  }
+
+  BookEntry? query(BookKind kind, String fen, List<String> history) =>
+      _entries[_key(kind, fen, history)];
+
+  static String _key(BookKind kind, String fen, List<String> history) =>
+      jsonEncode([kind.name, fen.trim(), history]);
+}
 
 enum SkinCatalogSort { defaultOrder, likes, name, author, recent }
 
@@ -250,11 +456,17 @@ String _sha256(List<int> bytes) {
 }
 
 final class SkinCatalogHttpServer {
-  SkinCatalogHttpServer._(this._server, this._store, this._boardStore);
+  SkinCatalogHttpServer._(
+    this._server,
+    this._store,
+    this._boardStore,
+    this._bookDatabase,
+  );
 
   final HttpServer _server;
   final SkinCatalogStore _store;
   final SkinCatalogStore? _boardStore;
+  final BookDatabase? _bookDatabase;
   StreamSubscription<HttpRequest>? _subscription;
 
   String get baseUrl => 'http://${_server.address.address}:${_server.port}';
@@ -262,6 +474,7 @@ final class SkinCatalogHttpServer {
   static Future<SkinCatalogHttpServer> bind({
     required SkinCatalogStore store,
     SkinCatalogStore? boardStore,
+    BookDatabase? bookDatabase,
     InternetAddress? address,
     int port = 8087,
   }) async {
@@ -270,7 +483,12 @@ final class SkinCatalogHttpServer {
       port,
       shared: false,
     );
-    final service = SkinCatalogHttpServer._(server, store, boardStore);
+    final service = SkinCatalogHttpServer._(
+      server,
+      store,
+      boardStore,
+      bookDatabase,
+    );
     service._subscription = server.listen(service._handle);
     return service;
   }
@@ -307,13 +525,30 @@ final class SkinCatalogHttpServer {
     if (request.method == 'OPTIONS') {
       response.statusCode = HttpStatus.noContent;
       response.headers
-        ..set(HttpHeaders.accessControlAllowMethodsHeader, 'GET, HEAD, OPTIONS')
-        ..set(HttpHeaders.accessControlAllowHeadersHeader, 'If-None-Match');
+        ..set(
+          HttpHeaders.accessControlAllowMethodsHeader,
+          'GET, HEAD, POST, OPTIONS',
+        )
+        ..set(
+          HttpHeaders.accessControlAllowHeadersHeader,
+          'If-None-Match, Content-Type',
+        );
       await response.close();
       return;
     }
+    if (request.method == 'POST' &&
+        request.uri.path == '/v1/book/query' &&
+        _bookDatabase != null) {
+      await _bookQuery(request, _bookDatabase);
+      return;
+    }
     if (request.method != 'GET' && request.method != 'HEAD') {
-      response.headers.set(HttpHeaders.allowHeader, 'GET, HEAD, OPTIONS');
+      response.headers.set(
+        HttpHeaders.allowHeader,
+        request.uri.path == '/v1/book/query' && _bookDatabase != null
+            ? 'POST, OPTIONS'
+            : 'GET, HEAD, OPTIONS',
+      );
       await _json(response, HttpStatus.methodNotAllowed, {
         'error': {'code': 'method_not_allowed'},
       });
@@ -337,6 +572,74 @@ final class SkinCatalogHttpServer {
     } else {
       await _json(response, HttpStatus.notFound, {
         'error': {'code': 'not_found'},
+      });
+    }
+  }
+
+  Future<void> _bookQuery(HttpRequest request, BookDatabase database) async {
+    final response = request.response;
+    if (request.headers.contentType?.mimeType != 'application/json' ||
+        request.contentLength == 0 ||
+        request.contentLength > _maxBookRequestBytes) {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
+      });
+      return;
+    }
+    final bytes = <int>[];
+    await for (final chunk in request) {
+      if (bytes.length + chunk.length > _maxBookRequestBytes) {
+        await _json(response, 413, {
+          'error': {'code': 'request_too_large'},
+        });
+        return;
+      }
+      bytes.addAll(chunk);
+    }
+    try {
+      final body = jsonDecode(utf8.decode(bytes));
+      if (body is! Map<String, dynamic> ||
+          body.keys.toSet().difference({
+            'schema',
+            'kind',
+            'fen',
+            'history',
+          }).isNotEmpty ||
+          body['schema'] != 1 ||
+          body['kind'] is! String ||
+          body['fen'] is! String ||
+          (body['fen'] as String).trim().isEmpty ||
+          (body['fen'] as String).length > 256 ||
+          body['history'] is! List ||
+          (body['history'] as List).length > 512 ||
+          (body['history'] as List).any(
+            (move) => move is! String || !_xiangqiMovePattern.hasMatch(move),
+          )) {
+        throw const FormatException('Invalid book query');
+      }
+      final kind = switch (body['kind']) {
+        'opening' => BookKind.opening,
+        'endgame' => BookKind.endgame,
+        _ => throw const FormatException('Invalid book kind'),
+      };
+      final history = List<String>.from(body['history'] as List);
+      final entry = database.query(kind, body['fen'] as String, history);
+      await _json(response, HttpStatus.ok, {
+        'schema': 1,
+        'status': entry == null ? 'miss' : 'hit',
+        'kind': kind.name,
+        'fen': body['fen'],
+        'history': history,
+        'dataset': {
+          'id': database.id,
+          'license': database.license,
+          'attribution': database.attribution,
+        },
+        'moves': entry?.moves.map((move) => move.toJson()).toList() ?? [],
+      });
+    } on FormatException {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
       });
     }
   }

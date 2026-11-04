@@ -32,9 +32,14 @@ Future<void> main(List<String> args) async {
           manifestName: 'board-catalog.json',
           packageDirectoryName: 'board-packages',
         );
+  final bookRoot = Platform.environment['CHESSNEXT_BOOK_ROOT'];
+  final bookDatabase = bookRoot == null || bookRoot.trim().isEmpty
+      ? null
+      : await BookDatabase.load(Directory(bookRoot));
   final server = await SkinCatalogHttpServer.bind(
     store: store,
     boardStore: boardStore,
+    bookDatabase: bookDatabase,
     address: address,
     port: port,
   );
@@ -42,6 +47,11 @@ Future<void> main(List<String> args) async {
   stdout.writeln('Loaded ${store.skins.length} public entries.');
   if (boardStore != null) {
     stdout.writeln('Loaded ${boardStore.skins.length} public board skins.');
+  }
+  if (bookDatabase != null) {
+    stdout.writeln(
+      'Loaded ${bookDatabase.entryCount} operator-supplied book positions.',
+    );
   }
   final stopped = Completer<void>();
   ProcessSignal.sigint.watch().listen((_) => stopped.complete());

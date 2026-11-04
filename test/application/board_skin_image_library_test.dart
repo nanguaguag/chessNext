@@ -31,40 +31,40 @@ void main() {
 
       expect(
         await controller.replace(
-          BoardSkin.parchment,
+          BoardSkin.parchment.name,
           BoardSkinImageSlot.boardBackground,
         ),
         isTrue,
       );
       final original = controller.imageFor(
-        BoardSkin.parchment,
+        BoardSkin.parchment.name,
         BoardSkinImageSlot.boardBackground,
       );
       picker.value = SelectedPieceImage('png', Uint8List.fromList([1, 2, 3]));
       expect(
         await controller.replace(
-          BoardSkin.parchment,
+          BoardSkin.parchment.name,
           BoardSkinImageSlot.boardBackground,
         ),
         isFalse,
       );
       expect(
         controller.imageFor(
-          BoardSkin.parchment,
+          BoardSkin.parchment.name,
           BoardSkinImageSlot.boardBackground,
         ),
         original,
       );
       expect(
         await controller.reset(
-          BoardSkin.parchment,
+          BoardSkin.parchment.name,
           BoardSkinImageSlot.boardBackground,
         ),
         isTrue,
       );
       expect(
         controller.imageFor(
-          BoardSkin.parchment,
+          BoardSkin.parchment.name,
           BoardSkinImageSlot.boardBackground,
         ),
         isNull,
@@ -79,17 +79,49 @@ void main() {
     final repository = FileBoardSkinImageRepository(() async => temp);
     final bytes = _png();
     await repository.save(
-      BoardSkin.jade,
+      BoardSkin.jade.name,
       BoardSkinImageSlot.selectionFrame,
       'png',
       bytes,
     );
     expect(
       (await repository
-          .load())[BoardSkin.jade]![BoardSkinImageSlot.selectionFrame],
+          .load())[BoardSkin.jade.name]![BoardSkinImageSlot.selectionFrame],
       orderedEquals(bytes),
     );
-    await repository.remove(BoardSkin.jade, BoardSkinImageSlot.selectionFrame);
-    expect((await repository.load()).containsKey(BoardSkin.jade), isFalse);
+    await repository.remove(
+      BoardSkin.jade.name,
+      BoardSkinImageSlot.selectionFrame,
+    );
+    expect((await repository.load()).containsKey(BoardSkin.jade.name), isFalse);
   });
+
+  test(
+    'file image repository clones and removes a custom skin by id',
+    () async {
+      final temp = await Directory.systemTemp.createTemp('chessnext-board-');
+      addTearDown(() => temp.delete(recursive: true));
+      final repository = FileBoardSkinImageRepository(() async => temp);
+      final bytes = _png();
+      await repository.save(
+        BoardSkin.parchment.name,
+        BoardSkinImageSlot.boardBackground,
+        'png',
+        bytes,
+      );
+      const customId = 'custom-12345678-abcd';
+      await repository.cloneSkin(BoardSkin.parchment.name, customId);
+      expect(
+        (await repository
+            .load())[customId]![BoardSkinImageSlot.boardBackground],
+        orderedEquals(bytes),
+      );
+      await repository.removeSkin(customId);
+      expect((await repository.load()).containsKey(customId), isFalse);
+      expect(
+        (await repository.load()).containsKey(BoardSkin.parchment.name),
+        isTrue,
+      );
+    },
+  );
 }

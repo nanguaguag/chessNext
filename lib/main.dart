@@ -23,6 +23,7 @@ import 'adapters/storage/file_audio_override_repository.dart';
 import 'adapters/platform/file_selector_piece_image_picker.dart';
 import 'adapters/storage/file_piece_image_repository.dart';
 import 'adapters/storage/file_board_skin_image_repository.dart';
+import 'adapters/storage/file_board_skin_library_repository.dart';
 import 'adapters/storage/file_piece_skin_library_repository.dart';
 import 'adapters/storage/file_piece_skin_catalog_cache.dart';
 import 'adapters/network/http_piece_skin_catalog.dart';
@@ -73,6 +74,9 @@ void main() {
       ),
       boardSkinImagePicker: FileSelectorPieceImagePicker(),
       boardSkinImageRepository: FileBoardSkinImageRepository(
+        getApplicationSupportDirectory,
+      ),
+      boardSkinLibraryRepository: FileBoardSkinLibraryRepository(
         getApplicationSupportDirectory,
       ),
       engineFactory: openBundledEngine,

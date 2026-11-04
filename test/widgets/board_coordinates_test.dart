@@ -55,7 +55,7 @@ void main() {
       );
       await tester.pumpAndSettle();
       await open(tester);
-      final dropdown = find.byType(DropdownButtonFormField<BoardSkin>);
+      final dropdown = find.byKey(const ValueKey('parchment'));
       await tap(tester, dropdown);
       await tap(tester, find.text('松石青').last);
       expect(store.value!.boardSkin, BoardSkin.jade);
@@ -66,7 +66,7 @@ void main() {
         (background.decoration as BoxDecoration).color,
         Color(BoardSkin.jade.boardColor),
       );
-      final pieceDropdown = find.byType(DropdownButtonFormField<String>);
+      final pieceDropdown = find.byKey(const ValueKey('roundSeal'));
       await tap(tester, pieceDropdown);
       await tap(tester, find.text('方章墨韵').last);
       expect(store.value!.pieceSkin, PieceSkin.squareInk);

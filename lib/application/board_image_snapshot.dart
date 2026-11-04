@@ -55,6 +55,7 @@ class BoardImageSnapshot {
   factory BoardImageSnapshot.capture(
     BoardSession session,
     AppPreferences prefs, {
+    BoardSkinGeometry? boardSkinGeometry,
     MoveAssessment? assessment,
     Move? recommendation,
     Move? reply,
@@ -78,6 +79,7 @@ class BoardImageSnapshot {
     rotateOppositePieces: prefs.rotateOppositePieces,
     boardSkin: prefs.boardSkin,
     geometry:
+        boardSkinGeometry ??
         prefs.boardGeometries[prefs.boardSkin] ??
         const BoardSkinGeometry.standard(),
     pieceSkin: prefs.pieceSkin,

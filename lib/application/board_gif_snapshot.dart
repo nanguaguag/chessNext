@@ -56,6 +56,7 @@ final class BoardGifSnapshot {
   factory BoardGifSnapshot.capture(
     BoardSession session,
     AppPreferences prefs, {
+    BoardSkinGeometry? boardSkinGeometry,
     int? pieceSkinSizePercent,
     int? pieceSkinOffsetXPercent,
     int? pieceSkinOffsetYPercent,
@@ -94,6 +95,7 @@ final class BoardGifSnapshot {
       rotateOppositePieces: prefs.rotateOppositePieces,
       boardSkin: prefs.boardSkin,
       geometry:
+          boardSkinGeometry ??
           prefs.boardGeometries[prefs.boardSkin] ??
           const BoardSkinGeometry.standard(),
       pieceSkin: prefs.pieceSkin,

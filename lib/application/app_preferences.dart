@@ -98,6 +98,7 @@ final class AppPreferences {
     this.showCoordinates = true,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.selectedBoardSkinId = 'parchment',
     Map<BoardSkin, BoardSkinGeometry> boardGeometries = const {},
     Map<PieceSkin, PieceSkinShadow> pieceSkinShadows = const {},
     this.pieceSkin = PieceSkin.roundSeal,
@@ -208,6 +209,7 @@ final class AppPreferences {
   final bool showCoordinates;
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
+  final String selectedBoardSkinId;
   final Map<BoardSkin, BoardSkinGeometry> boardGeometries;
   final Map<PieceSkin, PieceSkinShadow> pieceSkinShadows;
   final PieceSkin pieceSkin;
@@ -253,6 +255,7 @@ final class AppPreferences {
     bool? showCoordinates,
     bool? rotateOppositePieces,
     BoardSkin? boardSkin,
+    String? selectedBoardSkinId,
     Map<BoardSkin, BoardSkinGeometry>? boardGeometries,
     Map<PieceSkin, PieceSkinShadow>? pieceSkinShadows,
     PieceSkin? pieceSkin,
@@ -300,6 +303,7 @@ final class AppPreferences {
     showCoordinates: showCoordinates ?? this.showCoordinates,
     rotateOppositePieces: rotateOppositePieces ?? this.rotateOppositePieces,
     boardSkin: boardSkin ?? this.boardSkin,
+    selectedBoardSkinId: selectedBoardSkinId ?? this.selectedBoardSkinId,
     boardGeometries: boardGeometries ?? this.boardGeometries,
     pieceSkinShadows: pieceSkinShadows ?? this.pieceSkinShadows,
     pieceSkin: pieceSkin ?? this.pieceSkin,
@@ -359,6 +363,8 @@ final class AppPreferences {
     if (!showCoordinates) 'showCoordinates': false,
     if (rotateOppositePieces) 'rotateOppositePieces': true,
     if (boardSkin != BoardSkin.parchment) 'boardSkin': boardSkin.name,
+    if (selectedBoardSkinId != boardSkin.name)
+      'selectedBoardSkinId': selectedBoardSkinId,
     if (boardGeometries.values.any(
       (geometry) => geometry != BoardSkinGeometry(),
     ))
@@ -456,6 +462,14 @@ final class AppPreferences {
         (json.containsKey('rotateOppositePieces') &&
             json['rotateOppositePieces'] is! bool) ||
         (json.containsKey('boardSkin') && json['boardSkin'] is! String) ||
+        (json.containsKey('selectedBoardSkinId') &&
+            (json['selectedBoardSkinId'] is! String ||
+                (!BoardSkin.values.any(
+                      (skin) => skin.name == json['selectedBoardSkinId'],
+                    ) &&
+                    !RegExp(
+                      r'^custom-[a-z0-9-]{8,48}$',
+                    ).hasMatch(json['selectedBoardSkinId'] as String)))) ||
         (json.containsKey('boardGeometries') &&
             json['boardGeometries'] is! Map) ||
         (json.containsKey('pieceSkinShadows') &&
@@ -559,6 +573,9 @@ final class AppPreferences {
         boardSkin: BoardSkin.values.byName(
           json['boardSkin'] as String? ?? 'parchment',
         ),
+        selectedBoardSkinId:
+            json['selectedBoardSkinId'] as String? ??
+            (json['boardSkin'] as String? ?? 'parchment'),
         boardGeometries: _decodeBoardGeometries(json['boardGeometries']),
         pieceSkinShadows: _decodePieceSkinShadows(json['pieceSkinShadows']),
         pieceSkin: PieceSkin.values.byName(
@@ -683,6 +700,7 @@ final class AppPreferences {
       showCoordinates == other.showCoordinates &&
       rotateOppositePieces == other.rotateOppositePieces &&
       boardSkin == other.boardSkin &&
+      selectedBoardSkinId == other.selectedBoardSkinId &&
       _mapEquals(boardGeometries, other.boardGeometries) &&
       _mapEquals(pieceSkinShadows, other.pieceSkinShadows) &&
       pieceSkin == other.pieceSkin &&
@@ -731,6 +749,7 @@ final class AppPreferences {
     showCoordinates,
     rotateOppositePieces,
     boardSkin,
+    selectedBoardSkinId,
     Object.hashAll(
       boardGeometries.entries.map((e) => Object.hash(e.key, e.value)),
     ),

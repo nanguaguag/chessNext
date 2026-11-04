@@ -1,5 +1,9 @@
 # 交接（2026-11-04 Asia/Shanghai）
 
+## 当前交接续记（2026-11-05 / M4-46）
+
+M4-46代码、测试、追踪文档已完成待commit。根全量`flutter test --reporter compact`541通过/5跳过；analyze无问题；macOS `flutter run -d macos --no-pub` Build/Sync成功但`open returned 1`，唯一App PID50598/VM `127.0.0.1:61589`，没有人工视觉验收。测试运行的是flutter_tester，没有启动App；macOS阶段只启动了一次实例，后续复用。首轮失败为piece_skin_images_test测试查找器非唯一，已按控件key修正且定向6/6。提交`git diff --check`已通过。ADR-080。commit后立即继续B24；棋盘皮肤包导出/导入、独立编辑草稿与源站真实成功语义未完成；F21与全站未对齐。
+
 用户持续授权登录部分以外功能/设置对齐，不因单项停下。在线功能仍在总范围，离线优先只是推进顺序；在线采用自建可替换后端并提供部署方案。无分代理授权；许可决策暂缓，不阻挡本地开发。每个功能根目录`flutter test`、`flutter analyze`通过后中文Conventional Commit；macOS运行复用唯一交互runner/app。不能宣称全站已对齐。
 
 已提交：M4-39 `ae9858e`自建公开目录服务；M4-40 `c4c4aa6`只读客户端端口；M4-41 `38886a5`自建URL偏好、目录浏览/许可署名/离线状态；M4-42 `5b8384d`有界下载、摘要校验和许可确认导入；M4-43 `c6bc08e`自制样包loopback端到端集成测试；M4-44 `6712cdd`目录缓存和离线提示。
@@ -342,3 +346,6 @@ F21/B24访客审计E60确认新建棋盘皮肤草稿“使用”会立即创建�
 E61：新建棋盘皮肤页不改初始参数点击“保存”，访客页返回本地ID编辑路由并显示“已保存”，另一同浏览器临时标签的“我的皮肤”列表可见“我的棋盘”。当前设置仍默认棋盘/棋子、100%、坐标开、对面倒置关。已删除仅本次生成的皮肤，确认项消失；用户原始IAB标签1未触碰。tab10在中断时消失；新临时tab2结束时自动清理。证据见`docs/research/REFERENCE_EVIDENCE.md` E61。页面reload/重启、编辑脏态、几何保存内容、导出仍U。
 
 当前仅文档审计更改未提交，先`git diff --check`后以中文docs commit。没有flutter runner或chessNext App进程在跑（上轮ps/本轮CUA app状态均无运行实例）；macOS验证需要时启动一个`flutter run -d macos --no-pub`并持续复用，先核对不要重叠。
+# 当前续接（2026-11-05 / M4-46）
+
+F21/B24本机用户棋盘皮肤库实现正在工作树中，未提交。包含`BoardSkinDefinition`/schema1文件库、管理控制器，设置选择/管理UI，几何/图片按用户皮肤ID保存并贯通主盘/编辑器/PNG/GIF，新增应用及组件测试。全量根测试最终541通过/5跳过（首次运行因旧piece皮肤测试用String类型找两个下拉框而有1失败，改ValueKey后定向6/6并全量通过），`flutter analyze --no-pub`通过；测试没有启动chessNext App。`git diff --check`与独立macOS运行待完成。此片ADR-080；项目P实现不表示源站草稿/保存/使用、几何持久化或皮肤包已对齐。完成验证和中文单独commit后继续B24及其余功能设置，不停在单项。

@@ -6,18 +6,20 @@ import '../../ports/board_skin_images.dart';
 class BoardSkinImagesDialog extends StatelessWidget {
   const BoardSkinImagesDialog({
     super.key,
-    required this.skin,
+    required this.skinId,
+    required this.skinLabel,
     required this.library,
   });
 
-  final BoardSkin skin;
+  final String skinId;
+  final String skinLabel;
   final BoardSkinImageLibraryController library;
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: library,
     builder: (context, _) => AlertDialog(
-      title: Text('编辑${skin == BoardSkin.parchment ? '宣纸木色' : '松石青'}棋盘图片'),
+      title: Text('编辑$skinLabel棋盘图片'),
       content: SizedBox(
         width: 520,
         child: ConstrainedBox(
@@ -54,7 +56,7 @@ class BoardSkinImagesDialog extends StatelessWidget {
   );
 
   Widget _slot(BuildContext context, BoardSkinImageSlot slot) {
-    final image = library.imageFor(skin, slot);
+    final image = library.imageFor(skinId, slot);
     final busy = library.busySlot == slot;
     final error = library.errorSlot == slot ? library.error : null;
     return Padding(
@@ -107,7 +109,7 @@ class BoardSkinImagesDialog extends StatelessWidget {
                     onPressed:
                         library.loading || busy || library.busySlot != null
                         ? null
-                        : () => library.replace(skin, slot),
+                        : () => library.replace(skinId, slot),
                     icon: busy
                         ? const SizedBox.square(
                             dimension: 16,
@@ -123,7 +125,7 @@ class BoardSkinImagesDialog extends StatelessWidget {
                             image == null ||
                             library.busySlot != null
                         ? null
-                        : () => library.reset(skin, slot),
+                        : () => library.reset(skinId, slot),
                     child: const Text('恢复默认'),
                   ),
                 ],

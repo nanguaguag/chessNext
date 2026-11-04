@@ -658,3 +658,11 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 新增`PieceSkinCollectionPackageCodec`项目格式：2–16个嵌套的既有schema1单皮肤ZIP，总压缩文件≤8MiB；外层和内层逐一验证包路径/条目/声明身份/SHA/图片。皮肤库为本机用户皮肤提供勾选多项导出；导入先全包预检，再选择子集，条目显示许可证/署名，已有同名和目录容量外条目不可选。Controller逐项写图暂存后一次保存定义列表，失败回滚所有已暂存图片；成功分配新ID、保留元数据并选中集合中的第一项。此项目包不声称兼容源站未知ZIP格式。
 
 定向`flutter test test/application/piece_skin_collection_package_codec_test.dart test/application/piece_skin_library_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`14/14；根`flutter test --reporter compact`535通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一macOS runner PID6602热重载成功（Reloaded 7 of 1740 libraries，2498ms），App PID6847不变。根测试未启动App。CUA人工视觉验收未做；参考站多套ZIP格式未知，项目格式不称兼容。
+
+## 2026-11-05 / M4-46 / F21,B24,ADR-080 本机用户棋盘皮肤库
+
+新增`BoardSkinDefinition`/`BoardSkinLibraryRepository`应用端口与schema1文件适配器，最多64个用户项；`BoardSkinLibraryController`提供创建、选择、改名、几何更新、删除。创建复制当前内置或用户棋盘的基底、几何与四类图层图片后持久化并即时应用；删除活动用户皮肤回退其基底，图片按ID隔离。`selectedBoardSkinId`进入偏好序列化与迟到设置合并。设置对话框集成皮肤选择/库管理；自定义几何及图片贯穿主盘、编辑器、PNG/GIF快照。项目P，不宣称源站编辑草稿/保存/使用语义、任意站点包格式或在线棋盘目录已对齐。
+
+定向`flutter test test/application/board_skin_library_test.dart test/application/board_skin_image_library_test.dart test/application/board_skin_geometry_test.dart test/widgets/board_skin_library_dialog_test.dart test/widgets/board_coordinates_test.dart --reporter expanded`尚未单独执行；功能用例由根全量覆盖。根首轮`flutter test --reporter compact`539通过/5跳过/1失败，原因是旧测试对String下拉框使用不唯一查找器；改用控件key后定向`flutter test test/widgets/piece_skin_images_test.dart --reporter expanded`6/6。其后根`flutter test --reporter compact`541通过/5跳过；`flutter analyze --no-pub`无问题。`git diff --check`通过。测试宿主仅为flutter_tester，未启动chessNext App。`flutter run -d macos --no-pub` Build/Sync成功，唯一App PID50598、VM `127.0.0.1:61589`；`open returned 1`，窗口人工视觉验收未完成。保留该runner复用，不重叠启动。
+
+源站自定义棋盘皮肤的几何保存内容/重载恢复、导入导出包、草稿脏态语义及落点图旋转效果仍U；全站功能仍开放。后续B24继续棋盘皮肤项目包与保存/应用边界，然后按差距矩阵继续全站功能/设置审计。

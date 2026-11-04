@@ -856,3 +856,7 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 新增`PieceSkinCollectionPackageCodec`，定义项目collection ZIP：2–16套单皮肤schema1嵌套ZIP，总文件≤8MiB。先完整验证内外压缩路径、条目、身份、SHA和每张图片，再进入用户选择。皮肤库列表有checkbox，支持多选导出；导入多套包可选子集，展示许可/署名，预先禁选本机同名及64套容量外项目。`PieceSkinLibraryController.importPackages`先将所选皮肤图片写到新ID目录，最后一次保存定义列表；任一错误删除此前已装图片且不改变目录，成功追加并选中包顺序中第一项。
 
 专项`flutter test test/application/piece_skin_collection_package_codec_test.dart test/application/piece_skin_library_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`14/14；根`flutter test --reporter compact`535通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一`flutter run -d macos --no-pub`runner PID6602热重载成功（Reloaded 7 of 1740 libraries，2498ms），App PID6847仍唯一；根测试未启动App。CUA未做macOS应用窗口人工点选；站点多套ZIP格式未验证，项目collection格式不宣称兼容。
+
+## 2026-11-05 / M4-46 / F21,B24 本机棋盘皮肤库（进行中）
+
+新加自定义棋盘皮肤清单schema1/文件适配器、控制器、设置管理UI，支持复制当前外观并即时应用、选择、重命名、删除；几何/图片按用户ID持久隔离，预览与PNG/GIF共用。首轮全量测试539通过/5跳过/1失败：旧控件测试按DropdownButtonFormField<String>全局唯一查找，现因棋盘和棋子皮肤各有一个而失败；改为ValueKey后定向`test/widgets/piece_skin_images_test.dart`6/6。第二次根`flutter test --reporter compact`541通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过；测试期间未启动App。唯一`flutter run -d macos --no-pub`Build/Sync成功、App PID50598/VM `127.0.0.1:61589`；`open returned 1`所以窗口视觉未验，保留单实例runner复用。代码及追踪待中文单独commit。用户明确要求继续推进全站而非交付此项后停下。

@@ -11,14 +11,24 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
 
   final Future<Directory> Function() directory;
 
-  Future<Directory> _folder(BoardSkin skin) async {
+  Future<Directory> _base() async {
     final support = await directory();
     final base = Directory('${support.path}/chessnext-board-skin-images');
     if (await FileSystemEntity.type(base.path, followLinks: false) ==
         FileSystemEntityType.link) {
       throw const PieceImageException(PieceImageFailure.write);
     }
-    final folder = Directory('${base.path}/${skin.name}');
+    await base.create(recursive: true);
+    return base;
+  }
+
+  Future<Directory> _folder(String skinId) async {
+    if (!BoardSkin.values.any((skin) => skin.name == skinId) &&
+        !RegExp(r'^custom-[a-z0-9-]{8,48}$').hasMatch(skinId)) {
+      throw const PieceImageException(PieceImageFailure.write);
+    }
+    final base = await _base();
+    final folder = Directory('${base.path}/$skinId');
     if (await FileSystemEntity.type(folder.path, followLinks: false) ==
         FileSystemEntityType.link) {
       throw const PieceImageException(PieceImageFailure.write);
@@ -60,10 +70,21 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
   }
 
   @override
-  Future<Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>>> load() async {
-    final result = <BoardSkin, Map<BoardSkinImageSlot, Uint8List>>{};
-    for (final skin in BoardSkin.values) {
-      final folder = await _folder(skin);
+  Future<Map<String, Map<BoardSkinImageSlot, Uint8List>>> load() async {
+    final result = <String, Map<BoardSkinImageSlot, Uint8List>>{};
+    final base = await _base();
+    await for (final entity in base.list(followLinks: false)) {
+      final skinId = entity.uri.pathSegments.lastWhere(
+        (segment) => segment.isNotEmpty,
+      );
+      if (entity is! Directory ||
+          (!BoardSkin.values.any((skin) => skin.name == skinId) &&
+              !RegExp(r'^custom-[a-z0-9-]{8,48}$').hasMatch(skinId)) ||
+          await FileSystemEntity.type(entity.path, followLinks: false) !=
+              FileSystemEntityType.directory) {
+        continue;
+      }
+      final folder = entity;
       final images = <BoardSkinImageSlot, Uint8List>{};
       for (final slot in BoardSkinImageSlot.values) {
         final manifest = await _readManifest(folder, slot);
@@ -84,20 +105,20 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
           // Ignore damaged local images without making the board unavailable.
         }
       }
-      if (images.isNotEmpty) result[skin] = images;
+      if (images.isNotEmpty) result[skinId] = images;
     }
     return result;
   }
 
   @override
   Future<void> save(
-    BoardSkin skin,
+    String skinId,
     BoardSkinImageSlot slot,
     String extension,
     Uint8List bytes,
   ) async {
     PieceImageValidator.validate(SelectedPieceImage(extension, bytes));
-    final folder = await _folder(skin);
+    final folder = await _folder(skinId);
     final previous = await _readManifest(folder, slot);
     final staging = await folder.createTemp('.${slot.name}-pending-');
     final name =
@@ -125,8 +146,8 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
   }
 
   @override
-  Future<void> remove(BoardSkin skin, BoardSkinImageSlot slot) async {
-    final folder = await _folder(skin);
+  Future<void> remove(String skinId, BoardSkinImageSlot slot) async {
+    final folder = await _folder(skinId);
     final manifest = _manifest(folder, slot);
     final previous = await _readManifest(folder, slot);
     if (await FileSystemEntity.type(manifest.path, followLinks: false) ==
@@ -139,6 +160,43 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
           FileSystemEntityType.file) {
         await image.delete();
       }
+    }
+  }
+
+  @override
+  Future<void> removeSkin(String skinId) async {
+    final folder = await _folder(skinId);
+    if (await FileSystemEntity.type(folder.path, followLinks: false) ==
+        FileSystemEntityType.directory) {
+      await folder.delete(recursive: true);
+    }
+  }
+
+  @override
+  Future<void> cloneSkin(String sourceId, String destinationId) async {
+    if (!BoardSkin.values.any((skin) => skin.name == sourceId) &&
+        !RegExp(r'^custom-[a-z0-9-]{8,48}$').hasMatch(sourceId)) {
+      throw const PieceImageException(PieceImageFailure.write);
+    }
+    final source = await _folder(sourceId);
+    try {
+      for (final slot in BoardSkinImageSlot.values) {
+        final manifest = await _readManifest(source, slot);
+        if (manifest == null) continue;
+        final file = File('${source.path}/${manifest['file']}');
+        if (await FileSystemEntity.type(file.path, followLinks: false) !=
+            FileSystemEntityType.file) {
+          continue;
+        }
+        final bytes = await file.readAsBytes();
+        PieceImageValidator.validate(
+          SelectedPieceImage(manifest['extension']!, bytes),
+        );
+        await save(destinationId, slot, manifest['extension']!, bytes);
+      }
+    } catch (_) {
+      await removeSkin(destinationId);
+      rethrow;
     }
   }
 }

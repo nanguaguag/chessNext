@@ -2,6 +2,13 @@ import 'dart:typed_data';
 
 enum BoardSkin { parchment, jade }
 
+extension BoardSkinInfo on BoardSkin {
+  String get label => switch (this) {
+    BoardSkin.parchment => '宣纸木色',
+    BoardSkin.jade => '松石青',
+  };
+}
+
 enum BoardSkinImageSlot {
   boardBackground,
   startMarker,
@@ -19,12 +26,14 @@ extension BoardSkinImageSlotInfo on BoardSkinImageSlot {
 }
 
 abstract interface class BoardSkinImageRepository {
-  Future<Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>>> load();
+  Future<Map<String, Map<BoardSkinImageSlot, Uint8List>>> load();
   Future<void> save(
-    BoardSkin skin,
+    String skinId,
     BoardSkinImageSlot slot,
     String extension,
     Uint8List bytes,
   );
-  Future<void> remove(BoardSkin skin, BoardSkinImageSlot slot);
+  Future<void> remove(String skinId, BoardSkinImageSlot slot);
+  Future<void> removeSkin(String skinId);
+  Future<void> cloneSkin(String sourceId, String destinationId);
 }

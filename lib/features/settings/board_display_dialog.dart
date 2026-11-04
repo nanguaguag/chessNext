@@ -9,7 +9,9 @@ import 'audio_options_dialog.dart';
 import '../../application/piece_image_library_controller.dart';
 import 'piece_skin_images_dialog.dart';
 import '../../application/board_skin_image_library_controller.dart';
+import '../../application/board_skin_library_controller.dart';
 import 'board_skin_images_dialog.dart';
+import 'board_skin_library_dialog.dart';
 import '../../application/board_skin_geometry.dart';
 import '../../application/piece_skin_library_controller.dart';
 import '../../ports/piece_skin_library.dart';
@@ -26,6 +28,7 @@ class BoardDisplayDialog extends StatelessWidget {
     this.audioLibrary,
     this.pieceImages,
     this.boardSkinImages,
+    this.boardSkins,
     this.pieceSkins,
     this.pieceSkinPackageExporter,
     this.pieceSkinPackagePicker,
@@ -36,6 +39,7 @@ class BoardDisplayDialog extends StatelessWidget {
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController? pieceImages;
   final BoardSkinImageLibraryController? boardSkinImages;
+  final BoardSkinLibraryController? boardSkins;
   final PieceSkinLibraryController? pieceSkins;
   final PieceSkinPackageExporter? pieceSkinPackageExporter;
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
@@ -235,9 +239,18 @@ class BoardDisplayDialog extends StatelessWidget {
 
   Widget _geometryControls(BuildContext context) {
     final skin = preferences.value.boardSkin;
+    final skinId = preferences.value.selectedBoardSkinId;
     final geometry =
+        boardSkins?.geometryFor(skinId) ??
         preferences.value.boardGeometries[skin] ??
         const BoardSkinGeometry.standard();
+    Future<void> setGeometry(BoardSkinGeometry next) {
+      if (boardSkins?.definitionFor(skinId) != null) {
+        return boardSkins!.updateGeometry(skinId, next);
+      }
+      return preferences.setBoardSkinGeometry(skin, next);
+    }
+
     Widget edge(
       String label,
       double value,
@@ -249,7 +262,7 @@ class BoardDisplayDialog extends StatelessWidget {
       children: [
         Text('$label ${value.toStringAsFixed(1)}%'),
         Slider(
-          key: ValueKey('board-geometry-${skin.name}-$label'),
+          key: ValueKey('board-geometry-$skinId-$label'),
           value: value,
           min: min,
           max: max,
@@ -258,9 +271,7 @@ class BoardDisplayDialog extends StatelessWidget {
           semanticFormatterCallback: (v) => '${v.toStringAsFixed(1)}%',
           onChanged: preferences.loading
               ? null
-              : (next) => unawaited(
-                  preferences.setBoardSkinGeometry(skin, update(next)),
-                ),
+              : (next) => unawaited(setGeometry(update(next))),
         ),
       ],
     );
@@ -311,15 +322,14 @@ class BoardDisplayDialog extends StatelessWidget {
           onChanged: preferences.loading
               ? null
               : (next) => unawaited(
-                  preferences.setBoardSkinGeometry(
-                    skin,
+                  setGeometry(
                     geometry.copyWith(pieceScalePercent: next.round()),
                   ),
                 ),
         ),
         const Text('棋子只改变面容尺寸，不改变格线间距或交点命中；与全局棋子尺寸、棋子样式比例相乘。'),
         SwitchListTile(
-          key: ValueKey('board-geometry-${skin.name}-landing-rotation'),
+          key: ValueKey('board-geometry-$skinId-landing-rotation'),
           contentPadding: EdgeInsets.zero,
           title: const Text('落点标记图片旋转'),
           subtitle: const Text('每次换步时转一周后静止；系统减少动画或关闭动画速度时静止。'),
@@ -327,10 +337,7 @@ class BoardDisplayDialog extends StatelessWidget {
           onChanged: preferences.loading
               ? null
               : (enabled) => unawaited(
-                  preferences.setBoardSkinGeometry(
-                    skin,
-                    geometry.copyWith(rotateLandingMarker: enabled),
-                  ),
+                  setGeometry(geometry.copyWith(rotateLandingMarker: enabled)),
                 ),
         ),
         Align(
@@ -339,10 +346,7 @@ class BoardDisplayDialog extends StatelessWidget {
             onPressed: preferences.loading
                 ? null
                 : () => unawaited(
-                    preferences.setBoardSkinGeometry(
-                      skin,
-                      const BoardSkinGeometry.standard(),
-                    ),
+                    setGeometry(const BoardSkinGeometry.standard()),
                   ),
             icon: const Icon(Icons.restart_alt),
             label: const Text('格网恢复默认'),
@@ -379,7 +383,7 @@ class BoardDisplayDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListenableBuilder(
-    listenable: Listenable.merge([preferences, ?pieceSkins]),
+    listenable: Listenable.merge([preferences, ?pieceSkins, ?boardSkins]),
     builder: (context, _) {
       final skinScale = _skinScale(preferences);
       final skinOffsetX = _skinOffsetX(preferences);
@@ -395,27 +399,55 @@ class BoardDisplayDialog extends StatelessWidget {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                DropdownButtonFormField<BoardSkin>(
-                  key: ValueKey(preferences.value.boardSkin),
-                  initialValue: preferences.value.boardSkin,
+                DropdownButtonFormField<String>(
+                  key: ValueKey(preferences.value.selectedBoardSkinId),
+                  initialValue: preferences.value.selectedBoardSkinId,
                   isExpanded: true,
                   decoration: const InputDecoration(labelText: '棋盘皮肤'),
-                  items: const [
+                  items: [
                     DropdownMenuItem(
-                      value: BoardSkin.parchment,
+                      value: BoardSkin.parchment.name,
                       child: Text('宣纸木色'),
                     ),
-                    DropdownMenuItem(value: BoardSkin.jade, child: Text('松石青')),
+                    DropdownMenuItem(
+                      value: BoardSkin.jade.name,
+                      child: Text('松石青'),
+                    ),
+                    for (final profile in boardSkins?.profiles ?? const [])
+                      DropdownMenuItem(
+                        value: profile.id,
+                        child: Text(profile.name),
+                      ),
                   ],
                   onChanged: preferences.loading || skinBusy
                       ? null
-                      : (skin) {
-                          if (skin != null) {
-                            unawaited(preferences.setBoardSkin(skin));
+                      : (id) {
+                          if (id == null) return;
+                          final builtIn = BoardSkin.values
+                              .where((item) => item.name == id)
+                              .firstOrNull;
+                          if (boardSkins != null) {
+                            unawaited(boardSkins!.select(id));
+                          } else if (builtIn != null) {
+                            unawaited(preferences.setBoardSkin(builtIn));
                           }
                         },
                 ),
-                const Text('图片覆盖仅保存在本机；本机皮肤包可导出/导入，站点ZIP和文件夹导入仍待实现。'),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton.icon(
+                    onPressed: boardSkins == null || boardSkins!.loading
+                        ? null
+                        : () => showDialog<void>(
+                            context: context,
+                            builder: (_) =>
+                                BoardSkinLibraryDialog(library: boardSkins!),
+                          ),
+                    icon: const Icon(Icons.collections_bookmark_outlined),
+                    label: const Text('管理棋盘皮肤库'),
+                  ),
+                ),
+                const Text('棋盘图片覆盖保存在本机。棋子皮肤支持项目格式的ZIP导入/导出；棋盘皮肤包导入/导出、站点ZIP及文件夹格式仍待实现。'),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(
@@ -425,7 +457,10 @@ class BoardDisplayDialog extends StatelessWidget {
                         : () => showDialog<void>(
                             context: context,
                             builder: (_) => BoardSkinImagesDialog(
-                              skin: preferences.value.boardSkin,
+                              skinId: preferences.value.selectedBoardSkinId,
+                              skinLabel:
+                                  boardSkins?.selectedName ??
+                                  preferences.value.boardSkin.label,
                               library: boardSkinImages!,
                             ),
                           ),

@@ -29,7 +29,6 @@ import 'features/records/move_list.dart';
 import 'features/records/variation_panel.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'application/app_preferences.dart';
-import 'application/board_skin_geometry.dart';
 import 'application/preferences_controller.dart';
 import 'application/record_playback_controller.dart';
 import 'ports/preferences_repository.dart';
@@ -63,6 +62,8 @@ import 'application/piece_image_library_controller.dart';
 import 'ports/piece_images.dart';
 import 'application/board_skin_image_library_controller.dart';
 import 'ports/board_skin_images.dart';
+import 'application/board_skin_library_controller.dart';
+import 'ports/board_skin_library.dart';
 import 'ports/piece_skin_library.dart';
 import 'ports/piece_skin_catalog.dart';
 import 'application/piece_skin_library_controller.dart';
@@ -93,6 +94,7 @@ class ChessNextApp extends StatefulWidget {
     this.pieceSkinCatalog,
     this.boardSkinImagePicker,
     this.boardSkinImageRepository,
+    this.boardSkinLibraryRepository,
     this.gifExporter,
     this.engineFactory,
     this.reviewCache,
@@ -119,6 +121,7 @@ class ChessNextApp extends StatefulWidget {
   final PieceSkinCatalog? pieceSkinCatalog;
   final PieceImagePicker? boardSkinImagePicker;
   final BoardSkinImageRepository? boardSkinImageRepository;
+  final BoardSkinLibraryRepository? boardSkinLibraryRepository;
   final GifFileExporter? gifExporter;
   final EngineFactory? engineFactory;
   final ReviewCacheRepository? reviewCache;
@@ -143,6 +146,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final PieceImageLibraryController pieceImages;
   late final PieceSkinLibraryController pieceSkins;
   late final BoardSkinImageLibraryController boardSkinImages;
+  late final BoardSkinLibraryController boardSkins;
   late final EngineSessionController analysis;
   BoardGifSettings gifSettings = BoardGifSettings();
   bool floatingWorkspace = false;
@@ -205,7 +209,12 @@ class _ChessNextAppState extends State<ChessNextApp>
       widget.boardSkinImageRepository ?? MemoryBoardSkinImageRepository(),
     );
     boardSkinImages.addListener(_preferencesChanged);
-    unawaited(boardSkinImages.initialize());
+    boardSkins = BoardSkinLibraryController(
+      widget.boardSkinLibraryRepository ?? MemoryBoardSkinLibraryRepository(),
+      boardSkinImages,
+      preferences,
+    );
+    boardSkins.addListener(_preferencesChanged);
     boardFeedback = BoardFeedbackController(
       session,
       preferences,
@@ -221,6 +230,8 @@ class _ChessNextAppState extends State<ChessNextApp>
   Future<void> _initializePreferences() async {
     await preferences.initialize();
     await pieceSkins.initialize();
+    await boardSkinImages.initialize();
+    await boardSkins.initialize();
     if (!mounted ||
         !widget.showFirstRunGuide ||
         preferences.error != null ||
@@ -346,6 +357,8 @@ class _ChessNextAppState extends State<ChessNextApp>
     pieceImages.dispose();
     boardSkinImages.removeListener(_preferencesChanged);
     boardSkinImages.dispose();
+    boardSkins.removeListener(_preferencesChanged);
+    boardSkins.dispose();
     unawaited(preferences.flush());
     preferences.dispose();
     analysis.dispose();
@@ -384,10 +397,10 @@ class _ChessNextAppState extends State<ChessNextApp>
         showCoordinates: preferences.value.showCoordinates,
         rotateOppositePieces: preferences.value.rotateOppositePieces,
         boardSkin: preferences.value.boardSkin,
-        geometry:
-            preferences.value.boardGeometries[preferences.value.boardSkin] ??
-            const BoardSkinGeometry.standard(),
-        boardSkinImages: boardSkinImages.imagesFor(preferences.value.boardSkin),
+        geometry: boardSkins.geometryFor(preferences.value.selectedBoardSkinId),
+        boardSkinImages: boardSkinImages.imagesFor(
+          preferences.value.selectedBoardSkinId,
+        ),
         pieceSkin: preferences.value.pieceSkin,
         pieceSkinShadow:
             pieceSkins
@@ -441,6 +454,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       pieceSkinFolderPicker: widget.pieceSkinFolderPicker,
       pieceSkinCatalog: widget.pieceSkinCatalog,
       boardSkinImages: boardSkinImages,
+      boardSkins: boardSkins,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       filePicker: widget.filePicker,
       fileExporter: widget.fileExporter,
@@ -496,6 +510,7 @@ class _BoardPage extends StatelessWidget {
     this.pieceSkinFolderPicker,
     this.pieceSkinCatalog,
     required this.boardSkinImages,
+    required this.boardSkins,
   });
   final bool floatingWorkspace;
   final ValueChanged<bool> onFloatingWorkspaceChanged;
@@ -509,6 +524,7 @@ class _BoardPage extends StatelessWidget {
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
   final PieceSkinCatalog? pieceSkinCatalog;
   final BoardSkinImageLibraryController boardSkinImages;
+  final BoardSkinLibraryController boardSkins;
   final DraftController? drafts;
   final TextClipboard clipboard;
   final RecordFilePicker? filePicker;
@@ -806,6 +822,9 @@ class _BoardPage extends StatelessWidget {
     final snapshot = BoardImageSnapshot.capture(
       session,
       preferences.value,
+      boardSkinGeometry: boardSkins.geometryFor(
+        preferences.value.selectedBoardSkinId,
+      ),
       pieceSkinSizePercent: pieceSkins
           .definitionFor(preferences.value.selectedPieceSkinId)
           ?.scalePercent,
@@ -822,7 +841,9 @@ class _BoardPage extends StatelessWidget {
       recommendation: analysis.recommended,
       reply: analysis.reply,
       pieceImages: pieceImages.imagesFor(preferences.value.selectedPieceSkinId),
-      boardSkinImages: boardSkinImages.imagesFor(preferences.value.boardSkin),
+      boardSkinImages: boardSkinImages.imagesFor(
+        preferences.value.selectedBoardSkinId,
+      ),
     );
     await showDialog<void>(
       context: context,
@@ -840,6 +861,9 @@ class _BoardPage extends StatelessWidget {
       snapshot = BoardGifSnapshot.capture(
         session,
         preferences.value,
+        boardSkinGeometry: boardSkins.geometryFor(
+          preferences.value.selectedBoardSkinId,
+        ),
         pieceSkinSizePercent: pieceSkins
             .definitionFor(preferences.value.selectedPieceSkinId)
             ?.scalePercent,
@@ -855,7 +879,9 @@ class _BoardPage extends StatelessWidget {
         pieceImages: pieceImages.imagesFor(
           preferences.value.selectedPieceSkinId,
         ),
-        boardSkinImages: boardSkinImages.imagesFor(preferences.value.boardSkin),
+        boardSkinImages: boardSkinImages.imagesFor(
+          preferences.value.selectedBoardSkinId,
+        ),
       );
     } on BoardGifCapacityException catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -917,6 +943,7 @@ class _BoardPage extends StatelessWidget {
         pieceSkinFolderPicker: pieceSkinFolderPicker,
         pieceSkinCatalog: pieceSkinCatalog,
         boardSkinImages: boardSkinImages,
+        boardSkins: boardSkins,
       ),
     );
   }

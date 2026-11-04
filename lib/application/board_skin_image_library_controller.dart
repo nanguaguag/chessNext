@@ -9,20 +9,45 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
 
   final PieceImagePicker picker;
   final BoardSkinImageRepository repository;
-  Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>> _images = const {};
+  Map<String, Map<BoardSkinImageSlot, Uint8List>> _images = const {};
   bool loading = false;
   BoardSkinImageSlot? busySlot;
   BoardSkinImageSlot? errorSlot;
   String? error;
   bool _disposed = false;
 
-  Uint8List? imageFor(BoardSkin skin, BoardSkinImageSlot slot) =>
-      _images[skin]?[slot];
+  Uint8List? imageFor(String skinId, BoardSkinImageSlot slot) =>
+      _images[skinId]?[slot];
 
-  Map<BoardSkinImageSlot, Uint8List> imagesFor(BoardSkin skin) =>
-      _images[skin] ?? const {};
+  Map<BoardSkinImageSlot, Uint8List> imagesFor(String skinId) =>
+      _images[skinId] ?? const {};
 
-  Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>> get snapshot =>
+  Future<void> cloneSkin(String sourceId, String destinationId) async {
+    await repository.cloneSkin(sourceId, destinationId);
+    if (_disposed) return;
+    final source = _images[sourceId];
+    if (source != null) {
+      _images = Map.unmodifiable({
+        ..._images,
+        destinationId: Map<BoardSkinImageSlot, Uint8List>.unmodifiable({
+          for (final entry in source.entries)
+            entry.key: Uint8List.fromList(entry.value).asUnmodifiableView(),
+        }),
+      });
+      _notify();
+    }
+  }
+
+  Future<void> removeSkin(String skinId) async {
+    await repository.removeSkin(skinId);
+    if (_disposed) return;
+    final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_images)
+      ..remove(skinId);
+    _images = Map.unmodifiable(next);
+    _notify();
+  }
+
+  Map<String, Map<BoardSkinImageSlot, Uint8List>> get snapshot =>
       Map.unmodifiable({
         for (final entry in _images.entries)
           entry.key: Map<BoardSkinImageSlot, Uint8List>.unmodifiable(
@@ -57,7 +82,7 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
     }
   }
 
-  Future<bool> replace(BoardSkin skin, BoardSkinImageSlot slot) async {
+  Future<bool> replace(String skinId, BoardSkinImageSlot slot) async {
     if (_disposed || loading || busySlot != null) return false;
     busySlot = slot;
     errorSlot = null;
@@ -67,9 +92,9 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
       final selected = await picker.pickImage();
       if (selected == null || _disposed) return false;
       PieceImageValidator.validate(selected);
-      await repository.save(skin, slot, selected.extension, selected.bytes);
+      await repository.save(skinId, slot, selected.extension, selected.bytes);
       if (_disposed) return false;
-      _setImage(skin, slot, selected.bytes);
+      _setImage(skinId, slot, selected.bytes);
       return true;
     } on PieceImageException catch (exception) {
       errorSlot = slot;
@@ -85,25 +110,25 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
     }
   }
 
-  Future<bool> reset(BoardSkin skin, BoardSkinImageSlot slot) async {
+  Future<bool> reset(String skinId, BoardSkinImageSlot slot) async {
     if (_disposed || loading || busySlot != null) return false;
     busySlot = slot;
     errorSlot = null;
     error = null;
     _notify();
     try {
-      await repository.remove(skin, slot);
+      await repository.remove(skinId, slot);
       if (_disposed) return false;
-      final next = Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>>.from(
+      final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(
         _images,
       );
       final skinImages = Map<BoardSkinImageSlot, Uint8List>.from(
-        next[skin] ?? const {},
+        next[skinId] ?? const {},
       )..remove(slot);
       if (skinImages.isEmpty) {
-        next.remove(skin);
+        next.remove(skinId);
       } else {
-        next[skin] = skinImages;
+        next[skinId] = skinImages;
       }
       _images = Map.unmodifiable(next);
       return true;
@@ -117,15 +142,14 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
     }
   }
 
-  void _setImage(BoardSkin skin, BoardSkinImageSlot slot, Uint8List bytes) {
-    final next = Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>>.from(
-      _images,
-    );
-    next[skin] = Map<BoardSkinImageSlot, Uint8List>.from(next[skin] ?? const {})
-      ..[slot] = Uint8List.fromList(bytes).asUnmodifiableView();
+  void _setImage(String skinId, BoardSkinImageSlot slot, Uint8List bytes) {
+    final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_images);
+    next[skinId] = Map<BoardSkinImageSlot, Uint8List>.from(
+      next[skinId] ?? const {},
+    )..[slot] = Uint8List.fromList(bytes).asUnmodifiableView();
     _images = Map.unmodifiable({
       ...next,
-      skin: Map<BoardSkinImageSlot, Uint8List>.unmodifiable(next[skin]!),
+      skinId: Map<BoardSkinImageSlot, Uint8List>.unmodifiable(next[skinId]!),
     });
   }
 
@@ -137,10 +161,10 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
 }
 
 class MemoryBoardSkinImageRepository implements BoardSkinImageRepository {
-  Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>> _values = {};
+  Map<String, Map<BoardSkinImageSlot, Uint8List>> _values = {};
 
   @override
-  Future<Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>>> load() async => {
+  Future<Map<String, Map<BoardSkinImageSlot, Uint8List>>> load() async => {
     for (final entry in _values.entries)
       entry.key: {
         for (final image in entry.value.entries)
@@ -150,32 +174,49 @@ class MemoryBoardSkinImageRepository implements BoardSkinImageRepository {
 
   @override
   Future<void> save(
-    BoardSkin skin,
+    String skinId,
     BoardSkinImageSlot slot,
     String extension,
     Uint8List bytes,
   ) async {
-    final next = Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>>.from(
-      _values,
-    );
-    next[skin] = Map<BoardSkinImageSlot, Uint8List>.from(next[skin] ?? const {})
-      ..[slot] = Uint8List.fromList(bytes);
+    final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_values);
+    next[skinId] = Map<BoardSkinImageSlot, Uint8List>.from(
+      next[skinId] ?? const {},
+    )..[slot] = Uint8List.fromList(bytes);
     _values = next;
   }
 
   @override
-  Future<void> remove(BoardSkin skin, BoardSkinImageSlot slot) async {
-    final next = Map<BoardSkin, Map<BoardSkinImageSlot, Uint8List>>.from(
-      _values,
-    );
+  Future<void> remove(String skinId, BoardSkinImageSlot slot) async {
+    final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_values);
     final skinImages = Map<BoardSkinImageSlot, Uint8List>.from(
-      next[skin] ?? const {},
+      next[skinId] ?? const {},
     )..remove(slot);
     if (skinImages.isEmpty) {
-      next.remove(skin);
+      next.remove(skinId);
     } else {
-      next[skin] = skinImages;
+      next[skinId] = skinImages;
     }
     _values = next;
+  }
+
+  @override
+  Future<void> removeSkin(String skinId) async {
+    final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_values)
+      ..remove(skinId);
+    _values = next;
+  }
+
+  @override
+  Future<void> cloneSkin(String sourceId, String destinationId) async {
+    final source = _values[sourceId];
+    if (source == null) return;
+    _values = {
+      ..._values,
+      destinationId: {
+        for (final entry in source.entries)
+          entry.key: Uint8List.fromList(entry.value),
+      },
+    };
   }
 }

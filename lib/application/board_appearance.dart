@@ -2,7 +2,7 @@ import '../ports/piece_images.dart' show PieceSkin;
 import '../ports/board_skin_images.dart' show BoardSkin;
 
 export '../ports/piece_images.dart' show PieceSkin;
-export '../ports/board_skin_images.dart' show BoardSkin;
+export '../ports/board_skin_images.dart' show BoardSkin, BoardSkinInfo;
 export '../ports/piece_skin_shadow.dart';
 
 /// Stable storage values. Drawing geometry belongs to the presentation layer.

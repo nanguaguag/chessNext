@@ -99,7 +99,7 @@ void main() {
       await tester.tap(find.text('棋盘显示'));
       await tester.pumpAndSettle();
       final picker = tester.widget<DropdownButtonFormField<String>>(
-        find.byType(DropdownButtonFormField<String>),
+        find.byKey(const ValueKey('roundSeal')),
       );
       expect(picker.initialValue, PieceSkin.roundSeal.name);
     },

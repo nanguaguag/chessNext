@@ -166,6 +166,9 @@ class PreferencesController extends ChangeNotifier {
             boardSkin: _edited.contains('boardSkin')
                 ? previous.boardSkin
                 : null,
+            selectedBoardSkinId: _edited.contains('selectedBoardSkinId')
+                ? previous.selectedBoardSkinId
+                : null,
             boardGeometries: _mergeBoardGeometries(
               stored.boardGeometries,
               previous.boardGeometries,
@@ -313,8 +316,17 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(showCoordinates: visible));
   Future<void> setRotateOppositePieces(bool enabled) =>
       apply(value.copyWith(rotateOppositePieces: enabled));
-  Future<void> setBoardSkin(BoardSkin skin) =>
-      apply(value.copyWith(boardSkin: skin));
+  Future<void> setBoardSkin(BoardSkin skin) => selectBoardSkin(skin, skin.name);
+  Future<void> selectBoardSkin(BoardSkin skin, String profileId) {
+    if (profileId != skin.name &&
+        !RegExp(r'^custom-[a-z0-9-]{8,48}$').hasMatch(profileId)) {
+      return Future.error(ArgumentError.value(profileId, 'profileId'));
+    }
+    return apply(
+      value.copyWith(boardSkin: skin, selectedBoardSkinId: profileId),
+    );
+  }
+
   Future<void> setBoardSkinGeometry(
     BoardSkin skin,
     BoardSkinGeometry geometry,
@@ -484,6 +496,9 @@ class PreferencesController extends ChangeNotifier {
       _edited.add('rotateOppositePieces');
     }
     if (next.boardSkin != value.boardSkin) _edited.add('boardSkin');
+    if (next.selectedBoardSkinId != value.selectedBoardSkinId) {
+      _edited.add('selectedBoardSkinId');
+    }
     for (final skin in BoardSkin.values) {
       if (next.boardGeometries[skin] != value.boardGeometries[skin]) {
         _edited.add('boardGeometry:${skin.name}');

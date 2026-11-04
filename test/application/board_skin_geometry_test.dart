@@ -53,6 +53,21 @@ void main() {
         boardGeometries: {BoardSkin.jade: geometry},
       );
       expect(AppPreferences.fromJson(preferences.toJson()), preferences);
+      final customSelection = AppPreferences(
+        boardSkin: BoardSkin.jade,
+        selectedBoardSkinId: 'custom-12345678-abcd',
+      );
+      expect(
+        AppPreferences.fromJson(customSelection.toJson()),
+        customSelection,
+      );
+      expect(
+        () => AppPreferences.fromJson({
+          ...AppPreferences().toJson(),
+          'selectedBoardSkinId': '../outside',
+        }),
+        throwsFormatException,
+      );
       expect(
         preferences.boardGeometries[BoardSkin.parchment],
         const BoardSkinGeometry.standard(),

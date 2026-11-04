@@ -985,3 +985,7 @@ E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新�
 专项`flutter test --concurrency=1 test/widgets/piece_skin_images_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`8/8。根首轮`flutter test --concurrency=1 --reporter compact`570通过/5跳过/2失败，失败为既有PieceSkin偏移按钮被新增内联预览挤出视口；移入独立Dialog，专项重跑后8/8。`flutter analyze --no-pub`通过，根复跑`flutter test --concurrency=1 --reporter compact`574通过/5跳过；`git diff --check`通过。复用App50598/runner50125，attach sync1060ms、热重启1020ms，Ctrl-C脱离后app/runner存活。系统锁屏，视觉not run。feature提交`b3f9f36 feat(settings): 增加棋盘拖点校准`。
 
 根测试全程`--concurrency=1`，进程审核仅一个flutter_tester和单App50598，已处理用户关于重复开多个App的担心。后续仍继续全站登录外对齐，不在M4-58停止。
+
+# 2026-11-05 / E73 / F21,B24 右下点拖动样本
+
+复用原访客tab和既有“我的棋盘”草稿，初值右465/下519；右下点向右下约10视口像素后右475/下530.52，近似反拖读数右464.04/下519.54。AX输入右465/下519恢复，退出确认丢弃。回设置复核默认棋盘/棋子、100%、坐标开、对面倒置关。更新五项研究追踪与CURRENT_STATE/HANDOFF，文档待单独提交。只读审计不跑Flutter门槛。因单次逆拖不能精确恢复，轴映射/增益/原因继续U；之后实现/补证要慎用数值映射。继续全站任务。

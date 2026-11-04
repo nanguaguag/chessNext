@@ -57,6 +57,10 @@ HEAD为`b3025a7`，工作树干净。当前唯一macOS Debug App为PID50598，ru
 用户反馈曾因测试重复打开多个chessNext。本轮检查只发现既有App PID50598，没有运行`flutter run`或根测试；后续测试必须串行`flutter test --concurrency=1`。macOS改动只能复用既有App及VM Service attach，操作前核对PID；不得再次启动app实例。最后明确的既有runner PID50125需重新核对。
 
 工作树：E72文档审计改动待提交；无业务代码改动。未跑测试/analyze/macOS（纯审计）。下一步单独提交E72文档后，继续F21/B24双格点/边距交互设计与实现，逐项保持源站未知值为U；每个功能根目录串行`flutter test`、`flutter analyze`、复用Mac app并单独中文feature commit，随后更新上下文。
+
+## 追加 E73 审计（2026-11-05）
+
+在相同既有棋盘草稿复测右下点：约10个视口像素右下拖动使右465→475、下519→530.52；同距离反拖后AX读数右464.04/下519.54。将右/下数值输入恢复为465/519后，退出并确认丢弃。设置页复读默认棋盘/棋子、100%、坐标开、倒置关。更新REFERENCE_EVIDENCE、矩阵、缺口、交互规格、追溯待提交；证据只支持一次局部拖动及一次往返失败，不推导公式或原因。随后继续F21/B24和其它登录外功能，不在单片后停工。
 # 2026-11-05 最新交接 / M4-58
 
 用户持续授权实现登录以外所有功能/设置及实际macOS运行；不得用代理。用户特别指出测试不应启动多个chessNext：根Flutter测试用`--concurrency=1`，macOS代码验证复用既有runner/app的`flutter attach`，不要新跑`flutter run`。当前HEAD `b3f9f36`，M4-58 feature commit已完成，下面本交接文档更新待独立中文docs commit。

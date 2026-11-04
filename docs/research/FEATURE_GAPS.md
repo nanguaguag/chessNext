@@ -197,3 +197,5 @@ E71追加实操：难度通过Home/End分别到0/20并恢复20（V）；自定�
 定向`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart test/adapters/network/http_book_service_test.dart --reporter expanded`32/32；根串行`flutter test --concurrency=1 --reporter compact`572通过/5跳过，`flutter analyze --no-pub`通过。复用macOS PID50598/runner50125，attach同步1047ms、热重启993ms；锁屏未人工视觉验收。
 
 M4-58 / F21,B24增加本机双格点拖动校准预览（P），把手分别改变左上/右下两边并维持项目模型边界。该交互不说明或实现参考站完整联动公式；E64/E66/E72覆盖的边界仍为局部样本，页面保存生命周期及reload行为仍U。后续还需核对其它可见棋盘/棋子设置与跨尺寸编辑器表现。
+
+E73新增右下拖柄局部操作结果：约10px右下拖动后右/下分别+10/+11.52，近似反拖不能精确恢复。实际映射与误差来源仍U；下一步如继续实测，应一次只改一个坐标轴并使用可撤销草稿，记录拖柄中心和实际位移，再将终稿丢弃。

@@ -773,3 +773,7 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 在棋盘显示设置添加独立校准对话框和9列×10行预览，拖左上/右下手柄按画布宽高比例改对应格网边；遵守`BoardSkinGeometry`的1–99%边界与至少55%跨度。四边滑杆仍可作精调，既有表单高度不增加。映射是项目P，不套用源站33/465数字或未知公式。
 
 专项`flutter test --concurrency=1 test/widgets/piece_skin_images_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`8/8；根串行`flutter test --concurrency=1 --reporter compact`574通过/5跳过；`flutter analyze --no-pub`无问题。首次根测试发现预览内联使原PieceSkin控件滚出视口，修复为单独对话框后根测试全通过。复用macOS PID50598/runner50125，attach同步1060ms、热重启1020ms；进程审计始终一个App及单测试宿主。系统锁屏，未人工视觉验收。浏览器坐标真实算法仍U。
+
+## 2026-11-05 / E73 / F21,B24 右下格点映射样本
+
+在已存“我的棋盘”编辑页拖右下点约10视口像素向右下，右465→475、下519→530.52；同距离反拖后右464.04/下519.54。通过数值框恢复右465/下519后确认丢弃，棋盘显示设置的选择/100%/坐标/倒置均回默认。证据只支持一次正向及一次近似反向样本，完整像素映射及不可逆原因仍U；未保存/使用/导出。无Flutter验证（只读审计）。

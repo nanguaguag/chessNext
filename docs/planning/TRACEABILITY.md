@@ -622,3 +622,10 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 通过可替换`PieceSkinCatalog`端口和Dart IO HTTP适配器读取公开分页目录，支持搜索、默认/点赞/名称/作者/最新排序；严格解析作品ID、文本、点赞数、日期、许可证、署名和SHA-256。8秒请求/流超时，页码≤10000、每页≤100、查询≤120 Unicode码点、响应≤2MiB；远程必须HTTPS，HTTP仅限loopback。超时/断网、非200和无效响应分为类型化错误。没有UI、用户服务器URL偏好、缓存、包下载、包校验/导入或点赞写接口，M4-40只是客户端传输端口。
 
 `flutter test test/adapters/network/http_piece_skin_catalog_test.dart --reporter expanded`3/3通过（首次断网测试因关闭服务后读取port而失败，保存port后复跑通过）；根`flutter test --reporter compact`522通过/5跳过（缺官方Pikafish/NNUE）；`flutter analyze --no-pub`无问题（首次报告单行if风格，修复后通过）。macOS复用现有runner PID2226与App PID2479；先终止旧runner/app后仅启动一组新实例：`flutter run -d macos --no-pub`构建/Sync成功，App PID5725、VM Service `127.0.0.1:52805`；系统前台打开返回1，未完成人工视觉验收。此前attach因认证URL未连接；测试宿主完成loopback HTTP请求。
+
+
+## 2026-11-04 / M4-41 / F21,B24,ADR-076 自建皮肤目录浏览
+
+AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；PreferencesController校验并限制远程HTTPS，仅loopback可HTTP，异步旧设置载入按编辑字段合并。皮肤库设置处可保存服务地址并连接；支持默认/点赞/名称/作者/最新排序，复用回车提交搜索与分页，条目展示作者/点赞/许可/署名/描述。详情明确当前不会自动写入本机。网络失败、HTTP失败、协议错误及空目录有独立文案。没有目录缓存、包下载/摘要校验/导入。
+
+专项`flutter test test/application/preferences_controller_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`8/8；根`flutter test --reporter compact`524通过/5跳过；`flutter analyze --no-pub`无问题。初次widget发现目录区渲染溢出并漏显许可，改为可滚动布局后通过；测试查找分行许可文本改用包含匹配。macOS使用唯一runner交互会话热启动，`flutter run -d macos --no-pub`Build/Sync成功、App PID6847、VM `127.0.0.1:53684`；`open returned 1`，未人工视觉验收。仅保留该一组runner/app。

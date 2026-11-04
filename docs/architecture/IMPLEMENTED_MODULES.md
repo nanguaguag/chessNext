@@ -107,3 +107,6 @@ M4-39 / ADR-074：`server/skin_catalog`为独立纯Dart只读HTTP服务，提供
 
 
 M4-40 / F21,B24（ADR-075）：`ports/piece_skin_catalog.dart`定义公开条目、分页结果、五类排序及类型化失败；`adapters/network/http_piece_skin_catalog.dart`实现8秒超时、有界分页/查询/响应、仅HTTPS远端与loopback HTTP。尚未接入UI/服务器地址设置、缓存、下载、许可确认和导入。
+
+
+M4-41 / F21,B24（ADR-076）：AppPreferences/PreferencesController保存经过HTTPS/loopback规则验证的目录URL；皮肤库对话框接入只读查询，支持五类在线排序、回车搜索、分页/刷新，展示许可/署名和网络失败/空目录，详情明确不下载。

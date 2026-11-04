@@ -812,3 +812,8 @@ M4-39先完成依赖许可登记（crypto 3.0.8 BSD-3-Clause/hash）并独立提
 实际命令：定向`flutter test test/adapters/network/http_piece_skin_catalog_test.dart --reporter expanded`3/3；根`flutter test --reporter compact`522通过/5跳过（本机无官方Pikafish/NNUE环境）；`flutter analyze --no-pub`通过。首次断网测试失败因关闭server后取port，修复后通过；首次analyze提示单行if应加花括号，修复后通过。根测试没有启动chessNext。macOS最初runner PID2226/App PID2479；`flutter attach --debug-url`因认证URL无法连接，SIGUSR1无会话日志确认reload。随后结束该开发实例，仅启动一组`flutter run -d macos --no-pub`，Build/Sync成功，App PID5725/VM `127.0.0.1:52805`；open returned 1，人工视觉not run。现仅保留新runner/app。
 
 M4-40尚未提交。下一项为在线目录UI、可配置服务URL、许可与离线错误，再下载/校验/导入。
+
+
+## 2026-11-04 / M4-41 / F21,B24 自建目录浏览
+
+M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全协议校验/迟到读合并与皮肤库在线查询、五类排序/分页/搜索、许可署名和空/离线错误UI。专项8/8；根测试524通过/5跳过；analyze通过。测试首次发现Dialog内容溢出导致许可项不可见，改为外层可滚动后通过；首次分析if大括号和测试unused imports清理后通过。macOS热启动唯一runner/app后Build/Sync成功，runner PID6602/App PID6847、VM `127.0.0.1:53684`；open returned 1，人工视觉未验。没有第二个实例。当前代码与交接待单独提交。

@@ -3,6 +3,23 @@ import 'board_skin_geometry.dart';
 import 'review_models.dart';
 import '../ports/piece_skin_library.dart';
 
+bool _validSkinCatalogBaseUrl(String value) {
+  if (value.isEmpty) return true;
+  final uri = Uri.tryParse(value);
+  if (uri == null ||
+      uri.userInfo.isNotEmpty ||
+      uri.hasQuery ||
+      uri.hasFragment) {
+    return false;
+  }
+  if (uri.scheme == 'https' && uri.host.isNotEmpty) return value.length <= 2048;
+  return uri.scheme == 'http' &&
+      (uri.host == 'localhost' ||
+          uri.host == '127.0.0.1' ||
+          uri.host == '::1') &&
+      value.length <= 2048;
+}
+
 bool _mapEquals<K, V>(Map<K, V> a, Map<K, V> b) {
   if (identical(a, b)) return true;
   if (a.length != b.length) return false;
@@ -108,6 +125,7 @@ final class AppPreferences {
     this.showRecordPlaybackButton = true,
     this.showPanelSwitchBar = false,
     this.activeSidePanel = SidePanel.play,
+    this.skinCatalogBaseUrl = '',
     List<BoardContextAction> boardContextActions = defaultBoardContextActions,
     this.guideVersion = 0,
     List<SidePanel> sidePanelOrder = defaultSidePanelOrder,
@@ -141,6 +159,7 @@ final class AppPreferences {
         recordPlaybackIntervalMs < 500 ||
         recordPlaybackIntervalMs > 30000 ||
         recordPlaybackIntervalMs % 100 != 0 ||
+        !_validSkinCatalogBaseUrl(skinCatalogBaseUrl) ||
         guideVersion < 0 ||
         guideVersion > 1000000 ||
         roundSealPieceScalePercent < 80 ||
@@ -215,6 +234,7 @@ final class AppPreferences {
   final bool showMoveList, showRecordPlaybackButton;
   final bool showPanelSwitchBar;
   final SidePanel activeSidePanel;
+  final String skinCatalogBaseUrl;
   final List<BoardContextAction> boardContextActions;
   final List<SidePanel> sidePanelOrder;
   final List<SidePanel> visibleSidePanels;
@@ -260,6 +280,7 @@ final class AppPreferences {
     bool? showRecordPlaybackButton,
     bool? showPanelSwitchBar,
     SidePanel? activeSidePanel,
+    String? skinCatalogBaseUrl,
     List<BoardContextAction>? boardContextActions,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
@@ -310,6 +331,7 @@ final class AppPreferences {
         showRecordPlaybackButton ?? this.showRecordPlaybackButton,
     showPanelSwitchBar: showPanelSwitchBar ?? this.showPanelSwitchBar,
     activeSidePanel: activeSidePanel ?? this.activeSidePanel,
+    skinCatalogBaseUrl: skinCatalogBaseUrl ?? this.skinCatalogBaseUrl,
     boardContextActions: boardContextActions ?? this.boardContextActions,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
@@ -383,6 +405,7 @@ final class AppPreferences {
     if (!showMoveList) 'showMoveList': false,
     if (!showRecordPlaybackButton) 'showRecordPlaybackButton': false,
     if (showPanelSwitchBar) 'showPanelSwitchBar': true,
+    if (skinCatalogBaseUrl.isNotEmpty) 'skinCatalogBaseUrl': skinCatalogBaseUrl,
     if (activeSidePanel != SidePanel.play)
       'activeSidePanel': activeSidePanel.name,
     if (!_listEquals(boardContextActions, defaultBoardContextActions))
@@ -448,6 +471,8 @@ final class AppPreferences {
             json['showRecordPlaybackButton'] is! bool) ||
         (json.containsKey('showPanelSwitchBar') &&
             json['showPanelSwitchBar'] is! bool) ||
+        (json.containsKey('skinCatalogBaseUrl') &&
+            json['skinCatalogBaseUrl'] is! String) ||
         (json.containsKey('activeSidePanel') &&
             (json['activeSidePanel'] is! String ||
                 !SidePanel.values.any(
@@ -564,6 +589,7 @@ final class AppPreferences {
           (panel) => panel.name == json['activeSidePanel'],
           orElse: () => SidePanel.play,
         ),
+        skinCatalogBaseUrl: json['skinCatalogBaseUrl'] as String? ?? '',
         boardContextActions:
             (json['boardContextActions'] as List?)
                 ?.map(
@@ -678,6 +704,7 @@ final class AppPreferences {
       showRecordPlaybackButton == other.showRecordPlaybackButton &&
       showPanelSwitchBar == other.showPanelSwitchBar &&
       activeSidePanel == other.activeSidePanel &&
+      skinCatalogBaseUrl == other.skinCatalogBaseUrl &&
       _listEquals(boardContextActions, other.boardContextActions) &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
       _listEquals(visibleSidePanels, other.visibleSidePanels);
@@ -729,6 +756,7 @@ final class AppPreferences {
     showRecordPlaybackButton,
     showPanelSwitchBar,
     activeSidePanel,
+    skinCatalogBaseUrl,
     Object.hashAll(boardContextActions),
     Object.hashAll(sidePanelOrder),
     Object.hashAll(visibleSidePanels),

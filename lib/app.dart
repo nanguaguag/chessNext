@@ -64,6 +64,7 @@ import 'ports/piece_images.dart';
 import 'application/board_skin_image_library_controller.dart';
 import 'ports/board_skin_images.dart';
 import 'ports/piece_skin_library.dart';
+import 'ports/piece_skin_catalog.dart';
 import 'application/piece_skin_library_controller.dart';
 import 'features/workspace/resizable_workspace.dart';
 
@@ -89,6 +90,7 @@ class ChessNextApp extends StatefulWidget {
     this.pieceSkinPackageExporter,
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
+    this.pieceSkinCatalog,
     this.boardSkinImagePicker,
     this.boardSkinImageRepository,
     this.gifExporter,
@@ -114,6 +116,7 @@ class ChessNextApp extends StatefulWidget {
   final PieceSkinPackageExporter? pieceSkinPackageExporter;
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
+  final PieceSkinCatalog? pieceSkinCatalog;
   final PieceImagePicker? boardSkinImagePicker;
   final BoardSkinImageRepository? boardSkinImageRepository;
   final GifFileExporter? gifExporter;
@@ -436,6 +439,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       pieceSkinPackageExporter: widget.pieceSkinPackageExporter,
       pieceSkinPackagePicker: widget.pieceSkinPackagePicker,
       pieceSkinFolderPicker: widget.pieceSkinFolderPicker,
+      pieceSkinCatalog: widget.pieceSkinCatalog,
       boardSkinImages: boardSkinImages,
       clipboard: widget.clipboard ?? FlutterTextClipboard(),
       filePicker: widget.filePicker,
@@ -490,6 +494,7 @@ class _BoardPage extends StatelessWidget {
     this.pieceSkinPackageExporter,
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
+    this.pieceSkinCatalog,
     required this.boardSkinImages,
   });
   final bool floatingWorkspace;
@@ -502,6 +507,7 @@ class _BoardPage extends StatelessWidget {
   final PieceSkinPackageExporter? pieceSkinPackageExporter;
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
+  final PieceSkinCatalog? pieceSkinCatalog;
   final BoardSkinImageLibraryController boardSkinImages;
   final DraftController? drafts;
   final TextClipboard clipboard;
@@ -909,6 +915,7 @@ class _BoardPage extends StatelessWidget {
         pieceSkinPackageExporter: pieceSkinPackageExporter,
         pieceSkinPackagePicker: pieceSkinPackagePicker,
         pieceSkinFolderPicker: pieceSkinFolderPicker,
+        pieceSkinCatalog: pieceSkinCatalog,
         boardSkinImages: boardSkinImages,
       ),
     );

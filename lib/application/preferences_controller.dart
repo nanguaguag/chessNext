@@ -212,6 +212,9 @@ class PreferencesController extends ChangeNotifier {
             activeSidePanel: _edited.contains('activeSidePanel')
                 ? previous.activeSidePanel
                 : null,
+            skinCatalogBaseUrl: _edited.contains('skinCatalogBaseUrl')
+                ? previous.skinCatalogBaseUrl
+                : null,
             boardContextActions: _edited.contains('boardContextActions')
                 ? previous.boardContextActions
                 : null,
@@ -262,6 +265,18 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(showPanelSwitchBar: visible));
   Future<void> setActiveSidePanel(SidePanel panel) =>
       apply(value.copyWith(activeSidePanel: panel));
+  Future<void> setSkinCatalogBaseUrl(String baseUrl) async {
+    final normalized = baseUrl.trim().replaceFirst(RegExp(r'/+$'), '');
+    try {
+      final candidate = value.copyWith(skinCatalogBaseUrl: normalized);
+      _edited.add('skinCatalogBaseUrl');
+      await apply(candidate);
+    } on ArgumentError {
+      error = '服务地址须为HTTPS；本机测试可使用localhost HTTP。';
+      _notify();
+    }
+  }
+
   Future<void> setBoardContextActions(List<BoardContextAction> actions) =>
       apply(value.copyWith(boardContextActions: actions));
   Future<void> setSidePanelOrder(List<SidePanel> order) =>

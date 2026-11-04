@@ -14,6 +14,7 @@ import '../../application/piece_skin_library_controller.dart';
 import '../../ports/piece_skin_package_exporter.dart';
 import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/piece_skin_folder_picker.dart';
+import '../../ports/piece_skin_catalog.dart';
 
 class PreferencesDialog extends StatefulWidget {
   const PreferencesDialog({
@@ -26,6 +27,7 @@ class PreferencesDialog extends StatefulWidget {
     this.pieceSkinPackageExporter,
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
+    this.pieceSkinCatalog,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
@@ -35,6 +37,7 @@ class PreferencesDialog extends StatefulWidget {
   final PieceSkinPackageExporter? pieceSkinPackageExporter;
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
+  final PieceSkinCatalog? pieceSkinCatalog;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -168,6 +171,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                               widget.pieceSkinPackageExporter,
                           pieceSkinPackagePicker: widget.pieceSkinPackagePicker,
                           pieceSkinFolderPicker: widget.pieceSkinFolderPicker,
+                          pieceSkinCatalog: widget.pieceSkinCatalog,
                         ),
                       ),
                       icon: const Icon(Icons.grid_on),

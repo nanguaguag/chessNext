@@ -9,6 +9,7 @@ import '../../ports/piece_skin_package_exporter.dart';
 import '../../ports/record_file_exporter.dart';
 import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/piece_skin_folder_picker.dart';
+import '../../ports/piece_skin_catalog.dart';
 
 class PieceSkinLibraryDialog extends StatefulWidget {
   const PieceSkinLibraryDialog({
@@ -17,11 +18,13 @@ class PieceSkinLibraryDialog extends StatefulWidget {
     this.exporter,
     this.picker,
     this.folderPicker,
+    this.catalog,
   });
   final PieceSkinLibraryController library;
   final PieceSkinPackageExporter? exporter;
   final PieceSkinPackagePicker? picker;
   final PieceSkinFolderPicker? folderPicker;
+  final PieceSkinCatalog? catalog;
 
   @override
   State<PieceSkinLibraryDialog> createState() => _PieceSkinLibraryDialogState();
@@ -33,10 +36,24 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
   final _search = TextEditingController();
   String _query = '';
   _SkinSort _sort = _SkinSort.defaultOrder;
+  final _server = TextEditingController();
+  PublicPieceSkinSort _remoteSort = PublicPieceSkinSort.defaultOrder;
+  List<PublicPieceSkin> _remoteItems = const [];
+  bool _remoteLoading = false;
+  String? _remoteError;
+  int _remotePage = 1;
+  int _remoteTotal = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _server.text = widget.library.preferences.value.skinCatalogBaseUrl;
+  }
 
   @override
   void dispose() {
     _search.dispose();
+    _server.dispose();
     super.dispose();
   }
 
@@ -73,49 +90,181 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
       title: const Text('棋子皮肤库'),
       content: SizedBox(
         width: 440,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextField(
-              controller: _search,
-              textInputAction: TextInputAction.search,
-              decoration: InputDecoration(
-                labelText: '搜索本机皮肤',
-                suffixIcon: IconButton(
-                  tooltip: '清除搜索',
-                  onPressed: () {
-                    _search.clear();
-                    setState(() => _query = '');
-                  },
-                  icon: const Icon(Icons.clear),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (widget.catalog != null) ...[
+                TextField(
+                  controller: _server,
+                  decoration: InputDecoration(
+                    labelText: '自建目录服务地址',
+                    hintText: 'https://skins.example.com',
+                    helperText: '远程需HTTPS；localhost可用于本机部署。',
+                    suffixIcon: IconButton(
+                      tooltip: '保存服务地址并连接',
+                      onPressed: _remoteLoading ? null : _saveEndpoint,
+                      icon: const Icon(Icons.cloud_sync_outlined),
+                    ),
+                  ),
+                  keyboardType: TextInputType.url,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _saveEndpoint(),
                 ),
-              ),
-              onSubmitted: (value) => setState(() => _query = value.trim()),
-            ),
-            const SizedBox(height: 8),
-            DropdownButtonFormField<_SkinSort>(
-              initialValue: _sort,
-              decoration: const InputDecoration(labelText: '排序'),
-              items: const [
-                DropdownMenuItem(
-                  value: _SkinSort.defaultOrder,
-                  child: Text('默认排序'),
+                Row(
+                  children: [
+                    Expanded(
+                      child: DropdownButtonFormField<PublicPieceSkinSort>(
+                        initialValue: _remoteSort,
+                        decoration: const InputDecoration(labelText: '在线排序'),
+                        items: const [
+                          DropdownMenuItem(
+                            value: PublicPieceSkinSort.defaultOrder,
+                            child: Text('默认排序'),
+                          ),
+                          DropdownMenuItem(
+                            value: PublicPieceSkinSort.likes,
+                            child: Text('点赞最多'),
+                          ),
+                          DropdownMenuItem(
+                            value: PublicPieceSkinSort.name,
+                            child: Text('按名称'),
+                          ),
+                          DropdownMenuItem(
+                            value: PublicPieceSkinSort.author,
+                            child: Text('按作者'),
+                          ),
+                          DropdownMenuItem(
+                            value: PublicPieceSkinSort.recent,
+                            child: Text('最新导入'),
+                          ),
+                        ],
+                        onChanged: (value) {
+                          setState(
+                            () => _remoteSort =
+                                value ?? PublicPieceSkinSort.defaultOrder,
+                          );
+                          _loadRemote();
+                        },
+                      ),
+                    ),
+                    IconButton(
+                      tooltip: '刷新在线目录',
+                      onPressed: _remoteLoading ? null : _loadRemote,
+                      icon: const Icon(Icons.refresh),
+                    ),
+                  ],
                 ),
-                DropdownMenuItem(value: _SkinSort.name, child: Text('按名称')),
-                DropdownMenuItem(value: _SkinSort.newest, child: Text('最近创建')),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text('$_remoteTotal 项'),
+                    IconButton(
+                      tooltip: '上一页',
+                      onPressed: _remotePage <= 1 || _remoteLoading
+                          ? null
+                          : () {
+                              setState(() => _remotePage--);
+                              _loadRemote();
+                            },
+                      icon: const Icon(Icons.chevron_left),
+                    ),
+                    Text('$_remotePage'),
+                    IconButton(
+                      tooltip: '下一页',
+                      onPressed:
+                          _remotePage * 24 >= _remoteTotal || _remoteLoading
+                          ? null
+                          : () {
+                              setState(() => _remotePage++);
+                              _loadRemote();
+                            },
+                      icon: const Icon(Icons.chevron_right),
+                    ),
+                  ],
+                ),
+                if (_remoteLoading) const LinearProgressIndicator(),
+                if (_remoteError != null)
+                  Text(
+                    _remoteError!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                if (_remoteItems.isNotEmpty)
+                  SizedBox(
+                    height: 220,
+                    child: ListView(
+                      shrinkWrap: true,
+                      children: [
+                        for (final item in _remoteItems)
+                          Card(
+                            child: ListTile(
+                              leading: const Icon(Icons.cloud_outlined),
+                              title: Text(item.name),
+                              subtitle: Text(
+                                '${item.author} · ♥ ${item.likes}\n许可：${item.license}\n署名：${item.attribution.isEmpty ? '无额外署名' : item.attribution}',
+                              ),
+                              isThreeLine: true,
+                              onTap: () => _showRemoteDetails(context, item),
+                            ),
+                          ),
+                      ],
+                    ),
+                  ),
+                const Divider(),
               ],
-              onChanged: (value) =>
-                  setState(() => _sort = value ?? _SkinSort.defaultOrder),
-            ),
-            if (widget.library.error != null)
-              Text(
-                widget.library.error!,
-                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              TextField(
+                controller: _search,
+                textInputAction: TextInputAction.search,
+                decoration: InputDecoration(
+                  labelText: '搜索本机皮肤',
+                  suffixIcon: IconButton(
+                    tooltip: '清除搜索',
+                    onPressed: () {
+                      _search.clear();
+                      setState(() => _query = '');
+                      _remotePage = 1;
+                      _loadRemote();
+                    },
+                    icon: const Icon(Icons.clear),
+                  ),
+                ),
+                onSubmitted: (value) {
+                  setState(() {
+                    _query = value.trim();
+                    _remotePage = 1;
+                  });
+                  _loadRemote();
+                },
               ),
-            if (widget.library.loading) const LinearProgressIndicator(),
-            Flexible(
-              child: ListView(
+              const SizedBox(height: 8),
+              DropdownButtonFormField<_SkinSort>(
+                initialValue: _sort,
+                decoration: const InputDecoration(labelText: '排序'),
+                items: const [
+                  DropdownMenuItem(
+                    value: _SkinSort.defaultOrder,
+                    child: Text('默认排序'),
+                  ),
+                  DropdownMenuItem(value: _SkinSort.name, child: Text('按名称')),
+                  DropdownMenuItem(
+                    value: _SkinSort.newest,
+                    child: Text('最近创建'),
+                  ),
+                ],
+                onChanged: (value) =>
+                    setState(() => _sort = value ?? _SkinSort.defaultOrder),
+              ),
+              if (widget.library.error != null)
+                Text(
+                  widget.library.error!,
+                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                ),
+              if (widget.library.loading) const LinearProgressIndicator(),
+              ListView(
                 shrinkWrap: true,
+                physics: const NeverScrollableScrollPhysics(),
                 children: [
                   for (final skin in PieceSkin.values.where(
                     (skin) =>
@@ -227,8 +376,8 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
                     ),
                 ],
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [
@@ -283,6 +432,97 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
     }
     return profiles;
   }
+
+  Future<void> _saveEndpoint() async {
+    final raw = _server.text.trim().replaceFirst(RegExp(r'/+$'), '');
+    final endpoint = Uri.tryParse(raw);
+    final valid =
+        endpoint != null &&
+        endpoint.host.isNotEmpty &&
+        endpoint.userInfo.isEmpty &&
+        !endpoint.hasQuery &&
+        !endpoint.hasFragment &&
+        (endpoint.scheme == 'https' ||
+            (endpoint.scheme == 'http' &&
+                (endpoint.host == 'localhost' ||
+                    endpoint.host == '127.0.0.1' ||
+                    endpoint.host == '::1')));
+    if (!valid) {
+      setState(() => _remoteError = '服务地址无效：远程地址必须使用HTTPS。');
+      return;
+    }
+    await widget.library.preferences.setSkinCatalogBaseUrl(raw);
+    if (!mounted) return;
+    if (widget.library.preferences.error != null) {
+      setState(() => _remoteError = '服务地址保存失败，可重试。');
+      return;
+    }
+    await _loadRemote();
+  }
+
+  Future<void> _loadRemote() async {
+    final endpoint = Uri.tryParse(
+      widget.library.preferences.value.skinCatalogBaseUrl,
+    );
+    if (endpoint == null || endpoint.host.isEmpty || widget.catalog == null) {
+      setState(() {
+        _remoteItems = const [];
+        _remoteError = '请先填写并保存自建目录服务地址。';
+      });
+      return;
+    }
+    setState(() {
+      _remoteLoading = true;
+      _remoteError = null;
+    });
+    try {
+      final result = await widget.catalog!.search(
+        endpoint: endpoint,
+        query: _query,
+        sort: _remoteSort,
+        page: _remotePage,
+      );
+      if (!mounted) return;
+      setState(() {
+        _remoteItems = result.items;
+        _remoteTotal = result.total;
+        _remoteError = result.items.isEmpty ? '目录当前没有公开皮肤。' : null;
+      });
+    } on PieceSkinCatalogUnavailable {
+      if (mounted) setState(() => _remoteError = '无法连接自建皮肤目录，请检查网络和服务状态。');
+    } on PieceSkinCatalogRejected catch (error) {
+      if (mounted) {
+        setState(() => _remoteError = '目录服务返回HTTP ${error.statusCode}。');
+      }
+    } on PieceSkinCatalogException {
+      if (mounted) setState(() => _remoteError = '目录响应无效，未显示远程条目。');
+    } catch (_) {
+      if (mounted) setState(() => _remoteError = '目录请求失败，请检查服务地址。');
+    } finally {
+      if (mounted) setState(() => _remoteLoading = false);
+    }
+  }
+
+  Future<void> _showRemoteDetails(
+    BuildContext context,
+    PublicPieceSkin item,
+  ) => showDialog<void>(
+    context: context,
+    builder: (context) => AlertDialog(
+      title: Text(item.name),
+      content: SingleChildScrollView(
+        child: Text(
+          '${item.description}\n\n作者：${item.author}\n点赞：${item.likes}\n导入日期：${item.publishedAt.toLocal()}\n许可证：${item.license}\n署名：${item.attribution.isEmpty ? '无额外署名' : item.attribution}\n\n下载后仍需确认许可，当前不会自动写入本机。',
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('关闭'),
+        ),
+      ],
+    ),
+  );
 
   Future<void> _export(
     BuildContext context,

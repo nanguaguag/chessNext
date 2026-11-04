@@ -61,6 +61,18 @@ void main() {
         thinkTimeMs: 3000,
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
+      final catalog = AppPreferences().copyWith(
+        skinCatalogBaseUrl: 'https://skins.example.org/catalog',
+      );
+      expect(AppPreferences.fromJson(catalog.toJson()), catalog);
+      expect(
+        () => AppPreferences(skinCatalogBaseUrl: 'http://example.org'),
+        throwsArgumentError,
+      );
+      expect(
+        () => AppPreferences(skinCatalogBaseUrl: 'http://localhost:8080'),
+        returnsNormally,
+      );
       final legacy = AppPreferences().toJson()..remove('boardLayoutPreset');
       expect(
         AppPreferences.fromJson(legacy).boardLayoutPreset,
@@ -148,6 +160,9 @@ void main() {
       repository.readGate = Completer<void>();
       final reading = preferences.initialize();
       final choosing = preferences.setTheme(ThemePreference.light);
+      final choosingCatalog = preferences.setSkinCatalogBaseUrl(
+        'https://skins.example.org',
+      );
       final choosingLayout = preferences.setBoardLayoutPreset(
         BoardLayoutPreset.boardOnLeft,
       );
@@ -180,6 +195,7 @@ void main() {
       repository.readGate!.complete();
       await reading;
       await choosing;
+      await choosingCatalog;
       await choosingLayout;
       await choosingPanels;
       await choosingPlayback;
@@ -192,6 +208,7 @@ void main() {
       await exiting;
       await preferences.flush();
       expect(preferences.value.theme, ThemePreference.light);
+      expect(preferences.value.skinCatalogBaseUrl, 'https://skins.example.org');
       expect(
         preferences.value.boardLayoutPreset,
         BoardLayoutPreset.boardOnLeft,

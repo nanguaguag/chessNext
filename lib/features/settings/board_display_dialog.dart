@@ -17,6 +17,7 @@ import '../../ports/piece_skin_package_exporter.dart';
 import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/piece_skin_folder_picker.dart';
 import 'piece_skin_library_dialog.dart';
+import '../../ports/piece_skin_catalog.dart';
 
 class BoardDisplayDialog extends StatelessWidget {
   const BoardDisplayDialog({
@@ -29,6 +30,7 @@ class BoardDisplayDialog extends StatelessWidget {
     this.pieceSkinPackageExporter,
     this.pieceSkinPackagePicker,
     this.pieceSkinFolderPicker,
+    this.pieceSkinCatalog,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
@@ -38,6 +40,7 @@ class BoardDisplayDialog extends StatelessWidget {
   final PieceSkinPackageExporter? pieceSkinPackageExporter;
   final PieceSkinPackagePicker? pieceSkinPackagePicker;
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
+  final PieceSkinCatalog? pieceSkinCatalog;
 
   PieceSkinDefinition? _activeProfile(PreferencesController preferences) =>
       pieceSkins?.definitionFor(preferences.value.selectedPieceSkinId);
@@ -484,6 +487,7 @@ class BoardDisplayDialog extends StatelessWidget {
                               exporter: pieceSkinPackageExporter,
                               picker: pieceSkinPackagePicker,
                               folderPicker: pieceSkinFolderPicker,
+                              catalog: pieceSkinCatalog,
                             ),
                           ),
                     icon: const Icon(Icons.collections_bookmark_outlined),

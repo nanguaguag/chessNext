@@ -4,7 +4,8 @@ This service exposes a public, read only catalog. It has no account system,
 upload endpoint, likes endpoint, or connection to xiangqiai.com. The operator
 publishes metadata and package files from a local directory. Public clients can
 search and sort the published entries, read the license/attribution, and fetch a
-bounded project skin ZIP.
+bounded project piece-skin ZIP. An optional second root can publish board-skin
+packages through a separate endpoint on the same host.
 
 ## Data directory
 
@@ -14,6 +15,15 @@ Create this layout and copy `catalog.example.json` to `data/catalog.json`:
 data/
   catalog.json
   packages/
+    <skin-id>.zip
+```
+
+An optional board catalog uses a separate root:
+
+```text
+board-data/
+  board-catalog.json
+  board-packages/
     <skin-id>.zip
 ```
 
@@ -51,7 +61,12 @@ SKIN_CATALOG_ROOT=./data dart run bin/skin_catalog_server.dart
 
 It binds to `127.0.0.1:8087` by default. Configure
 `SKIN_CATALOG_ADDRESS`, `SKIN_CATALOG_PORT`, and `SKIN_CATALOG_ROOT` for a
-deployment. The catalog is loaded once at startup. Use immutable package IDs:
+deployment. To enable board skins, also set
+`SKIN_BOARD_CATALOG_ROOT=./board-data`. This root contains
+`board-catalog.json` and `board-packages/<skin-id>.zip`, using the same metadata
+schema, hash and license checks. Packages must use the project's board-skin ZIP
+schema; clients validate them again before import. The piece catalog uses
+`catalog.json` and `packages/`. Catalogs load once at startup. Use immutable package IDs:
 copy new package files first, atomically replace `catalog.json`, then restart
 the process. Keep old package files until the prior catalog has been retired.
 
@@ -91,6 +106,9 @@ to the catalog directory.
 - `GET /v1/catalog?q=&sort=default|likes|name|author|recent&page=1&pageSize=24`
 - `GET /v1/catalog/{id}`
 - `GET /v1/catalog/{id}/package`
+- `GET /v1/board-catalog?q=&sort=default|likes|name|author|recent&page=1&pageSize=24` (optional board root)
+- `GET /v1/board-catalog/{id}`
+- `GET /v1/board-catalog/{id}/package`
 
 Only GET/HEAD and CORS preflight are accepted. The API has bounded query,
 pagination, manifest and package sizes. Package responses use a content hash as

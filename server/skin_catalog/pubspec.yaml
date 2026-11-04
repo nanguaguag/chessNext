@@ -1,5 +1,5 @@
 name: skin_catalog_server
-description: Self-hostable, public read-only piece skin catalog for chessNext.
+description: Self-hostable, public read-only piece and board skin catalog for chessNext.
 version: 0.1.0
 publish_to: none
 environment:

@@ -120,17 +120,26 @@ bool _boundedText(String value, int minRunes, int maxRunes) {
 }
 
 final class SkinCatalogStore {
-  SkinCatalogStore._(this.root, this.skins);
+  SkinCatalogStore._(this.root, this.packageDirectoryName, this.skins);
 
   final Directory root;
+  final String packageDirectoryName;
   final List<PublicSkin> skins;
 
-  static Future<SkinCatalogStore> load(Directory root) async {
+  static Future<SkinCatalogStore> load(
+    Directory root, {
+    String manifestName = 'catalog.json',
+    String packageDirectoryName = 'packages',
+  }) async {
     if (await FileSystemEntity.type(root.path, followLinks: false) !=
         FileSystemEntityType.directory) {
       throw const FormatException('Catalog root must be a real directory');
     }
-    final manifest = File('${root.path}/catalog.json');
+    if (!RegExp(r'^[a-z][a-z0-9_-]{0,63}\.json$').hasMatch(manifestName) ||
+        !RegExp(r'^[a-z][a-z0-9_-]{0,63}$').hasMatch(packageDirectoryName)) {
+      throw const FormatException('Invalid catalog layout');
+    }
+    final manifest = File('${root.path}/$manifestName');
     if (await FileSystemEntity.type(manifest.path, followLinks: false) !=
         FileSystemEntityType.file) {
       throw const FormatException('Catalog manifest must be a regular file');
@@ -155,7 +164,11 @@ final class SkinCatalogStore {
         'Catalog contains duplicate or excessive entries',
       );
     }
-    return SkinCatalogStore._(root, List.unmodifiable(list));
+    return SkinCatalogStore._(
+      root,
+      packageDirectoryName,
+      List.unmodifiable(list),
+    );
   }
 
   List<PublicSkin> search({
@@ -204,7 +217,7 @@ final class SkinCatalogStore {
 
   Future<Uint8List?> readPackage(PublicSkin skin) async {
     try {
-      final packageDirectory = Directory('${root.path}/packages');
+      final packageDirectory = Directory('${root.path}/$packageDirectoryName');
       if (await FileSystemEntity.type(
             packageDirectory.path,
             followLinks: false,
@@ -237,16 +250,18 @@ String _sha256(List<int> bytes) {
 }
 
 final class SkinCatalogHttpServer {
-  SkinCatalogHttpServer._(this._server, this._store);
+  SkinCatalogHttpServer._(this._server, this._store, this._boardStore);
 
   final HttpServer _server;
   final SkinCatalogStore _store;
+  final SkinCatalogStore? _boardStore;
   StreamSubscription<HttpRequest>? _subscription;
 
   String get baseUrl => 'http://${_server.address.address}:${_server.port}';
 
   static Future<SkinCatalogHttpServer> bind({
     required SkinCatalogStore store,
+    SkinCatalogStore? boardStore,
     InternetAddress? address,
     int port = 8087,
   }) async {
@@ -255,7 +270,7 @@ final class SkinCatalogHttpServer {
       port,
       shared: false,
     );
-    final service = SkinCatalogHttpServer._(server, store);
+    final service = SkinCatalogHttpServer._(server, store, boardStore);
     service._subscription = server.listen(service._handle);
     return service;
   }
@@ -308,9 +323,17 @@ final class SkinCatalogHttpServer {
     if (path == '/healthz') {
       await _json(response, HttpStatus.ok, {'status': 'ok'});
     } else if (path == '/v1/catalog') {
-      await _list(request);
+      await _list(request, _store);
     } else if (path.startsWith('/v1/catalog/')) {
-      await _entry(request, path.substring('/v1/catalog/'.length));
+      await _entry(request, path.substring('/v1/catalog/'.length), _store);
+    } else if (path == '/v1/board-catalog' && _boardStore != null) {
+      await _list(request, _boardStore);
+    } else if (path.startsWith('/v1/board-catalog/') && _boardStore != null) {
+      await _entry(
+        request,
+        path.substring('/v1/board-catalog/'.length),
+        _boardStore,
+      );
     } else {
       await _json(response, HttpStatus.notFound, {
         'error': {'code': 'not_found'},
@@ -318,7 +341,7 @@ final class SkinCatalogHttpServer {
     }
   }
 
-  Future<void> _list(HttpRequest request) async {
+  Future<void> _list(HttpRequest request, SkinCatalogStore store) async {
     final queryValues = request.uri.queryParametersAll;
     if (request.uri.query.length > 512 ||
         queryValues.values.any((values) => values.length != 1)) {
@@ -342,13 +365,13 @@ final class SkinCatalogHttpServer {
       await _badRequest(request.response);
       return;
     }
-    final results = _store.search(
+    final results = store.search(
       query: query,
       sort: sort,
       page: page,
       pageSize: pageSize,
     );
-    final count = _store.countMatches(query);
+    final count = store.countMatches(query);
     await _json(request.response, HttpStatus.ok, {
       'schema': 1,
       'page': page,
@@ -359,10 +382,14 @@ final class SkinCatalogHttpServer {
     });
   }
 
-  Future<void> _entry(HttpRequest request, String pathTail) async {
+  Future<void> _entry(
+    HttpRequest request,
+    String pathTail,
+    SkinCatalogStore store,
+  ) async {
     final segments = pathTail.split('/');
     if (segments.length == 2 && segments[1] == 'package') {
-      await _package(request, segments[0]);
+      await _package(request, segments[0], store);
       return;
     }
     if (segments.length != 1 || !_idPattern.hasMatch(segments.single)) {
@@ -371,7 +398,7 @@ final class SkinCatalogHttpServer {
       });
       return;
     }
-    final skin = _store.skins
+    final skin = store.skins
         .where((item) => item.id == segments.single)
         .firstOrNull;
     if (skin == null) {
@@ -389,14 +416,18 @@ final class SkinCatalogHttpServer {
     });
   }
 
-  Future<void> _package(HttpRequest request, String id) async {
+  Future<void> _package(
+    HttpRequest request,
+    String id,
+    SkinCatalogStore store,
+  ) async {
     if (!_idPattern.hasMatch(id)) {
       await _json(request.response, HttpStatus.notFound, {
         'error': {'code': 'not_found'},
       });
       return;
     }
-    final skin = _store.skins.where((item) => item.id == id).firstOrNull;
+    final skin = store.skins.where((item) => item.id == id).firstOrNull;
     if (skin == null) {
       await _json(request.response, HttpStatus.notFound, {
         'error': {'code': 'not_found'},
@@ -408,7 +439,7 @@ final class SkinCatalogHttpServer {
     response.headers
       ..set(HttpHeaders.etagHeader, etag)
       ..contentType = ContentType('application', 'zip');
-    final bytes = await _store.readPackage(skin);
+    final bytes = await store.readPackage(skin);
     if (bytes == null) {
       response.headers.set(HttpHeaders.cacheControlHeader, 'no-store');
       await _json(response, HttpStatus.notFound, {

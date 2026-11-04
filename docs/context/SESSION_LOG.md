@@ -886,3 +886,8 @@ M4-48按ADR-082将本机`BoardSkinGeometry`棋盘皮肤专属棋子比例由80�
 访客临时棋盘皮肤草稿读取左边距spinbutton默认33.00，value/aria-valuenow存在而DOM min/max/step缺失；聚焦并按ArrowDown一次后仍33.00（仅一次未观察到变化，不判断其它键/文本编辑/全站键盘支持）。意外打开重命名对话框后取消；浏览器返回、确认放弃草稿，核对棋盘/棋子默认、全局大小100%、坐标开、对面倒置关。无保存/应用。
 
 准备同步E65证据、矩阵、缺口、交互、追溯、待办和handoff。仍在B24，下一步审计/设计在线棋盘皮肤目录与后续全站缺口。没有跑测试/analyze，也没有启动额外App；现存唯一App PID50598、runner PID50125复用。文档commit待diff check。
+## 2026-11-05 / M4-49 / F21,B24,ADR-083 自建棋盘皮肤目录服务端
+
+`server/skin_catalog`现在可选从`SKIN_BOARD_CATALOG_ROOT`装载独立棋盘目录清单/包目录，新增`board-catalog.json`、`board-packages/`布局及`/v1/board-catalog`分页查询/详情/包下载路由。既有`/v1/catalog`保持旧目录不变，不配置board root时新路由404。服务仍只读，SHA/大小/符号链接边界不变；客户端必须二次校验，在线目录UI/离线缓存/许可确认导入仍未做。测试：`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`6/6；根`flutter test --reporter compact`545通过/5跳过；`dart analyze server/skin_catalog/lib server/skin_catalog/bin`无问题；`flutter analyze --no-pub`无问题；格式化3文件，`git diff --check`待做。未改Flutter/macOS客户端，不运行App；PID50598/runner PID50125仅保留复用。
+
+更新ADR-083、DECISIONS、矩阵、追溯、待办与context，未提交。下一步检查diff后中文feature commit，继续M4-50客户端目录/缓存/安全导入，再审计/实现其余设置；全站对齐仍未完成。

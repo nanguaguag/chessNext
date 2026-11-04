@@ -694,3 +694,7 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 ## 2026-11-05 / E65 / F21,B24 边距数值框键盘观察
 
 空白棋盘皮肤草稿左边距初值33.00；读取数值框value/aria-valuenow，未发现DOM min/max/step。聚焦左边距并按ArrowDown后仍33.00；只代表这次输入/按键未改变值，其他键与字段编辑行为未知。误触重命名入口后取消，浏览器返回并确认放弃；默认皮肤/100%/坐标开/对面倒置关复原。无保存或应用操作，详见REFERENCE_EVIDENCE E65。
+
+## 2026-11-05 / M4-49 / F21,B24,ADR-083 自建只读棋盘皮肤目录服务端
+
+扩展既有`server/skin_catalog`，可选`SKIN_BOARD_CATALOG_ROOT`从独立根目录装载`board-catalog.json`及`board-packages/`，复用同一有界metadata、查询/排序/分页、许可/署名、SHA绑定与包读取防符号链接规则；新增`/v1/board-catalog`、详情及ZIP端点。未启用新根时既有`/v1/catalog`棋子目录保持兼容。部署README记录新根目录和路由；服务仍无写API/用户认证。根Flutter测试545通过/5跳过；服务定向6/6；服务端dart analyze与根`flutter analyze --no-pub`无问题；格式化完成、`git diff --check`待复核。未运行macOS客户端，因为本增量仅改独立Dart服务协议，既有唯一App PID50598/runner PID50125未变。客户端目录与缓存仍待M4-50。

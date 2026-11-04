@@ -371,3 +371,7 @@ E64当前已更新REFERENCE_EVIDENCE、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、
 最新提交`f364bda docs(audit): 记录棋盘边距联动样本`。其后E65增加：临时棋盘编辑草稿四边spinbutton可见value/aria-valuenow，无DOM min/max/step；左边距聚焦后一次ArrowDown仍33.00，仅此一次按键未观察到值变更。临时新建草稿已丢弃，设置恢复默认。E65已追加证据、矩阵、缺口、交互、追溯、待办和CURRENT_STATE，纯文档变更待diff check/提交。
 
 继续用户已授权的全站功能/设置对齐（登录除外）；不要在单个切片后停止，也不得把未知项说成完成。在线棋盘皮肤目录缺少实现（当前自建目录是棋子皮肤目录）；需要先阅读现有`PieceSkinCatalog`接口/服务契约及M4-39 ADR-074，设计可替换的棋盘皮肤目录后推进。当前唯一macOS App PID50598、Flutter runner PID50125保留复用；根测试不启动GUI App。
+
+## 当前实现 M4-49（2026-11-05）
+
+已实现服务端可选棋盘目录根+`/v1/board-catalog`读列表/详情/包，支持和原棋子目录物理隔离；以项目棋盘皮肤schema ZIP作为发布内容，客户端需要二次验证许可/SHA与包。服务端定向6/6、根测试545通过/5跳过，根Flutter analyze与服务dart analyze通过；macOS UI不是本增量目标，未运行。代码/ADR/TRACEABILITY/FEATURE_MATRIX/BACKLOG有未提交改动，先`git diff --check`复核并以中文Conventional Commit单独提交。随后立即继续M4-50客户端目录UI/cache/import，不因服务端切片停止；仍需推进B24及全站。

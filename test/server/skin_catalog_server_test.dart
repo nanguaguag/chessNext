@@ -13,11 +13,15 @@ final packageBytes = <String, List<int>>{
 
 void main() {
   late Directory root;
+  late Directory boardRoot;
   late SkinCatalogHttpServer server;
   late HttpClient client;
 
   setUp(() async {
     root = await Directory.systemTemp.createTemp('skin-catalog-server-');
+    boardRoot = await Directory.systemTemp.createTemp(
+      'board-skin-catalog-server-',
+    );
     final packages = Directory('${root.path}/packages');
     await packages.create();
     final skins = [
@@ -32,7 +36,29 @@ void main() {
       await File('${packages.path}/${entry.key}.zip').writeAsBytes(entry.value);
     }
     final store = await SkinCatalogStore.load(root);
-    server = await SkinCatalogHttpServer.bind(store: store, port: 0);
+    final boardPackages = Directory('${boardRoot.path}/board-packages')
+      ..createSync();
+    await File('${boardRoot.path}/board-catalog.json').writeAsString(
+      jsonEncode({
+        'schema': 1,
+        'skins': [
+          _skin('alpha', 'Board Oak', 'Ada', 3, '2026-02-01T00:00:00Z'),
+        ],
+      }),
+    );
+    await File(
+      '${boardPackages.path}/alpha.zip',
+    ).writeAsBytes(packageBytes['alpha']!);
+    final boardStore = await SkinCatalogStore.load(
+      boardRoot,
+      manifestName: 'board-catalog.json',
+      packageDirectoryName: 'board-packages',
+    );
+    server = await SkinCatalogHttpServer.bind(
+      store: store,
+      boardStore: boardStore,
+      port: 0,
+    );
     client = HttpClient();
   });
 
@@ -40,6 +66,7 @@ void main() {
     client.close(force: true);
     await server.close();
     await root.delete(recursive: true);
+    await boardRoot.delete(recursive: true);
   });
 
   test(
@@ -97,6 +124,24 @@ void main() {
     final cached = await cachedRequest.close();
     expect(cached.statusCode, HttpStatus.notModified);
     await cached.drain<void>();
+  });
+
+  test('serves board catalog independently from piece catalog', () async {
+    final board = await _getJson(server, client, '/v1/board-catalog');
+    expect(board['total'], 1);
+    expect((board['items'] as List).single['name'], 'Board Oak');
+    expect((await _getJson(server, client, '/v1/catalog'))['total'], 3);
+
+    final request = await client.getUrl(
+      Uri.parse('${server.baseUrl}/v1/board-catalog/alpha/package'),
+    );
+    final response = await request.close();
+    final bytes = await response.fold<List<int>>(
+      <int>[],
+      (all, chunk) => all..addAll(chunk),
+    );
+    expect(response.statusCode, HttpStatus.ok);
+    expect(bytes, packageBytes['alpha']);
   });
 
   test('rejects invalid queries and all mutation methods', () async {

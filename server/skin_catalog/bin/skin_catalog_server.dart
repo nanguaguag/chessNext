@@ -24,13 +24,25 @@ Future<void> main(List<String> args) async {
     return;
   }
   final store = await SkinCatalogStore.load(root);
+  final boardRoot = Platform.environment['SKIN_BOARD_CATALOG_ROOT'];
+  final boardStore = boardRoot == null || boardRoot.trim().isEmpty
+      ? null
+      : await SkinCatalogStore.load(
+          Directory(boardRoot),
+          manifestName: 'board-catalog.json',
+          packageDirectoryName: 'board-packages',
+        );
   final server = await SkinCatalogHttpServer.bind(
     store: store,
+    boardStore: boardStore,
     address: address,
     port: port,
   );
   stdout.writeln('Skin catalog listening at ${server.baseUrl}');
   stdout.writeln('Loaded ${store.skins.length} public entries.');
+  if (boardStore != null) {
+    stdout.writeln('Loaded ${boardStore.skins.length} public board skins.');
+  }
   final stopped = Completer<void>();
   ProcessSignal.sigint.watch().listen((_) => stopped.complete());
   if (!Platform.isWindows) {

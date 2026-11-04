@@ -296,4 +296,6 @@ M4-13实现“传统圆章/方章墨韵”本机PieceSkin，持久化并覆盖�
 
 E56材料已提交`a5df531 docs(audit): 验证多语言翻译与重载记忆`；工作树干净。`pgrep`仍仅看到runner PID86855及一个App PID87104，未增加实例。没有测试/analyze/runner。当前 Mac 锁屏；若后续改码，根Flutter test/analyze仍可运行，但要实际macOS前台验收需解锁后复用PID86855，不要另起flutter run。下一步将F27扩展为完整本地化资源盘点；当前无ARB/l10n资源，仅依赖硬编码中文，显示设置对话框等也混合在一起。
 
+随后E57在临时标签7、1280×720验证“棋盘靠左/居中”：靠左主界面棋盘和着法区靠左，AX splitter结构/棋盘宽改变；居中恢复三栏和默认分隔。已恢复居中并关闭标签。源站断点/记忆未知。本机M4-37还没有双预设；需按真实宽高/字号审查再实现。原始IAB标签1仍未操作，现只剩该标签。
+
 E54/E55文档审计分别提交：`149a153 docs(audit): 验证显示语言切换行为`、`2ee7dc9 docs(audit): 补充谱库来源设置证据`、`649d8fa docs(audit): 验证谱库来源切换保持`、`a446786 docs(audit): 记录大师谱面板与筛选入口`。`git status --short`为空，`git diff --check`通过。此轮未运行测试/analyze/runner，故没有产生新棋盘进程。`pgrep -fal 'chessNext|flutter_tools.snapshot run'`确认既有`flutter run -d macos` PID86855及App PID87104仍在；没有新chessNext.app。下一步：在不提交谱库查询的前提下继续审计站点设置/在线查询的触发边界；然后继续盘点并实现完整F27本地化，持续推进到登录外矩阵差距收敛。

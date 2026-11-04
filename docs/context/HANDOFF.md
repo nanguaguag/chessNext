@@ -2,11 +2,11 @@
 
 用户持续授权登录部分以外功能/设置对齐，不因单项停下。在线功能仍在总范围，离线优先只是推进顺序；在线采用自建可替换后端并提供部署方案。无分代理授权；许可决策暂缓，不阻挡本地开发。每个功能根目录`flutter test`、`flutter analyze`通过后中文Conventional Commit；macOS运行复用唯一交互runner/app。不能宣称全站已对齐。
 
-已提交：M4-39 `ae9858e`自建公开目录服务；M4-40 `c4c4aa6`只读客户端端口；M4-41 `38886a5`自建URL偏好、目录浏览/许可署名/离线状态。
+已提交：M4-39 `ae9858e`自建公开目录服务；M4-40 `c4c4aa6`只读客户端端口；M4-41 `38886a5`自建URL偏好、目录浏览/许可署名/离线状态；M4-42 `5b8384d`有界下载、摘要校验和许可确认导入。
 
-M4-42代码/文档当前未提交：目录包8MiB下载上限、SHA-256校验、复用项目ZIP codec、许可/署名用户确认后导入，以及license/attribution元数据本机持久化并随复制/导出保留（ADR-077）。定向12/12；根测试525通过/5跳过（本机无官方Pikafish/NNUE）；`flutter analyze --no-pub`通过。widget首次许可文案断言计数修正后通过；早期格式/静态分析问题已修复。macOS唯一runner PID6602/App PID6847、VM `127.0.0.1:53684`热重载明确成功（Reloaded 39/1738 libraries），没有另开实例。系统`open returned 1`，未做人工视觉验收。无后台目录服务或临时制品。
+M4-43新增`test/server/skin_catalog_client_roundtrip_test.dart`：自制schema1样包经真实loopback `SkinCatalogHttpServer`、HTTP客户端、摘要/codec校验和`PieceSkinLibraryController`导入，断言许可/署名持久化。专项`flutter test test/server/skin_catalog_client_roundtrip_test.dart --reporter expanded`1/1；根`flutter test --reporter compact`526通过/5跳过；`flutter analyze --no-pub`通过。只新增集成测试与追踪文档，待提交。进程核对唯一runner PID6602/App PID6847；测试只运行flutter_tester，没有打开新App。之前macOS系统`open returned 1`，无人工视觉验收。无后台目录服务或临时制品。
 
-下一步：提交M4-42为`feat(catalog): 安全导入在线皮肤`；随后使用自制且有授权样包部署服务验证浏览→下载→校验→许可确认→导入全链路，接着持续解决FEATURE_GAPS其余缺口。登录相关不实现，全站对齐仍未达成。
+下一步：提交M4-43为`test(catalog): 验证自建目录导入全链路`；继续B24实现离线目录/包缓存与明确新鲜度策略，然后解决FEATURE_GAPS其余缺口。集成夹具验证了本机HTTP服务链路，但真实托管部署和UI人工点选仍未验证。登录相关不实现，全站对齐仍未达成。
 
 # 会话交接
 

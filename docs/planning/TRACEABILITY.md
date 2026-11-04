@@ -636,3 +636,9 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 目录HTTP端口仅接受合法slug和SHA-256，单包≤8MiB，流式累积到边界后比对真实SHA-256才返回。详情点击下载后复用M4-27项目schema1皮肤包codec校验固定ZIP结构、SHA和PNG/JPEG内容；包内皮肤名称必须匹配在线条目。显示许可及署名，显式按“接受许可并导入”后才写入本机库；取消不写，导入自动创建新ID并选用。下载失败/服务拒绝/摘要或格式失败均显示本机未更改。用户皮肤定义新增可选license/attribution字段，文件和包格式兼容旧schema1，创建衍生皮肤时保留来源许可，导出继续携带元数据。
 
 专项`flutter test test/application/piece_skin_library_test.dart test/adapters/network/http_piece_skin_catalog_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`12/12；根`flutter test --reporter compact`525通过/5跳过；`flutter analyze --no-pub`无问题。首轮widget对确认弹窗里许可文案预期计数错误，改为精确双匹配后通过；首轮文件改动曾有重复/错位import修正。macOS复用交互runner PID6602，`r`热重载明确回报Reloaded 39 of 1738 libraries；App PID6847、VM `127.0.0.1:53684`保持单实例。系统先前`open returned 1`，未人工视觉验收。
+
+## 2026-11-04 / M4-43 / F21,B24 自建目录loopback导入链路集成验证
+
+新增`test/server/skin_catalog_client_roundtrip_test.dart`。测试自行构造schema1皮肤ZIP与临时schema1目录元数据，在ephemeral loopback端口启动`SkinCatalogHttpServer`，由`HttpPieceSkinCatalog`搜索并下载，再验证SHA/项目codec、经`PieceSkinLibraryController`导入，断言条目、选中ID及许可证/署名元数据已保存。样包完全自制，不含参考站资源。该证据只证明本机服务与客户端/本机库契约互通；真实托管部署及人工UI点击未验证。
+
+专项`flutter test test/server/skin_catalog_client_roundtrip_test.dart --reporter expanded`1/1；根`flutter test --reporter compact`526通过/5跳过（5项需要官方Pikafish/NNUE环境）；`flutter analyze --no-pub`无问题。测试使用Flutter测试宿主，不启动`chessNext.app`；复核唯一runner PID6602/App PID6847仍在运行。

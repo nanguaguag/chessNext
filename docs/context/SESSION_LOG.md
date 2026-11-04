@@ -824,3 +824,7 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 目录端口新增8MiB下载上限和SHA-256；皮肤库详情可下载，复用schema1包codec，名称与服务元数据校对，显式确认许可后调用安全本机导入。license/attribution增为用户皮肤定义可选字段，保留旧文件兼容并随复制/ZIP导出。取消/错误不会写本机。
 
 专项12/12；根`flutter test --reporter compact`525通过/5跳过（缺官方Pikafish/NNUE）；`flutter analyze --no-pub`通过。最初widget断言因详情和确认对话框同时有许可文本而误计数，调整后通过；传输层和界面流程都复测。macOS复用交互runner PID6602热重载明确成功（Reloaded 39/1738，2664ms），App PID6847/VM `127.0.0.1:53684`唯一实例；`open returned 1`未能人工验收窗口。代码/文档待提交。
+
+## 2026-11-04 / M4-43 / F21,B24 自建目录端到端集成回归
+
+新增`test/server/skin_catalog_client_roundtrip_test.dart`，以自制schema1样包验证loopback服务→搜索/下载客户端→SHA及codec→皮肤库许可/署名持久化。定向1/1；根`flutter test --reporter compact`526通过/5跳过；`flutter analyze --no-pub`通过。测试期间只见flutter_tester，无新App；复核runner PID6602及唯一App PID6847。没有验证真实托管部署或人工UI流程；M4-43测试/追踪文档待提交。后续继续B24缓存和FEATURE_GAPS剩余项。

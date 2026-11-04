@@ -1,8 +1,14 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-56 当前进展（已提交7bf3b2d）
+
+在已提交M4-55服务端`4f515e9`上增加`BookService`端口和`HttpBookService`适配器（ADR-088）。只在调用方显式传入endpoint时请求；公网HTTPS、loopback HTTP，5秒超时、request/response 32KiB、history 512、候选32；核对请求键回显、候选格式/唯一性和数据集署名。HTTP failure按Unavailable/Rejected/InvalidResponse区分，不落子/不缓存/不重试。专项4/4；根测试568通过/5跳过；Flutter/Dart analyze与diff check通过。未接app composition root/设置/AI走棋，无macOS运行需要；未新增chessNext。
+
+M4-56及追踪材料已单独提交；本轮上下文更新另做中文docs commit。下一片把endpoint与开局策略、残局开关、离库步数设置落实到持久化偏好，并用AI单步进行合法候选复核/未命中或失败时本机引擎回退；E71随机分差和残局判定未知值须在项目决策中标P。随后继续F21格点/边距几何、F27/F31及其它登录外差距。全站目标仍未完成。
+
 ## 最新进展 M4-55 / 服务端云库查询切片
 
-当前feature基线`4f515e9 feat(server): 增加自建云库查询接口`；仅本交接文档待独立提交。`server/skin_catalog`增加可选运营者book.json、开局/残局精确键查询（kind+完整FEN+history）、候选着法/分值/权重及数据许可/归属信息，服务默认无棋库数据、不记录查询。请求32KiB、最多512步历史/32候选等校验，部署文档涵盖systemd/nginx。不是端到端云库；还缺Flutter客户端、合法棋步核验集成、真实授权数据和策略等价验证。
+M4-55已由`4f515e9 feat(server): 增加自建云库查询接口`提交，M4-56随后增加独立BookService传输端口（`7bf3b2d`）。服务端可选operator book.json，kind+完整FEN+history精确查询；响应候选着法/分值/权重及数据许可/归属，不附数据、不记录查询。请求32KiB、最多512步历史/32候选；systemd/nginx有部署配置。仍非端到端云库：客户端未注入App、无AI合法棋步核验/策略和真实授权数据。
 
 验证：专项`flutter test --concurrency=1 test/server/book_catalog_server_test.dart test/server/skin_catalog_server_test.dart --reporter expanded`12/12；根`flutter test --concurrency=1 --reporter compact`564通过/5跳过；`flutter analyze --no-pub`、`dart analyze server/skin_catalog/lib server/skin_catalog/bin`、`git diff --check`均通过；服务端`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功。仅服务端变更，未重启App；唯一既有PID50598/runner50125保留，测试单一flutter_tester，没有新chessNext。
 

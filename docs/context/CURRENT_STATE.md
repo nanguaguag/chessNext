@@ -1,10 +1,16 @@
 # 当前状态
 
+## 最新增量 M4-56（已提交 7bf3b2d）
+
+新增BookService领域端口及HTTP客户端适配器（ADR-088），精确请求开局/残局kind、FEN与完整历史；HTTPS公网/loopback开发地址约束，5秒超时、32KiB边界、协议/署名校验和类型化失败。显式传入endpoint才会请求；尚未接composition root、偏好设置、策略、缓存、合法着法校验或AI回退，不能称端到端云库。
+
+HTTP专项4/4；根串行`flutter test --concurrency=1 --reporter compact`568通过/5跳过；`flutter analyze --no-pub`、BookService Dart analyze及`git diff --check`通过。纯端口/适配器改动，未启动或重启macOS app；串行测试仅1个flutter_tester、没有新增chessNext。
+
 ## 最新实现 M4-55（已提交 4f515e9）
 
-按E71/F22,F23建立自建只读开局/残局云库查询服务端切片（ADR-087）：运营者可提供带许可/归属元数据的book.json；按类型、完整FEN和着法历史精确查询，返回候选着法、分值及权重。默认不附带任何棋库、不记录查询；包含限流式请求大小、清单结构及候选校验、示例配置、systemd/nginx部署参数。尚无Flutter客户端/实际数据集，因此不宣称云库端到端或全站对齐。
+按E71/F22,F23建立自建只读开局/残局云库查询服务端切片（ADR-087）：运营者可提供带许可/归属元数据的book.json；按类型、完整FEN和着法历史精确查询，返回候选着法、分值及权重。默认不附带任何棋库、不记录查询；包含限流式请求大小、清单结构及候选校验、示例配置、systemd/nginx部署参数。M4-56已有纯传输客户端但未注入App，且无实际数据集，因此不宣称云库端到端或全站对齐。
 
-专项服务器测试12/12；根串行`flutter test --concurrency=1 --reporter compact`564通过/5跳过；`flutter analyze --no-pub`与服务端`dart analyze server/skin_catalog/lib server/skin_catalog/bin`无问题；`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功；`git diff --check`通过。该切片仅服务端，不需重启macOS；复用既有PID50598/runner50125，未启动新App。
+专项服务器测试12/12；根串行`flutter test --concurrency=1 --reporter compact`564通过/5跳过；`flutter analyze --no-pub`与服务端`dart analyze server/skin_catalog/lib server/skin_catalog/bin`无问题；`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功；`git diff --check`通过。M4-55仅服务端，不需重启macOS；复用既有PID50598/runner50125，未启动新App。M4-56已补纯传输客户端，但尚未注入App。
 
 ## 最新实现 M4-54（已提交 1804040）
 
@@ -14,7 +20,7 @@ M4-54专项24/24；根目录`flutter test --concurrency=1 --reporter compact`558
 
 ## 工作树与持续目标
 
-HEAD `4f515e9`，交接文档更新待独立提交。持续目标：对齐登录外所有可确认功能与设置；保留自建可替换在线后端和部署方案，不宣称全站完成。下一步实现Flutter BookService客户端及开局/残局策略、离库步数；运营者提供数据，服务不附带或伪装第三方棋库。许可决策暂缓，不阻挡本地开发。棋盘格点、边距完整几何和F31关于/支持等差距仍开放。
+HEAD `7bf3b2d`，当前仅交接文档待提交。持续目标：对齐登录外所有可确认功能与设置；保留自建可替换在线后端和部署方案，不宣称全站完成。下一步把BookService接入AI走棋，补策略设置、合法性复核和引擎回退；运营者提供数据，服务不附带或伪装第三方棋库。许可决策暂缓，不阻挡本地开发。棋盘格点、边距完整几何和F31关于/支持等差距仍开放。
 
 ## 最新审计 E70（2026-11-05）
 

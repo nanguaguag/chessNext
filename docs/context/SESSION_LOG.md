@@ -920,6 +920,12 @@ E66/E67仅更新文档，待`git diff --check`并以中文docs commit单独提�
 已更新REFERENCE_EVIDENCE、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、DECISIONS、TRACEABILITY、BACKLOG、CURRENT_STATE/HANDOFF；待`git diff --check`和docs commit。M4-32本机原0.5–30秒/0.1秒与该范围不一致，准备M4-51独立修正为0.1特殊首值、其后0.5秒步长至60秒并保留既有设置兼容。当前测试样本删除尚待用户确认，设置均恢复。
 
 
+# 2026-11-05 / M4-56 / F15,F22,F23 / ADR-088 BookService HTTP传输首片
+
+实现平台无关BookService/BookPositionKey/BookLookup和HttpBookService。POST exact kind+FEN+完整历史，公网HTTPS、本机HTTP限loopback；5秒请求/响应超时，体积≤32KiB、历史≤512、候选≤32；核schema/键回显/坐标着法/唯一性/license/attribution。超时/网络不可达、服务拒绝、无效响应类型分开。endpoint显式调用，无默认网址，无缓存/自动重试/落子，当前未在App composition root使用。
+
+专项`flutter test --concurrency=1 test/adapters/network/http_book_service_test.dart --reporter expanded`4/4；根串行`flutter test --concurrency=1 --reporter compact`568通过/5跳过；`flutter analyze --no-pub`、`dart analyze lib/ports/book_service.dart lib/adapters/network/http_book_service.dart`、`git diff --check`通过。未改UI/平台/应用接线，未重启macOS；根测试串行单flutter_tester，无新App。代码与追踪已提交`7bf3b2d feat(book): 增加自建云库HTTP客户端`；上下文交接另做中文docs commit。
+
 # 2026-11-05 / M4-55 / F22,F23 / ADR-087 自建云库只读服务端
 
 按E71实现运营者自供book.json的只读开局/残局查询接口，精确匹配kind、完整FEN、完整历史；候选结果含坐标着法/分值/权重并带数据集许可与归属。默认无数据，不附第三方棋库、不持久化查询；校验manifest/request/candidate边界，并补充示例与systemd/nginx部署说明。仍缺Flutter客户端、真实授权数据、搜索合法性与策略端到端验证，不能称云库完整或全站对齐。

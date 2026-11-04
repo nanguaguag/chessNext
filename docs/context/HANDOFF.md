@@ -366,3 +366,8 @@ F21/B24本机用户棋盘皮肤库实现正在工作树中，未提交。包含`
 用户要求继续推进全站已确认功能与设置（登录部分除外），不要每个功能后停止；无代理授权。最新功能提交M4-48为`c8e4f43 feat(skins): 对齐棋盘缩放范围`。E64访客临时编辑页验证四边stepper单击+0.5、左边距33连续加3次为34.5且右边距465联动约465.06；一次左上格点约50屏幕像素拖动后显示左/上/右/下86/32.5/465.12/519.04。AX值域声明不是实际极值，单位和全套公式仍U。设置草稿已确认丢弃，用户原tab1未触碰。
 
 E64当前已更新REFERENCE_EVIDENCE、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、TRACEABILITY、BACKLOG和CURRENT_STATE；文档diff待核对并单独中文docs commit。此为纯文档审计，不运行测试/analyze。唯一macOS App PID50598、runner PID50125仍在；复用它，不再启动第二实例。下一步继续B24几何输入边界/联动实测，并扩展FEATURE_GAPS尚未确认的全站设置；不得称F21或全站完成。
+## 最新续接（2026-11-05 / E65）
+
+最新提交`f364bda docs(audit): 记录棋盘边距联动样本`。其后E65增加：临时棋盘编辑草稿四边spinbutton可见value/aria-valuenow，无DOM min/max/step；左边距聚焦后一次ArrowDown仍33.00，仅此一次按键未观察到值变更。临时新建草稿已丢弃，设置恢复默认。E65已追加证据、矩阵、缺口、交互、追溯、待办和CURRENT_STATE，纯文档变更待diff check/提交。
+
+继续用户已授权的全站功能/设置对齐（登录除外）；不要在单个切片后停止，也不得把未知项说成完成。在线棋盘皮肤目录缺少实现（当前自建目录是棋子皮肤目录）；需要先阅读现有`PieceSkinCatalog`接口/服务契约及M4-39 ADR-074，设计可替换的棋盘皮肤目录后推进。当前唯一macOS App PID50598、Flutter runner PID50125保留复用；根测试不启动GUI App。

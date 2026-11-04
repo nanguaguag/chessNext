@@ -881,3 +881,8 @@ M4-48按ADR-082将本机`BoardSkinGeometry`棋盘皮肤专属棋子比例由80�
 在访客临时棋盘皮肤编辑页读取stepper AX声明：左/右0–500、上/下0–550（O，仅声明）；四个边距stepper各点一次增加0.5，左边距33连续加3次至34.5时右边距465联动至465.06；恢复默认边距后左上点约(161,92)拖至(211,92)，四边显示86/32.5/465.12/519.04，格点AX值仍50而预览格网移动（V/O）。此单一样本不能推断单位、全范围、边界或完整联动公式（U）。返回确认丢弃后默认棋盘/棋子、全局棋子100%、坐标开、倒置关恢复；原IAB tab1未触碰，未保存/应用任何皮肤。
 
 同步更新E64至REFERENCE_EVIDENCE、FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC、TRACEABILITY、BACKLOG、CURRENT_STATE/HANDOFF。仅文档审计，未运行Flutter测试/analyze，也未启动App。`git diff --check`待执行，纯文档中文commit待做。当前复用唯一macOS App PID50598、runner PID50125。下一步继续几何实际边界和其余全站设置审计，不停在本片；F21/全站仍开放。
+## 2026-11-05 / E65 / F21,B24 棋盘边距数值框键盘样本
+
+访客临时棋盘皮肤草稿读取左边距spinbutton默认33.00，value/aria-valuenow存在而DOM min/max/step缺失；聚焦并按ArrowDown一次后仍33.00（仅一次未观察到变化，不判断其它键/文本编辑/全站键盘支持）。意外打开重命名对话框后取消；浏览器返回、确认放弃草稿，核对棋盘/棋子默认、全局大小100%、坐标开、对面倒置关。无保存/应用。
+
+准备同步E65证据、矩阵、缺口、交互、追溯、待办和handoff。仍在B24，下一步审计/设计在线棋盘皮肤目录与后续全站缺口。没有跑测试/analyze，也没有启动额外App；现存唯一App PID50598、runner PID50125复用。文档commit待diff check。

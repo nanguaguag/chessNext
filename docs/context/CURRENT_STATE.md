@@ -349,3 +349,7 @@ E35证据已复核110项；E38/E39补审F28更换弹层和独立音效开关。M
 M4-07验证：根 `flutter test --reporter compact` 440 passed/5 skipped，5项需未配置的官方 Pikafish 环境；`flutter analyze` 无问题；专项13/13；macOS integration音频1/1；普通 `flutter run -d macos` 已启动 PID16653，VM Service `127.0.0.1:49641`。Xcode构建可能有既有audioplayers Swift并发warning；主窗口人工视觉/听感和其它平台未验。详 `TRACEABILITY.md` 与本轮 `SESSION_LOG.md`。
 
 Flutter3.44.6/Dart3.12.2，macOS14.4 arm64/Xcode15.0。2026-11-02官方latest复核仍Pikafish2026-09-06 commit4c17cee，lock/NNUE校验见engine/pikafish.lock.json，.local忽略不提交。普通用户旧窗口不关闭/热重启；native测试覆盖build入口，最终审查前需重建普通main。
+
+## 2026-11-05 / E74 F31反馈与版权投诉边界
+
+反馈表包含≤2000字、联系方式、≤3张截图，默认勾选附设备/版本；查看内容展示platform、version/build、bundle/channel、os/model、userAgent、locale及屏幕尺寸等数据。投诉表要求投诉人/邮箱、作品和权属说明、涉及链接及真实性声明。检查更新和更新日志无AX可见反馈但不能排除网络请求。未填表、传图或提交；已回到设置，棋盘偏好保持默认。下一步本机离线支持页及自建可替换反馈/更新接口须明确数据目的地和用户提交时机。

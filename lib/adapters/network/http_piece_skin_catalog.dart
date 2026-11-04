@@ -1,10 +1,14 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:crypto/crypto.dart';
 
 import '../../ports/piece_skin_catalog.dart';
 
 const _maxCatalogResponseBytes = 2 * 1024 * 1024;
+const _maxSkinPackageBytes = 8 * 1024 * 1024;
 
 /// HTTP implementation for a public, read-only self-hosted catalog.
 final class HttpPieceSkinCatalog implements PieceSkinCatalog {
@@ -79,6 +83,56 @@ final class HttpPieceSkinCatalog implements PieceSkinCatalog {
       throw const PieceSkinCatalogUnavailable();
     } on FormatException {
       throw const PieceSkinCatalogInvalidResponse();
+    }
+  }
+
+  @override
+  Future<Uint8List> downloadPackage({
+    required Uri endpoint,
+    required String id,
+    required String expectedSha256,
+  }) async {
+    if (!_validEndpoint(endpoint) ||
+        !RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$').hasMatch(id) ||
+        !RegExp(r'^[0-9a-f]{64}$').hasMatch(expectedSha256)) {
+      throw const PieceSkinCatalogInvalidResponse();
+    }
+    final basePath = endpoint.path.replaceFirst(RegExp(r'/+$'), '');
+    final uri = endpoint.replace(path: '$basePath/v1/catalog/$id/package');
+    try {
+      final request = await _client.getUrl(uri).timeout(timeout);
+      request.headers.set(HttpHeaders.acceptHeader, 'application/zip');
+      final response = await request.close().timeout(timeout);
+      if (response.statusCode != HttpStatus.ok) {
+        await response.drain<void>();
+        throw PieceSkinCatalogRejected(response.statusCode);
+      }
+      if (response.contentLength > _maxSkinPackageBytes) {
+        await response.drain<void>();
+        throw const PieceSkinCatalogInvalidResponse();
+      }
+      final bytes = BytesBuilder(copy: false);
+      var length = 0;
+      await for (final chunk in response.timeout(timeout)) {
+        length += chunk.length;
+        if (length > _maxSkinPackageBytes) {
+          throw const PieceSkinCatalogInvalidResponse();
+        }
+        bytes.add(chunk);
+      }
+      final package = bytes.takeBytes();
+      if (sha256.convert(package).toString() != expectedSha256) {
+        throw const PieceSkinCatalogInvalidResponse();
+      }
+      return package;
+    } on PieceSkinCatalogException {
+      rethrow;
+    } on TimeoutException {
+      throw const PieceSkinCatalogUnavailable();
+    } on SocketException {
+      throw const PieceSkinCatalogUnavailable();
+    } on HttpException {
+      throw const PieceSkinCatalogUnavailable();
     }
   }
 

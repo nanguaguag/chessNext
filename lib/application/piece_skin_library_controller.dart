@@ -140,6 +140,8 @@ class PieceSkinLibraryController extends ChangeNotifier {
               : preferences.value.squareInkPieceOffsetY);
       final shadow =
           active?.shadow ?? preferences.value.pieceSkinShadows[base]!;
+      final license = active?.license ?? '';
+      final attribution = active?.attribution ?? '';
       final next = [
         ...profiles,
         PieceSkinDefinition(
@@ -150,6 +152,8 @@ class PieceSkinLibraryController extends ChangeNotifier {
           offsetXPercent: offsetXPercent,
           offsetYPercent: offsetYPercent,
           shadow: shadow,
+          license: license,
+          attribution: attribution,
         ),
       ];
       await repository.save(next);
@@ -166,7 +170,11 @@ class PieceSkinLibraryController extends ChangeNotifier {
     }
   }
 
-  Future<bool> importPackage(PieceSkinPackage package) async {
+  Future<bool> importPackage(
+    PieceSkinPackage package, {
+    String license = '',
+    String attribution = '',
+  }) async {
     final profile = package.profile;
     if (loading ||
         profiles.length >= 64 ||
@@ -189,6 +197,8 @@ class PieceSkinLibraryController extends ChangeNotifier {
       offsetXPercent: profile.offsetXPercent,
       offsetYPercent: profile.offsetYPercent,
       shadow: profile.shadow,
+      license: license.isEmpty ? profile.license : license,
+      attribution: attribution.isEmpty ? profile.attribution : attribution,
     );
     try {
       if (!await images.installPackageImages(id, package.images)) {

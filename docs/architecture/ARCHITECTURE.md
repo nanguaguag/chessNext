@@ -98,3 +98,8 @@ M4-16预设位置同样是schema1的四个独立偏好字段。展示端以每�
 ## M4-41：在线皮肤目录浏览
 
 AppPreferences记忆自建目录URL，PreferencesController验证并保护异步读取时用户新改值。皮肤库经`PieceSkinCatalog`查询和分页，展示服务条目许可/署名；断网和空目录都明确呈现。条目详情不自动下载或写入，下载/校验/导入留M4-42。见ADR-076。
+
+
+## M4-42：目录皮肤包下载和本机导入
+
+目录端口按预期SHA-256下载有界ZIP，`PieceSkinPackageCodec`完成二次结构校验；随后要求用户确认许可/署名，再由PieceSkinLibraryController安全导入。PieceSkinDefinition保存license/attribution并随本机清单/导出包保留。取消/失败无写入。见ADR-077。

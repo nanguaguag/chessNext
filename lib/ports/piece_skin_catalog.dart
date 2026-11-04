@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 /// Public metadata from a self-hosted skin catalog. Package bytes are fetched
 /// separately so callers can show license and attribution before importing.
 final class PublicPieceSkin {
@@ -46,6 +48,12 @@ abstract interface class PieceSkinCatalog {
     required PublicPieceSkinSort sort,
     int page = 1,
     int pageSize = 24,
+  });
+
+  Future<Uint8List> downloadPackage({
+    required Uri endpoint,
+    required String id,
+    required String expectedSha256,
   });
 }
 

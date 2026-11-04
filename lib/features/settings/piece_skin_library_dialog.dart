@@ -4,12 +4,12 @@ import 'package:flutter/material.dart';
 import '../../application/piece_skin_library_controller.dart';
 import '../../ports/piece_images.dart';
 import '../../ports/piece_skin_library.dart';
-import '../../application/piece_skin_package_codec.dart';
 import '../../ports/piece_skin_package_exporter.dart';
 import '../../ports/record_file_exporter.dart';
 import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/piece_skin_folder_picker.dart';
 import '../../ports/piece_skin_catalog.dart';
+import '../../application/piece_skin_package_codec.dart';
 
 class PieceSkinLibraryDialog extends StatefulWidget {
   const PieceSkinLibraryDialog({
@@ -516,6 +516,12 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
         ),
       ),
       actions: [
+        if (widget.catalog != null)
+          FilledButton.icon(
+            onPressed: () => _downloadAndImport(context, item),
+            icon: const Icon(Icons.download_outlined),
+            label: const Text('下载并确认导入'),
+          ),
         TextButton(
           onPressed: () => Navigator.pop(context),
           child: const Text('关闭'),
@@ -523,6 +529,86 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
       ],
     ),
   );
+
+  Future<void> _downloadAndImport(
+    BuildContext context,
+    PublicPieceSkin item,
+  ) async {
+    try {
+      final endpoint = Uri.parse(
+        widget.library.preferences.value.skinCatalogBaseUrl,
+      );
+      final bytes = await widget.catalog!.downloadPackage(
+        endpoint: endpoint,
+        id: item.id,
+        expectedSha256: item.packageSha256,
+      );
+      final package = PieceSkinPackageCodec.decode(bytes);
+      if (package.profile.name != item.name) {
+        throw const PieceSkinCatalogInvalidResponse();
+      }
+      if (!context.mounted) return;
+      final accepted = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: Text('确认导入${item.name}？'),
+          content: SingleChildScrollView(
+            child: Text(
+              '下载包已通过SHA-256和本机皮肤包格式校验。\n\n许可证：${item.license}\n署名：${item.attribution.isEmpty ? '无额外署名' : item.attribution}\n\n导入后会新增并选用一套本机皮肤；许可义务由你自行遵守。',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context, false),
+              child: const Text('取消'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(context, true),
+              child: const Text('接受许可并导入'),
+            ),
+          ],
+        ),
+      );
+      if (accepted != true || !context.mounted) return;
+      final imported = await widget.library.importPackage(
+        package,
+        license: item.license,
+        attribution: item.attribution,
+      );
+      if (!context.mounted) return;
+      ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+        SnackBar(
+          content: Text(
+            imported ? '已校验并导入${item.name}。' : widget.library.error ?? '导入失败。',
+          ),
+        ),
+      );
+    } on PieceSkinCatalogUnavailable {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(content: Text('下载失败，请检查网络后重试；本机皮肤未更改。')),
+        );
+      }
+    } on PieceSkinCatalogException {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          const SnackBar(content: Text('下载包校验失败或服务拒绝请求，本机皮肤未更改。')),
+        );
+      }
+    } on FormatException {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(
+          context,
+        )?.showSnackBar(const SnackBar(content: Text('皮肤包格式无效，本机皮肤未更改。')));
+      }
+    } catch (_) {
+      if (context.mounted) {
+        ScaffoldMessenger.maybeOf(
+          context,
+        )?.showSnackBar(const SnackBar(content: Text('无法导入该远程皮肤，本机皮肤未更改。')));
+      }
+    }
+  }
 
   Future<void> _export(
     BuildContext context,

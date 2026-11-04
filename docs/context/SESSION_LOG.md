@@ -817,3 +817,10 @@ M4-40尚未提交。下一项为在线目录UI、可配置服务URL、许可与�
 ## 2026-11-04 / M4-41 / F21,B24 自建目录浏览
 
 M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全协议校验/迟到读合并与皮肤库在线查询、五类排序/分页/搜索、许可署名和空/离线错误UI。专项8/8；根测试524通过/5跳过；analyze通过。测试首次发现Dialog内容溢出导致许可项不可见，改为外层可滚动后通过；首次分析if大括号和测试unused imports清理后通过。macOS热启动唯一runner/app后Build/Sync成功，runner PID6602/App PID6847、VM `127.0.0.1:53684`；open returned 1，人工视觉未验。没有第二个实例。当前代码与交接待单独提交。
+
+
+## 2026-11-04 / M4-42 / F21,B24 在线皮肤包导入
+
+目录端口新增8MiB下载上限和SHA-256；皮肤库详情可下载，复用schema1包codec，名称与服务元数据校对，显式确认许可后调用安全本机导入。license/attribution增为用户皮肤定义可选字段，保留旧文件兼容并随复制/ZIP导出。取消/错误不会写本机。
+
+专项12/12；根`flutter test --reporter compact`525通过/5跳过（缺官方Pikafish/NNUE）；`flutter analyze --no-pub`通过。最初widget断言因详情和确认对话框同时有许可文本而误计数，调整后通过；传输层和界面流程都复测。macOS复用交互runner PID6602热重载明确成功（Reloaded 39/1738，2664ms），App PID6847/VM `127.0.0.1:53684`唯一实例；`open returned 1`未能人工验收窗口。代码/文档待提交。

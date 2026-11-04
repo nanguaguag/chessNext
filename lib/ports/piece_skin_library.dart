@@ -10,6 +10,8 @@ final class PieceSkinDefinition {
     int offsetXPercent = 0,
     int offsetYPercent = 0,
     PieceSkinShadow? shadow,
+    String license = '',
+    String attribution = '',
   }) {
     final normalizedName = name.trim();
     if (!isValidId(id) ||
@@ -21,7 +23,11 @@ final class PieceSkinDefinition {
         offsetXPercent < -8 ||
         offsetXPercent > 8 ||
         offsetYPercent < -8 ||
-        offsetYPercent > 8) {
+        offsetYPercent > 8 ||
+        license.runes.length > 120 ||
+        attribution.runes.length > 500 ||
+        license.runes.any((rune) => rune < 32 && rune != 9) ||
+        attribution.runes.any((rune) => rune < 32 && rune != 9)) {
       throw ArgumentError('Invalid piece skin definition');
     }
     return PieceSkinDefinition._(
@@ -32,6 +38,8 @@ final class PieceSkinDefinition {
       offsetXPercent: offsetXPercent,
       offsetYPercent: offsetYPercent,
       shadow: shadow,
+      license: license.trim(),
+      attribution: attribution.trim(),
     );
   }
 
@@ -43,6 +51,8 @@ final class PieceSkinDefinition {
     required this.offsetXPercent,
     required this.offsetYPercent,
     required this.shadow,
+    required this.license,
+    required this.attribution,
   });
 
   static const maxNameRunes = 32;
@@ -56,6 +66,8 @@ final class PieceSkinDefinition {
   final int offsetXPercent;
   final int offsetYPercent;
   final PieceSkinShadow? shadow;
+  final String license;
+  final String attribution;
 
   PieceSkinDefinition copyWith({
     String? name,
@@ -64,6 +76,8 @@ final class PieceSkinDefinition {
     int? offsetYPercent,
     PieceSkinShadow? shadow,
     bool clearShadow = false,
+    String? license,
+    String? attribution,
   }) => PieceSkinDefinition(
     id: id,
     name: name ?? this.name,
@@ -72,6 +86,8 @@ final class PieceSkinDefinition {
     offsetXPercent: offsetXPercent ?? this.offsetXPercent,
     offsetYPercent: offsetYPercent ?? this.offsetYPercent,
     shadow: clearShadow ? null : shadow ?? this.shadow,
+    license: license ?? this.license,
+    attribution: attribution ?? this.attribution,
   );
 
   Map<String, Object> toJson() => {
@@ -82,6 +98,8 @@ final class PieceSkinDefinition {
     if (offsetXPercent != 0) 'offsetXPercent': offsetXPercent,
     if (offsetYPercent != 0) 'offsetYPercent': offsetYPercent,
     if (shadow != null) 'shadow': shadow!.toJson(),
+    if (license.isNotEmpty) 'license': license,
+    if (attribution.isNotEmpty) 'attribution': attribution,
   };
 
   factory PieceSkinDefinition.fromJson(Map<String, dynamic> json) {
@@ -93,6 +111,8 @@ final class PieceSkinDefinition {
           'offsetXPercent',
           'offsetYPercent',
           'shadow',
+          'license',
+          'attribution',
         }).isNotEmpty ||
         json['id'] is! String ||
         json['name'] is! String ||
@@ -102,7 +122,9 @@ final class PieceSkinDefinition {
             json['offsetXPercent'] is! int) ||
         (json.containsKey('offsetYPercent') &&
             json['offsetYPercent'] is! int) ||
-        (json.containsKey('shadow') && json['shadow'] is! Map)) {
+        (json.containsKey('shadow') && json['shadow'] is! Map) ||
+        (json.containsKey('license') && json['license'] is! String) ||
+        (json.containsKey('attribution') && json['attribution'] is! String)) {
       throw const FormatException('Invalid piece skin definition');
     }
     try {
@@ -118,6 +140,8 @@ final class PieceSkinDefinition {
             : PieceSkinShadow.fromJson(
                 Map<String, dynamic>.from(json['shadow'] as Map),
               ),
+        license: json['license'] as String? ?? '',
+        attribution: json['attribution'] as String? ?? '',
       );
     } on ArgumentError {
       throw const FormatException('Invalid piece skin definition');
@@ -133,7 +157,9 @@ final class PieceSkinDefinition {
       scalePercent == other.scalePercent &&
       offsetXPercent == other.offsetXPercent &&
       offsetYPercent == other.offsetYPercent &&
-      shadow == other.shadow;
+      shadow == other.shadow &&
+      license == other.license &&
+      attribution == other.attribution;
 
   @override
   int get hashCode => Object.hash(
@@ -144,6 +170,8 @@ final class PieceSkinDefinition {
     offsetXPercent,
     offsetYPercent,
     shadow,
+    license,
+    attribution,
   );
 }
 

@@ -1,5 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
+
+import 'package:crypto/crypto.dart';
 
 import 'package:flutter_test/flutter_test.dart';
 import 'package:chess_next/adapters/network/http_piece_skin_catalog.dart';
@@ -9,12 +12,22 @@ void main() {
   late HttpServer server;
   late HttpPieceSkinCatalog catalog;
   late List<Uri> requests;
+  final packageBytes = Uint8List.fromList([1, 2, 3, 4, 5]);
 
   setUp(() async {
     requests = [];
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server.listen((request) async {
       requests.add(request.uri);
+      if (request.uri.path.endsWith('/package')) {
+        request.response.headers.contentType = ContentType(
+          'application',
+          'zip',
+        );
+        request.response.add(packageBytes);
+        await request.response.close();
+        return;
+      }
       request.response.headers.contentType = ContentType.json;
       request.response.write(
         jsonEncode({
@@ -92,6 +105,23 @@ void main() {
         sort: PublicPieceSkinSort.defaultOrder,
       ),
       throwsA(isA<PieceSkinCatalogUnavailable>()),
+    );
+  });
+
+  test('downloads only the expected bounded package digest', () async {
+    final bytes = await catalog.downloadPackage(
+      endpoint: Uri.parse('http://127.0.0.1:${server.port}'),
+      id: 'original-red',
+      expectedSha256: sha256.convert(packageBytes).toString(),
+    );
+    expect(bytes, packageBytes);
+    await expectLater(
+      catalog.downloadPackage(
+        endpoint: Uri.parse('http://127.0.0.1:${server.port}'),
+        id: 'original-red',
+        expectedSha256: List.filled(64, 'b').join(),
+      ),
+      throwsA(isA<PieceSkinCatalogInvalidResponse>()),
     );
   });
 }

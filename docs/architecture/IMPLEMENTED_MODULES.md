@@ -110,3 +110,6 @@ M4-40 / F21,B24（ADR-075）：`ports/piece_skin_catalog.dart`定义公开条目
 
 
 M4-41 / F21,B24（ADR-076）：AppPreferences/PreferencesController保存经过HTTPS/loopback规则验证的目录URL；皮肤库对话框接入只读查询，支持五类在线排序、回车搜索、分页/刷新，展示许可/署名和网络失败/空目录，详情明确不下载。
+
+
+M4-42 / F21,B24（ADR-077）：HTTP目录适配器增加有界skin ZIP下载和SHA-256校验；详情页下载后复用项目包codec，再展示显式许可确认，确认后才新建本机皮肤。`PieceSkinDefinition`可持久保存license/attribution并随导出保留。

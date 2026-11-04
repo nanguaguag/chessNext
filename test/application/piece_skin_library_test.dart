@@ -46,6 +46,8 @@ void main() {
         offsetXPercent: -7,
         offsetYPercent: 5,
         shadow: const PieceSkinShadow.standard(),
+        license: 'CC-BY-4.0',
+        attribution: '原创作者 / 作品链接',
       );
       expect(PieceSkinDefinition.fromJson(profile.toJson()), profile);
       expect(

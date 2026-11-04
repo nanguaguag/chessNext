@@ -1,5 +1,16 @@
 # 当前状态
 
+## 最新审计 E70（2026-11-05）
+
+F31参考站关于页只读观察到当前版本构建号929/47a59ac6及检查更新、更新日志、问题反馈、版权与投诉、讨论群入口。更新日志AX点击后截图/AX未见变化，结果仍U；未触发更新检查或外发反馈。证据已更新REFERENCE_EVIDENCE/矩阵/缺口/交互/追溯/待办；纯文档审计待diff check/commit。
+
+## 当前交付 M4-52（已提交 73d2291）
+
+本机应用设置可按线程×64 MB自动分配Hash，切换到手动可保留自选值；分析面板参数表单通过统一偏好控制器应用设置并关闭自动模式。真实EngineCapabilities/设备上限钳制，旧偏好缺字段按原手动Hash读取。专项10/10；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过；`flutter analyze --no-pub`无问题；复用PID50598/runner50125 attach同步1086ms、热重启1055ms。Mac锁屏未人工视觉验收。测试全量时只有一个flutter_tester，未启动额外chessNext。
+
+## 持续目标
+
+继续F31与B25/F27及登录外全站缺口，不宣称全站对齐。在线能力仍为自建可替换后端并提供部署方案。
 ## 当前实现 M4-52（待门槛和提交）
 
 按E69/F24增加本机线程×64MB自动Hash模式与手动切换；基于EngineCapabilities/设备约束钳制，显式分析参数变更回手动。新`autoHash`可选偏好字段；旧schema1配置缺省时保留手动Hash。设置/控制器专项`flutter test test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过，`flutter analyze --no-pub`无问题，`git diff --check`通过。复用唯一App PID50598/runner50125，attach同步1086ms、热重启1055ms；锁屏未做人工视觉验收。门槛通过，代码/文档待本片单独中文提交。

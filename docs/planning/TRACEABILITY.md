@@ -730,3 +730,8 @@ E66在参考站访客临时棋盘皮肤草稿上用实际按钮/输入操作验�
 ## M4-52 / F24,B25 / ADR-084 自动Hash内存
 
 改动`AppPreferences.autoHash`、PreferencesController资源钳制/并发字段合并、Material3应用设置自动/手动模式。默认维持原手动Hash，旧schema1缺字段按手动解码。自动线程×64MB受设备与真实UCI选项限制；分析面板显式改资源经PreferencesController同步持久化并退出自动模式。codec、自动公式、能力钳制、旧值、应用设置与面板切回手动均有测试。专项`flutter test test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用macOS PID50598/runner50125 attach同步1086ms/热重启1055ms，锁屏未视觉验收。E69只证网页联动，不是源站实引擎能力。
+
+
+## E70 / F31 关于与支持入口（2026-11-05）
+
+参考访客`#/settings/about`可见版本/构建号929、hash样式短版本，以及检查更新、更新日志、问题反馈、版权与投诉和讨论群QQ群号。入口O；AX单击更新日志后页面未观察到变化，实际结果、数据发送与外链目的地U；未提交反馈/投诉或触发更新检查。详REFERENCE_EVIDENCE E70。

@@ -1,5 +1,16 @@
 # 交接（2026-11-05 Asia/Shanghai）
 
+## 最新审计 E70 / F31
+
+访客`#/settings/about`只读观察到构建号929/短版本47a59ac6、检查更新、更新日志、问题反馈、版权与投诉和QQ群入口。对更新日志AX点击没有可见状态变化，动作效果、检查更新请求、外链及信息发送均U。E70文档待diff check和独立中文docs提交。原IAB用户tab1未触碰。
+
+## 最新实现 M4-52 / F24,B25（已提交`73d2291 feat(settings): 支持自动分析内存`）
+
+本机线程×64MB自动Hash/手动切换，按能力钳制；旧偏好不迁移。定向10/10、根551通过/5跳过、analyze通过、diff check通过。macOS复用唯一PID50598/runner50125 attach同步1086ms/热重启1055ms；锁屏未视觉验收。`flutter test --concurrency=1`只产生单一flutter_tester；原App仍唯一。
+
+访客临时标签2留在关于页；测试样本棋盘皮肤`local-e59de8ef-c7a7-4eda-b57a-4911a2309829`删除确认仍等待用户答复，严禁删除。
+
+继续F31（先验证更新/反馈目标且不发外部数据）、F27语言覆盖与其他非登录差距，不能称全站完成。在线能力保持自建可替换后端/部署方案。
 ## 当前续接 M4-52 / F24,B25
 
 实现本机按线程×64MB自动Hash设置并保留手动模式；旧偏好`autoHash`缺字段时回落手动并保留Hash。最终专项`flutter test test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10；根`flutter test --concurrency=1 --reporter compact`551通过/5跳过，`flutter analyze --no-pub`无问题，`git diff --check`通过。复用PID50598/runner50125 attach同步1086ms、热重启1055ms；锁屏未人工视觉验收。门槛已过，中文feature commit待做。默认关闭自动模式以维持显式旧Hash。首轮根测试两项失败源于旧Hash被按自动解释，默认关闭自动后全量修复。

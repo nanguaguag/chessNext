@@ -934,3 +934,8 @@ M4-52最终门槛：定向应用/设置测试9/9；根`flutter test --concurrenc
 
 
 M4-52最终复核（最新代码）：controller+settings专项10/10；根串行`flutter test --concurrency=1 --reporter compact`551通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一PID50598/runner50125，attach sync1086ms、热重启1055ms；退出attach后PID核对仍唯一；系统锁屏，人工窗口验收not run。M4-52已完成全部自动化与可用macOS运行门槛，中文feature commit待做。全量测试期间单一flutter_tester；未启动额外chessNext。
+
+
+# 2026-11-05 / E70 / F31 关于页入口盘点
+
+访客临时tab2进入`#/settings/about`，AX/截图可见构建号929/短版本47a59ac6、检查更新、更新日志、问题反馈、版权与投诉、讨论群/QQ群号。只读浏览；对更新日志进行AX click后AX/截图无可见变化，不视为按钮无效或成功。未检查更新、打开外部反馈/版权链接、发送数据或改变用户资料。F31证据与缺口文档待diff check、docs commit。原IAB tab1未触碰。

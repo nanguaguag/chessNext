@@ -945,3 +945,13 @@ M4-52最终复核（最新代码）：controller+settings专项10/10；根串行
 访客参考`#/settings/play`明确说明此组仅作用于分析界面AI走棋，不影响人机对弈/分析。默认难度20、预设步时1秒、开局云库最佳着法、残局云库开；难度Home/End验证0/20端点，自定义步时1→0.5→0且0为不限时、不限时显示最大深度60。高级离开云库步数默认10、减到1时禁用。恢复难度20/步时1秒/深度60/离库10。没有触发搜索或网络调用；难度预算、步时上限、真实引擎/云库行为、持久性仍U。
 
 E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新并分别提交`686c029 docs(audit): 验证AI走棋设置边界`、`bd53d74 docs(audit): 验证AI走棋数值边界`。纯文档审计未跑Flutter测试/analyze/macOS。当前工作树干净，分支ahead23。进程检查只见既有App PID50598和runner PID50125，无flutter_tester；访客临时tab2留在复原页，原tab1未动。继续前应定位项目缺失的独立AI走棋工作流，避免将其参数误绑普通人机对弈；全站未对齐。
+
+# 2026-11-05 / M4-53 / F22 / ADR-085 分析界面AI单步走棋
+
+在分析面板添加AI走一着独立请求：1000ms默认，锁输入，校验epoch/positionRevision/tree身份，只提交合法新鲜结果；允许取消，导航/换谱使结果过期，原持续分析在新位置恢复。新增引擎竞态与控件测试及ADR/追踪。专项16/16；根`flutter test --concurrency=1 --reporter compact`557通过/5跳过；`flutter analyze --no-pub`通过；`git diff --check`通过。复用App PID50598/runner PID50125，attach sync1,062ms、热重启1,003ms。系统锁屏未人工视觉验收。提交`c7b7af6 feat(analysis): 增加分析界面AI单步走棋`。全站仍开放。
+
+# 2026-11-05 / M4-54 / F22,F23 / ADR-086 分析AI走棋预算设置
+
+在AppPreferences独立保存AI走棋难度0–20、时间1/3/10秒预设、0不限时、项目自定义0.5–600秒和最大深度1–255（默认60）；AI单步将时间0映射到depth，难度映射`10000 × (difficulty+1)`节点预算。自定义范围/预算均为项目提案P，不代表源站算法。普通分析/连续对弈偏好不变。偏好编解码兼容缺字段旧schema1并拒绝越界设置。专项`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`24/24；根串行`flutter test --concurrency=1 --reporter compact`558通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一App PID50598/runner PID50125，attach同步1,090ms、热重启1,042ms；测试只有一个flutter_tester。锁屏，视觉验收not run。提交`1804040 feat(settings): 增加AI走棋预算设置`。
+
+后续继续F22/F23 BookService/开局和残局云库、离库步数；并推进F21几何残项、F27多页面本地化、F31关于支持等其他非登录功能。许可仍暂缓；在线采用可替换自建后端部署模型。当前唯一App/runner仍PID50598/50125；无后台测试/attach任务。工作树含本交接文档更新，需diff check并单独中文docs提交后继续目标。

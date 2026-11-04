@@ -711,3 +711,16 @@ M4-30 F20侧栏顺序：新增`SidePanel`稳定ID、严格完整顺序schema1、
 M4-31 F20侧栏显隐：新增可空`visibleSidePanels`集合，拒绝重复/未知项，旧字段全显；设置列表独立Switch、偏好即时持久化、App隐藏卡片子树且AppBar设置永久保留。覆盖序列化、重复值、迟到读取合并和实际隐藏widget。首轮widget点击离屏Switch被测试命中警告且偏好未变化；增加`ensureVisible`后定向7/7。最终根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`No issues found；`flutter run -d macos`Build/Sync成功PID78894、VM `127.0.0.1:51984`，flutter_tts SwiftPM未来兼容warning。尝试CUA `getApp("chessNext")`超时，人工视觉验收未做。提交`4a02127 feat(settings): 支持侧栏面板显隐`。
 
 本轮macOS runner会话21286及既有Debug/runner进程仍运行，未终止。源码和对应功能提交均完成，交接状态文档提交待做。下一可执行：B25当前线路播放计时/播放按钮，按项目P实现并测试；F27补足本地化资源前不呈现虚假语言切换；继续B24自建可替换在线皮肤目录/部署设计及矩阵其它未完成范围。E50源站面板与本机卡片映射U；F20/F27/F21和全站仍开放。
+
+# 2026-11-04 / M4-32至M4-35 / F20,B25 持续推进与测试进程核验
+
+按用户要求继续，不在单功能后停；排除登录，其它在线能力仍属于总范围。四个功能各自中文提交：
+
+- M4-32 棋谱定时播放/步时（ADR-067）：播放从当前游标沿选定线到末尾停止，步时预设0.5/1/2/3秒，自定义0.5–30秒、100ms步进，偏好本机存储。专项测试通过；根`flutter test --reporter compact`507通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`PID80585/VM `127.0.0.1:53120`；提交`d476409`。
+- M4-33 棋谱栏/播放按钮独立显隐（ADR-068）：关闭播放入口同时停播，保留其它导航。定向9项、根508通过/5跳过、analyze无问题；macOS PID81507/VM `127.0.0.1:53859`；提交`cce3558`。
+- M4-34 侧栏切换栏（ADR-069）：选择单个本机卡片/无可见项提示/关闭回到原堆叠。定向9项、根508通过/5跳过、analyze无问题；macOS PID85978/VM `127.0.0.1:58768`，Build/Sync成功但open returned 1。提交`f3a6517`。
+- M4-35 可配置棋盘长按/右键动作菜单（ADR-070）：复用FEN/线路复制、文字导入/导出和本地保存；站点专属UBB/局面链接/搜索不假装支持。专项`flutter test test/application/preferences_controller_test.dart test/widgets/record_playback_test.dart --reporter compact`10/10；根`flutter test --reporter compact`509通过/5跳过；`flutter analyze --no-pub`无问题。最新`flutter run -d macos`重新Build/Sync，PID87104/VM `127.0.0.1:60069`；open returned 1但Flutter设备同步/VM连接成功。提交`df8376d`。
+
+用户询问每次测试是否启动App。执行`ps`/`pgrep`核验：`flutter test`期间有`flutter_tester`和`flutter_tools.snapshot test`，没有`chessNext.app`；真实桌面App来自我此前每功能单独运行的`flutter run -d macos`。清理后只保留一个最终runner/App。旧runner stdin关闭，故杀掉该唯一实例后以TTY启动单一runner；后续可尝试TTY hot reload避免重复App。当前app PID87104、runner会话27500。5项根测试跳过需官方Pikafish/NNUE环境；flutter_tts有SwiftPM未来兼容warning。没有用CUA对桌面右键菜单作视觉确认。
+
+附加只读审计E51：参考站主菜单“显示模式”候选分析（引擎面板+着法列表）/悬浮窗（棋盘+一行分数）；没选择模式，应用结果/置顶为U。操作时页面route报告`#/settings/language`但实画面是主棋盘；最终恢复浏览器至用户原始`#/settings`首页，未修改站点偏好。E51、B26、CURRENT_STATE、HANDOFF、SESSION_LOG需文档checkpoint独立提交。

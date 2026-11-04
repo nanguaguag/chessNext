@@ -585,3 +585,7 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 专项`flutter test test/widgets/resizable_workspace_test.dart --reporter expanded`2/2通过；根`flutter test --reporter compact`512通过/5跳过（本机未配置官方Pikafish/NNUE）；`flutter analyze --no-pub`无问题。复用现存`flutter run -d macos`runner PID86855热重载3/1736库、2231ms，运行App PID87104保持唯一。没有新增启动。最初布局试验曾使1120dp/200%字号用例溢出、草稿状态条不在视口；提高三栏断点、恢复状态条顶部后通过。另有测试夹具Semantics API编译/释放问题，改为检查SemanticsData增减动作后通过。
 
 未做CUA现场交互验收；三栏阈值/项目值域不宣称复刻源站；触屏、其它显示器、重启持久化、源站完整几何和F19 OS置顶/独立窗仍未验证。
+
+## 2026-11-04 / E54 / F27 英文切换即时翻译
+
+参考证据见`REFERENCE_EVIDENCE.md#e54--2026-11-04-显示语言切换实际效果访客桌面iab`。访客临时标签将简体中文切到English后，当前显示设置页和示例棋谱说明/着法即时变为英文；返回设置首页再进入显示页仍为英文；切回简体中文后中文恢复。验证范围仅当前会话内的页面切换，不含刷新、重启、其他语言或所有页面覆盖。F27完整本地化仍待审计与实现。

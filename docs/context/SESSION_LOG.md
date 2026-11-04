@@ -845,6 +845,12 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 
 更新REFERENCE_EVIDENCE E60、FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC。仅审计文档改动，不跑Flutter测试/analyze，不启动macOS；`ps`仅见原runner PID6602与唯一App PID6847。执行diff检查后单独提交中文docs commit。下一步继续F21和其他全站缺口，不宣称全站完成。
 
+## 2026-11-05 / E61 / F21,B24 棋盘皮肤保存与清理
+
+在独立访客临时标签10的新建皮肤页保持初始值点“保存”，页面生成`local-171ed012-2b58-47a0-b964-35dffa902887`，显示“已保存”，保存按钮禁用。回棋盘设置仍是默认棋盘；选择器“我的皮肤”出现本地“我的棋盘”。另开临时访客标签2后仍可见该项目，因此标签间列表共享已V，reload/重启持久性未验证。确认当前值默认棋盘/棋子、棋子100%、坐标开、对面倒置关；删除只由这次审计生成的“我的棋盘”，确认后本机皮肤列表空；关闭选择器再次确认默认状态。用户IAB tab1始终未操作；原tab10因本轮中断消失，新tab2将在回合结束时自动关闭。无棋谱、账号、用户文件变化。
+
+新增`REFERENCE_EVIDENCE` E61、更新F21矩阵/差距/交互规格及CURRENT_STATE/HANDOFF。仅文档变更，之后检查git diff并单独提交；上轮PID6602/6847本轮实时状态均不存在，`ps`未发现runner/App/flutter_tester，暂未启动App。F21及全站功能仍开放，不停在这一条审计。
+
 ## 2026-11-04 / M4-45 / F21,B24,ADR-079 多皮肤集合ZIP
 
 新增`PieceSkinCollectionPackageCodec`，定义项目collection ZIP：2–16套单皮肤schema1嵌套ZIP，总文件≤8MiB。先完整验证内外压缩路径、条目、身份、SHA和每张图片，再进入用户选择。皮肤库列表有checkbox，支持多选导出；导入多套包可选子集，展示许可/署名，预先禁选本机同名及64套容量外项目。`PieceSkinLibraryController.importPackages`先将所选皮肤图片写到新ID目录，最后一次保存定义列表；任一错误删除此前已装图片且不改变目录，成功追加并选中包顺序中第一项。

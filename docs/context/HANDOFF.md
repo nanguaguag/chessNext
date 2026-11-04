@@ -337,3 +337,8 @@ E54/E55文档审计分别提交：`149a153 docs(audit): 验证显示语言切换
 F21/B24访客审计E60确认新建棋盘皮肤草稿“使用”会立即创建并应用本地“我的棋盘”；随后已先应用默认棋盘、删除这次临时皮肤，并读回设置确认默认状态恢复。重载/重启持久性仍U，详情`docs/research/REFERENCE_EVIDENCE.md`。临时IAB tab10留在恢复后的`#/settings/board`，用户原tab1未动；CUA当前无关闭tab接口。
 
 当前工作树包含E60审计文档更新，尚未提交；完成`git diff --check`及中文docs commit。随后继续F21棋盘编辑器保存/导出边界及全站剩余缺口，不宣称全站对齐。macOS沿用现有runner PID6602/App PID6847；测试不会启动App，涉及macOS时先复用runner并核对实例，不重复`flutter run`。
+# 会话续接（2026-11-05 / E61）
+
+E61：新建棋盘皮肤页不改初始参数点击“保存”，访客页返回本地ID编辑路由并显示“已保存”，另一同浏览器临时标签的“我的皮肤”列表可见“我的棋盘”。当前设置仍默认棋盘/棋子、100%、坐标开、对面倒置关。已删除仅本次生成的皮肤，确认项消失；用户原始IAB标签1未触碰。tab10在中断时消失；新临时tab2结束时自动清理。证据见`docs/research/REFERENCE_EVIDENCE.md` E61。页面reload/重启、编辑脏态、几何保存内容、导出仍U。
+
+当前仅文档审计更改未提交，先`git diff --check`后以中文docs commit。没有flutter runner或chessNext App进程在跑（上轮ps/本轮CUA app状态均无运行实例）；macOS验证需要时启动一个`flutter run -d macos --no-pub`并持续复用，先核对不要重叠。

@@ -973,3 +973,8 @@ E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新�
 在AppPreferences独立保存AI走棋难度0–20、时间1/3/10秒预设、0不限时、项目自定义0.5–600秒和最大深度1–255（默认60）；AI单步将时间0映射到depth，难度映射`10000 × (difficulty+1)`节点预算。自定义范围/预算均为项目提案P，不代表源站算法。普通分析/连续对弈偏好不变。偏好编解码兼容缺字段旧schema1并拒绝越界设置。专项`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`24/24；根串行`flutter test --concurrency=1 --reporter compact`558通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。复用唯一App PID50598/runner PID50125，attach同步1,090ms、热重启1,042ms；测试只有一个flutter_tester。锁屏，视觉验收not run。提交`1804040 feat(settings): 增加AI走棋预算设置`。
 
 后续继续F22/F23 BookService/开局和残局云库、离库步数；并推进F21几何残项、F27多页面本地化、F31关于支持等其他非登录功能。许可仍暂缓；在线采用可替换自建后端部署模型。当前唯一App/runner仍PID50598/50125；无后台测试/attach任务。工作树含本交接文档更新，需diff check并单独中文docs提交后继续目标。
+# 2026-11-05 / E72 / F21,B24 棋盘边距联动复核
+
+参考站既有“我的棋盘”编辑页，左边距stepper单击使33.00→33.50，右边距465.00→465.02；再减回左值并退出，确认丢弃草稿，检查设置恢复。证据只支持这组一步观察，完整耦合公式/单位/其余边界仍U。证据及矩阵、缺口、交互规格、追溯、待办更新。纯文档审计，未运行Flutter测试、analyze或Mac重启；`git diff --check`通过。E72 docs commit待执行。
+
+用户说明此前测试会造成多个chessNext后台实例。当前进程检查见App PID50598，无flutter_tester、无新`flutter run`；后续Flutter全量测试均串行，macOS验证只对既有VM Service `flutter attach`，并在前后核对App PID唯一性。下一步E72中文文档提交，然后继续F21几何功能实现，不在本增量结束后停止总体目标。

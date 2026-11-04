@@ -62,6 +62,10 @@ void main() {
         aiWalkDifficulty: 7,
         aiWalkTimeMs: 0,
         aiWalkMaxDepth: 42,
+        openingBookMode: OpeningBookMode.randomWithinGap,
+        endgameBookEnabled: false,
+        leaveBookMoves: 24,
+        bookServiceBaseUrl: 'https://books.example.org/api',
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
       final catalog = AppPreferences().copyWith(
@@ -71,6 +75,14 @@ void main() {
       expect(
         () => AppPreferences(skinCatalogBaseUrl: 'http://example.org'),
         throwsArgumentError,
+      );
+      expect(
+        () => AppPreferences(bookServiceBaseUrl: 'http://example.org'),
+        throwsArgumentError,
+      );
+      expect(
+        () => AppPreferences(bookServiceBaseUrl: 'http://localhost:8080'),
+        returnsNormally,
       );
       expect(
         () => AppPreferences(skinCatalogBaseUrl: 'http://localhost:8080'),

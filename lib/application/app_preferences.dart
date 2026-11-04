@@ -49,6 +49,8 @@ enum TextSizePreference { system, standard, large, extraLarge }
 
 enum SidePanel { play, analysis, review, candidates }
 
+enum OpeningBookMode { closed, best, randomWithinGap }
+
 enum BoardContextAction {
   copyFen,
   copyRecord,
@@ -129,6 +131,10 @@ final class AppPreferences {
     this.aiWalkDifficulty = 20,
     this.aiWalkTimeMs = 1000,
     this.aiWalkMaxDepth = 60,
+    this.openingBookMode = OpeningBookMode.best,
+    this.endgameBookEnabled = true,
+    this.leaveBookMoves = 10,
+    this.bookServiceBaseUrl = '',
     this.recordPlaybackIntervalMs = 2000,
     this.showMoveList = true,
     this.showRecordPlaybackButton = true,
@@ -173,8 +179,11 @@ final class AppPreferences {
         (aiWalkTimeMs != 0 && aiWalkTimeMs % 500 != 0) ||
         aiWalkMaxDepth < 1 ||
         aiWalkMaxDepth > 255 ||
+        leaveBookMoves < 1 ||
+        leaveBookMoves > 255 ||
         !isValidRecordPlaybackInterval(recordPlaybackIntervalMs) ||
         !_validSkinCatalogBaseUrl(skinCatalogBaseUrl) ||
+        !_validSkinCatalogBaseUrl(bookServiceBaseUrl) ||
         guideVersion < 0 ||
         guideVersion > 1000000 ||
         roundSealPieceScalePercent < 80 ||
@@ -263,6 +272,10 @@ final class AppPreferences {
   final bool showPanelSwitchBar;
   final SidePanel activeSidePanel;
   final String skinCatalogBaseUrl;
+  final OpeningBookMode openingBookMode;
+  final bool endgameBookEnabled;
+  final int leaveBookMoves;
+  final String bookServiceBaseUrl;
   final List<BoardContextAction> boardContextActions;
   final List<SidePanel> sidePanelOrder;
   final List<SidePanel> visibleSidePanels;
@@ -308,12 +321,16 @@ final class AppPreferences {
     int? aiWalkDifficulty,
     int? aiWalkTimeMs,
     int? aiWalkMaxDepth,
+    OpeningBookMode? openingBookMode,
+    bool? endgameBookEnabled,
+    int? leaveBookMoves,
     int? recordPlaybackIntervalMs,
     bool? showMoveList,
     bool? showRecordPlaybackButton,
     bool? showPanelSwitchBar,
     SidePanel? activeSidePanel,
     String? skinCatalogBaseUrl,
+    String? bookServiceBaseUrl,
     List<BoardContextAction>? boardContextActions,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
@@ -362,6 +379,9 @@ final class AppPreferences {
     aiWalkDifficulty: aiWalkDifficulty ?? this.aiWalkDifficulty,
     aiWalkTimeMs: aiWalkTimeMs ?? this.aiWalkTimeMs,
     aiWalkMaxDepth: aiWalkMaxDepth ?? this.aiWalkMaxDepth,
+    openingBookMode: openingBookMode ?? this.openingBookMode,
+    endgameBookEnabled: endgameBookEnabled ?? this.endgameBookEnabled,
+    leaveBookMoves: leaveBookMoves ?? this.leaveBookMoves,
     recordPlaybackIntervalMs:
         recordPlaybackIntervalMs ?? this.recordPlaybackIntervalMs,
     showMoveList: showMoveList ?? this.showMoveList,
@@ -370,6 +390,7 @@ final class AppPreferences {
     showPanelSwitchBar: showPanelSwitchBar ?? this.showPanelSwitchBar,
     activeSidePanel: activeSidePanel ?? this.activeSidePanel,
     skinCatalogBaseUrl: skinCatalogBaseUrl ?? this.skinCatalogBaseUrl,
+    bookServiceBaseUrl: bookServiceBaseUrl ?? this.bookServiceBaseUrl,
     boardContextActions: boardContextActions ?? this.boardContextActions,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
@@ -444,12 +465,17 @@ final class AppPreferences {
     'aiWalkDifficulty': aiWalkDifficulty,
     'aiWalkTimeMs': aiWalkTimeMs,
     'aiWalkMaxDepth': aiWalkMaxDepth,
+    if (openingBookMode != OpeningBookMode.best)
+      'openingBookMode': openingBookMode.name,
+    if (!endgameBookEnabled) 'endgameBookEnabled': false,
+    if (leaveBookMoves != 10) 'leaveBookMoves': leaveBookMoves,
     if (recordPlaybackIntervalMs != 2000)
       'recordPlaybackIntervalMs': recordPlaybackIntervalMs,
     if (!showMoveList) 'showMoveList': false,
     if (!showRecordPlaybackButton) 'showRecordPlaybackButton': false,
     if (showPanelSwitchBar) 'showPanelSwitchBar': true,
     if (skinCatalogBaseUrl.isNotEmpty) 'skinCatalogBaseUrl': skinCatalogBaseUrl,
+    if (bookServiceBaseUrl.isNotEmpty) 'bookServiceBaseUrl': bookServiceBaseUrl,
     if (activeSidePanel != SidePanel.play)
       'activeSidePanel': activeSidePanel.name,
     if (!_listEquals(boardContextActions, defaultBoardContextActions))
@@ -526,6 +552,17 @@ final class AppPreferences {
         (json.containsKey('autoHash') && json['autoHash'] is! bool) ||
         (json.containsKey('skinCatalogBaseUrl') &&
             json['skinCatalogBaseUrl'] is! String) ||
+        (json.containsKey('bookServiceBaseUrl') &&
+            json['bookServiceBaseUrl'] is! String) ||
+        (json.containsKey('openingBookMode') &&
+            (json['openingBookMode'] is! String ||
+                !OpeningBookMode.values.any(
+                  (mode) => mode.name == json['openingBookMode'],
+                ))) ||
+        (json.containsKey('endgameBookEnabled') &&
+            json['endgameBookEnabled'] is! bool) ||
+        (json.containsKey('leaveBookMoves') &&
+            json['leaveBookMoves'] is! int) ||
         (json.containsKey('activeSidePanel') &&
             (json['activeSidePanel'] is! String ||
                 !SidePanel.values.any(
@@ -655,6 +692,13 @@ final class AppPreferences {
           orElse: () => SidePanel.play,
         ),
         skinCatalogBaseUrl: json['skinCatalogBaseUrl'] as String? ?? '',
+        bookServiceBaseUrl: json['bookServiceBaseUrl'] as String? ?? '',
+        openingBookMode: OpeningBookMode.values.firstWhere(
+          (mode) => mode.name == json['openingBookMode'],
+          orElse: () => OpeningBookMode.best,
+        ),
+        endgameBookEnabled: json['endgameBookEnabled'] as bool? ?? true,
+        leaveBookMoves: json['leaveBookMoves'] as int? ?? 10,
         boardContextActions:
             (json['boardContextActions'] as List?)
                 ?.map(
@@ -768,6 +812,9 @@ final class AppPreferences {
       aiWalkDifficulty == other.aiWalkDifficulty &&
       aiWalkTimeMs == other.aiWalkTimeMs &&
       aiWalkMaxDepth == other.aiWalkMaxDepth &&
+      openingBookMode == other.openingBookMode &&
+      endgameBookEnabled == other.endgameBookEnabled &&
+      leaveBookMoves == other.leaveBookMoves &&
       guideVersion == other.guideVersion &&
       recordPlaybackIntervalMs == other.recordPlaybackIntervalMs &&
       showMoveList == other.showMoveList &&
@@ -775,6 +822,7 @@ final class AppPreferences {
       showPanelSwitchBar == other.showPanelSwitchBar &&
       activeSidePanel == other.activeSidePanel &&
       skinCatalogBaseUrl == other.skinCatalogBaseUrl &&
+      bookServiceBaseUrl == other.bookServiceBaseUrl &&
       _listEquals(boardContextActions, other.boardContextActions) &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
       _listEquals(visibleSidePanels, other.visibleSidePanels);
@@ -825,6 +873,9 @@ final class AppPreferences {
     aiWalkDifficulty,
     aiWalkTimeMs,
     aiWalkMaxDepth,
+    openingBookMode,
+    endgameBookEnabled,
+    leaveBookMoves,
     guideVersion,
     recordPlaybackIntervalMs,
     showMoveList,
@@ -832,6 +883,7 @@ final class AppPreferences {
     showPanelSwitchBar,
     activeSidePanel,
     skinCatalogBaseUrl,
+    bookServiceBaseUrl,
     Object.hashAll(boardContextActions),
     Object.hashAll(sidePanelOrder),
     Object.hashAll(visibleSidePanels),

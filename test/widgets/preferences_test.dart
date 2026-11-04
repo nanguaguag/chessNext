@@ -49,12 +49,43 @@ void main() {
         find.widgetWithText(TextFormField, '不限时最大深度'),
         '42',
       );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('book-service-url')),
+      );
+      await tester.enterText(
+        find.byKey(const ValueKey('book-service-url')),
+        'http://localhost:8080',
+      );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('opening-book-mode')),
+      );
+      await tester.tap(find.byKey(const ValueKey('opening-book-mode')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('分差内随机').last);
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(find.widgetWithText(SwitchListTile, '启用残局云库'));
+      await tester.tap(find.widgetWithText(SwitchListTile, '启用残局云库'));
+      await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.widgetWithText(TextFormField, '离开开局云库步数'),
+      );
+      await tester.enterText(
+        find.widgetWithText(TextFormField, '离开开局云库步数'),
+        '24',
+      );
       await tester.tap(find.widgetWithText(FilledButton, '应用设置'));
       await tester.pumpAndSettle();
       expect(repository.value!.theme, ThemePreference.dark);
       expect(repository.value!.threads, 2);
       expect(repository.value!.aiWalkTimeMs, 0);
       expect(repository.value!.aiWalkMaxDepth, 42);
+      expect(repository.value!.bookServiceBaseUrl, 'http://localhost:8080');
+      expect(
+        repository.value!.openingBookMode,
+        OpeningBookMode.randomWithinGap,
+      );
+      expect(repository.value!.endgameBookEnabled, isFalse);
+      expect(repository.value!.leaveBookMoves, 24);
       expect(
         tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
         ThemeMode.dark,

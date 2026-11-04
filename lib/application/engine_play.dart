@@ -110,23 +110,78 @@ extension EnginePlay on EngineSessionController {
         identical(session.tree, source);
 
     try {
-      final engine = await _getEngine();
-      if (!current()) return;
-      final search = await engine.start(
-        EngineRequest.fromTree(
-          token: generation,
-          gameId: epoch,
-          tree: source,
-          depth: moveTimeMs == 0 ? maxDepth : null,
-          moveTimeMs: moveTimeMs == 0 ? null : moveTimeMs,
-          nodeLimit: 10000 * (difficulty + 1),
-          threads: _settings.threads,
-          hashMb: _settings.hashMb,
-          multiPv: 1,
-        ),
-      );
-      if (!current()) return;
-      final move = await search.bestMove;
+      Move? move;
+      var bookNote = '';
+      final service = bookService;
+      final endpoint = _bookServiceEndpoint;
+      final key = _bookKey(source);
+      final kind = _bookKind(source.current.position);
+      final useBook =
+          service != null &&
+          endpoint != null &&
+          key != null &&
+          (kind == BookKind.endgame
+              ? _endgameBookEnabled
+              : _openingBookMode != OpeningBookMode.closed &&
+                    key.history.length ~/ 2 < _leaveBookMoves);
+      if (useBook) {
+        try {
+          final result = await service.query(
+            endpoint: endpoint,
+            position: BookPositionKey(
+              kind: kind,
+              fen: key.fen,
+              history: key.history,
+            ),
+          );
+          if (!current()) return;
+          final legal = result.candidates
+              .map((candidate) {
+                try {
+                  return (candidate, Move.parse(candidate.uci));
+                } on FormatException {
+                  return null;
+                }
+              })
+              .whereType<(BookMoveCandidate, Move)>()
+              .where((entry) => session.isLegalMove(entry.$2))
+              .toList();
+          if (legal.isNotEmpty) {
+            legal.sort((a, b) => b.$1.scoreCp.compareTo(a.$1.scoreCp));
+            final selected =
+                _openingBookMode == OpeningBookMode.randomWithinGap &&
+                    kind == BookKind.opening
+                ? _randomBookCandidate(legal)
+                : legal.first;
+            move = selected.$2;
+          } else {
+            bookNote = result.hit ? '云库着法无效，' : '云库未命中，';
+          }
+        } on BookServiceException {
+          bookNote = '云库不可用，';
+        } catch (_) {
+          bookNote = '云库查询失败，';
+        }
+      }
+      if (move == null) {
+        final engine = await _getEngine();
+        if (!current()) return;
+        final search = await engine.start(
+          EngineRequest.fromTree(
+            token: generation,
+            gameId: epoch,
+            tree: source,
+            depth: moveTimeMs == 0 ? maxDepth : null,
+            moveTimeMs: moveTimeMs == 0 ? null : moveTimeMs,
+            nodeLimit: 10000 * (difficulty + 1),
+            threads: _settings.threads,
+            hashMb: _settings.hashMb,
+            multiPv: 1,
+          ),
+        );
+        if (!current()) return;
+        move = await search.bestMove;
+      }
       if (!current()) return;
       if (move == null || !session.isLegalMove(move)) {
         throw StateError('本地引擎没有返回合法着法');
@@ -146,7 +201,7 @@ extension EnginePlay on EngineSessionController {
         return;
       }
       _busy = false;
-      _status = 'AI 已走一着';
+      _status = '${bookNote}AI 已走一着';
       _notify();
     } catch (e) {
       if (!_disposed && generation == _generation) {
@@ -156,6 +211,46 @@ extension EnginePlay on EngineSessionController {
         _failed(e, generation);
       }
     }
+  }
+
+  ({String fen, List<String> history})? _bookKey(GameTree tree) {
+    final path = tree.path;
+    if (path.length > 513) return null;
+    return (
+      fen: tree.current.position.toFen(),
+      history: path.skip(1).map((node) => node.move.toString()).toList(),
+    );
+  }
+
+  BookKind _bookKind(Position position) {
+    var nonGeneralPieces = 0;
+    for (var rank = 0; rank < 10; rank++) {
+      for (var file = 0; file < 9; file++) {
+        final piece = position.at(Square(file, rank));
+        if (piece != null && piece.type != PieceType.general) {
+          nonGeneralPieces++;
+        }
+      }
+    }
+    // Source-site endgame classification is unknown; eight remaining pieces is
+    // the project's explicit P threshold.
+    return nonGeneralPieces <= 8 ? BookKind.endgame : BookKind.opening;
+  }
+
+  (BookMoveCandidate, Move) _randomBookCandidate(
+    List<(BookMoveCandidate, Move)> candidates,
+  ) {
+    final bestScore = candidates.first.$1.scoreCp;
+    final eligible = candidates
+        .where((entry) => bestScore - entry.$1.scoreCp <= 100)
+        .toList();
+    final total = eligible.fold<int>(0, (sum, item) => sum + item.$1.weight);
+    var ticket = math.Random().nextInt(total);
+    for (final candidate in eligible) {
+      ticket -= candidate.$1.weight;
+      if (ticket < 0) return candidate;
+    }
+    return eligible.last;
   }
 
   Future<void> cancelAiWalk() async {

@@ -1,7 +1,9 @@
 import 'dart:async';
 import 'package:chess_next/application/engine_session_controller.dart';
+import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/chess_next.dart';
+import 'package:chess_next/ports/book_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 import '../support/fake_engine.dart';
 
@@ -24,6 +26,25 @@ class FailedStopFake extends FakeEngine {
 }
 
 Future<void> tick() => Future<void>.delayed(const Duration(milliseconds: 180));
+
+class FakeBookService implements BookService {
+  FakeBookService(this.result, {this.error});
+  final BookLookup result;
+  final Object? error;
+  int calls = 0;
+  BookPositionKey? requested;
+  @override
+  Future<BookLookup> query({
+    required Uri endpoint,
+    required BookPositionKey position,
+  }) async {
+    calls++;
+    if (error != null) throw error!;
+    requested = position;
+    return result;
+  }
+}
+
 void main() {
   late BoardSession session;
   late FakeEngine fake;
@@ -95,6 +116,137 @@ void main() {
       await walking;
     },
   );
+  test(
+    'AI walk validates and applies a self-hosted book move before search',
+    () async {
+      final book = FakeBookService(
+        const BookLookup(
+          hit: true,
+          candidates: [BookMoveCandidate(uci: 'h2e2', scoreCp: 12, weight: 4)],
+          datasetId: 'local-test',
+          license: 'CC0',
+          attribution: 'fixture',
+        ),
+      );
+      engine.dispose();
+      engine = EngineSessionController(
+        session,
+        () => Future.value(fake),
+        bookService: book,
+      );
+      engine.configureBookPolicy(
+        endpoint: 'http://localhost:8080',
+        openingMode: OpeningBookMode.best,
+        endgameEnabled: true,
+        leaveBookMoves: 10,
+      );
+      final initialFen = session.position.toFen();
+
+      await engine.walkOneMove();
+
+      expect(book.requested?.kind, BookKind.opening);
+      expect(book.requested?.fen, initialFen);
+      expect(session.moves, [Move.parse('h2e2')]);
+      expect(fake.requests, isEmpty);
+      expect(engine.status, 'AI 已走一着');
+    },
+  );
+
+  test('illegal cloud candidates fall back to the local engine', () async {
+    final book = FakeBookService(
+      const BookLookup(
+        hit: true,
+        candidates: [BookMoveCandidate(uci: 'a0a0', scoreCp: 100, weight: 1)],
+        datasetId: 'local-test',
+        license: 'CC0',
+        attribution: 'fixture',
+      ),
+    );
+    engine.dispose();
+    engine = EngineSessionController(
+      session,
+      () => Future.value(fake),
+      bookService: book,
+    );
+    engine.configureBookPolicy(
+      endpoint: 'http://localhost:8080',
+      openingMode: OpeningBookMode.best,
+      endgameEnabled: true,
+      leaveBookMoves: 10,
+    );
+
+    final walking = engine.walkOneMove();
+    await tick();
+    expect(fake.requests, hasLength(1));
+    fake.results.single.complete(Move.parse('h2e2'));
+    await walking;
+
+    expect(session.moves, [Move.parse('h2e2')]);
+    expect(engine.status, '云库着法无效，AI 已走一着');
+  });
+  test('cloud service failure falls back to the local engine', () async {
+    final book = FakeBookService(
+      const BookLookup(
+        hit: false,
+        candidates: [],
+        datasetId: 'local-test',
+        license: 'CC0',
+        attribution: 'fixture',
+      ),
+      error: const BookServiceUnavailable(),
+    );
+    engine.dispose();
+    engine = EngineSessionController(
+      session,
+      () => Future.value(fake),
+      bookService: book,
+    );
+    engine.configureBookPolicy(
+      endpoint: 'https://books.example.org',
+      openingMode: OpeningBookMode.best,
+      endgameEnabled: true,
+      leaveBookMoves: 10,
+    );
+
+    final walking = engine.walkOneMove();
+    await tick();
+    expect(book.calls, 1);
+    expect(fake.requests, hasLength(1));
+    fake.results.single.complete(Move.parse('h2e2'));
+    await walking;
+    expect(engine.status, '云库不可用，AI 已走一着');
+  });
+
+  test('empty service address never calls the book service', () async {
+    final book = FakeBookService(
+      const BookLookup(
+        hit: true,
+        candidates: [BookMoveCandidate(uci: 'h2e2', scoreCp: 0, weight: 1)],
+        datasetId: 'local-test',
+        license: 'CC0',
+        attribution: 'fixture',
+      ),
+    );
+    engine.dispose();
+    engine = EngineSessionController(
+      session,
+      () => Future.value(fake),
+      bookService: book,
+    );
+    engine.configureBookPolicy(
+      endpoint: '',
+      openingMode: OpeningBookMode.best,
+      endgameEnabled: true,
+      leaveBookMoves: 10,
+    );
+
+    final walking = engine.walkOneMove();
+    await tick();
+    expect(book.calls, 0);
+    expect(fake.requests, hasLength(1));
+    fake.results.single.complete(Move.parse('h2e2'));
+    await walking;
+  });
   test('analysis resumes on the new position after one AI walk', () async {
     await engine.enable();
     expect(fake.requests.single.moveTimeMs, isNull);

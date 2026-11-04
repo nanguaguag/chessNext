@@ -5,7 +5,9 @@ import 'dart:math' as math;
 import 'package:flutter/foundation.dart';
 import 'package:xiangqi_core/xiangqi_core.dart';
 import '../ports/engine_gateway.dart';
+import '../ports/book_service.dart';
 import 'board_session.dart';
+import 'app_preferences.dart';
 
 import 'review_models.dart';
 import 'review_report.dart';
@@ -40,6 +42,7 @@ class EngineSessionController extends ChangeNotifier {
     this.factory, {
     this.deviceThreads = 1,
     ReviewCacheRepository? reviewCache,
+    this.bookService,
   }) : reviewCache = reviewCache ?? MemoryReviewCacheRepository() {
     _lastRevision = session.positionRevision;
     _lastSessionEpoch = session.epoch;
@@ -51,6 +54,25 @@ class EngineSessionController extends ChangeNotifier {
   final EngineFactory? factory;
   final int deviceThreads;
   final ReviewCacheRepository reviewCache;
+  final BookService? bookService;
+  Uri? _bookServiceEndpoint;
+  OpeningBookMode _openingBookMode = OpeningBookMode.best;
+  bool _endgameBookEnabled = true;
+  int _leaveBookMoves = 10;
+
+  void configureBookPolicy({
+    required String endpoint,
+    required OpeningBookMode openingMode,
+    required bool endgameEnabled,
+    required int leaveBookMoves,
+  }) {
+    final value = endpoint.trim().replaceFirst(RegExp(r'/+$'), '');
+    _bookServiceEndpoint = value.isEmpty ? null : Uri.tryParse(value);
+    _openingBookMode = openingMode;
+    _endgameBookEnabled = endgameEnabled;
+    _leaveBookMoves = leaveBookMoves;
+  }
+
   CandidateRun? _candidates;
   int _candidateJob = 0;
   EngineInfo? _batchInfo, _batchPending;

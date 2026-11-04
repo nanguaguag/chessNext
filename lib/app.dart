@@ -30,6 +30,7 @@ import 'features/records/variation_panel.dart';
 import 'package:flutter/foundation.dart' as foundation;
 import 'application/app_preferences.dart';
 import 'application/preferences_controller.dart';
+import 'adapters/network/http_book_service.dart';
 import 'application/record_playback_controller.dart';
 import 'ports/preferences_repository.dart';
 import 'features/settings/preferences_dialog.dart';
@@ -150,17 +151,20 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final BoardSkinImageLibraryController boardSkinImages;
   late final BoardSkinLibraryController boardSkins;
   late final EngineSessionController analysis;
+  late final HttpBookService bookService;
   BoardGifSettings gifSettings = BoardGifSettings();
   bool floatingWorkspace = false;
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
+    bookService = HttpBookService();
     analysis = EngineSessionController(
       session,
       widget.engineFactory,
       deviceThreads: widget.deviceThreads,
       reviewCache: widget.reviewCache,
+      bookService: bookService,
     );
     library = LibraryController(
       session,
@@ -225,6 +229,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       widget.audioOverrides,
     );
     preferences.addListener(_preferencesChanged);
+    _configureBookPolicy();
     unawaited(_initializePreferences());
   }
 
@@ -279,10 +284,21 @@ class _ChessNextAppState extends State<ChessNextApp>
 
   void _preferencesChanged() {
     if (mounted) {
+      _configureBookPolicy();
       recordPlayback.setInterval(preferences.value.recordPlaybackIntervalMs);
       if (!preferences.value.showRecordPlaybackButton) recordPlayback.stop();
       setState(() {});
     }
+  }
+
+  void _configureBookPolicy() {
+    final value = preferences.value;
+    analysis.configureBookPolicy(
+      endpoint: value.bookServiceBaseUrl,
+      openingMode: value.openingBookMode,
+      endgameEnabled: value.endgameBookEnabled,
+      leaveBookMoves: value.leaveBookMoves,
+    );
   }
 
   @override
@@ -364,6 +380,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     unawaited(preferences.flush());
     preferences.dispose();
     analysis.dispose();
+    bookService.close();
     if (drafts != null) {
       unawaited(drafts!.flush());
       drafts!.dispose();

@@ -189,3 +189,9 @@ E71追加实操：难度通过Home/End分别到0/20并恢复20（V）；自定�
 ## M4-56 / F15,F22,F23 / ADR-088 云库客户端传输层
 
 新增平台无关BookService端口和HTTP适配器；公网只接受HTTPS，本机HTTP限loopback；5秒超时、请求/响应≤32KiB、历史≤512着、候选≤32；校验键回显、协议schema、候选格式/唯一性和数据集来源。服务地址只由调用方显式传入，未配地址时不会联网。专项HTTP fixture 4/4；根串行`flutter test --concurrency=1 --reporter compact`568通过/5跳过，analyze无问题。当前尚未接入应用composition root、设置服务地址、AI策略、缓存、合法性复核或引擎回退，不能称端到端已对齐。
+
+## M4-57 / F15,F22,F23 / ADR-089 AI单步云库策略
+
+分析AI单步读取云库偏好；添加自建服务根地址、开局关闭/最佳/分差随机、残局开关、离库步数，默认最佳/开/10。只此单步使用网络，关闭地址时无网络调用。匹配服务返回后以领域合法着法列表复核；无效/miss/不可达回退本机引擎。源站随机差距、残局分类及离库计数上限未知；本项目采用100cp随机带、≤8枚非将残局识别、已完成全回合步数及255上限并标P（ADR-089）。F22/F23仍未完成真实远端查询、撤销/取消及UI视觉等验收。
+
+定向`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart test/adapters/network/http_book_service_test.dart --reporter expanded`32/32；根串行`flutter test --concurrency=1 --reporter compact`572通过/5跳过，`flutter analyze --no-pub`通过。复用macOS PID50598/runner50125，attach同步1047ms、热重启993ms；锁屏未人工视觉验收。

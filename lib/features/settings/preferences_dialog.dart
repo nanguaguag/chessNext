@@ -50,6 +50,7 @@ class PreferencesDialog extends StatefulWidget {
 class _PreferencesDialogState extends State<PreferencesDialog> {
   final form = GlobalKey<FormState>();
   late final TextEditingController aiWalkTimeController;
+  late final TextEditingController bookServiceUrlController;
   late ThemePreference theme;
   late BoardLayoutPreset boardLayoutPreset;
   late int threads, hash, pv;
@@ -57,6 +58,9 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
   late double seconds;
   late double aiWalkSeconds;
   late int aiWalkDifficulty, aiWalkMaxDepth;
+  late OpeningBookMode openingBookMode;
+  late bool endgameBookEnabled;
+  late int leaveBookMoves;
   @override
   void initState() {
     super.initState();
@@ -72,11 +76,18 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     aiWalkTimeController = TextEditingController(text: '$aiWalkSeconds');
     aiWalkDifficulty = value.aiWalkDifficulty;
     aiWalkMaxDepth = value.aiWalkMaxDepth;
+    openingBookMode = value.openingBookMode;
+    endgameBookEnabled = value.endgameBookEnabled;
+    leaveBookMoves = value.leaveBookMoves;
+    bookServiceUrlController = TextEditingController(
+      text: value.bookServiceBaseUrl,
+    );
   }
 
   @override
   void dispose() {
     aiWalkTimeController.dispose();
+    bookServiceUrlController.dispose();
     super.dispose();
   }
 
@@ -343,6 +354,76 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                     (value) => aiWalkMaxDepth = value,
                     helperText: '1 – 255；默认60',
                   ),
+                const Divider(height: 28),
+                const Text('开局与残局云库'),
+                TextFormField(
+                  key: const ValueKey('book-service-url'),
+                  controller: bookServiceUrlController,
+                  keyboardType: TextInputType.url,
+                  decoration: const InputDecoration(
+                    labelText: '自建云库服务地址',
+                    helperText:
+                        'AI单步会发送当前局面及完整着法历史；留空时完全离线。公网必须HTTPS，本机可用localhost HTTP',
+                  ),
+                  validator: (text) {
+                    final value = text!.trim().replaceFirst(RegExp(r'/+$'), '');
+                    if (value.isEmpty) return null;
+                    final uri = Uri.tryParse(value);
+                    if (uri == null ||
+                        uri.userInfo.isNotEmpty ||
+                        uri.hasQuery ||
+                        uri.hasFragment) {
+                      return '请输入服务根地址';
+                    }
+                    final local = {
+                      'localhost',
+                      '127.0.0.1',
+                      '::1',
+                    }.contains(uri.host);
+                    if (uri.host.isEmpty ||
+                        (uri.scheme != 'https' &&
+                            !(uri.scheme == 'http' && local))) {
+                      return '公网必须HTTPS，本机仅允许localhost HTTP';
+                    }
+                    return null;
+                  },
+                ),
+                DropdownButtonFormField<OpeningBookMode>(
+                  key: const ValueKey('opening-book-mode'),
+                  initialValue: openingBookMode,
+                  decoration: const InputDecoration(labelText: '开局云库策略'),
+                  items: const [
+                    DropdownMenuItem(
+                      value: OpeningBookMode.closed,
+                      child: Text('关闭'),
+                    ),
+                    DropdownMenuItem(
+                      value: OpeningBookMode.best,
+                      child: Text('最佳着法'),
+                    ),
+                    DropdownMenuItem(
+                      value: OpeningBookMode.randomWithinGap,
+                      child: Text('分差内随机'),
+                    ),
+                  ],
+                  onChanged: (mode) {
+                    if (mode != null) setState(() => openingBookMode = mode);
+                  },
+                ),
+                SwitchListTile.adaptive(
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('启用残局云库'),
+                  value: endgameBookEnabled,
+                  onChanged: (enabled) =>
+                      setState(() => endgameBookEnabled = enabled),
+                ),
+                number(
+                  '离开开局云库步数',
+                  leaveBookMoves,
+                  255,
+                  (value) => leaveBookMoves = value,
+                  helperText: '1 – 255；站点上界未验证，本机暂定255（P）',
+                ),
                 const SizedBox(height: 12),
                 TextFormField(
                   initialValue: '$seconds',
@@ -395,6 +476,12 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       aiWalkDifficulty: aiWalkDifficulty,
                       aiWalkTimeMs: (aiWalkSeconds * 1000).round(),
                       aiWalkMaxDepth: aiWalkMaxDepth,
+                      openingBookMode: openingBookMode,
+                      endgameBookEnabled: endgameBookEnabled,
+                      leaveBookMoves: leaveBookMoves,
+                      bookServiceBaseUrl: bookServiceUrlController.text
+                          .trim()
+                          .replaceFirst(RegExp(r'/+$'), ''),
                     ),
                   );
                   if (context.mounted && widget.preferences.error == null) {

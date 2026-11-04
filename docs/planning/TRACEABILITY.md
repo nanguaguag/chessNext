@@ -759,3 +759,7 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 ## M4-56 / F15,F22,F23 / ADR-088 云库客户端传输首片
 
 新增`BookService`精确局面查询端口和`HttpBookService` HTTP POST适配器；公网HTTPS、本机loopback HTTP，5秒超时，32KiB请求/响应边界。严格核对schema、kind/FEN/history回显、候选格式/唯一性及license/attribution，网络不可达/服务拒绝/无效协议分开类型化。调用方须显式提供endpoint，未接composition root，当前不会联网。专项`flutter test --concurrency=1 test/adapters/network/http_book_service_test.dart --reporter expanded`4/4；根串行`flutter test --concurrency=1 --reporter compact`568通过/5跳过；`flutter analyze --no-pub`通过。未改App/UI/平台代码，未运行macOS。
+
+## M4-57 / F15,F22,F23 / ADR-089 AI单步云库策略
+
+分析AI单步可独立配置服务地址、关闭/最佳/分差内随机、残局库开关、离库回合数；初始策略为开局最佳、残局开、离库10。服务地址留空时绝不请求网络，并明确说明单步查询会发送当前局面/完整历史至指定端点。云候选必须匹配当前合法着法并绑定现有epoch/局面/棋树身份，miss/服务异常/无合法候选回退本机引擎。随机≤100cp、残局≤8个非将棋子、离库上界255均为项目P，源站E71均U。定向`flutter test --concurrency=1 test/application/engine_play_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart test/adapters/network/http_book_service_test.dart --reporter expanded`32/32；根串行`flutter test --concurrency=1 --reporter compact`572通过/5跳过；`flutter analyze --no-pub`无问题；复用PID50598/runner50125 attach同步1047ms、热重启993ms。系统锁屏，人工视觉验收未做。

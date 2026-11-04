@@ -8,8 +8,10 @@ const _maxBookResponseBytes = 32 * 1024;
 
 /// Bounded HTTP adapter for the self-hosted public book query endpoint.
 final class HttpBookService implements BookService {
-  HttpBookService({HttpClient? client, this.timeout = const Duration(seconds: 5)})
-    : _client = client ?? HttpClient();
+  HttpBookService({
+    HttpClient? client,
+    this.timeout = const Duration(seconds: 5),
+  }) : _client = client ?? HttpClient();
 
   final HttpClient _client;
   final Duration timeout;
@@ -82,7 +84,9 @@ final class HttpBookService implements BookService {
   static final _move = RegExp(r'^[a-i][0-9][a-i][0-9]$');
 
   static bool _validEndpoint(Uri uri) {
-    if (uri.userInfo.isNotEmpty || uri.hasQuery || uri.hasFragment) return false;
+    if (uri.userInfo.isNotEmpty || uri.hasQuery || uri.hasFragment) {
+      return false;
+    }
     if (uri.scheme == 'https') return uri.host.isNotEmpty;
     return uri.scheme == 'http' &&
         {'localhost', '127.0.0.1', '::1'}.contains(uri.host);
@@ -110,7 +114,11 @@ final class HttpBookService implements BookService {
       throw const FormatException('Invalid book response');
     }
     final dataset = json['dataset'] as Map<String, dynamic>;
-    if (dataset.keys.toSet().difference({'id', 'license', 'attribution'}).isNotEmpty ||
+    if (dataset.keys.toSet().difference({
+          'id',
+          'license',
+          'attribution',
+        }).isNotEmpty ||
         dataset['id'] is! String ||
         (dataset['id'] as String).isEmpty ||
         dataset['license'] is! String ||
@@ -124,22 +132,30 @@ final class HttpBookService implements BookService {
         (json['status'] == 'miss' && rawMoves.isNotEmpty)) {
       throw const FormatException('Invalid book result');
     }
-    final moves = rawMoves.map((raw) {
-      if (raw is! Map<String, dynamic> ||
-          raw.keys.toSet().difference({'move', 'scoreCp', 'weight'}).isNotEmpty ||
-          raw['move'] is! String ||
-          !_move.hasMatch(raw['move'] as String) ||
-          raw['scoreCp'] is! int ||
-          raw['weight'] is! int ||
-          (raw['weight'] as int) < 1) {
-        throw const FormatException('Invalid book candidate');
-      }
-      return BookMoveCandidate(
-        uci: raw['move'] as String,
-        scoreCp: raw['scoreCp'] as int,
-        weight: raw['weight'] as int,
-      );
-    }).toList(growable: false);
+    final moves = rawMoves
+        .map((raw) {
+          if (raw is! Map<String, dynamic> ||
+              raw.keys.toSet().difference({
+                'move',
+                'scoreCp',
+                'weight',
+              }).isNotEmpty ||
+              raw['move'] is! String ||
+              !_move.hasMatch(raw['move'] as String) ||
+              raw['scoreCp'] is! int ||
+              (raw['scoreCp'] as int).abs() > 1000000 ||
+              raw['weight'] is! int ||
+              (raw['weight'] as int) < 1 ||
+              (raw['weight'] as int) > 1000000000) {
+            throw const FormatException('Invalid book candidate');
+          }
+          return BookMoveCandidate(
+            uci: raw['move'] as String,
+            scoreCp: raw['scoreCp'] as int,
+            weight: raw['weight'] as int,
+          );
+        })
+        .toList(growable: false);
     if (moves.map((move) => move.uci).toSet().length != moves.length) {
       throw const FormatException('Duplicate book candidate');
     }

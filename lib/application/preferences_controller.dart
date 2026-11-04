@@ -213,6 +213,18 @@ class PreferencesController extends ChangeNotifier {
             aiWalkMaxDepth: _edited.contains('aiWalkMaxDepth')
                 ? previous.aiWalkMaxDepth
                 : null,
+            openingBookMode: _edited.contains('openingBookMode')
+                ? previous.openingBookMode
+                : null,
+            endgameBookEnabled: _edited.contains('endgameBookEnabled')
+                ? previous.endgameBookEnabled
+                : null,
+            leaveBookMoves: _edited.contains('leaveBookMoves')
+                ? previous.leaveBookMoves
+                : null,
+            bookServiceBaseUrl: _edited.contains('bookServiceBaseUrl')
+                ? previous.bookServiceBaseUrl
+                : null,
             recordPlaybackIntervalMs:
                 _edited.contains('recordPlaybackIntervalMs')
                 ? previous.recordPlaybackIntervalMs
@@ -548,6 +560,18 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.aiWalkMaxDepth != value.aiWalkMaxDepth) {
       _edited.add('aiWalkMaxDepth');
+    }
+    if (next.openingBookMode != value.openingBookMode) {
+      _edited.add('openingBookMode');
+    }
+    if (next.endgameBookEnabled != value.endgameBookEnabled) {
+      _edited.add('endgameBookEnabled');
+    }
+    if (next.leaveBookMoves != value.leaveBookMoves) {
+      _edited.add('leaveBookMoves');
+    }
+    if (next.bookServiceBaseUrl != value.bookServiceBaseUrl) {
+      _edited.add('bookServiceBaseUrl');
     }
     if (next.recordPlaybackIntervalMs != value.recordPlaybackIntervalMs) {
       _edited.add('recordPlaybackIntervalMs');

@@ -866,3 +866,7 @@ M4-40已提交`c4c4aa6`。M4-41增加AppPreferences自建服务URL字段/安全�
 新增固定项目schema1棋盘皮肤ZIP编解码（board-skin.json、四图层白名单、SHA、图像真实字节验证、8MiB ZIP/7MiB图像总量/单图512KiB），自定义皮肤可导出；导入解码预览后二次确认，以新ID落盘并立即应用，图像或清单失败会清理暂存项。源站ZIP/文件夹兼容明确未知。
 
 定向`flutter test test/application/board_skin_package_codec_test.dart test/application/board_skin_library_test.dart test/application/board_skin_image_library_test.dart test/widgets/board_skin_library_dialog_test.dart test/widgets/board_coordinates_test.dart --reporter expanded`20/20；根`flutter test --reporter compact`544通过/5跳过（官方Pikafish/NNUE环境未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。初次target/analyze发现测试image API不支持clear(color:)及SelectedPieceImage未导入，修正后通过。macOS复用唯一PID50598/VM61589，通过`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/`同步，热重载称0库/569ms，然后热重启907ms成功。未启动第二个App；人工窗口视觉not run。M4-47文档更新已做，尚待复核diff并以中文Conventional Commit单独提交。之后继续B24及全站剩余差距，不停于本片。
+
+## 2026-11-05 / E62 / F21,B24 棋盘缩放AX声明与恢复
+
+访客临时标签2在`https://xiangqiai.com/#/settings/skins/edit/new?type=board`只读查看。棋子缩放AX语义声明60–140、当前100（O）；Playwright对控件尝试End和ArrowRight后AX仍100，不能确认实际键盘行为/可达端点（U）。格点拖柄AX值50但无min/max/now；边距stepper完整范围/联动继续U。未改参数或执行保存/使用；返回触发放弃确认，确认后默认棋盘/棋子/100%/坐标开/对面倒置关复原（V）。无用户棋谱/数据改动，原IAB tab1未触碰。按审计skill更新E62、Feature Matrix/Gaps、Interaction Spec、Traceability、Backlog、CURRENT_STATE/HANDOFF。仅文档改动，不运行Flutter测试/分析，不重启App；执行`git diff --check`后独立中文docs提交。下一步继续测可观察几何操作并推进全站缺口。

@@ -674,3 +674,7 @@ AppPreferences schema1增加可选`skinCatalogBaseUrl`，旧配置默认空；Pr
 专项`flutter test test/application/board_skin_package_codec_test.dart test/application/board_skin_library_test.dart test/application/board_skin_image_library_test.dart test/widgets/board_skin_library_dialog_test.dart test/widgets/board_coordinates_test.dart --reporter expanded`20/20；根`flutter test --reporter compact`544通过/5跳过；`flutter analyze --no-pub`无问题；`git diff --check`通过。macOS沿用M4-46唯一App PID50598/VM `127.0.0.1:61589`，`flutter attach --debug-url=...`后热重载，再热重启907ms成功，无新App实例；`flutter run`此前Build/Sync成功但`open returned 1`，窗口人工视觉验收not run。测试宿主是flutter_tester，没有生成App实例。
 
 项目ZIP不声称兼容站点“主流格式”或任意ZIP/文件夹；源站包结构、冲突、保存/应用差异与重新加载持久性继续U。F21及全站未完成，下一审计/实现按BACKLOG继续B24和矩阵的其它缺口。
+
+## 2026-11-05 / E62 / F21,B24 棋盘编辑器缩放语义
+
+参考站访客临时标签2只读页面语义，初值棋子缩放100%，滑杆AX声明min60/max140（O）。对该控件尝试End和ArrowRight后AX仍100，因此没有验证端点/步进交互；格点拖柄为两个role=slider、value50但无可访问范围值，边距stepper的全范围/耦合仍U。未改动任何参数或保存/使用；浏览器返回仍弹弃草稿确认，确认后默认棋盘/棋子、100%、坐标开、对面倒置关复原（V）。证据与限制见`REFERENCE_EVIDENCE.md#e62--2026-11-05-棋盘编辑器棋子缩放可访问边界访客桌面iab`。下一步以站点可观察操作补证，而不把AX声明直接当已实现边界。

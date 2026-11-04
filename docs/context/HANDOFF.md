@@ -1,3 +1,13 @@
+# 交接（2026-11-04 Asia/Shanghai）
+
+用户持续授权登录部分以外功能/设置对齐，要求继续推进，不在单项后停。以磁盘文档为准；在线功能保留总范围，顺序离线优先，自建可替换后端并提供部署方案；没有分代理授权；许可决策暂缓不阻挡本地开发。每项根目录`flutter test`、`flutter analyze`通过后中文Conventional Commit；涉及macOS复用runner/app，避免重复启动。不能宣称全站已对齐。
+
+本轮完成并提交 M4-39：`ae9858e feat(catalog): 增加自建皮肤目录服务`，含只读目录服务、部署说明和crypto许可记录。
+
+M4-40代码与文档当前未提交：只读`PieceSkinCatalog`传输端口、类型化公开条目/分页/排序/失败、HTTP适配器及测试，ADR-075。定向测试3/3；根测试522通过/5跳过（官方Pikafish/NNUE配置缺失）；analyze通过。首轮断网fixture错误已修，首次analyze单行if格式已修。macOS仅用PID2226现有runner/app PID2479，替换旧runner后以`flutter run -d macos --no-pub`重建/同步，App PID5725、VM `127.0.0.1:52805`；open returned 1，未视觉检查。现在只运行这一组实例；`flutter attach`因VM service认证URL未能连接，不记成功。没有后台服务/临时制品。
+
+下一步：检查并提交M4-40为`feat(catalog): 增加自建目录客户端端口`；随后继续M4-41皮肤库在线目录浏览、URL偏好/搜索排序、许可展示与离线错误，再做下载/哈希/安全导入。UI未接入，不能称皮肤在线目录客户端完成。
+
 # 会话交接
 
 ## 2026-11-04 / M4-37 / F20,B26 四处分隔桌面工作区

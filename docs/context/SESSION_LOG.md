@@ -803,3 +803,12 @@ E57研究文档提交`d3176c6`。无新增应用实例。待核`git status`；�
 命令/结果：`flutter pub get --offline` exit0；`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`首轮1 fail（测试对唯一搜索结果请求第2页，错误触发List.single）；更正页号后5/5；`flutter analyze --no-pub`首轮提示if缺大括号修复后通过，后来新加子包分析配置的strict选项键位不支持再修正，最终复跑无问题；`flutter test --reporter compact`519通过/5跳过；服务器`dart pub get --offline` exit0；`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server` exit0；启动编译版于macOS 127.0.0.1:18088，curl health `{"status":"ok"}`，目录为空schema1/count0；随后停止最终版服务并清理临时数据和可执行文件。`git diff --check`通过。Flutter macOS App未运行，因为改动只在独立服务端包；进程核对runner PID2226/App PID2479仍是唯一一组，没有测试新开的App。
 
 服务端首片未接入Flutter客户端。下一独立增量按E42提供`PieceSkinCatalog`可替换端口、服务器URL偏好、超时/缓存/许可展示/错误与离线状态，再验证实际项目ZIP下载时限/哈希/导入，不添加匿名写入。更新feature gaps/matrix、OFFLINE_SCOPE厘清离线优先与在线总范围、README/architecture/ADR及计划追踪。待以中文Conventional Commit单独提交；继续推进而不是停止在M4-39。
+
+
+## 2026-11-04 / M4-39与M4-40
+
+M4-39先完成依赖许可登记（crypto 3.0.8 BSD-3-Clause/hash）并独立提交`ae9858e feat(catalog): 增加自建皮肤目录服务`。M4-40新增`PieceSkinCatalog`只读端口和HTTP适配器：五种排序、分页、搜索、条目许可/署名/hash字段解析、8秒超时、2MiB边界、HTTPS远端/loopback HTTP、类型化离线与协议错误。
+
+实际命令：定向`flutter test test/adapters/network/http_piece_skin_catalog_test.dart --reporter expanded`3/3；根`flutter test --reporter compact`522通过/5跳过（本机无官方Pikafish/NNUE环境）；`flutter analyze --no-pub`通过。首次断网测试失败因关闭server后取port，修复后通过；首次analyze提示单行if应加花括号，修复后通过。根测试没有启动chessNext。macOS最初runner PID2226/App PID2479；`flutter attach --debug-url`因认证URL无法连接，SIGUSR1无会话日志确认reload。随后结束该开发实例，仅启动一组`flutter run -d macos --no-pub`，Build/Sync成功，App PID5725/VM `127.0.0.1:52805`；open returned 1，人工视觉not run。现仅保留新runner/app。
+
+M4-40尚未提交。下一项为在线目录UI、可配置服务URL、许可与离线错误，再下载/校验/导入。

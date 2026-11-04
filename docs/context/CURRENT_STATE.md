@@ -1,10 +1,14 @@
 # 当前状态
 
-## 最新交付 M4-39（2026-11-04）
+## 最新交付 M4-40（2026-11-04）
+
+F21/B24按ADR-075完成只读在线皮肤目录客户端传输端口：公开DTO、分页/搜索与五类排序、许可/署名/哈希解析、8秒超时、2MiB响应上限、仅HTTPS远端/loopback HTTP，以及断网/拒绝/无效响应分类。定向3/3，根测试522通过/5跳过，analyze无问题。最初runner PID2226/App PID2479未能热重载确认，后替换旧实例并运行`flutter run -d macos --no-pub`，Build/Sync成功，App PID5725、VM `127.0.0.1:52805`；`open returned 1`，未做窗口视觉验收。当前只保留这一组实例。UI、服务器URL设置、缓存、下载/导入尚未接入，F21继续开放。
+
+## 已提交 M4-39（2026-11-04）
 
 F21/B24按E42、ADR-074实现自建公开只读棋子皮肤目录服务和部署说明。服务支持固定包ID、许可/署名元数据、显式搜索/分页与默认/点赞/名称/作者/最新排序，ZIP SHA-256校验；不引入登录、上传、用户点赞写入或网站资源。默认目录为空。Flutter客户端/服务器地址/缓存/离线交互尚未接入，F21及全站仍开放。
 
-定向5/5；根`flutter test --reporter compact`519通过/5跳过；`flutter analyze --no-pub`无问题。已离线解析依赖、编译独立Dart可执行文件，并在macOS本机启动后以curl验证health和空目录结果。没有运行`flutter run`、没有新增/停止chessNext实例；原runner PID2226和App PID2479仍运行。首轮测试页码夹具、if大括号及服务包分析配置问题均记录并修复后复跑通过。下一片接Flutter `PieceSkinCatalog`可替换端口、服务URL偏好和用户可见离线/许可状态。
+定向5/5；根`flutter test --reporter compact`519通过/5跳过；`flutter analyze --no-pub`无问题。已离线解析依赖、编译独立Dart可执行文件，并在macOS本机启动后以curl验证health和空目录结果。没有运行`flutter run`、没有新增/停止chessNext实例；原runner PID2226和App PID2479仍运行。首轮测试页码夹具、if大括号及服务包分析配置问题均记录并修复后复跑通过。M4-39提交`ae9858e`。下一片接入皮肤库UI与用户可配置服务URL，显示许可/署名和明确离线状态，再完成安全下载导入。
 
 ## 最新审计 E58（2026-11-04）
 

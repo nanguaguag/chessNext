@@ -615,3 +615,10 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 定向`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`5/5；根`flutter test --reporter compact`519通过/5跳过（缺官方Pikafish/NNUE配置）；`flutter analyze --no-pub`无问题。首轮定向测试因测试用例请求唯一搜索结果的第2页而失败，改为第1页后5/5；首次analyze提示一个if语句需加大括号，修复后通过；服务子包分析配置最初将strict选项放在不支持的键位，移入analyzer.language后复跑无问题。`flutter pub get --offline`成功；`dart pub get --offline`成功；`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功。在macOS以临时空目录启动最终编译版服务，`curl -fsS http://127.0.0.1:18088/healthz`返回`{"status":"ok"}`，目录列表返回schema1空items；完成后停止服务并清理临时目录/可执行文件。此服务首片没有改变Flutter macOS客户端，因此未另启/重启`flutter run`；原runner PID2226/App PID2479继续保留，无测试启动App。
 
 客户端接入、断网/超时/缓存/许可展示、服务URL偏好及真实远程包导入仍后续任务；公开点赞排序目前是运营者静态元数据，不表示访客投票。源站用户上传/点赞实际结果仍U，B24/F21与全站未对齐。
+
+
+## 2026-11-04 / M4-40 / F21,B24,ADR-075 自建皮肤目录客户端传输层
+
+通过可替换`PieceSkinCatalog`端口和Dart IO HTTP适配器读取公开分页目录，支持搜索、默认/点赞/名称/作者/最新排序；严格解析作品ID、文本、点赞数、日期、许可证、署名和SHA-256。8秒请求/流超时，页码≤10000、每页≤100、查询≤120 Unicode码点、响应≤2MiB；远程必须HTTPS，HTTP仅限loopback。超时/断网、非200和无效响应分为类型化错误。没有UI、用户服务器URL偏好、缓存、包下载、包校验/导入或点赞写接口，M4-40只是客户端传输端口。
+
+`flutter test test/adapters/network/http_piece_skin_catalog_test.dart --reporter expanded`3/3通过（首次断网测试因关闭服务后读取port而失败，保存port后复跑通过）；根`flutter test --reporter compact`522通过/5跳过（缺官方Pikafish/NNUE）；`flutter analyze --no-pub`无问题（首次报告单行if风格，修复后通过）。macOS复用现有runner PID2226与App PID2479；先终止旧runner/app后仅启动一组新实例：`flutter run -d macos --no-pub`构建/Sync成功，App PID5725、VM Service `127.0.0.1:52805`；系统前台打开返回1，未完成人工视觉验收。此前attach因认证URL未连接；测试宿主完成loopback HTTP请求。

@@ -104,3 +104,6 @@ M4-36 / ADR-071：_BoardPage通过显示模式PopupMenu切换普通分析工作�
 M4-38 / ADR-073：`AppPreferences.boardLayoutPreset`保存居中/靠左选择，旧偏好缺字段回默认居中；PreferencesController处理初始化期间异步读取与用户修改合并。PreferencesDialog应用时保存本机布局选择。ResizableWorkspace在宽屏三栏分支调整列序并提供棋盘宽度拖动、键盘及Slider无障碍增减、重置；窄窗继续旧布局。靠左最小/最大宽度属于项目P；不改变棋局或引擎。根测试/分析通过；macOS已Build/Sync，但锁屏无法置前，人工视觉not verified。
 
 M4-39 / ADR-074：`server/skin_catalog`为独立纯Dart只读HTTP服务，提供公开皮肤元数据列表/排序/显式搜索分页/许可证署名详情及SHA-256固定包下载；启动加载静态发布目录，ID映射固定包文件路径并拒绝符号链接。没有登录、写入、上传、用户投票或内容种子。独立包可编译单文件、经HTTPS反代部署；Flutter端口/URL偏好/缓存和离线状态尚未实现，不能标在线目录完成。定向5/5、根519通过/5跳过、analyze通过；macOS独立服务可执行编译并本机curl smoke通过，既有Flutter App进程不重启。
+
+
+M4-40 / F21,B24（ADR-075）：`ports/piece_skin_catalog.dart`定义公开条目、分页结果、五类排序及类型化失败；`adapters/network/http_piece_skin_catalog.dart`实现8秒超时、有界分页/查询/响应、仅HTTPS远端与loopback HTTP。尚未接入UI/服务器地址设置、缓存、下载、许可确认和导入。

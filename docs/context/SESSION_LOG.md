@@ -796,3 +796,10 @@ E57研究文档提交`d3176c6`。无新增应用实例。待核`git status`；�
 临时IAB标签8访客访问`https://xiangqiai.com/#/settings/skins/edit/new?type=board`，约527×860。AX观察初值为两个格点50/50、四边左33/上33/右465/下519、棋子缩放100%；截图可见两个蓝点在棋盘画布对角交点。将左上点约拖动一格(48×50px)后，AX显示左85.50/上87/右465.18/下519.09，证明一次拖动导致多边值变化，不能确定公式/单位/约束。缩放滑杆100%拖到轨道左端得60%，右端得139%；聚焦139%按一次右键值不变。记录当次轨道终点显示，不推断精确内部边界/步长或缩放对象。回退触发放弃确认，点击确认后AX返回默认棋盘页，默认棋子/棋盘、棋子大小100%、坐标开、对面倒置关。临时标签关闭，原用户IAB标签1未碰；无保存/使用/导出/上传/账号/棋谱改动。
 
 更新E58、ADR-054证据边界、F21 gap/交互规格/BACKLOG和handoff。纯文档，不跑测试/analyze/macOS。`git diff --check`待执行。M4-38已提交`1aceb59`。后续继续B24自建可替换在线目录/部署方案，不停止在这次几何审计；F27完整本地化待大范围覆盖。唯一Debug runner PID2226/App PID2479会话2427保持运行，无测试App实例。
+## 2026-11-04 / M4-39 / F21,B24 自建只读皮肤目录服务
+
+按用户选择自建可替换后端的范围新增独立Dart服务`server/skin_catalog`。静态管理员发布目录提供健康检查、默认/点赞/名称/作者/最新排序、显式q搜索、页码/条数、有许可/署名详情和固定`<id>.zip`下载；清单/查询/页面/ZIP大小有界，slug白名单、文件路径固定/无符号链接、包sha256和ETag。无账号/上传/投票写端点，likes是管理员metadata而非假称实时用户评分。以样例空目录起步，包要求自有/有再分发权内容，未复制网站资产。新增服务README部署方案及ADR-074；新增root dev path package和HTTP集成测试。
+
+命令/结果：`flutter pub get --offline` exit0；`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`首轮1 fail（测试对唯一搜索结果请求第2页，错误触发List.single）；更正页号后5/5；`flutter analyze --no-pub`首轮提示if缺大括号修复后通过，后来新加子包分析配置的strict选项键位不支持再修正，最终复跑无问题；`flutter test --reporter compact`519通过/5跳过；服务器`dart pub get --offline` exit0；`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server` exit0；启动编译版于macOS 127.0.0.1:18088，curl health `{"status":"ok"}`，目录为空schema1/count0；随后停止最终版服务并清理临时数据和可执行文件。`git diff --check`通过。Flutter macOS App未运行，因为改动只在独立服务端包；进程核对runner PID2226/App PID2479仍是唯一一组，没有测试新开的App。
+
+服务端首片未接入Flutter客户端。下一独立增量按E42提供`PieceSkinCatalog`可替换端口、服务器URL偏好、超时/缓存/许可展示/错误与离线状态，再验证实际项目ZIP下载时限/哈希/导入，不添加匿名写入。更新feature gaps/matrix、OFFLINE_SCOPE厘清离线优先与在线总范围、README/architecture/ADR及计划追踪。待以中文Conventional Commit单独提交；继续推进而不是停止在M4-39。

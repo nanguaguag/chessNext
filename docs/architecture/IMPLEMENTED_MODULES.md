@@ -102,3 +102,5 @@ M4-04 / ADR-042：BoardGifSnapshot冻结根到当前所选线路末端、方向�
 M4-36 / ADR-071：_BoardPage通过显示模式PopupMenu切换普通分析工作区/进程内浮动工作区。浮动态隐藏AppBar与侧栏，居中棋盘，底栏提供引擎状态/设置/悔棋/新局/翻转/编辑/退出。该展示状态不持久化且不改文档与搜索；不调用原生窗口置顶API，不表达独立窗口能力。测试覆盖进入、必要底栏、退出回常规布局；macOS热重载通过，CUA点击未能执行，人工macOS交互not verified。
 
 M4-38 / ADR-073：`AppPreferences.boardLayoutPreset`保存居中/靠左选择，旧偏好缺字段回默认居中；PreferencesController处理初始化期间异步读取与用户修改合并。PreferencesDialog应用时保存本机布局选择。ResizableWorkspace在宽屏三栏分支调整列序并提供棋盘宽度拖动、键盘及Slider无障碍增减、重置；窄窗继续旧布局。靠左最小/最大宽度属于项目P；不改变棋局或引擎。根测试/分析通过；macOS已Build/Sync，但锁屏无法置前，人工视觉not verified。
+
+M4-39 / ADR-074：`server/skin_catalog`为独立纯Dart只读HTTP服务，提供公开皮肤元数据列表/排序/显式搜索分页/许可证署名详情及SHA-256固定包下载；启动加载静态发布目录，ID映射固定包文件路径并拒绝符号链接。没有登录、写入、上传、用户投票或内容种子。独立包可编译单文件、经HTTPS反代部署；Flutter端口/URL偏好/缓存和离线状态尚未实现，不能标在线目录完成。定向5/5、根519通过/5跳过、analyze通过；macOS独立服务可执行编译并本机curl smoke通过，既有Flutter App进程不重启。

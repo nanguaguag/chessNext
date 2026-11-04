@@ -313,3 +313,10 @@ E54/E55文档审计分别提交：`149a153 docs(audit): 验证显示语言切换
 在访客临时IAB标签8打开`https://xiangqiai.com/#/settings/skins/edit/new?type=board`，视口约527×860。前置空白棋盘草稿；初始格点滑杆50/50、stepper左/上/右/下33/33/465/519、棋子缩放100%。截图观察两个蓝点分别在画布左上/右下交点。左上点从约(64,88)拖到(112,138)，AX显示左85.50/上87/右465.18/下519.09；只做一个方向/距离样本，不推断单位、联动算法或完整范围。缩放滑杆轨道视觉端点当次显示60%/139%，在139%聚焦按右方向键后值不变；实际范围、边界与缩放对象仍U。按返回并确认丢弃后回`#/settings/board`，AX确认默认棋子/棋盘、100%、坐标开、倒置关。临时标签已关闭，用户原标签1没操作。
 
 更新REFERENCE_EVIDENCE E58、FEATURE_GAPS、INTERACTION_SPEC、ADR-054证据边界、BACKLOG与context。仅文档改动，不跑Flutter测试/analyze，不重启macOS；执行`git diff --check`后单独中文docs commit。下一步延续B24：识别现有自建在线可替换目录的缺失架构和部署方案，且保持F21/F27及全站剩余项开放。当前唯一macOS runner会话2427/App PID2479仍需保留复用，不要因测试另启实例。
+## 2026-11-04 / M4-39 / F21,B24 自建只读皮肤目录服务端
+
+新增纯Dart服务`server/skin_catalog`和ADR-074：`GET /healthz`、`GET /v1/catalog`（q/sort/page/pageSize）、详情及`GET /package`；包限定8MiB、固定slug路径、拒绝软链接、SHA-256/ETag校验。元数据必须写许可证与署名；likes仅是管理员静态值，服务没有账号/上传/投票写接口，目录初始为空。README给出编译单文件、非root监听本机端口、TLS反代和只读发布目录的部署方案。Flutter客户端尚未接入；本片不代表在线皮肤目录完成。
+
+门槛：定向`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`5/5；根`flutter test --reporter compact`519通过/5跳过；`flutter analyze --no-pub`无问题。失败事实：第一轮定向夹具搜索仅1项却请求page2导致`List.single`失败，改为page1复跑5/5；首次analyze报告server一处缺大括号，补上通过；子包分析配置strict选项键位无效，改为analyzer.language后最终复跑无问题。`flutter pub get --offline`、服务器`dart pub get --offline`、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`均成功。编译服务macOS本机运行(127.0.0.1:18088)后curl health返回`{"status":"ok"}`、空目录列表schema1/count0成功；服务已停，临时目录/编译产物已清理。未运行Flutter macOS应用，因为只改独立服务端；此前唯一runner PID2226和App PID2479继续运行。测试全程没有新开chessNext。
+
+此时服务实现、测试、ADR/部署README/ARCHITECTURE/BACKLOG/矩阵/TRACEABILITY/CURRENT_STATE/HANDOFF/SESSION_LOG待单独提交。执行`git diff --check`及核工作树后用中文Conventional Commit。下一步继续客户端端口、URL配置、超时/缓存与无登录公开目录显示，之后接真实只读下载及安全验证；在线能力仍在总范围，登录后功能除外。F27全站语言资源仍待覆盖；全站未对齐。

@@ -607,3 +607,11 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 `AppPreferences.boardLayoutPreset`兼容旧值并参加复制、相等、严格JSON解码及初始化迟到读取合并。偏好对话框可选“棋盘居中/棋盘靠左”并在应用时保存。`ResizableWorkspace`靠左预设仅在宽屏三栏路径排列棋盘/记录操作/侧栏，提供棋盘宽度拖动、键盘及Slider语义和重置；项目宽度508–556dp、记录区/右区至少220dp是P。测试覆盖编码/旧偏好、异步编辑、列顺序、尺寸调整、偏好入口与持久化。
 
 专项`flutter test test/application/preferences_controller_test.dart test/widgets/resizable_workspace_test.dart --reporter expanded`10/10；根`flutter test --reporter compact`514通过/5跳过（缺官方Pikafish/NNUE配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。macOS `flutter run -d macos --no-pub` Build/Sync成功，VM `127.0.0.1:49754`；`open returned 1`且Mac锁定，无法置前，人工窗口视觉交互not verified。期间仅一条Debug runner会话；根Flutter测试使用flutter_tester，没有创建chessNext应用实例。源站其它视口、语言覆盖与F27其余功能继续开放。
+
+## 2026-11-04 / M4-39 / F21,B24,ADR-074 自建皮肤目录服务端
+
+新增独立纯Dart `server/skin_catalog`，通过只读HTTP契约提供health、分页/排序/搜索列表、条目许可详情和有界skin ZIP；启动加载schema1元数据，固定slug到package路径，拒绝软链接/非法输入，SHA-256与不可变ETag保护包。默认目录为空；运营者需只发布有授权/署名的内容。不实现账户、上传、点赞写入，也未接入Flutter端口或用户可配置服务器URL。部署说明覆盖单文件Dart编译、非root本机监听、HTTPS反代、只读目录与原子切换重启，见`server/skin_catalog/README.md`和ADR-074。
+
+定向`flutter test test/server/skin_catalog_server_test.dart --reporter expanded`5/5；根`flutter test --reporter compact`519通过/5跳过（缺官方Pikafish/NNUE配置）；`flutter analyze --no-pub`无问题。首轮定向测试因测试用例请求唯一搜索结果的第2页而失败，改为第1页后5/5；首次analyze提示一个if语句需加大括号，修复后通过；服务子包分析配置最初将strict选项放在不支持的键位，移入analyzer.language后复跑无问题。`flutter pub get --offline`成功；`dart pub get --offline`成功；`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功。在macOS以临时空目录启动最终编译版服务，`curl -fsS http://127.0.0.1:18088/healthz`返回`{"status":"ok"}`，目录列表返回schema1空items；完成后停止服务并清理临时目录/可执行文件。此服务首片没有改变Flutter macOS客户端，因此未另启/重启`flutter run`；原runner PID2226/App PID2479继续保留，无测试启动App。
+
+客户端接入、断网/超时/缓存/许可展示、服务URL偏好及真实远程包导入仍后续任务；公开点赞排序目前是运营者静态元数据，不表示访客投票。源站用户上传/点赞实际结果仍U，B24/F21与全站未对齐。

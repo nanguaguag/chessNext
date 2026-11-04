@@ -1,0 +1,41 @@
+import 'dart:async';
+import 'dart:io';
+
+import 'package:skin_catalog_server/skin_catalog_server.dart';
+
+Future<void> main(List<String> args) async {
+  final root = Directory(Platform.environment['SKIN_CATALOG_ROOT'] ?? './data');
+  final addressText =
+      Platform.environment['SKIN_CATALOG_ADDRESS'] ?? '127.0.0.1';
+  final port = int.tryParse(
+    Platform.environment['SKIN_CATALOG_PORT'] ?? '8087',
+  );
+  final address = InternetAddress.tryParse(addressText);
+  if (args.isNotEmpty ||
+      address == null ||
+      port == null ||
+      port < 1 ||
+      port > 65535) {
+    stderr.writeln(
+      'Usage: SKIN_CATALOG_ROOT=./data SKIN_CATALOG_ADDRESS=127.0.0.1 '
+      'SKIN_CATALOG_PORT=8087 dart run bin/skin_catalog_server.dart',
+    );
+    exitCode = 64;
+    return;
+  }
+  final store = await SkinCatalogStore.load(root);
+  final server = await SkinCatalogHttpServer.bind(
+    store: store,
+    address: address,
+    port: port,
+  );
+  stdout.writeln('Skin catalog listening at ${server.baseUrl}');
+  stdout.writeln('Loaded ${store.skins.length} public entries.');
+  final stopped = Completer<void>();
+  ProcessSignal.sigint.watch().listen((_) => stopped.complete());
+  if (!Platform.isWindows) {
+    ProcessSignal.sigterm.watch().listen((_) => stopped.complete());
+  }
+  await stopped.future;
+  await server.close();
+}

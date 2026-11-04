@@ -84,3 +84,7 @@ M4-14的棋子图片流程采用`PieceImagePicker`/`PieceImageRepository` ports�
 M4-15皮肤缩放数值作为`AppPreferences`中两个稳定字段按PieceSkin分别持久化；异步偏好加载遵循既有edited-fields合并屏障。`BoardDisplayScope`只暴露当前皮肤比例，UI不操作棋盘绘制器；单面容比例和全局比例在展示端组合，图片/GIF快照则冻结原始两个因子。范围80–120为项目P，不复刻参考站未知最小端点。
 
 M4-16预设位置同样是schema1的四个独立偏好字段。展示端以每格宽百分比将棋子绘制层视觉平移，始终设置`transformHitTests:false`；Navigator、领域棋谱与棋盘交点不感知装饰性偏移。BoardDisplayScope和图片/GIF冻结快照各自持有只读值，方向按钮通过PreferencesController的有界更改入口持久化，自动对正写回零值。
+
+## M4-39：自建公开皮肤目录服务端
+
+`server/skin_catalog`是独立纯Dart只读HTTP服务；进程启动时读取发布目录JSON，通过固定ID/文件路径映射皮肤包，不接触用户棋谱/账号，不提供上传或投票写接口。列表排序/搜索/分页由服务使用有界参数执行；详情声明许可证/署名，ZIP以SHA-256校验并返回ETag。服务不编造清单条目；运营者离线更新发布目录，TLS/反代和速率限制由部署层提供。Flutter客户端应经独立`PieceSkinCatalog`端口装配服务URL、缓存/超时及明确离线错误，不允许UI直接持HTTP/JSON。

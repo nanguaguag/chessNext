@@ -1,0 +1,22 @@
+[Unit]
+Description=chessNext public skin catalog
+After=network.target
+
+[Service]
+Type=simple
+User=skin-catalog
+Group=skin-catalog
+Environment=SKIN_CATALOG_ROOT=/srv/chessnext/skin-catalog/public
+Environment=SKIN_CATALOG_ADDRESS=127.0.0.1
+Environment=SKIN_CATALOG_PORT=8087
+ExecStart=/usr/local/bin/chessnext-skin-catalog
+Restart=on-failure
+RestartSec=2
+NoNewPrivileges=true
+PrivateTmp=true
+ProtectHome=true
+ProtectSystem=strict
+UMask=0027
+
+[Install]
+WantedBy=multi-user.target

@@ -600,4 +600,10 @@ E42仅观察到ZIP、图片多选、文件夹三个导入入口，没有选文�
 
 ## 2026-11-04 / E57 / F27 显示布局预设
 
-参考证据见`REFERENCE_EVIDENCE.md` E57。访客1280×720实际切换靠左/居中，观察到真实列顺序和AX分隔结构变化；恢复居中默认。产品断点/跨尺寸/持久化仍U，本机预设未实现。
+参考证据见`REFERENCE_EVIDENCE.md` E57。访客1280×720实际切换靠左/居中，观察到真实列顺序和AX分隔结构变化；恢复居中默认。源站断点/尺寸算法仍U。
+
+## 2026-11-04 / M4-38 / F27,B25,ADR-073 棋盘布局预设
+
+`AppPreferences.boardLayoutPreset`兼容旧值并参加复制、相等、严格JSON解码及初始化迟到读取合并。偏好对话框可选“棋盘居中/棋盘靠左”并在应用时保存。`ResizableWorkspace`靠左预设仅在宽屏三栏路径排列棋盘/记录操作/侧栏，提供棋盘宽度拖动、键盘及Slider语义和重置；项目宽度508–556dp、记录区/右区至少220dp是P。测试覆盖编码/旧偏好、异步编辑、列顺序、尺寸调整、偏好入口与持久化。
+
+专项`flutter test test/application/preferences_controller_test.dart test/widgets/resizable_workspace_test.dart --reporter expanded`10/10；根`flutter test --reporter compact`514通过/5跳过（缺官方Pikafish/NNUE配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。macOS `flutter run -d macos --no-pub` Build/Sync成功，VM `127.0.0.1:49754`；`open returned 1`且Mac锁定，无法置前，人工窗口视觉交互not verified。期间仅一条Debug runner会话；根Flutter测试使用flutter_tester，没有创建chessNext应用实例。源站其它视口、语言覆盖与F27其余功能继续开放。

@@ -1,5 +1,6 @@
 import 'package:chess_next/features/workspace/resizable_workspace.dart';
 import 'package:chess_next/app.dart';
+import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/semantics.dart';
@@ -89,12 +90,86 @@ void main() {
       initialBoardWidth,
     );
 
-    final leftSplitter = tester.getSemantics(
-      find.bySemanticsLabel('调整左栏宽度'),
-    );
+    final leftSplitter = tester.getSemantics(find.bySemanticsLabel('调整左栏宽度'));
     final splitterData = leftSplitter.getSemanticsData();
     expect(splitterData.hasAction(SemanticsAction.increase), isTrue);
     expect(splitterData.hasAction(SemanticsAction.decrease), isTrue);
     semantics.dispose();
+  });
+
+  testWidgets('board-left preset puts board, record and side panels in order', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = MemoryPreferencesRepository()
+      ..value = AppPreferences(
+        boardLayoutPreset: BoardLayoutPreset.boardOnLeft,
+      );
+
+    await tester.pumpWidget(ChessNextApp(preferencesRepository: repository));
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const ValueKey('workspace-board-pane')), findsOneWidget);
+    expect(find.byKey(const ValueKey('workspace-middle-pane')), findsOneWidget);
+    expect(find.byKey(const ValueKey('workspace-right-pane')), findsOneWidget);
+    final boardLeft = tester
+        .getTopLeft(find.byKey(const ValueKey('workspace-board-pane')))
+        .dx;
+    final recordLeft = tester
+        .getTopLeft(find.byKey(const ValueKey('workspace-middle-pane')))
+        .dx;
+    final panelsLeft = tester
+        .getTopLeft(find.byKey(const ValueKey('workspace-right-pane')))
+        .dx;
+    expect(boardLeft, lessThan(recordLeft));
+    expect(recordLeft, lessThan(panelsLeft));
+    expect(find.byKey(const ValueKey('调整左栏宽度')), findsNothing);
+    expect(find.byKey(const ValueKey('调整棋盘宽度')), findsOneWidget);
+    final semantics = tester.ensureSemantics();
+    final splitter = tester.getSemantics(find.bySemanticsLabel('调整棋盘宽度'));
+    expect(
+      splitter.getSemanticsData().hasAction(SemanticsAction.increase),
+      isTrue,
+    );
+    final initialBoardWidth = tester
+        .getSize(find.byKey(const ValueKey('workspace-board-pane')))
+        .width;
+    await tester.drag(
+      find.byKey(const ValueKey('调整棋盘宽度')),
+      const Offset(40, 0),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      tester.getSize(find.byKey(const ValueKey('workspace-board-pane'))).width,
+      greaterThan(initialBoardWidth),
+    );
+    semantics.dispose();
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('settings apply and persist board layout preset', (tester) async {
+    tester.view.physicalSize = const Size(1440, 1000);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final repository = MemoryPreferencesRepository();
+
+    await tester.pumpWidget(ChessNextApp(preferencesRepository: repository));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('应用设置'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('board-layout-preset')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('棋盘靠左').last);
+    await tester.pumpAndSettle();
+    await tester.tap(find.widgetWithText(FilledButton, '应用设置'));
+    await tester.pumpAndSettle();
+
+    expect(repository.value?.boardLayoutPreset, BoardLayoutPreset.boardOnLeft);
+    expect(find.byKey(const ValueKey('workspace-middle-pane')), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 }

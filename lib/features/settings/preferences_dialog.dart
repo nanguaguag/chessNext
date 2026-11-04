@@ -42,6 +42,7 @@ class PreferencesDialog extends StatefulWidget {
 class _PreferencesDialogState extends State<PreferencesDialog> {
   final form = GlobalKey<FormState>();
   late ThemePreference theme;
+  late BoardLayoutPreset boardLayoutPreset;
   late int threads, hash, pv;
   late double seconds;
   @override
@@ -49,6 +50,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     super.initState();
     final value = widget.preferences.value;
     theme = value.theme;
+    boardLayoutPreset = value.boardLayoutPreset;
     threads = value.threads;
     hash = value.hashMb;
     pv = value.multiPv;
@@ -106,6 +108,27 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   ],
                   onChanged: (value) {
                     if (value != null) setState(() => theme = value);
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<BoardLayoutPreset>(
+                  key: const ValueKey('board-layout-preset'),
+                  initialValue: boardLayoutPreset,
+                  decoration: const InputDecoration(labelText: '棋盘布局'),
+                  items: const [
+                    DropdownMenuItem(
+                      value: BoardLayoutPreset.centered,
+                      child: Text('棋盘居中'),
+                    ),
+                    DropdownMenuItem(
+                      value: BoardLayoutPreset.boardOnLeft,
+                      child: Text('棋盘靠左'),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) {
+                      setState(() => boardLayoutPreset = value);
+                    }
                   },
                 ),
                 const SizedBox(height: 12),
@@ -233,6 +256,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   await widget.preferences.apply(
                     widget.preferences.value.copyWith(
                       theme: theme,
+                      boardLayoutPreset: boardLayoutPreset,
                       threads: threads,
                       hashMb: hash,
                       multiPv: pv,

@@ -301,3 +301,10 @@ E56材料已提交`a5df531 docs(audit): 验证多语言翻译与重载记忆`；
 E57已提交`d3176c6 docs(audit): 验证棋盘布局预设行为`，记录E57/E56的证据均在研究文档。此提交仅文档，无测试/analyze/macOS启动；本机锁屏令CUA原生应用无法读取。下一切片应检视并实现棋盘靠左布局，使主盘和着法区左置、其余侧栏右置，按宽屏验证，不只增加一个无效偏好控件。执行代码后根目录test/analyze并尽量解锁后复用现有PID86855；不要新开App。全站/语言仍未对齐。
 
 E54/E55文档审计分别提交：`149a153 docs(audit): 验证显示语言切换行为`、`2ee7dc9 docs(audit): 补充谱库来源设置证据`、`649d8fa docs(audit): 验证谱库来源切换保持`、`a446786 docs(audit): 记录大师谱面板与筛选入口`。`git status --short`为空，`git diff --check`通过。此轮未运行测试/analyze/runner，故没有产生新棋盘进程。`pgrep -fal 'chessNext|flutter_tools.snapshot run'`确认既有`flutter run -d macos` PID86855及App PID87104仍在；没有新chessNext.app。下一步：在不提交谱库查询的前提下继续审计站点设置/在线查询的触发边界；然后继续盘点并实现完整F27本地化，持续推进到登录外矩阵差距收敛。
+## 2026-11-04 / M4-38 / F27,B25 棋盘布局预设
+
+根据E57和ADR-073，新增默认居中的“棋盘居中/棋盘靠左”本机偏好。靠左宽屏三栏为棋盘、记录/操作、右侧面板；棋盘宽度可以鼠标拖动/方向键/读屏Slider调整，并有重置。项目范围508–556dp、仅≥1280dp采用该列序，是P，不代表源站几何；源站只在1280×720观察。偏好旧字段默认值和初始化期间用户编辑合并已覆盖。
+
+本轮实际验证：定向`flutter test test/application/preferences_controller_test.dart test/widgets/resizable_workspace_test.dart --reporter expanded`10/10；根`flutter test --reporter compact`514通过/5跳过（官方Pikafish/NNUE未配置）；`flutter analyze --no-pub`无问题；`git diff --check`通过。`flutter run -d macos --no-pub` Build/Sync成功，VM `127.0.0.1:49754`，Flutter报告`open returned 1`；Mac锁屏导致不能置前或人工验收。只启动一个新的Debug runner会话，供后续复用；根测试不启动App。不要重复`flutter run`，先复用会话/核对进程；会话号由Codex工具维护，VM服务URL仅本地临时。
+
+当前源码与研究文档待单独功能commit，见`git status`。紧接着继续F27：先盘点真实用户可见字符串和本地化架构，再准备简中/英语完整资源垂直切片；同时不停止审计全站剩余设置、在线可替换后端范围。macOS锁屏是人工现场验收阻碍；进程及会话以实时ps为准。

@@ -782,3 +782,12 @@ E56提交`a5df531`。最终`git status --short`为空；`pgrep -fal 'chessNext|f
 临时标签7默认居中；显示设置选择“棋盘靠左”后回主界面，截图见棋盘+着法移至左侧、引擎/云库右置，AX splitter只见棋盘宽39；选“棋盘居中”后恢复左着法/中央大棋盘/右侧面板，AX 22/70/55/55。随后关闭标签，原标签1未动。验证只覆盖1280×720，断点/重启持久化U。更新E57及F27/F20矩阵/缺口/交互/待办/追溯/交接；无代码，无测试/analyze/runner。
 
 E57研究文档提交`d3176c6`。无新增应用实例。待核`git status`；后续接着分析棋盘靠左的列布局并实现对应的本机显示偏好，按组件、根测试、analyze和macOS runner复用验收。
+## 2026-11-04 / M4-38 / F27,B25 棋盘布局预设
+
+按E57和ADR-073增加`BoardLayoutPreset`、旧字段兼容、偏好异步读取期间编辑合并、设置弹窗选择和宽屏靠左布局。棋盘/记录操作/右侧栏重排，提供棋盘宽度拖动、方向键、Slider语义和重置；尺寸与断点明确记为项目P，不映射为站点算法。测试新增偏好JSON/异步merge及布局UI/端到端持久化覆盖。
+
+专项`flutter test test/application/preferences_controller_test.dart test/widgets/resizable_workspace_test.dart --reporter expanded`10/10；根`flutter test --reporter compact`514通过/5跳过（缺官方Pikafish/NNUE环境）；`flutter analyze --no-pub`无问题；`git diff --check`通过。全根套件的flutter_tester没有创建chessNext.app。MacOS `flutter run -d macos --no-pub` build/sync成功，PID2479，VM `127.0.0.1:49754`；Flutter输出`Failed to foreground app; open returned 1`。CUA确认Mac锁屏，故人工窗口验收not verified。
+
+此前尝试向旧runner app PID87104发`SIGUSR1`后，旧runner/app消失；不确定此信号是否导致退出，因此没有再次发送信号。随后确认没有旧App实例后仅启动一次新runner会话2427，运行实例PID2479。应保留该会话复用；不要重复启动flutter run。此前仅凭Shell列PID推断可发送信号并不充分，今后优先用可交互runner stdin热重载（确认会话仍活跃）或仅build；系统锁屏时不要继续尝试CUA视觉操作。
+
+本次改动涉及lib/app.dart、application/app_preferences.dart、preferences_controller.dart、features/settings/preferences_dialog.dart、features/workspace/resizable_workspace.dart及两组测试；ADR-073、矩阵/缺口/交互、BACKLOG/TRACEABILITY、DESIGN_SYSTEM、IMPLEMENTED_MODULES、上下文待提交。下一步核git diff/status，单独中文Conventional Commit；随后继续F27完整本地化架构盘点和其他全站设置审计，不停止于M4-38。登录后功能除外，B24在线服务仍在自建可替换后端总范围。

@@ -100,3 +100,5 @@ M4-03 / ADR-041：ImageClipboard与TextClipboard分离，接收已有PngImage及
 M4-04 / ADR-042：BoardGifSnapshot冻结根到当前所选线路末端、方向和显示偏好，最多64帧，超限不截断。BoardGifDialog逐帧原创BoardSurface渲染并在后台Isolate用image 4.12.0编码；首末帧停留替代对应步时，预览缓存后交独立GifFileExporter。macOS chooser后经RecordFileWriter.writeGifAtomic，12MiB/64帧/1024边长和0.2–30秒边界检查、ImageIO逐帧解码、Foundation atomic；其它平台不注入保存适配器。系统分享、长线路分段/其它平台未实现。
 
 M4-36 / ADR-071：_BoardPage通过显示模式PopupMenu切换普通分析工作区/进程内浮动工作区。浮动态隐藏AppBar与侧栏，居中棋盘，底栏提供引擎状态/设置/悔棋/新局/翻转/编辑/退出。该展示状态不持久化且不改文档与搜索；不调用原生窗口置顶API，不表达独立窗口能力。测试覆盖进入、必要底栏、退出回常规布局；macOS热重载通过，CUA点击未能执行，人工macOS交互not verified。
+
+M4-38 / ADR-073：`AppPreferences.boardLayoutPreset`保存居中/靠左选择，旧偏好缺字段回默认居中；PreferencesController处理初始化期间异步读取与用户修改合并。PreferencesDialog应用时保存本机布局选择。ResizableWorkspace在宽屏三栏分支调整列序并提供棋盘宽度拖动、键盘及Slider无障碍增减、重置；窄窗继续旧布局。靠左最小/最大宽度属于项目P；不改变棋局或引擎。根测试/分析通过；macOS已Build/Sync，但锁屏无法置前，人工视觉not verified。

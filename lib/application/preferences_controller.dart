@@ -109,6 +109,9 @@ class PreferencesController extends ChangeNotifier {
                 ? previous.arrowHead
                 : null,
             theme: _edited.contains('theme') ? previous.theme : null,
+            boardLayoutPreset: _edited.contains('boardLayoutPreset')
+                ? previous.boardLayoutPreset
+                : null,
             animationSpeed: _edited.contains('animationSpeed')
                 ? previous.animationSpeed
                 : null,
@@ -273,6 +276,8 @@ class PreferencesController extends ChangeNotifier {
 
   Future<void> setTheme(ThemePreference theme) =>
       apply(value.copyWith(theme: theme));
+  Future<void> setBoardLayoutPreset(BoardLayoutPreset preset) =>
+      apply(value.copyWith(boardLayoutPreset: preset));
   Future<void> setAnimationSpeed(AnimationSpeed speed) =>
       apply(value.copyWith(animationSpeed: speed));
   Future<void> setPlayMoveSound(bool enabled) =>
@@ -413,6 +418,9 @@ class PreferencesController extends ChangeNotifier {
       _edited.add('arrowHead');
     }
     if (next.theme != value.theme) _edited.add('theme');
+    if (next.boardLayoutPreset != value.boardLayoutPreset) {
+      _edited.add('boardLayoutPreset');
+    }
     if (next.animationSpeed != value.animationSpeed) {
       _edited.add('animationSpeed');
     }

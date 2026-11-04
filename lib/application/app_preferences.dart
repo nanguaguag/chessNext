@@ -14,6 +14,8 @@ bool _mapEquals<K, V>(Map<K, V> a, Map<K, V> b) {
 
 enum ThemePreference { system, light, dark }
 
+enum BoardLayoutPreset { centered, boardOnLeft }
+
 /// Project timing choices; the reference site does not expose numeric durations.
 enum AnimationSpeed { off, fast, standard, slow }
 
@@ -66,6 +68,7 @@ extension TextSizeScale on TextSizePreference {
 final class AppPreferences {
   AppPreferences({
     this.theme = ThemePreference.system,
+    this.boardLayoutPreset = BoardLayoutPreset.centered,
     this.animationSpeed = AnimationSpeed.standard,
     this.playMoveSound = true,
     this.playSelectionSound = true,
@@ -173,6 +176,7 @@ final class AppPreferences {
     }
   }
   final ThemePreference theme;
+  final BoardLayoutPreset boardLayoutPreset;
   final AnimationSpeed animationSpeed;
   final bool playMoveSound;
   final bool playSelectionSound;
@@ -216,6 +220,7 @@ final class AppPreferences {
   final List<SidePanel> visibleSidePanels;
   AppPreferences copyWith({
     ThemePreference? theme,
+    BoardLayoutPreset? boardLayoutPreset,
     AnimationSpeed? animationSpeed,
     bool? playMoveSound,
     bool? playSelectionSound,
@@ -261,6 +266,7 @@ final class AppPreferences {
     List<SidePanel>? visibleSidePanels,
   }) => AppPreferences(
     theme: theme ?? this.theme,
+    boardLayoutPreset: boardLayoutPreset ?? this.boardLayoutPreset,
     animationSpeed: animationSpeed ?? this.animationSpeed,
     playMoveSound: playMoveSound ?? this.playMoveSound,
     playSelectionSound: playSelectionSound ?? this.playSelectionSound,
@@ -317,6 +323,8 @@ final class AppPreferences {
     if (lastMoveMarker != LastMoveMarkerStyle.halo)
       'lastMoveMarker': lastMoveMarker.name,
     'theme': theme.name,
+    if (boardLayoutPreset != BoardLayoutPreset.centered)
+      'boardLayoutPreset': boardLayoutPreset.name,
     if (animationSpeed != AnimationSpeed.standard)
       'animationSpeed': animationSpeed.name,
     if (!playMoveSound) 'playMoveSound': false,
@@ -406,6 +414,8 @@ final class AppPreferences {
             json['showAnalysisArrows'] is! bool) ||
         (json.containsKey('arrowHead') && json['arrowHead'] is! String) ||
         json['theme'] is! String ||
+        (json.containsKey('boardLayoutPreset') &&
+            json['boardLayoutPreset'] is! String) ||
         (json.containsKey('textSize') && json['textSize'] is! String) ||
         (json.containsKey('animationSpeed') &&
             json['animationSpeed'] is! String) ||
@@ -503,6 +513,9 @@ final class AppPreferences {
           json['arrowHead'] as String? ?? 'standard',
         ),
         theme: ThemePreference.values.byName(json['theme'] as String),
+        boardLayoutPreset: BoardLayoutPreset.values.byName(
+          json['boardLayoutPreset'] as String? ?? 'centered',
+        ),
         animationSpeed: AnimationSpeed.values.byName(
           json['animationSpeed'] as String? ?? 'standard',
         ),
@@ -632,6 +645,7 @@ final class AppPreferences {
       showAnalysisArrows == other.showAnalysisArrows &&
       arrowHead == other.arrowHead &&
       theme == other.theme &&
+      boardLayoutPreset == other.boardLayoutPreset &&
       animationSpeed == other.animationSpeed &&
       playMoveSound == other.playMoveSound &&
       playSelectionSound == other.playSelectionSound &&
@@ -678,6 +692,7 @@ final class AppPreferences {
     showAnalysisArrows,
     arrowHead,
     theme,
+    boardLayoutPreset,
     animationSpeed,
     playMoveSound,
     playSelectionSound,

@@ -54,15 +54,22 @@ void main() {
     () {
       final value = AppPreferences(
         theme: ThemePreference.dark,
+        boardLayoutPreset: BoardLayoutPreset.boardOnLeft,
         threads: 4,
         hashMb: 128,
         multiPv: 5,
         thinkTimeMs: 3000,
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
+      final legacy = AppPreferences().toJson()..remove('boardLayoutPreset');
+      expect(
+        AppPreferences.fromJson(legacy).boardLayoutPreset,
+        BoardLayoutPreset.centered,
+      );
       for (final entry in {
         'schema': 2,
         'theme': 'unknown',
+        'boardLayoutPreset': 'unknown',
         'threads': 0,
         'multiPv': 257,
         'thinkTimeMs': 49,
@@ -100,6 +107,10 @@ void main() {
         visibleSidePanels: const [SidePanel.play, SidePanel.review],
       );
       expect(AppPreferences.fromJson(hidden.toJson()), hidden);
+      final boardOnLeft = AppPreferences().copyWith(
+        boardLayoutPreset: BoardLayoutPreset.boardOnLeft,
+      );
+      expect(AppPreferences.fromJson(boardOnLeft.toJson()), boardOnLeft);
       expect(
         () => AppPreferences(
           visibleSidePanels: const [SidePanel.play, SidePanel.play],
@@ -137,6 +148,9 @@ void main() {
       repository.readGate = Completer<void>();
       final reading = preferences.initialize();
       final choosing = preferences.setTheme(ThemePreference.light);
+      final choosingLayout = preferences.setBoardLayoutPreset(
+        BoardLayoutPreset.boardOnLeft,
+      );
       final choosingPanels = preferences.setSidePanelOrder(const [
         SidePanel.candidates,
         SidePanel.play,
@@ -166,6 +180,7 @@ void main() {
       repository.readGate!.complete();
       await reading;
       await choosing;
+      await choosingLayout;
       await choosingPanels;
       await choosingPlayback;
       await hidingMoveList;
@@ -177,6 +192,10 @@ void main() {
       await exiting;
       await preferences.flush();
       expect(preferences.value.theme, ThemePreference.light);
+      expect(
+        preferences.value.boardLayoutPreset,
+        BoardLayoutPreset.boardOnLeft,
+      );
       expect(preferences.value.sidePanelOrder.first, SidePanel.candidates);
       expect(preferences.value.recordPlaybackIntervalMs, 500);
       expect(preferences.value.showMoveList, isFalse);

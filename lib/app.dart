@@ -1476,6 +1476,7 @@ class _BoardPage extends StatelessWidget {
                 padding: const EdgeInsets.all(24),
                 child: threeColumn
                     ? ResizableWorkspace(
+                        layoutPreset: preferences.value.boardLayoutPreset,
                         leftTop: Column(
                           children: [workspaceStatus, panelUpper],
                         ),

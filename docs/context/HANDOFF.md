@@ -12,6 +12,14 @@ E50操作设置本轮项目行为已补播放、棋谱栏/播放按钮显隐、�
 
 下一步：E52提交`bed1456`，E53及矩阵/待办/交接提交`a308cb0`，SESSION_LOG校订提交`e57891b`。按现场行为实现本机布局/显示模式，然后根测试、analyze、复用唯一macOS runner；继续矩阵内其它功能、F27翻译、自建在线后端/部署方案及全站差距。相应技能：`feature-audit`审计、`flutter-feature`实现、`quality-gate`验收、`session-handoff`交接；按当前子任务读取，不需一次读完。
 
+## 2026-11-04 / M4-36 / F19,B26 悬浮工作区
+
+已提交`5048330 feat(workspace): 增加棋盘悬浮工作区`：AppBar显示模式菜单切换分析/悬浮窗。悬浮态以紧凑居中棋盘代替常规侧栏，底部状态/设置/悔棋/更多菜单；更多可新局、翻转、编辑、退出回常规布局。ADR-071，状态不持久化，不改变棋谱/分析。参考E52实际验证了应用内页面切换与退出，原生置顶/独立窗口仍U。
+
+专项`flutter test test/widgets/floating_workspace_test.dart --reporter expanded`通过；根`flutter test --reporter compact`510通过/5跳过（官方Pikafish/NNUE需配置）；`flutter analyze --no-pub`No issues found。macOS沿PID86855现有runner热重载成功；App PID87104唯一。人工点击尝试CUA报`noWindowsAvailable`，仅截屏确认原模式入口；悬浮态macOS交互未验。热重载未新开实例。
+
+下一步继续B26实装四分隔条及重置，保留测值U边界；每片根测试/analyze并复用唯一macOS runner，不停止全站推进。
+
 ## 2026-11-04 / B25 持续交付：M4-31侧栏面板显隐
 
 用户授权持续推进至登录相关部分外全部可确认功能/设置，不在一项功能后停。在线能力仍保留范围，采用可替换自建后端并提供部署方案；离线优先仅为推进顺序。许可决策按要求暂缓，无代理授权。

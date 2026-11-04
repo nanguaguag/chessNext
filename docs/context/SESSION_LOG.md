@@ -740,3 +740,11 @@ M4-31 F20侧栏显隐：新增可空`visibleSidePanels`集合，拒绝重复/未
 在独立临时访客IAB标签（`https://xiangqiai.com/#/`，1280×720）继续操作，用户原设置标签未触碰。左侧上下分区AX 55→58；继续向上拖到边缘见25，往下拖至视口底部附近见72（72高值端是否完整饱和仍U）。右侧引擎/云库上下分区55→58，向上边缘见25、向下见75；继续拖到屏幕下沿无数值变化。点击“重置布局”，两个分区均回55。临时标签关闭，IAB仅保留用户原`#/settings`标签。
 
 据此更新E53、F20矩阵/缺口、B26待办和CURRENT_STATE/HANDOFF。`git diff --check`通过；文档提交`a308cb0`，SESSION_LOG校订`e57891b`。无代码变更，因此本轮没有运行测试/analyze，也没有重启macOS App。随后按证据实现F19/F20本机功能，遵守每功能根测试+analyze+唯一runner实际macOS运行+单独中文commit。全站仍未对齐。
+
+# 2026-11-04 / M4-36 / F19,B26 本机悬浮工作区
+
+按E52已验证行为实现本机App内分析/悬浮工作区切换（ADR-071）：普通AppBar显示模式菜单；悬浮态隐藏常规AppBar/侧栏，居中显示棋盘，底部提供引擎状态、设置、悔棋与更多菜单；菜单含新局/翻转/编辑/退出。退出恢复普通工作区。状态仅当前进程内，不持久化，不改变棋谱/引擎分析，不实现OS置顶或独立窗口。
+
+新增`test/widgets/floating_workspace_test.dart`覆盖标准→悬浮、底栏存在、更多/退出和返回标准工作区。专项`flutter test test/widgets/floating_workspace_test.dart --reporter expanded`通过；根`flutter test --reporter compact`510通过/5跳过（官方Pikafish/NNUE需配置）；`flutter analyze --no-pub`无问题。使用已运行PID86855 runner键入`r`热重载成功：Reloaded 2 of 1735 libraries in 6.3s，现有App PID87104。CUA截图确认当前AppBar出现显示模式入口；尝试真实点击时工具报`noWindowsAvailable`，悬浮态macOS交互未验，未重启/未新开实例。
+
+更新ADR-071、CURRENT_STATE、HANDOFF、FEATURE_MATRIX/GAPS、BACKLOG、TRACEABILITY、IMPLEMENTED_MODULES。功能代码/研究提交`5048330 feat(workspace): 增加棋盘悬浮工作区`；状态交接补记该提交。B26后续继续本机四分隔条与重置，不因本片停止全站推进；原生窗口、全值域、键盘/触屏及全站其余差距保持开放。

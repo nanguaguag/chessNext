@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 import '../../application/piece_skin_library_controller.dart';
 import '../../ports/piece_images.dart';
 import '../../ports/piece_skin_library.dart';
@@ -61,25 +62,26 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
   }
 
   Future<String?> _name(BuildContext context, {String initial = ''}) async {
+    final l10n = AppLocalizations.of(context);
     final controller = TextEditingController(text: initial);
     return showDialog<String>(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text(initial.isEmpty ? '新建棋子皮肤' : '重命名棋子皮肤'),
+        title: Text(initial.isEmpty ? l10n.newPieceSkin : l10n.renamePieceSkin),
         content: TextField(
           controller: controller,
           autofocus: true,
           maxLength: 32,
-          decoration: const InputDecoration(labelText: '名称'),
+          decoration: InputDecoration(labelText: l10n.pieceSkinName),
         ),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('取消'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, controller.text),
-            child: const Text('保存'),
+            child: Text(l10n.save),
           ),
         ],
       ),
@@ -89,356 +91,369 @@ class _PieceSkinLibraryDialogState extends State<PieceSkinLibraryDialog> {
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: widget.library,
-    builder: (context, _) => AlertDialog(
-      title: const Text('棋子皮肤库'),
-      content: SizedBox(
-        width: 440,
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (widget.catalog != null) ...[
-                TextField(
-                  controller: _server,
-                  decoration: InputDecoration(
-                    labelText: '自建目录服务地址',
-                    hintText: 'https://skins.example.com',
-                    helperText: '远程需HTTPS；localhost可用于本机部署。',
-                    suffixIcon: IconButton(
-                      tooltip: '保存服务地址并连接',
-                      onPressed: _remoteLoading ? null : _saveEndpoint,
-                      icon: const Icon(Icons.cloud_sync_outlined),
-                    ),
-                  ),
-                  keyboardType: TextInputType.url,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _saveEndpoint(),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: DropdownButtonFormField<PublicPieceSkinSort>(
-                        initialValue: _remoteSort,
-                        decoration: const InputDecoration(labelText: '在线排序'),
-                        items: const [
-                          DropdownMenuItem(
-                            value: PublicPieceSkinSort.defaultOrder,
-                            child: Text('默认排序'),
-                          ),
-                          DropdownMenuItem(
-                            value: PublicPieceSkinSort.likes,
-                            child: Text('点赞最多'),
-                          ),
-                          DropdownMenuItem(
-                            value: PublicPieceSkinSort.name,
-                            child: Text('按名称'),
-                          ),
-                          DropdownMenuItem(
-                            value: PublicPieceSkinSort.author,
-                            child: Text('按作者'),
-                          ),
-                          DropdownMenuItem(
-                            value: PublicPieceSkinSort.recent,
-                            child: Text('最新导入'),
-                          ),
-                        ],
-                        onChanged: (value) {
-                          setState(
-                            () => _remoteSort =
-                                value ?? PublicPieceSkinSort.defaultOrder,
-                          );
-                          _loadRemote();
-                        },
+    builder: (context, _) {
+      final l10n = AppLocalizations.of(context);
+      String skinName(PieceSkin skin) => skin == PieceSkin.roundSeal
+          ? l10n.roundSealPieceSkin
+          : l10n.squareInkPieceSkin;
+      return AlertDialog(
+        title: Text(l10n.pieceSkinLibraryTitle),
+        content: SizedBox(
+          width: 440,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (widget.catalog != null) ...[
+                  TextField(
+                    controller: _server,
+                    decoration: InputDecoration(
+                      labelText: '自建目录服务地址',
+                      hintText: 'https://skins.example.com',
+                      helperText: '远程需HTTPS；localhost可用于本机部署。',
+                      suffixIcon: IconButton(
+                        tooltip: '保存服务地址并连接',
+                        onPressed: _remoteLoading ? null : _saveEndpoint,
+                        icon: const Icon(Icons.cloud_sync_outlined),
                       ),
                     ),
-                    IconButton(
-                      tooltip: '刷新在线目录',
-                      onPressed: _remoteLoading ? null : _loadRemote,
-                      icon: const Icon(Icons.refresh),
+                    keyboardType: TextInputType.url,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _saveEndpoint(),
+                  ),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: DropdownButtonFormField<PublicPieceSkinSort>(
+                          initialValue: _remoteSort,
+                          decoration: const InputDecoration(labelText: '在线排序'),
+                          items: const [
+                            DropdownMenuItem(
+                              value: PublicPieceSkinSort.defaultOrder,
+                              child: Text('默认排序'),
+                            ),
+                            DropdownMenuItem(
+                              value: PublicPieceSkinSort.likes,
+                              child: Text('点赞最多'),
+                            ),
+                            DropdownMenuItem(
+                              value: PublicPieceSkinSort.name,
+                              child: Text('按名称'),
+                            ),
+                            DropdownMenuItem(
+                              value: PublicPieceSkinSort.author,
+                              child: Text('按作者'),
+                            ),
+                            DropdownMenuItem(
+                              value: PublicPieceSkinSort.recent,
+                              child: Text('最新导入'),
+                            ),
+                          ],
+                          onChanged: (value) {
+                            setState(
+                              () => _remoteSort =
+                                  value ?? PublicPieceSkinSort.defaultOrder,
+                            );
+                            _loadRemote();
+                          },
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: '刷新在线目录',
+                        onPressed: _remoteLoading ? null : _loadRemote,
+                        icon: const Icon(Icons.refresh),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Text('$_remoteTotal 项'),
+                      IconButton(
+                        tooltip: '上一页',
+                        onPressed: _remotePage <= 1 || _remoteLoading
+                            ? null
+                            : () {
+                                setState(() => _remotePage--);
+                                _loadRemote();
+                              },
+                        icon: const Icon(Icons.chevron_left),
+                      ),
+                      Text('$_remotePage'),
+                      IconButton(
+                        tooltip: '下一页',
+                        onPressed:
+                            _remotePage * 24 >= _remoteTotal || _remoteLoading
+                            ? null
+                            : () {
+                                setState(() => _remotePage++);
+                                _loadRemote();
+                              },
+                        icon: const Icon(Icons.chevron_right),
+                      ),
+                    ],
+                  ),
+                  if (_remoteLoading) const LinearProgressIndicator(),
+                  if (_remoteCacheStatus != null)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        _remoteCacheStatus!,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
-                  ],
-                ),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    Text('$_remoteTotal 项'),
-                    IconButton(
-                      tooltip: '上一页',
-                      onPressed: _remotePage <= 1 || _remoteLoading
-                          ? null
-                          : () {
-                              setState(() => _remotePage--);
-                              _loadRemote();
-                            },
-                      icon: const Icon(Icons.chevron_left),
+                  if (_remoteError != null)
+                    Text(
+                      _remoteError!,
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.error,
+                      ),
                     ),
-                    Text('$_remotePage'),
-                    IconButton(
-                      tooltip: '下一页',
-                      onPressed:
-                          _remotePage * 24 >= _remoteTotal || _remoteLoading
-                          ? null
-                          : () {
-                              setState(() => _remotePage++);
-                              _loadRemote();
-                            },
-                      icon: const Icon(Icons.chevron_right),
+                  if (_remoteItems.isNotEmpty)
+                    SizedBox(
+                      height: 220,
+                      child: ListView(
+                        shrinkWrap: true,
+                        children: [
+                          for (final item in _remoteItems)
+                            Card(
+                              child: ListTile(
+                                leading: const Icon(Icons.cloud_outlined),
+                                title: Text(item.name),
+                                subtitle: Text(
+                                  '${item.author} · ♥ ${item.likes}\n许可：${item.license}\n署名：${item.attribution.isEmpty ? '无额外署名' : item.attribution}',
+                                ),
+                                isThreeLine: true,
+                                onTap: () => _showRemoteDetails(context, item),
+                              ),
+                            ),
+                        ],
+                      ),
                     ),
-                  ],
-                ),
-                if (_remoteLoading) const LinearProgressIndicator(),
-                if (_remoteCacheStatus != null)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      _remoteCacheStatus!,
-                      style: Theme.of(context).textTheme.bodySmall,
+                  const Divider(),
+                ],
+                TextField(
+                  controller: _search,
+                  textInputAction: TextInputAction.search,
+                  decoration: InputDecoration(
+                    labelText: l10n.searchLocalPieceSkins,
+                    suffixIcon: IconButton(
+                      tooltip: l10n.clearSearch,
+                      onPressed: () {
+                        _search.clear();
+                        setState(() => _query = '');
+                        _remotePage = 1;
+                        _loadRemote();
+                      },
+                      icon: const Icon(Icons.clear),
                     ),
                   ),
-                if (_remoteError != null)
+                  onSubmitted: (value) {
+                    setState(() {
+                      _query = value.trim();
+                      _remotePage = 1;
+                    });
+                    _loadRemote();
+                  },
+                ),
+                const SizedBox(height: 8),
+                DropdownButtonFormField<_SkinSort>(
+                  initialValue: _sort,
+                  decoration: InputDecoration(labelText: l10n.sortLocalSkins),
+                  items: [
+                    DropdownMenuItem(
+                      value: _SkinSort.defaultOrder,
+                      child: Text(l10n.sortDefault),
+                    ),
+                    DropdownMenuItem(
+                      value: _SkinSort.name,
+                      child: Text(l10n.sortByName),
+                    ),
+                    DropdownMenuItem(
+                      value: _SkinSort.newest,
+                      child: Text(l10n.recentlyCreated),
+                    ),
+                  ],
+                  onChanged: (value) =>
+                      setState(() => _sort = value ?? _SkinSort.defaultOrder),
+                ),
+                if (widget.library.error != null)
                   Text(
-                    _remoteError!,
+                    widget.library.error!,
                     style: TextStyle(
                       color: Theme.of(context).colorScheme.error,
                     ),
                   ),
-                if (_remoteItems.isNotEmpty)
-                  SizedBox(
-                    height: 220,
-                    child: ListView(
-                      shrinkWrap: true,
-                      children: [
-                        for (final item in _remoteItems)
-                          Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.cloud_outlined),
-                              title: Text(item.name),
-                              subtitle: Text(
-                                '${item.author} · ♥ ${item.likes}\n许可：${item.license}\n署名：${item.attribution.isEmpty ? '无额外署名' : item.attribution}',
-                              ),
-                              isThreeLine: true,
-                              onTap: () => _showRemoteDetails(context, item),
+                if (widget.library.loading) const LinearProgressIndicator(),
+                ListView(
+                  shrinkWrap: true,
+                  physics: const NeverScrollableScrollPhysics(),
+                  children: [
+                    for (final skin in PieceSkin.values.where(
+                      (skin) =>
+                          _query.isEmpty || skinName(skin).contains(_query),
+                    ))
+                      ListTile(
+                        leading: const Icon(Icons.style_outlined),
+                        title: Text(skinName(skin)),
+                        subtitle: Text(l10n.builtInStyle),
+                        selected:
+                            widget
+                                .library
+                                .preferences
+                                .value
+                                .selectedPieceSkinId ==
+                            skin.name,
+                        onTap: () async {
+                          await widget.library.select(skin.name);
+                          if (context.mounted) Navigator.pop(context);
+                        },
+                        trailing: const Icon(Icons.lock_outline),
+                      ),
+                    for (final profile in _visibleProfiles())
+                      ListTile(
+                        leading: Checkbox(
+                          value: _exportSelection.contains(profile.id),
+                          onChanged: (selected) => setState(() {
+                            if (selected == true) {
+                              _exportSelection.add(profile.id);
+                            } else {
+                              _exportSelection.remove(profile.id);
+                            }
+                          }),
+                        ),
+                        title: Text(profile.name),
+                        subtitle: Text(
+                          l10n.basedOnPieceSkin(skinName(profile.baseSkin)),
+                        ),
+                        selected:
+                            widget
+                                .library
+                                .preferences
+                                .value
+                                .selectedPieceSkinId ==
+                            profile.id,
+                        onTap: () async {
+                          await widget.library.select(profile.id);
+                          if (context.mounted) Navigator.pop(context);
+                        },
+                        trailing: Wrap(
+                          spacing: 0,
+                          children: [
+                            IconButton(
+                              tooltip: l10n.exportNamedPieceSkin(profile.name),
+                              onPressed:
+                                  widget.library.loading ||
+                                      widget.exporter == null
+                                  ? null
+                                  : () => _export(context, profile),
+                              icon: const Icon(Icons.download_outlined),
                             ),
-                          ),
-                      ],
-                    ),
-                  ),
-                const Divider(),
-              ],
-              TextField(
-                controller: _search,
-                textInputAction: TextInputAction.search,
-                decoration: InputDecoration(
-                  labelText: '搜索本机皮肤',
-                  suffixIcon: IconButton(
-                    tooltip: '清除搜索',
-                    onPressed: () {
-                      _search.clear();
-                      setState(() => _query = '');
-                      _remotePage = 1;
-                      _loadRemote();
-                    },
-                    icon: const Icon(Icons.clear),
-                  ),
-                ),
-                onSubmitted: (value) {
-                  setState(() {
-                    _query = value.trim();
-                    _remotePage = 1;
-                  });
-                  _loadRemote();
-                },
-              ),
-              const SizedBox(height: 8),
-              DropdownButtonFormField<_SkinSort>(
-                initialValue: _sort,
-                decoration: const InputDecoration(labelText: '排序'),
-                items: const [
-                  DropdownMenuItem(
-                    value: _SkinSort.defaultOrder,
-                    child: Text('默认排序'),
-                  ),
-                  DropdownMenuItem(value: _SkinSort.name, child: Text('按名称')),
-                  DropdownMenuItem(
-                    value: _SkinSort.newest,
-                    child: Text('最近创建'),
-                  ),
-                ],
-                onChanged: (value) =>
-                    setState(() => _sort = value ?? _SkinSort.defaultOrder),
-              ),
-              if (widget.library.error != null)
-                Text(
-                  widget.library.error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-              if (widget.library.loading) const LinearProgressIndicator(),
-              ListView(
-                shrinkWrap: true,
-                physics: const NeverScrollableScrollPhysics(),
-                children: [
-                  for (final skin in PieceSkin.values.where(
-                    (skin) =>
-                        _query.isEmpty ||
-                        (skin == PieceSkin.roundSeal ? '传统圆章' : '方章墨韵')
-                            .contains(_query),
-                  ))
-                    ListTile(
-                      leading: const Icon(Icons.style_outlined),
-                      title: Text(
-                        skin == PieceSkin.roundSeal ? '传统圆章' : '方章墨韵',
-                      ),
-                      subtitle: const Text('内置样式'),
-                      selected:
-                          widget
-                              .library
-                              .preferences
-                              .value
-                              .selectedPieceSkinId ==
-                          skin.name,
-                      onTap: () async {
-                        await widget.library.select(skin.name);
-                        if (context.mounted) Navigator.pop(context);
-                      },
-                      trailing: const Icon(Icons.lock_outline),
-                    ),
-                  for (final profile in _visibleProfiles())
-                    ListTile(
-                      leading: Checkbox(
-                        value: _exportSelection.contains(profile.id),
-                        onChanged: (selected) => setState(() {
-                          if (selected == true) {
-                            _exportSelection.add(profile.id);
-                          } else {
-                            _exportSelection.remove(profile.id);
-                          }
-                        }),
-                      ),
-                      title: Text(profile.name),
-                      subtitle: Text(
-                        profile.baseSkin == PieceSkin.roundSeal
-                            ? '基于传统圆章'
-                            : '基于方章墨韵',
-                      ),
-                      selected:
-                          widget
-                              .library
-                              .preferences
-                              .value
-                              .selectedPieceSkinId ==
-                          profile.id,
-                      onTap: () async {
-                        await widget.library.select(profile.id);
-                        if (context.mounted) Navigator.pop(context);
-                      },
-                      trailing: Wrap(
-                        spacing: 0,
-                        children: [
-                          IconButton(
-                            tooltip: '导出${profile.name}',
-                            onPressed:
-                                widget.library.loading ||
-                                    widget.exporter == null
-                                ? null
-                                : () => _export(context, profile),
-                            icon: const Icon(Icons.download_outlined),
-                          ),
-                          IconButton(
-                            tooltip: '重命名${profile.name}',
-                            onPressed: widget.library.loading
-                                ? null
-                                : () async {
-                                    final name = await _name(
-                                      context,
-                                      initial: profile.name,
-                                    );
-                                    if (name != null) {
-                                      await widget.library.rename(
-                                        profile.id,
-                                        name,
+                            IconButton(
+                              tooltip: l10n.renameNamedPieceSkin(profile.name),
+                              onPressed: widget.library.loading
+                                  ? null
+                                  : () async {
+                                      final name = await _name(
+                                        context,
+                                        initial: profile.name,
                                       );
-                                    }
-                                  },
-                            icon: const Icon(Icons.edit_outlined),
-                          ),
-                          IconButton(
-                            tooltip: '删除${profile.name}',
-                            onPressed: widget.library.loading
-                                ? null
-                                : () async {
-                                    final ok = await showDialog<bool>(
-                                      context: context,
-                                      builder: (context) => AlertDialog(
-                                        title: Text('删除${profile.name}？'),
-                                        content: const Text('此皮肤的本机图片也会删除。'),
-                                        actions: [
-                                          TextButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, false),
-                                            child: const Text('取消'),
+                                      if (name != null) {
+                                        await widget.library.rename(
+                                          profile.id,
+                                          name,
+                                        );
+                                      }
+                                    },
+                              icon: const Icon(Icons.edit_outlined),
+                            ),
+                            IconButton(
+                              tooltip: l10n.deleteNamedPieceSkin(profile.name),
+                              onPressed: widget.library.loading
+                                  ? null
+                                  : () async {
+                                      final ok = await showDialog<bool>(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: Text(
+                                            l10n.confirmDeletePieceSkin(
+                                              profile.name,
+                                            ),
                                           ),
-                                          FilledButton(
-                                            onPressed: () =>
-                                                Navigator.pop(context, true),
-                                            child: const Text('删除'),
+                                          content: Text(
+                                            l10n.pieceSkinImagesWillDelete,
                                           ),
-                                        ],
-                                      ),
-                                    );
-                                    if (ok == true) {
-                                      await widget.library.delete(profile.id);
-                                    }
-                                  },
-                            icon: const Icon(Icons.delete_outline),
-                          ),
-                        ],
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, false),
+                                              child: Text(l10n.cancel),
+                                            ),
+                                            FilledButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context, true),
+                                              child: Text(l10n.delete),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                      if (ok == true) {
+                                        await widget.library.delete(profile.id);
+                                      }
+                                    },
+                              icon: const Icon(Icons.delete_outline),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          if (widget.exporter != null)
+            TextButton.icon(
+              onPressed: widget.library.loading || _exportSelection.length < 2
+                  ? null
+                  : () => _exportCollection(context),
+              icon: const Icon(Icons.archive_outlined),
+              label: Text(
+                l10n.selectedPieceSkinExportCount(_exportSelection.length),
               ),
-            ],
-          ),
-        ),
-      ),
-      actions: [
-        if (widget.exporter != null)
+            ),
           TextButton.icon(
-            onPressed: widget.library.loading || _exportSelection.length < 2
+            onPressed: widget.library.loading || widget.picker == null
                 ? null
-                : () => _exportCollection(context),
+                : () => _import(context),
             icon: const Icon(Icons.archive_outlined),
-            label: Text('导出所选 ${_exportSelection.length} 套'),
+            label: Text(l10n.importZip),
           ),
-        TextButton.icon(
-          onPressed: widget.library.loading || widget.picker == null
-              ? null
-              : () => _import(context),
-          icon: const Icon(Icons.archive_outlined),
-          label: const Text('导入ZIP'),
-        ),
-        TextButton.icon(
-          onPressed: widget.library.loading || widget.folderPicker == null
-              ? null
-              : () => _importFolder(context),
-          icon: const Icon(Icons.folder_open_outlined),
-          label: const Text('导入文件夹'),
-        ),
-        TextButton.icon(
-          onPressed: widget.library.loading
-              ? null
-              : () async {
-                  final name = await _name(context);
-                  if (name != null) await widget.library.create(name: name);
-                },
-          icon: const Icon(Icons.add),
-          label: const Text('从当前样式复制'),
-        ),
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('关闭'),
-        ),
-      ],
-    ),
+          TextButton.icon(
+            onPressed: widget.library.loading || widget.folderPicker == null
+                ? null
+                : () => _importFolder(context),
+            icon: const Icon(Icons.folder_open_outlined),
+            label: Text(l10n.importFolder),
+          ),
+          TextButton.icon(
+            onPressed: widget.library.loading
+                ? null
+                : () async {
+                    final name = await _name(context);
+                    if (name != null) await widget.library.create(name: name);
+                  },
+            icon: const Icon(Icons.add),
+            label: Text(l10n.copyCurrentStyle),
+          ),
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.close),
+          ),
+        ],
+      );
+    },
   );
 
   List<PieceSkinDefinition> _visibleProfiles() {

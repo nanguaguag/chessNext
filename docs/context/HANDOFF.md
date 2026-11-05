@@ -1,5 +1,11 @@
 # 当前交接（2026-11-06，Asia/Shanghai）
 
+## M4-94 / F27 本机棋子皮肤库界面ARB化（验收通过，待提交）
+
+本机管理项静态文案迁入zh/en；在线目录UI和控制器错误态另片继续。专项`flutter test --concurrency=1 test/widgets/piece_skin_library_localization_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`5/5；根测试636通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-94.log`；`flutter analyze --no-pub`、`git diff --check`通过。专项曾遇到旧MaterialApp缺本地化delegate及导出数量标签格式变化，已更新测试后复跑通过；analyze unused import已修复。根测试单tester且结束，无第二GUI。macOS复用PID50598 attach同步，热重启1822ms，脱离后仍唯一运行；无人工视觉验收。当前代码和文档待独立中文feature commit。
+
+继续本地化棋子皮肤库在线目录详情/许可/错误路径及其它设置子页，再持续推进全部登录外差距；F27和全站未完成。
+
 ## M4-93 / F27 音效编辑弹窗ARB化（已提交）
 
 音效选项弹窗静态文案、当前方案与自定义状态、皮肤联动名、格式/大小/时长限制、试听/导入/恢复和关闭操作均迁入zh/en ARB。音频控制器动态`error`仍中文；没有改文件选择、解码或播放行为。产品根Locale保持zh，不称F27完成。

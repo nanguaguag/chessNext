@@ -747,4 +747,76 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get audioSquareInkSkin => '方章墨韵';
+
+  @override
+  String get pieceSkinLibraryTitle => '棋子皮肤库';
+
+  @override
+  String get newPieceSkin => '新建棋子皮肤';
+
+  @override
+  String get renamePieceSkin => '重命名棋子皮肤';
+
+  @override
+  String get searchLocalPieceSkins => '搜索本机皮肤';
+
+  @override
+  String get clearSearch => '清除搜索';
+
+  @override
+  String get sortLocalSkins => '排序';
+
+  @override
+  String get sortByName => '按名称';
+
+  @override
+  String get recentlyCreated => '最近创建';
+
+  @override
+  String get builtInStyle => '内置样式';
+
+  @override
+  String basedOnPieceSkin(String skin) {
+    return '基于$skin';
+  }
+
+  @override
+  String exportNamedPieceSkin(String name) {
+    return '导出$name';
+  }
+
+  @override
+  String renameNamedPieceSkin(String name) {
+    return '重命名$name';
+  }
+
+  @override
+  String deleteNamedPieceSkin(String name) {
+    return '删除$name';
+  }
+
+  @override
+  String confirmDeletePieceSkin(String name) {
+    return '确定删除$name？';
+  }
+
+  @override
+  String get pieceSkinImagesWillDelete => '此皮肤的本机图片也会删除。';
+
+  @override
+  String selectedPieceSkinExportCount(int count) {
+    return '导出所选$count套';
+  }
+
+  @override
+  String get importZip => '导入ZIP';
+
+  @override
+  String get importFolder => '导入文件夹';
+
+  @override
+  String get copyCurrentStyle => '从当前样式复制';
+
+  @override
+  String get pieceSkinName => '名称';
 }

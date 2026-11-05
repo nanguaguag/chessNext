@@ -785,4 +785,77 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get audioSquareInkSkin => 'Square ink style';
+
+  @override
+  String get pieceSkinLibraryTitle => 'Piece skin library';
+
+  @override
+  String get newPieceSkin => 'New piece skin';
+
+  @override
+  String get renamePieceSkin => 'Rename piece skin';
+
+  @override
+  String get searchLocalPieceSkins => 'Search local skins';
+
+  @override
+  String get clearSearch => 'Clear search';
+
+  @override
+  String get sortLocalSkins => 'Sort';
+
+  @override
+  String get sortByName => 'By name';
+
+  @override
+  String get recentlyCreated => 'Recently created';
+
+  @override
+  String get builtInStyle => 'Built-in style';
+
+  @override
+  String basedOnPieceSkin(String skin) {
+    return 'Based on $skin';
+  }
+
+  @override
+  String exportNamedPieceSkin(String name) {
+    return 'Export $name';
+  }
+
+  @override
+  String renameNamedPieceSkin(String name) {
+    return 'Rename $name';
+  }
+
+  @override
+  String deleteNamedPieceSkin(String name) {
+    return 'Delete $name';
+  }
+
+  @override
+  String confirmDeletePieceSkin(String name) {
+    return 'Delete $name?';
+  }
+
+  @override
+  String get pieceSkinImagesWillDelete =>
+      'The local images for this skin will also be deleted.';
+
+  @override
+  String selectedPieceSkinExportCount(int count) {
+    return 'Export selected $count skins';
+  }
+
+  @override
+  String get importZip => 'Import ZIP';
+
+  @override
+  String get importFolder => 'Import folder';
+
+  @override
+  String get copyCurrentStyle => 'Copy current style';
+
+  @override
+  String get pieceSkinName => 'Name';
 }

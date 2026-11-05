@@ -1,3 +1,9 @@
+## 2026-11-06 / M4-94 / F27 本机棋子皮肤库界面文案
+
+本机库管理部分使用ARB资源：新建/重命名、名称、搜索、排序、两类内置样式名与filter、用户皮肤base说明、选择/导出/删除tooltip与确认、图片删除副作用、多选集合导出数量、ZIP/文件夹导入及当前样式复制。在线目录UI/错误和控制器失败串仍未迁移。根Locale为zh。
+
+验收：定向`flutter test --concurrency=1 test/widgets/piece_skin_library_localization_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`636通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-94.log`）；`flutter analyze --no-pub`和`git diff --check`通过。English隔离MaterialApp确认核心本机界面标签；原在线目录/ZIP回归测试宿主增加zh delegates。macOS复用PID50598，同步与热重启1822ms；脱离后仍唯一GUI，未作视觉验收。
+
 ## 2026-11-06 / M4-93 / F27 音效替换设置文案
 
 `AudioOptionsDialog`通过zh/en资源显示事件标题、当前自定义/内置音效状态、Sound1/2/随皮肤选项、当前棋子预设名称、仅本机处理说明、格式/大小/时长边界、试听/选择文件/恢复操作。没有改变`AudioLibraryController`、文件验证或播放逻辑；其动态error message仍中文。根Locale锁定zh。

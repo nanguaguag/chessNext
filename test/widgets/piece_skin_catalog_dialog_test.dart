@@ -8,6 +8,7 @@ import 'package:chess_next/application/piece_skin_package_codec.dart';
 import 'package:chess_next/application/piece_skin_collection_package_codec.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/features/settings/piece_skin_library_dialog.dart';
+import 'package:chess_next/l10n/app_localizations.dart';
 import 'package:chess_next/ports/piece_skin_catalog.dart';
 import 'package:chess_next/ports/piece_skin_library.dart';
 import 'package:chess_next/ports/piece_skin_package_picker.dart';
@@ -125,6 +126,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('zh'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => Scaffold(
             body: TextButton(
@@ -143,14 +147,14 @@ void main() {
     await tester.pumpAndSettle();
     expect(
       tester
-          .widget<TextButton>(find.widgetWithText(TextButton, '导出所选 0 套'))
+          .widget<TextButton>(find.widgetWithText(TextButton, '导出所选0套'))
           .onPressed,
       isNull,
     );
     await tester.tap(find.byType(Checkbox).at(0));
     await tester.tap(find.byType(Checkbox).at(1));
     await tester.pumpAndSettle();
-    await tester.tap(find.text('导出所选 2 套'));
+    await tester.tap(find.text('导出所选2套'));
     await tester.pumpAndSettle();
     final decoded = PieceSkinCollectionPackageCodec.decode(exporter.bytes!);
     expect(decoded.packages.map((item) => item.profile.name).toSet(), {
@@ -201,6 +205,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('zh'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => Scaffold(
             body: TextButton(
@@ -263,6 +270,9 @@ void main() {
 
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('zh'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => Scaffold(
             body: TextButton(
@@ -340,6 +350,9 @@ void main() {
     });
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('zh'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Builder(
           builder: (context) => Scaffold(
             body: TextButton(

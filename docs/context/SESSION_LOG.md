@@ -1329,3 +1329,10 @@ macOS未执行新`flutter run`。使用已有PID50598的VM端口61579 `flutter a
 音效弹窗静态文本（事件名、当前/自定义状态、走棋方案、随棋子皮肤对应样式、仅本机说明、WAV/MP3与512KiB/5秒限制、试听/导入/恢复/关闭）迁入zh/en ARB。应用层返回的动态中文音效错误仍留待后续错误code模型。增加English隔离组件测试；现有中文交互测试的MaterialApp新增中文Localizations delegates。没有改变数据/导入/试听语义。
 
 专项`flutter test --concurrency=1 test/audio_library_test.dart --reporter expanded`6/6。根`flutter test --concurrency=1 --reporter expanded`635通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-93.log`；`flutter analyze --no-pub`与`git diff --check`通过。首轮测试发现测试宿主缺delegate使l10n查找null，补中文delegate及独立英语测试后复跑通过。macOS复用App PID50598，VM端口61579 attach同步成功，热重启`Restarted application in 1,831ms`；Ctrl-C脱离后PID50598仍唯一，无tester/attach残留。未做人工视觉验收。F27与其它登录外范围继续开放。功能提交`a74a370 feat(l10n): 本地化音效编辑设置`已完成。
+
+
+## 2026-11-06 / M4-94 / F27 本机棋子皮肤库静态界面ARB化
+
+本机棋子皮肤库的标题、名字输入、搜索清空、排序、内置皮肤名/说明、派生皮肤说明、动态名称工具提示、删除确认、本机图片删除说明、多选ZIP导出数量、ZIP/文件夹导入及当前样式复制等文案迁入zh/en。在线目录与详情/许可仍为中文，下一独立子片；控制器error保留动态中文。English只在隔离widget测试验证，产品根Locale固定zh。
+
+专项`flutter test --concurrency=1 test/widgets/piece_skin_library_localization_test.dart test/widgets/piece_skin_catalog_dialog_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`636通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-94.log`；`flutter analyze --no-pub`、`git diff --check`通过。首轮分析提示新测试unused import，去除后复跑。旧catalog UI测试MaterialApp宿主缺Localizations delegates；补zh delegates后，导出数量标签断言因资源文案空格差异再更新，复跑最终专项通过。macOS复用PID50598 VM attach同步，热重启`Restarted application in 1,822ms`，Ctrl-C脱离后PID仍是唯一GUI，无tester/attach残留；未视觉验收。没有新增GUI实例。功能及追踪记录待单独中文commit；继续登录外设置/功能矩阵。

@@ -1423,6 +1423,126 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'方章墨韵'**
   String get audioSquareInkSkin;
+
+  /// No description provided for @pieceSkinLibraryTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子皮肤库'**
+  String get pieceSkinLibraryTitle;
+
+  /// No description provided for @newPieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建棋子皮肤'**
+  String get newPieceSkin;
+
+  /// No description provided for @renamePieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名棋子皮肤'**
+  String get renamePieceSkin;
+
+  /// No description provided for @searchLocalPieceSkins.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索本机皮肤'**
+  String get searchLocalPieceSkins;
+
+  /// No description provided for @clearSearch.
+  ///
+  /// In zh, this message translates to:
+  /// **'清除搜索'**
+  String get clearSearch;
+
+  /// No description provided for @sortLocalSkins.
+  ///
+  /// In zh, this message translates to:
+  /// **'排序'**
+  String get sortLocalSkins;
+
+  /// No description provided for @sortByName.
+  ///
+  /// In zh, this message translates to:
+  /// **'按名称'**
+  String get sortByName;
+
+  /// No description provided for @recentlyCreated.
+  ///
+  /// In zh, this message translates to:
+  /// **'最近创建'**
+  String get recentlyCreated;
+
+  /// No description provided for @builtInStyle.
+  ///
+  /// In zh, this message translates to:
+  /// **'内置样式'**
+  String get builtInStyle;
+
+  /// No description provided for @basedOnPieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'基于{skin}'**
+  String basedOnPieceSkin(String skin);
+
+  /// No description provided for @exportNamedPieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'导出{name}'**
+  String exportNamedPieceSkin(String name);
+
+  /// No description provided for @renameNamedPieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名{name}'**
+  String renameNamedPieceSkin(String name);
+
+  /// No description provided for @deleteNamedPieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除{name}'**
+  String deleteNamedPieceSkin(String name);
+
+  /// No description provided for @confirmDeletePieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'确定删除{name}？'**
+  String confirmDeletePieceSkin(String name);
+
+  /// No description provided for @pieceSkinImagesWillDelete.
+  ///
+  /// In zh, this message translates to:
+  /// **'此皮肤的本机图片也会删除。'**
+  String get pieceSkinImagesWillDelete;
+
+  /// No description provided for @selectedPieceSkinExportCount.
+  ///
+  /// In zh, this message translates to:
+  /// **'导出所选{count}套'**
+  String selectedPieceSkinExportCount(int count);
+
+  /// No description provided for @importZip.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入ZIP'**
+  String get importZip;
+
+  /// No description provided for @importFolder.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入文件夹'**
+  String get importFolder;
+
+  /// No description provided for @copyCurrentStyle.
+  ///
+  /// In zh, this message translates to:
+  /// **'从当前样式复制'**
+  String get copyCurrentStyle;
+
+  /// No description provided for @pieceSkinName.
+  ///
+  /// In zh, this message translates to:
+  /// **'名称'**
+  String get pieceSkinName;
 }
 
 class _AppLocalizationsDelegate

@@ -225,6 +225,9 @@ class PreferencesController extends ChangeNotifier {
             bookServiceBaseUrl: _edited.contains('bookServiceBaseUrl')
                 ? previous.bookServiceBaseUrl
                 : null,
+            releaseServiceBaseUrl: _edited.contains('releaseServiceBaseUrl')
+                ? previous.releaseServiceBaseUrl
+                : null,
             recordPlaybackIntervalMs:
                 _edited.contains('recordPlaybackIntervalMs')
                 ? previous.recordPlaybackIntervalMs
@@ -572,6 +575,9 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.bookServiceBaseUrl != value.bookServiceBaseUrl) {
       _edited.add('bookServiceBaseUrl');
+    }
+    if (next.releaseServiceBaseUrl != value.releaseServiceBaseUrl) {
+      _edited.add('releaseServiceBaseUrl');
     }
     if (next.recordPlaybackIntervalMs != value.recordPlaybackIntervalMs) {
       _edited.add('recordPlaybackIntervalMs');

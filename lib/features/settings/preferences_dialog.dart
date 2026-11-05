@@ -16,6 +16,8 @@ import '../../ports/piece_skin_package_exporter.dart';
 import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/piece_skin_folder_picker.dart';
 import '../../ports/piece_skin_catalog.dart';
+import '../../ports/release_service.dart';
+import 'about_support_dialog.dart';
 
 class PreferencesDialog extends StatefulWidget {
   const PreferencesDialog({
@@ -31,6 +33,7 @@ class PreferencesDialog extends StatefulWidget {
     this.pieceSkinFolderPicker,
     this.pieceSkinCatalog,
     this.boardSkinCatalog,
+    required this.releaseService,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
@@ -43,6 +46,7 @@ class PreferencesDialog extends StatefulWidget {
   final PieceSkinFolderPicker? pieceSkinFolderPicker;
   final PieceSkinCatalog? pieceSkinCatalog;
   final BoardSkinCatalog? boardSkinCatalog;
+  final ReleaseService releaseService;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -51,6 +55,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
   final form = GlobalKey<FormState>();
   late final TextEditingController aiWalkTimeController;
   late final TextEditingController bookServiceUrlController;
+  late final TextEditingController releaseServiceUrlController;
   late ThemePreference theme;
   late BoardLayoutPreset boardLayoutPreset;
   late int threads, hash, pv;
@@ -82,12 +87,16 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     bookServiceUrlController = TextEditingController(
       text: value.bookServiceBaseUrl,
     );
+    releaseServiceUrlController = TextEditingController(
+      text: value.releaseServiceBaseUrl,
+    );
   }
 
   @override
   void dispose() {
     aiWalkTimeController.dispose();
     bookServiceUrlController.dispose();
+    releaseServiceUrlController.dispose();
     super.dispose();
   }
 
@@ -243,16 +252,13 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                     ),
                     OutlinedButton.icon(
                       key: const ValueKey('about-support'),
-                      onPressed: () => showAboutDialog(
+                      onPressed: () => showDialog<void>(
                         context: context,
-                        applicationName: 'chessNext',
-                        applicationVersion: '0.1.0+1',
-                        applicationIcon: const Icon(Icons.extension),
-                        applicationLegalese: '离线优先的中国象棋分析应用',
-                        children: const [
-                          SizedBox(height: 12),
-                          Text('本版本未配置更新或反馈服务，不会在后台联网检查更新或发送设备信息。'),
-                        ],
+                        builder: (_) => AboutSupportDialog(
+                          releaseEndpoint:
+                              widget.preferences.value.releaseServiceBaseUrl,
+                          releaseService: widget.releaseService,
+                        ),
                       ),
                       icon: const Icon(Icons.info_outline),
                       label: const Text('关于与开源许可'),
@@ -370,6 +376,41 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                     (value) => aiWalkMaxDepth = value,
                     helperText: '1 – 255；默认60',
                   ),
+                const Divider(height: 28),
+                const Text('版本更新'),
+                TextFormField(
+                  key: const ValueKey('release-service-url'),
+                  controller: releaseServiceUrlController,
+                  keyboardType: TextInputType.url,
+                  maxLength: 2048,
+                  decoration: const InputDecoration(
+                    labelText: '自建版本信息服务地址',
+                    helperText:
+                        '留空时完全离线；仅在关于页手动检查时请求。公网必须HTTPS，本机可用localhost HTTP',
+                  ),
+                  validator: (text) {
+                    final value = text!.trim().replaceFirst(RegExp(r'/+$'), '');
+                    if (value.isEmpty) return null;
+                    final uri = Uri.tryParse(value);
+                    if (uri == null ||
+                        uri.userInfo.isNotEmpty ||
+                        uri.hasQuery ||
+                        uri.hasFragment) {
+                      return '请输入服务根地址';
+                    }
+                    final local = {
+                      'localhost',
+                      '127.0.0.1',
+                      '::1',
+                    }.contains(uri.host);
+                    if (uri.host.isEmpty ||
+                        (uri.scheme != 'https' &&
+                            !(uri.scheme == 'http' && local))) {
+                      return '公网必须HTTPS，本机仅允许localhost HTTP';
+                    }
+                    return null;
+                  },
+                ),
                 const Divider(height: 28),
                 const Text('开局与残局云库'),
                 TextFormField(
@@ -496,6 +537,9 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       endgameBookEnabled: endgameBookEnabled,
                       leaveBookMoves: leaveBookMoves,
                       bookServiceBaseUrl: bookServiceUrlController.text
+                          .trim()
+                          .replaceFirst(RegExp(r'/+$'), ''),
+                      releaseServiceBaseUrl: releaseServiceUrlController.text
                           .trim()
                           .replaceFirst(RegExp(r'/+$'), ''),
                     ),

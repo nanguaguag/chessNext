@@ -135,6 +135,7 @@ final class AppPreferences {
     this.endgameBookEnabled = true,
     this.leaveBookMoves = 10,
     this.bookServiceBaseUrl = '',
+    this.releaseServiceBaseUrl = '',
     this.recordPlaybackIntervalMs = 2000,
     this.showMoveList = true,
     this.showRecordPlaybackButton = true,
@@ -184,6 +185,7 @@ final class AppPreferences {
         !isValidRecordPlaybackInterval(recordPlaybackIntervalMs) ||
         !_validSkinCatalogBaseUrl(skinCatalogBaseUrl) ||
         !_validSkinCatalogBaseUrl(bookServiceBaseUrl) ||
+        !_validSkinCatalogBaseUrl(releaseServiceBaseUrl) ||
         guideVersion < 0 ||
         guideVersion > 1000000 ||
         roundSealPieceScalePercent < 80 ||
@@ -276,6 +278,7 @@ final class AppPreferences {
   final bool endgameBookEnabled;
   final int leaveBookMoves;
   final String bookServiceBaseUrl;
+  final String releaseServiceBaseUrl;
   final List<BoardContextAction> boardContextActions;
   final List<SidePanel> sidePanelOrder;
   final List<SidePanel> visibleSidePanels;
@@ -331,6 +334,7 @@ final class AppPreferences {
     SidePanel? activeSidePanel,
     String? skinCatalogBaseUrl,
     String? bookServiceBaseUrl,
+    String? releaseServiceBaseUrl,
     List<BoardContextAction>? boardContextActions,
     int? guideVersion,
     List<SidePanel>? sidePanelOrder,
@@ -391,6 +395,7 @@ final class AppPreferences {
     activeSidePanel: activeSidePanel ?? this.activeSidePanel,
     skinCatalogBaseUrl: skinCatalogBaseUrl ?? this.skinCatalogBaseUrl,
     bookServiceBaseUrl: bookServiceBaseUrl ?? this.bookServiceBaseUrl,
+    releaseServiceBaseUrl: releaseServiceBaseUrl ?? this.releaseServiceBaseUrl,
     boardContextActions: boardContextActions ?? this.boardContextActions,
     guideVersion: guideVersion ?? this.guideVersion,
     sidePanelOrder: sidePanelOrder ?? this.sidePanelOrder,
@@ -476,6 +481,8 @@ final class AppPreferences {
     if (showPanelSwitchBar) 'showPanelSwitchBar': true,
     if (skinCatalogBaseUrl.isNotEmpty) 'skinCatalogBaseUrl': skinCatalogBaseUrl,
     if (bookServiceBaseUrl.isNotEmpty) 'bookServiceBaseUrl': bookServiceBaseUrl,
+    if (releaseServiceBaseUrl.isNotEmpty)
+      'releaseServiceBaseUrl': releaseServiceBaseUrl,
     if (activeSidePanel != SidePanel.play)
       'activeSidePanel': activeSidePanel.name,
     if (!_listEquals(boardContextActions, defaultBoardContextActions))
@@ -554,6 +561,8 @@ final class AppPreferences {
             json['skinCatalogBaseUrl'] is! String) ||
         (json.containsKey('bookServiceBaseUrl') &&
             json['bookServiceBaseUrl'] is! String) ||
+        (json.containsKey('releaseServiceBaseUrl') &&
+            json['releaseServiceBaseUrl'] is! String) ||
         (json.containsKey('openingBookMode') &&
             (json['openingBookMode'] is! String ||
                 !OpeningBookMode.values.any(
@@ -693,6 +702,7 @@ final class AppPreferences {
         ),
         skinCatalogBaseUrl: json['skinCatalogBaseUrl'] as String? ?? '',
         bookServiceBaseUrl: json['bookServiceBaseUrl'] as String? ?? '',
+        releaseServiceBaseUrl: json['releaseServiceBaseUrl'] as String? ?? '',
         openingBookMode: OpeningBookMode.values.firstWhere(
           (mode) => mode.name == json['openingBookMode'],
           orElse: () => OpeningBookMode.best,
@@ -823,6 +833,7 @@ final class AppPreferences {
       activeSidePanel == other.activeSidePanel &&
       skinCatalogBaseUrl == other.skinCatalogBaseUrl &&
       bookServiceBaseUrl == other.bookServiceBaseUrl &&
+      releaseServiceBaseUrl == other.releaseServiceBaseUrl &&
       _listEquals(boardContextActions, other.boardContextActions) &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
       _listEquals(visibleSidePanels, other.visibleSidePanels);
@@ -884,6 +895,7 @@ final class AppPreferences {
     activeSidePanel,
     skinCatalogBaseUrl,
     bookServiceBaseUrl,
+    releaseServiceBaseUrl,
     Object.hashAll(boardContextActions),
     Object.hashAll(sidePanelOrder),
     Object.hashAll(visibleSidePanels),

@@ -66,8 +66,18 @@ void main() {
         endgameBookEnabled: false,
         leaveBookMoves: 24,
         bookServiceBaseUrl: 'https://books.example.org/api',
+        releaseServiceBaseUrl: 'https://updates.example.org/api',
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
+      expect(
+        AppPreferences().copyWith(
+          releaseServiceBaseUrl: 'https://updates.example.org/api',
+        ),
+        AppPreferences.fromJson({
+          ...AppPreferences().toJson(),
+          'releaseServiceBaseUrl': 'https://updates.example.org/api',
+        }),
+      );
       final catalog = AppPreferences().copyWith(
         skinCatalogBaseUrl: 'https://skins.example.org/catalog',
       );

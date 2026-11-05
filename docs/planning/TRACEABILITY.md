@@ -793,3 +793,9 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 新增operator-only `ReleaseManifest`从可选`CHESSNEXT_RELEASE_ROOT/releases.json`加载schema1 newest-first发布清单；最多100条、单文件1MiB、SemVer/正build/UTC时间/4000字符说明，拒绝未知字段、控制字符、重复身份、乱序及畸形数据。`GET /v1/releases/latest`提供当前条目和历史，未配置时404；POST不允许。仅发公共元数据、不接收用户/设备标识、不分发binary。
 
 专项`flutter test --concurrency=1 test/server/release_manifest_test.dart test/server/skin_catalog_server_test.dart --reporter expanded`10/10；服务`dart analyze server/skin_catalog/lib server/skin_catalog/bin`通过；`dart compile exe server/skin_catalog/bin/skin_catalog_server.dart -o /tmp/chessnext-release-server`成功；根`flutter analyze --no-pub`通过；根`flutter test --concurrency=1 --reporter compact`579通过/5跳过；`git diff --check`通过。服务端无Flutter/UI/原生代码变化，不需Mac重启；进程检查仅见既有PID50598/runner50125，无额外chessNext。
+
+## M4-61 / F31 / ADR-093 自建版本信息客户端
+
+App偏好新增可选发布服务根地址，默认空；设置输入仅允许HTTPS公网/loopback HTTP，最大2048字符。关于页只响应用户显式点击检查；HTTP适配器5秒超时/2MiB边界，检查schema、当前/首条一致、UTC日期、唯一版本身份与降序历史；不发送账号、设备或棋谱信息。展示当前版本比较和历史说明，按不可达/无效响应/HTTP拒绝区分失败。无包下载/安装。UI用Fake验证仅显式触发；loopback HTTP适配器专项验证请求和协议。
+
+专项：`flutter test --concurrency=1 test/adapters/network/http_release_service_test.dart test/widgets/about_support_test.dart --reporter expanded`6/6；`flutter analyze --no-pub`通过。首轮关于Widget集成测试尝试使用真实loopback网络，在flutter_tester异步调度下请求未到达；改为Fake验证UI调用时机，并保留适配器真实loopback独立测试。根全量与macOS复用进程热重启待执行。测试按串行单测试host执行；执行前进程快照仅一个chessNext PID50598/runner50125，另一个长期flutter run属tuner_flutter PID70651/PID70890，并非chessNext或测试进程，不予干预。

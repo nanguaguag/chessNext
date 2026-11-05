@@ -479,11 +479,11 @@ class BoardDisplayDialog extends StatelessWidget {
                   items: [
                     DropdownMenuItem(
                       value: BoardSkin.parchment.name,
-                      child: Text('宣纸木色'),
+                      child: Text(l10n.boardSkinParchment),
                     ),
                     DropdownMenuItem(
                       value: BoardSkin.jade.name,
-                      child: Text('松石青'),
+                      child: Text(l10n.boardSkinJade),
                     ),
                     for (final profile in boardSkins?.profiles ?? const [])
                       DropdownMenuItem(
@@ -520,10 +520,10 @@ class BoardDisplayDialog extends StatelessWidget {
                             ),
                           ),
                     icon: const Icon(Icons.collections_bookmark_outlined),
-                    label: const Text('管理棋盘皮肤库'),
+                    label: Text(l10n.manageBoardSkins),
                   ),
                 ),
-                const Text('棋盘与棋子皮肤均支持项目格式的ZIP导入/导出；站点皮肤ZIP及文件夹格式未确认。'),
+                Text(l10n.skinPackageHelp),
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton.icon(
@@ -541,7 +541,7 @@ class BoardDisplayDialog extends StatelessWidget {
                             ),
                           ),
                     icon: const Icon(Icons.wallpaper_outlined),
-                    label: const Text('编辑棋盘图片'),
+                    label: Text(l10n.editBoardImages),
                   ),
                 ),
                 _geometryControls(context),
@@ -602,7 +602,7 @@ class BoardDisplayDialog extends StatelessWidget {
                             ),
                           ),
                     icon: const Icon(Icons.collections_bookmark_outlined),
-                    label: const Text('管理皮肤库'),
+                    label: Text(l10n.managePieceSkins),
                   ),
                 ),
                 Text(l10n.pieceStyleMoveSoundHelp),

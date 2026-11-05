@@ -155,5 +155,11 @@
   "@batchImportPieceImagesHelp": { "placeholders": { "count": { "type": "int" } } },
   "chooseTargetPiece": "请选择目标棋子",
   "cancel": "取消",
-  "importImages": "导入图片"
+  "importImages": "导入图片",
+  "boardSkinParchment": "宣纸木色",
+  "boardSkinJade": "松石青",
+  "manageBoardSkins": "管理棋盘皮肤库",
+  "skinPackageHelp": "棋盘与棋子皮肤均支持项目格式的ZIP导入/导出；站点皮肤ZIP及文件夹格式未确认。",
+  "editBoardImages": "编辑棋盘图片",
+  "managePieceSkins": "管理皮肤库"
 }

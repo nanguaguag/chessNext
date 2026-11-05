@@ -1,3 +1,9 @@
+## M4-90 / F27 棋盘显示剩余资源与管理按钮ARB化（门槛通过，待提交）
+
+棋盘预设名称、棋盘/棋子皮肤库管理入口、图片编辑入口、项目包格式及兼容状态说明迁入zh/en。使BoardDisplayDialog主屏中用户可见静态硬编码基本清空；动态皮肤名/错误文本及其子页面仍需核查。根Locale仍仅zh。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter expanded`632通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-90.log`；`flutter analyze --no-pub`和diff-check通过。macOS `flutter run -d macos --no-pub` Build/Sync/启动成功，PID30803按q正常退出；最终只保留原PID50598。未作视觉验收。待单独中文提交。
+
 ## M4-89 / F27 棋子与棋盘图片管理对话框ARB化（门槛通过，待提交）
 
 棋子图片槽、棋盘四图层槽、格式/容量限制、批量映射/完成提示、选择/替换/恢复/默认占位和对话框动作均迁入zh/en ARB。棋子图像仍以中国象棋字形作为无图预览；仓储控制器返回的具体失败原因仍为中文，需以后将错误码与显示分离后本地化。未改图片数据/导入行为。

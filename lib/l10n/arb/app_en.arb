@@ -155,5 +155,11 @@
   "@batchImportPieceImagesHelp": { "placeholders": { "count": { "type": "int" } } },
   "chooseTargetPiece": "Choose a target piece",
   "cancel": "Cancel",
-  "importImages": "Import images"
+  "importImages": "Import images",
+  "boardSkinParchment": "Parchment wood",
+  "boardSkinJade": "Jade green",
+  "manageBoardSkins": "Manage board skins",
+  "skinPackageHelp": "Board and piece skins support this app's ZIP format for import and export. Site ZIP and folder formats are unverified.",
+  "editBoardImages": "Edit board images",
+  "managePieceSkins": "Manage piece skins"
 }

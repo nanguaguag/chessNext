@@ -430,4 +430,22 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get importImages => '导入图片';
+
+  @override
+  String get boardSkinParchment => '宣纸木色';
+
+  @override
+  String get boardSkinJade => '松石青';
+
+  @override
+  String get manageBoardSkins => '管理棋盘皮肤库';
+
+  @override
+  String get skinPackageHelp => '棋盘与棋子皮肤均支持项目格式的ZIP导入/导出；站点皮肤ZIP及文件夹格式未确认。';
+
+  @override
+  String get editBoardImages => '编辑棋盘图片';
+
+  @override
+  String get managePieceSkins => '管理皮肤库';
 }

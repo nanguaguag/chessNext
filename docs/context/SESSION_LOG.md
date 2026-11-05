@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-90 / F27 棋盘显示主面板剩余标签ARB化（门槛通过，待提交）
+
+棋盘内置预设名、管理棋盘/棋子皮肤库按钮、棋盘图片入口和项目ZIP格式/未确认的站点格式说明迁入ARB；没有改设置业务和皮肤模型。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter expanded`632通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-90.log`）；`flutter analyze --no-pub`、`git diff --check`通过。macOS `flutter run -d macos --no-pub`Build/Sync/启动成功(PID30803)，用run终端`q`正常退出；核对只剩原PID50598，测试进程退出。未人工视觉验收；flutter_tts SwiftPM告警存在。下一逐步处理设置子页面与其它主路由语言资源。
+
 ## 2026-11-05 / M4-89 / F27 图片管理子对话框本地化（门槛通过，待提交）
 
 新增UI slot-name adapter，给14个棋子槽与4个棋盘图层槽映射zh/en资源，不改变ports中的中文标签/文件名导入别名。棋子图、棋盘图与批量导入弹窗的标题、约束、占位、操作、映射和计数均迁资源。仓储控制器现有中文error.message保持原样，留待错误模型分层；默认象棋字形预览继续使用汉字面容。

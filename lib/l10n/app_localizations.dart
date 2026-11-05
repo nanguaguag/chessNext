@@ -877,6 +877,42 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'导入图片'**
   String get importImages;
+
+  /// No description provided for @boardSkinParchment.
+  ///
+  /// In zh, this message translates to:
+  /// **'宣纸木色'**
+  String get boardSkinParchment;
+
+  /// No description provided for @boardSkinJade.
+  ///
+  /// In zh, this message translates to:
+  /// **'松石青'**
+  String get boardSkinJade;
+
+  /// No description provided for @manageBoardSkins.
+  ///
+  /// In zh, this message translates to:
+  /// **'管理棋盘皮肤库'**
+  String get manageBoardSkins;
+
+  /// No description provided for @skinPackageHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘与棋子皮肤均支持项目格式的ZIP导入/导出；站点皮肤ZIP及文件夹格式未确认。'**
+  String get skinPackageHelp;
+
+  /// No description provided for @editBoardImages.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑棋盘图片'**
+  String get editBoardImages;
+
+  /// No description provided for @managePieceSkins.
+  ///
+  /// In zh, this message translates to:
+  /// **'管理皮肤库'**
+  String get managePieceSkins;
 }
 
 class _AppLocalizationsDelegate

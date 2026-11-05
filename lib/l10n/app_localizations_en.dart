@@ -450,4 +450,23 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get importImages => 'Import images';
+
+  @override
+  String get boardSkinParchment => 'Parchment wood';
+
+  @override
+  String get boardSkinJade => 'Jade green';
+
+  @override
+  String get manageBoardSkins => 'Manage board skins';
+
+  @override
+  String get skinPackageHelp =>
+      'Board and piece skins support this app\'s ZIP format for import and export. Site ZIP and folder formats are unverified.';
+
+  @override
+  String get editBoardImages => 'Edit board images';
+
+  @override
+  String get managePieceSkins => 'Manage piece skins';
 }

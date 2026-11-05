@@ -47,6 +47,14 @@ void main() {
       expect(find.text('Board display'), findsOneWidget);
       expect(find.text('Board skin'), findsOneWidget);
       expect(find.text('Piece skin'), findsOneWidget);
+      expect(find.text('Parchment wood'), findsOneWidget);
+      expect(find.text('Manage board skins'), findsOneWidget);
+      expect(find.text('Edit board images'), findsOneWidget);
+      expect(find.text('Manage piece skins'), findsOneWidget);
+      expect(
+        find.textContaining('Site ZIP and folder formats are unverified'),
+        findsOneWidget,
+      );
       expect(find.text('Show coordinates'), findsOneWidget);
       expect(find.text('Rotate the opponent\'s pieces'), findsOneWidget);
       expect(find.text('Reset size'), findsOneWidget);

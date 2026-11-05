@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-05 / M4-90 / F27 棋盘显示主面板预设名/库入口
+
+BoardDisplayDialog最后的内置棋盘预设名、皮肤库与图像编辑入口、项目包格式兼容提示使用ARB。其动态用户命名和由其他控制器提供的error message仍需分类，未声明整页设置子dialog或全站覆盖。
+
+验收：定向1/1；根`flutter test --concurrency=1 --reporter expanded`632通过/5跳过/0失败；`flutter analyze --no-pub`与`git diff --check`通过。macOS `flutter run -d macos --no-pub` Build/Sync/启动成功，按q退出(PID30803)，仅既有PID50598存活。无视觉验收。
+
 ## 2026-11-05 / M4-89 / F27 棋子/棋盘图像编辑界面与批量映射
 
 棋子图片编辑器14槽及棋盘背景/三类标记4槽使用zh/en资源；说明、占位、选择/替换/恢复、批量选图计数和映射控件本地化。Slot port labels仍保留中文作为文件名兼容/领域元信息，不从显示文案反向改协议。控制器错误message当前为中文，未迁移。图像读写/错误处理逻辑保持不变。

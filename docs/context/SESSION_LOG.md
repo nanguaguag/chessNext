@@ -1045,3 +1045,10 @@ M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完�
 # 2026-11-05 / E80 / F27 English页面覆盖抽样
 
 访客显示设置语言临时切English，实看设置目录、显示、棋盘/棋子与皮肤选择器、分析、标记/箭头、声音及音效选择器、操作/展开长按右键动作、关于、主界面与菜单。样本静态界面文案均以English呈现；主界面着法示例改为ICCS拉丁`C8=5 n2+3`、`N8+7`。线上动态皮肤名/作者、品牌、备案法定链接仍中文或专名。未提交表单/操作、不执行棋谱/设置功能。恢复简体中文，复核Follow System、Azure/晴蓝、夜间棋盘开。证据仅覆盖以上路由，未测完整弹窗、错误、帮助/训练/导入等，不称English全站完整。F27全资源待办。
+# 2026-11-05 / M4-66 / F21,B24 / ADR-098 棋盘边距精确数值输入
+
+四边百分比滑杆旁增加一位小数的直接输入，边值按当前动态区间/55%最小跨度夹限，保存走既有偏好或自定义BoardSkin控制器；添加自定义皮肤集成断言验证越界输入和20.5小数值。
+
+定向`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`8/8。首轮精确字段测试因限制三位整数输入，越界值提前被formatter拒绝；放宽临时输入后由模型夹限，复跑通过。首轮根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/2失败，日志定位为`piece_skin_images_test`两处按钮因新表单高度增加而在滚动视口外；加入`ensureVisible`后两专项8/8。根最终`flutter test --concurrency=1 --reporter expanded`593通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-66-final.log`；5跳过因缺官方Pikafish/NNUE。`flutter analyze --no-pub`、`git diff --check`通过。
+
+复核进程：根测试前后只一个串行`flutter_tester`，最终无残留；既有App PID50598/runner50125未变。用`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1012ms、热重启8613ms；脱离后PID50598仍活。全程没用`flutter run`。另有`tuner_flutter` runner PID70651属于独立项目。Mac锁屏，视觉验收not run。M4-66中文feature commit待完成后继续全站登录外差距；E76/E77源站完整几何单位/公式仍U。

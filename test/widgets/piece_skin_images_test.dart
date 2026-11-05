@@ -74,6 +74,7 @@ void main() {
     expect(sizeSlider.value, 111);
     sizeSlider.onChanged!(118);
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byTooltip('棋子右移1%'));
     await tester.tap(find.byTooltip('棋子右移1%'));
     await tester.pumpAndSettle();
     scope = tester.widget<BoardDisplayScope>(find.byType(BoardDisplayScope));
@@ -119,8 +120,10 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('棋盘显示'));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byTooltip('棋子右移1%'));
     await tester.tap(find.byTooltip('棋子右移1%'));
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.byTooltip('棋子上移1%'));
     await tester.tap(find.byTooltip('棋子上移1%'));
     await tester.pumpAndSettle();
     expect(store.value!.roundSealPieceOffsetX, 1);
@@ -136,6 +139,7 @@ void main() {
           .transformHitTests,
       isFalse,
     );
+    await tester.ensureVisible(find.byTooltip('棋子自动对正'));
     await tester.tap(find.byTooltip('棋子自动对正'));
     await tester.pumpAndSettle();
     expect(store.value!.roundSealPieceOffsetX, 0);

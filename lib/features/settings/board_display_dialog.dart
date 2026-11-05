@@ -1,6 +1,7 @@
 import 'dart:async';
 import '../../application/board_appearance.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../application/preferences_controller.dart';
 import '../../application/app_preferences.dart';
 import '../../application/audio_library_controller.dart';
@@ -267,7 +268,23 @@ class BoardDisplayDialog extends StatelessWidget {
     ) => Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('$label ${value.toStringAsFixed(1)}%'),
+        Row(
+          children: [
+            Expanded(child: Text(label)),
+            SizedBox(
+              width: 100,
+              child: _GeometryEdgeInput(
+                key: ValueKey('board-geometry-input-$skinId-$label'),
+                label: label,
+                value: value,
+                min: min,
+                max: max,
+                enabled: !preferences.loading,
+                onChanged: (next) => unawaited(setGeometry(update(next))),
+              ),
+            ),
+          ],
+        ),
         Slider(
           key: ValueKey('board-geometry-$skinId-$label'),
           value: value,
@@ -893,5 +910,84 @@ class BoardDisplayDialog extends StatelessWidget {
         ],
       );
     },
+  );
+}
+
+class _GeometryEdgeInput extends StatefulWidget {
+  const _GeometryEdgeInput({
+    super.key,
+    required this.label,
+    required this.value,
+    required this.min,
+    required this.max,
+    required this.enabled,
+    required this.onChanged,
+  });
+
+  final String label;
+  final double value;
+  final double min;
+  final double max;
+  final bool enabled;
+  final ValueChanged<double> onChanged;
+
+  @override
+  State<_GeometryEdgeInput> createState() => _GeometryEdgeInputState();
+}
+
+class _GeometryEdgeInputState extends State<_GeometryEdgeInput> {
+  late final TextEditingController _controller = TextEditingController(
+    text: widget.value.toStringAsFixed(1),
+  );
+  final _focusNode = FocusNode();
+
+  @override
+  void didUpdateWidget(covariant _GeometryEdgeInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_focusNode.hasFocus && oldWidget.value != widget.value) {
+      _controller.text = widget.value.toStringAsFixed(1);
+    }
+  }
+
+  void _submit(String raw) {
+    final parsed = double.tryParse(raw.trim());
+    if (parsed == null || !parsed.isFinite) {
+      _controller.text = widget.value.toStringAsFixed(1);
+      return;
+    }
+    final next = parsed.clamp(widget.min, widget.max).toDouble();
+    widget.onChanged(next);
+    _controller.text = next.toStringAsFixed(1);
+    _controller.selection = TextSelection.collapsed(
+      offset: _controller.text.length,
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focusNode.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => TextField(
+    key: ValueKey('geometry-value-${widget.label}'),
+    controller: _controller,
+    focusNode: _focusNode,
+    enabled: widget.enabled,
+    keyboardType: const TextInputType.numberWithOptions(decimal: true),
+    inputFormatters: [
+      FilteringTextInputFormatter.allow(RegExp(r'^\d{0,3}(?:\.\d)?$')),
+    ],
+    textAlign: TextAlign.end,
+    decoration: InputDecoration(
+      isDense: true,
+      suffixText: '%',
+      labelText: widget.label,
+      border: const OutlineInputBorder(),
+    ),
+    onSubmitted: _submit,
+    onTapOutside: (_) => _focusNode.unfocus(),
   );
 }

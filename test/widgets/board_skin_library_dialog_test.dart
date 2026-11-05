@@ -164,6 +164,25 @@ void main() {
           .leftPercent,
       12,
     );
+    final leftInput = find.byKey(ValueKey('geometry-value-左边距'));
+    await tester.ensureVisible(leftInput);
+    await tester.enterText(leftInput, '999');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    profile = (await skins.load()).single;
+    expect(
+      profile.geometry.leftPercent,
+      closeTo(
+        profile.geometry.rightPercent - BoardSkinGeometry.minSpanPercent,
+        .1,
+      ),
+    );
+
+    await tester.enterText(leftInput, '20.5');
+    await tester.testTextInput.receiveAction(TextInputAction.done);
+    await tester.pumpAndSettle();
+    profile = (await skins.load()).single;
+    expect(profile.geometry.leftPercent, 20.5);
     await tester.ensureVisible(find.text('管理棋盘皮肤库'));
     await tester.tap(find.text('管理棋盘皮肤库'));
     await tester.pumpAndSettle();

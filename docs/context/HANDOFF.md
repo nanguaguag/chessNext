@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+# 2026-11-05 M4-66 / F21,B24 / ADR-098 最新交接
+
+用户持续授权继续对齐登录外全站功能与设置，不能每完成一项就停止；测试需避免造成多个chessNext。当前工作树包含M4-66代码、测试、ADR/研究追踪和context更新，待单独中文feature commit。新增四边百分比数字输入（一位小数），按BoardSkinGeometry当前合法范围和最小跨度钳制，复用已有保存控制器；项目百分比P，不映射站点未知单位/算法。
+
+定向`board_skin_library_dialog_test.dart`及`piece_skin_images_test.dart`合并8/8。根首轮591通过/5跳过/2失败，失败是设置表单变高后两条既有piece skin测试未将控件滚入视口；加`ensureVisible`后定向8/8。最终根`flutter test --concurrency=1 --reporter expanded`593通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-66-final.log`；5跳过为缺官方Pikafish/NNUE。本地`flutter analyze --no-pub`、`git diff --check`通过。
+
+macOS未新启动App：复用原App PID50598、runner PID50125，Flutter attach文件同步1012ms、热重启8613ms；Ctrl-C后PID50598仍存活。测试期间一个串行flutter_tester，结束无残留。当前确认无`flutter_tester`/attach客户端；`tuner_flutter` PID70651是其他项目。屏幕锁定，视觉人工验收not run。
+
+下一步提交M4-66并持续推进B24编辑保存/应用/reload生命周期、F27多语言资源与语言选择、以及功能矩阵中其它登录外差距。源站完整几何仍U；不能将F21/全站标完成。后续根测试加`--concurrency=1`；macOS复用同一App attach，禁止为验证重复运行`flutter run`。
+
 ## 最新审计 E80 / F27
 
 English多页面抽样覆盖显示/设置目录、棋盘与选择器、分析、标记、声音与音效选择、操作及长按菜单、关于、主页面与菜单；样本静态文案已翻译且主界面记谱使用ICCS拉丁表示。用户数据化的棋盘皮肤名/作者和备案链接仍中文/专名。未覆盖所有弹窗、错误、导入/编辑、题库/训练，不宣称全站English完整。切回简中，复读系统主题/晴蓝/夜间开关开，状态恢复。证据、矩阵、缺口、追踪、交互、待办和context正在做纯文档commit；工作树需要复核。

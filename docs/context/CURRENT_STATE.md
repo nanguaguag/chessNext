@@ -1,5 +1,13 @@
 # 当前状态
 
+# 最新实现 M4-66 / F21,B24 / ADR-098 棋盘边距精确输入（待提交）
+
+棋盘显示设置四边百分比滑杆旁新增可键入一位小数的字段。提交时按当前边界和至少55%横/纵跨度钳制，经现有偏好/用户棋盘皮肤控制器保存；滑杆、拖点校准仍可用。该项目百分比输入为P，与站点E76/E77显示0–500/0–550但完整单位/联动仍U的字段分离。
+
+专项`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`8/8；根`flutter test --concurrency=1 --reporter expanded`593通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-66-final.log`）；`flutter analyze --no-pub`无问题、`git diff --check`通过。根首次compact运行591通过/5跳过/2失败；定位为新字段增加垂直高度后，`piece_skin_images_test`两处旧测试点击滚动区外按钮。加入`ensureVisible`后相关套件8/8及完整根测试复跑通过。仅一个串行`flutter_tester`，结束无残留。
+
+macOS复用既有PID50598/runner50125，通过`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1012ms、热重启8613ms；脱离后PID50598仍存活。全程未执行`flutter run`，没有新开chessNext。屏幕锁定，窗口人工视觉验收not run。M4-66实现/ADR和追踪待中文feature commit。继续B24保存应用事务/几何差距、F27完整多语言和其他登录外缺口，不能声称F21或全站完成。
+
 ## 最新审计 E80 / F27 英语多页面覆盖（2026-11-05）
 
 访客English实看设置目录、显示、棋盘/棋子及棋盘选择器、分析、标记、声音/音效选择器、操作快捷动作、关于、主页面与主菜单；所见静态文案均英语，主界面着法示例变拉丁ICCS。动态皮肤名/作者、品牌和法定备案链接仍中文/专名。切回简中，主题/色调/夜间开关恢复E79基线。只是抽样，不覆盖所有弹窗/错误/练习/导入导出，不称English完整。F27完整语言资源仍缺；当前项目未实现Locale选择器。E80追踪待文档提交。

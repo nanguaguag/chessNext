@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-84 / F27 / ADR-114 ARB生成资源与字号对话框本地化（验证完成，待提交）
+
+增加Flutter `gen-l10n`配置和zh/en ARB，字号弹窗标签、提示、当前值、 slider label/semantics、读屏及动态OS字号百分比迁至资源key。应用根仍固定zh且仅支持zh，暂不开放部分覆盖语言。首次`flutter pub get`因`.dart_tool/l10n_untranslated.json`路径设置需目录而失败；配置改到`.dart_tool/l10n_untranslated.json`后再次pub get通过。
+
+定向`flutter test --concurrency=1 test/widgets/text_size_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`630通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-84.log`；`flutter analyze --no-pub`无问题；`dart format ...`与`git diff --check`通过；`flutter build macos --no-pub`成功（113.0MB）。构建告警：插件flutter_tts不支持SwiftPM；objective_c code asset在arm64/x86_64命名不一致并选取objective_c.framework。根测试仅一个串行flutter_tester，结束后无残留，原`chessNext` PID50598存活；没有启动新app/attach，运行态和视觉验收未做。F27其它全站文案与3种额外Locale仍未完成；功能待中文单独提交并继续推进。
+
 ## 2026-11-05 / M4-83 / F15,F20 / ADR-113 大师谱整局懒加载与只读预览（已提交 a1b3bff）
 
 扩展operator-supplied索引可选授权PGN，增加无日志、有限响应的单记录详情端点；Flutter按结果显式请求，校验schema/许可/署名/ID/PGN标签，回到独立只读主线预览。位置或过滤变化时旧详情丢弃，不更改主棋树。

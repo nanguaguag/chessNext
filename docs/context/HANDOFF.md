@@ -1,5 +1,13 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-84 / F27 / ADR-114 首个ARB本地化切片（验证完成，待提交）
+
+新增Flutter ARB生成器、zh模板/en资源，把字号弹窗静态文案、slider语义、状态和百分比参数迁到稳定资源key；应用根显式保持简体中文单Locale，英语系统设备不会出现半翻译界面。根暂不提供语言选择/持久化，当前English仅独立组件测试可见，其他99+ Dart UI文件待逐模块迁移。
+
+定向`flutter test --concurrency=1 test/widgets/text_size_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`630通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-84.log`；`flutter analyze --no-pub`、format/diff检查通过；`flutter build macos --no-pub`成功（113.0MB，flutter_tts SwiftPM提示和objective_c多架构资源警告）。运行单个串行tester、结束后退出；桌面唯一既有PID50598/runner50125。没有新开App；macOS运行/热重启/视觉未验。首次`flutter pub get`曾因未翻译清单父目录不存在失败，随后将文件移至已有`.dart_tool/`并重跑通过。功能及追踪文档待单独中文commit。
+
+下一步继续将完整设置入口/菜单、常见错误和对话框分组迁移；逐步建立静态资源与实际调用点的覆盖核查。所有语言覆盖达标后再实现Locale设置及偏好持久化；本片不关闭F27或总目标。
+
 ## M4-83 / F15,F20 / ADR-113 大师谱整局只读预览（已提交 a1b3bff）
 
 代码已实现详情API/客户端按ID懒加载/来源与PGN校验/独立只读主线棋盘导航；Nginx关闭详情访问日志并限速。已于`a1b3bff feat(book): 增加大师谱整局只读预览`提交。定向16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、server Dart包`dart test`6/6与`dart analyze`、format/diff检查均通过；`flutter build macos --no-pub`成功（111.9MB，既有flutter_tts SwiftPM warning）。根测试单串行tester，无GUI；结束后tester已退出，只有原`chessNext` PID50598，runner PID50125。`flutter attach -d macos`等候未连接后中止；为避免重复窗口未运行`flutter run`。运行态/热重启/视觉验收未验证。只接受运营者有权展示的PGN；仓库不携真实语料，授权数据、部署仍U。

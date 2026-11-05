@@ -38,6 +38,7 @@ import 'ports/feedback_service.dart' show FeedbackAttachmentPicker;
 import 'application/record_playback_controller.dart';
 import 'ports/preferences_repository.dart';
 import 'features/settings/preferences_dialog.dart';
+import 'l10n/app_localizations.dart';
 import 'dart:ui' show AppExitResponse;
 import 'dart:async';
 import 'application/draft_controller.dart';
@@ -423,6 +424,9 @@ class _ChessNextAppState extends State<ChessNextApp>
   Widget build(BuildContext context) => MaterialApp(
     navigatorKey: navigatorKey,
     scaffoldMessengerKey: messengerKey,
+    locale: const Locale('zh'),
+    localizationsDelegates: AppLocalizations.localizationsDelegates,
+    supportedLocales: const [Locale('zh')],
     title: 'chessNext',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(

@@ -1,0 +1,29 @@
+{
+  "@@locale": "zh",
+  "textSizeDialogTitle": "界面字号",
+  "followSystemTextSize": "跟随系统字号",
+  "systemTextSizePreview": "系统字号预览：{percent}%",
+  "@systemTextSizePreview": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "currentTextSizeFollowing": "当前字号：跟随系统",
+  "currentTextSizeManual": "当前字号：{sizeLabel}",
+  "@currentTextSizeManual": {
+    "placeholders": {
+      "sizeLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "standardTextSize": "标准100%",
+  "largeTextSize": "大115%",
+  "extraLargeTextSize": "特大130%",
+  "textSizePreviewLine": "红方行棋 · 本地棋谱与分析",
+  "textSizePersistenceHelp": "实时生效并保存在本机。手动调节会关闭跟随系统；重新关闭跟随时回到标准字号。",
+  "retry": "重试",
+  "close": "关闭"
+}

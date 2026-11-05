@@ -1,0 +1,29 @@
+{
+  "@@locale": "en",
+  "textSizeDialogTitle": "Interface text size",
+  "followSystemTextSize": "Follow system text size",
+  "systemTextSizePreview": "System text size preview: {percent}%",
+  "@systemTextSizePreview": {
+    "placeholders": {
+      "percent": {
+        "type": "int"
+      }
+    }
+  },
+  "currentTextSizeFollowing": "Current size: Follow system",
+  "currentTextSizeManual": "Current size: {sizeLabel}",
+  "@currentTextSizeManual": {
+    "placeholders": {
+      "sizeLabel": {
+        "type": "String"
+      }
+    }
+  },
+  "standardTextSize": "Standard 100%",
+  "largeTextSize": "Large 115%",
+  "extraLargeTextSize": "Extra large 130%",
+  "textSizePreviewLine": "Red to move · Local records and analysis",
+  "textSizePersistenceHelp": "Changes apply immediately and are saved on this device. Manual adjustment turns off system following; turning it off again returns to standard size.",
+  "retry": "Retry",
+  "close": "Close"
+}

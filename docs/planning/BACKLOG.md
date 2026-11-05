@@ -307,6 +307,8 @@ M4-28 / F21,B24：macOS选择解压的项目schema1单皮肤文件夹，固定�
 - E42访客目录显示默认/点赞/名称/作者/最新导入排序和显式提交搜索；点赞/上传/应用成功仍U。M4-39按ADR-074实现自建公开只读目录服务与部署资料；M4-40按ADR-075实现`PieceSkinCatalog`只读HTTP传输端口、超时/边界和类型化错误。M4-41接入皮肤库UI、用户服务URL偏好、许可提示/离线状态；M4-42实现包下载摘要/格式校验、用户确认许可和本机安全导入。下一步人工验证部署示例服务用自制授权样包的完整流程、增加有界目录缓存策略，再继续全站其它缺口；用户上传/点赞写入未确认且不纳入只读后端。
 - 登录后的设置同步按用户范围排除；皮肤目录等其他在线能力仍使用可替换后端并提供自建部署方案。
 
+M4-84 / F27 / ADR-114：建立Flutter ARB生成资源管线；字号对话框首片有简体中文和English资源及读屏语义。产品根暂只开放简体中文，防止English系统语言触发未翻译路由。继续按模块迁移全部静态文案、错误/确认/tooltip/语义，并区分动态棋谱/协议内容；覆盖验证完成前不增加Locale偏好或选择器。
+
 M4-30 / F20,B25：按ADR-065为本机四类侧栏卡片提供拖动排序，偏好校验必须是恰好四项且唯一，持久化旧值兼容与读写竞态沿用PreferencesController；布局按实时顺序重建，不修改棋树/分析。参考站实际面板映射仍U，项目分组为P。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID77791、VM `127.0.0.1:51219`。CUA `getApp("chessNext")`超时，人工窗口视觉验收未做。
 
 M4-31 / F20,B25：按ADR-066在同一Material3侧栏面板设置中提供四卡片独立显隐；全部隐藏时仍可从AppBar设置恢复。偏好支持空列表/去重/坏值拒绝、旧schema默认全开和异步迟到读取合并。适配项目卡片，不冒充源站面板映射。专项`flutter test test/application/preferences_controller_test.dart test/widgets/side_panel_order_test.dart --reporter expanded`7/7；根`flutter test --reporter compact`505通过/5跳过；`flutter analyze --no-pub`无问题；`flutter run -d macos`Build/Sync PID78894、VM `127.0.0.1:51984`。CUA窗口超时，人工视觉验收未做。

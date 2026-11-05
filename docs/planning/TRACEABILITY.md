@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-05 / M4-84 / F27 / ADR-114 首个ARB本地化切片
+
+增加Flutter `gen-l10n`/ARB管线及简体中文模板、English资源。把TextSizeDialog的标题、follow系统、当前值、预设、示例、帮助、关闭/重试、slider语义和系统字号百分比全部改为命名资源；默认App根强制简体中文且仅支持简体Locale，避免English系统设备看到混合界面。独立测试以English Localizations包裹同一组件，验证文案/slider语义；保留默认App的简体行为。该English资源只覆盖字号弹窗，尚无生产Locale切换；不代表F27完成。
+
+验证：定向`flutter test --concurrency=1 test/widgets/text_size_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`630通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-84.log`；`flutter analyze --no-pub`、`dart format`和`git diff --check`通过；`flutter build macos --no-pub`成功（113.0MB；flutter_tts SwiftPM提示与objective_c多架构资源警告）。根测试单串行flutter_tester，结束后已退出；实际macOS运行/视觉未验，为避免重复窗口未运行`flutter run`。
+
 ## 2026-11-05 / M4-83 / F15,F20 / ADR-113 大师谱授权整局只读预览
 
 自建索引记录增加可选受权PGN。`POST /v1/master-games/query`仍仅返回metadata和`hasRecord`；用户点击结果后由`GET /v1/master-games/records/<id>`按ID懒加载。服务端对PGN限制64,000 UTF-8字节并校验控制字符，未提供/未知ID明确404，详情附dataset/license/attribution和精确查询FEN/完整历史。客户端适配器严格校验响应大小/字段/记录ID；控制器核对当前查询来源/局面/完整历史、主线PGN到目标位置的路径以及可用棋手/赛事标签，并在筛选、文档、位置变化后丢弃迟到结果。独立对话框复制PGN树提供棋盘、主线及着法导航，不改主`BoardSession`。Nginx关闭两个路径的访问日志并应用目录限速。本仓库仍不含棋谱语料；授权真实性、真实自托管部署及源站整局操作语义仍U，F15不关闭。

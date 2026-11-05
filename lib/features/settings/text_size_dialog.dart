@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import '../../application/app_preferences.dart';
 import '../../application/preferences_controller.dart';
+import '../../l10n/app_localizations.dart';
 import 'app_text_scaling.dart';
 
 class TextSizeDialog extends StatelessWidget {
@@ -12,18 +13,18 @@ class TextSizeDialog extends StatelessWidget {
     TextSizePreference.large,
     TextSizePreference.extraLarge,
   ];
-  static const labels = ['标准100%', '大115%', '特大130%'];
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: preferences,
     builder: (context, _) {
+      final l10n = AppLocalizations.of(context);
       final size = preferences.value.textSize;
       final system = size == TextSizePreference.system;
       final index = system ? 0 : manual.indexOf(size);
       final systemPercent =
           (AppTextScaling.systemOf(context).scale(16) / 16 * 100).round();
       return AlertDialog(
-        title: const Text('界面字号'),
+        title: Text(l10n.textSizeDialogTitle),
         content: SizedBox(
           width: 460,
           child: SingleChildScrollView(
@@ -33,8 +34,8 @@ class TextSizeDialog extends StatelessWidget {
               children: [
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('跟随系统字号'),
-                  subtitle: Text('系统字号预览：$systemPercent%'),
+                  title: Text(l10n.followSystemTextSize),
+                  subtitle: Text(l10n.systemTextSizePreview(systemPercent)),
                   value: system,
                   onChanged: preferences.loading
                       ? null
@@ -46,17 +47,22 @@ class TextSizeDialog extends StatelessWidget {
                           ),
                         ),
                 ),
-                Text(system ? '当前字号：跟随系统' : '当前字号：${labels[index]}'),
+                Text(
+                  system
+                      ? l10n.currentTextSizeFollowing
+                      : l10n.currentTextSizeManual(_manualLabel(l10n, index)),
+                ),
                 Semantics(
-                  label: '界面字号',
+                  label: l10n.textSizeDialogTitle,
                   child: Slider(
                     key: const ValueKey('text-size-slider'),
                     value: index.toDouble(),
                     min: 0,
                     max: 2,
                     divisions: 2,
-                    label: labels[index],
-                    semanticFormatterCallback: (value) => labels[value.round()],
+                    label: _manualLabel(l10n, index),
+                    semanticFormatterCallback: (value) =>
+                        _manualLabel(l10n, value.round()),
                     onChanged: preferences.loading
                         ? null
                         : (value) => unawaited(
@@ -64,18 +70,22 @@ class TextSizeDialog extends StatelessWidget {
                           ),
                   ),
                 ),
-                const Wrap(
+                Wrap(
                   spacing: 16,
                   runSpacing: 8,
-                  children: [Text('标准100%'), Text('大115%'), Text('特大130%')],
+                  children: [
+                    Text(l10n.standardTextSize),
+                    Text(l10n.largeTextSize),
+                    Text(l10n.extraLargeTextSize),
+                  ],
                 ),
                 const SizedBox(height: 16),
-                const Text(
-                  '红方行棋 · 本地棋谱与分析',
+                Text(
+                  l10n.textSizePreviewLine,
                   key: ValueKey('text-size-preview'),
                 ),
                 const SizedBox(height: 12),
-                const Text('实时生效并保存在本机。手动调节会关闭跟随系统；重新关闭跟随时回到标准字号。'),
+                Text(l10n.textSizePersistenceHelp),
                 if (preferences.loading || preferences.saving)
                   const LinearProgressIndicator(),
                 if (preferences.error != null) ...[
@@ -89,7 +99,7 @@ class TextSizeDialog extends StatelessWidget {
                     onPressed: preferences.loading || preferences.saving
                         ? null
                         : () => unawaited(preferences.retryPersistence()),
-                    child: const Text('重试'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ],
@@ -99,10 +109,16 @@ class TextSizeDialog extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
+            child: Text(l10n.close),
           ),
         ],
       );
     },
   );
+
+  String _manualLabel(AppLocalizations l10n, int index) => switch (index) {
+    0 => l10n.standardTextSize,
+    1 => l10n.largeTextSize,
+    _ => l10n.extraLargeTextSize,
+  };
 }

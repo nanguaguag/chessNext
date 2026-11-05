@@ -1,3 +1,9 @@
+## M4-84 / F27 / ADR-114 ARB资源管线与字号对话框首片（门槛通过，待提交）
+
+建立Flutter `gen-l10n` ARB生成管线，简体中文模板和English资源；TextSizeDialog所有标签、说明、slider读屏格式及动态百分比占位经资源解析。根MaterialApp仍明确锁定`zh`且仅支持`zh`，不会让英语系统设备看到部分英语/中文混合页；暂无Locale选择和持久化。资源key覆盖目前仅这个弹窗，资源生成器齐全不等同全UI覆盖。
+
+定向`flutter test --concurrency=1 test/widgets/text_size_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`630通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-84.log`；`flutter analyze --no-pub`、format/diff检查通过；`flutter build macos --no-pub`成功，113.0MB；既有`flutter_tts`SwiftPM与`objective_c`多架构警告。测试单串行tester，结束后退出，桌面只有原PID50598。未附着/运行新App，macOS实际运行/视觉未验。F27仍开放，完整英译、繁中/越南语和语言偏好均待后续逐模块迁移。
+
 ## M4-83 / F15,F20 / ADR-113 大师谱整局只读预览（已提交 a1b3bff）
 
 自建大师谱索引可选包含经运营者授权的PGN；查询仍只返回metadata与`hasRecord`，用户显式点开后按ID懒加载详情。服务和客户端限制大小并核对ID、数据集来源、license/署名、精确FEN/完整历史和PGN主线；局面/文档/筛选变化会丢弃旧响应。独立只读主线对话框不写入主棋谱。服务包`dart test`6/6、`dart analyze`无问题；定向Flutter16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、格式/diff检查通过；`flutter build macos --no-pub`成功（111.9MB，已有flutter_tts SwiftPM警告）。未能附着现有PID50598/runner50125，未打开新App；实际macOS运行/热重启/视觉验收未验证。测试使用单串行tester且无GUI，结束后tester退出，原桌面实例仍唯一。真实PGN授权与部署语料仍U；F15/全站不关闭。

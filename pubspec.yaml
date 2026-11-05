@@ -11,7 +11,10 @@ dependencies:
   file_selector: 1.1.0
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
   flutter_tts: ^4.2.5
+  intl: any
   image: 4.12.0
   path_provider: ^2.1.6
   xiangqi_core:
@@ -25,6 +28,7 @@ dev_dependencies:
   skin_catalog_server:
     path: server/skin_catalog
 flutter:
+  generate: true
   uses-material-design: true
   assets:
     - assets/audio/

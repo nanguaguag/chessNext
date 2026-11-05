@@ -1,8 +1,12 @@
 import 'package:chess_next/app.dart';
 import 'package:chess_next/application/app_preferences.dart';
+import 'package:chess_next/application/board_session.dart';
+import 'package:chess_next/application/engine_session_controller.dart';
+import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/features/board/xiangqi_board.dart';
 import 'package:chess_next/features/settings/app_text_scaling.dart';
 import 'package:chess_next/features/settings/text_size_dialog.dart';
+import 'package:chess_next/l10n/app_localizations.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -48,6 +52,57 @@ void main() {
   double font(WidgetTester tester) => MediaQuery.textScalerOf(
     tester.element(find.byType(XiangqiBoard)),
   ).scale(20);
+
+  testWidgets(
+    'text size dialog uses the selected localization for labels and semantics',
+    (tester) async {
+      final session = BoardSession();
+      final engine = EngineSessionController(session, null);
+      final preferences = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      await preferences.initialize();
+      addTearDown(preferences.dispose);
+      addTearDown(engine.dispose);
+      addTearDown(session.dispose);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          locale: const Locale('en'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: Scaffold(
+            body: Builder(
+              builder: (context) => TextButton(
+                onPressed: () => showDialog<void>(
+                  context: context,
+                  builder: (_) => TextSizeDialog(preferences: preferences),
+                ),
+                child: const Text('Open'),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('Open'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Interface text size'), findsOneWidget);
+      expect(find.text('Follow system text size'), findsOneWidget);
+      expect(find.text('Standard 100%'), findsOneWidget);
+      expect(
+        find.text('Red to move · Local records and analysis'),
+        findsOneWidget,
+      );
+      expect(find.text('Close'), findsOneWidget);
+      final slider = tester.widget<Slider>(
+        find.byKey(const ValueKey('text-size-slider')),
+      );
+      expect(slider.semanticFormatterCallback!(1), 'Large 115%');
+      expect(tester.takeException(), isNull);
+    },
+  );
 
   testWidgets(
     'live slider exits system, keyboard selects extra large, system toggle resets manual',

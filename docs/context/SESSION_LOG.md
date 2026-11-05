@@ -1207,4 +1207,7 @@ macOS既有app PID50598/runner50125。非TTY attach文件同步1,480ms但无stdi
 
 M4-78最终验证（2026-11-05）：定向`flutter test --concurrency=1 test/application/book_lookup_controller_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，最终日志`/tmp/chessnext-root-test-m4-78-final.log`；`flutter analyze --no-pub`无问题；`git diff --check`通过。最终代码对macOS既有PID50598/runner50125执行TTY `flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`，同步1,266ms、R热重启787ms，Ctrl-C脱离后PID50598仍活；复核无tester/attach残留及新chessNext GUI。过程还有一次非TTY attach同步成功但不能交互，随后使用TTY流程成功；其孤立frontend_server已准确清理。全量单并发测试用时约5分14秒，期间只有一个`flutter_tester`。屏幕锁定未作人工视觉验收。\nEOF
 
-git diff --check; git status --short; git diff --stat; wc -l docs/context/SESSION_LOG.md
+
+## 2026-11-05 / E85 / B24 左边距stepper单步审计
+
+在参考站棋盘设置→新建草稿中，以AX点击左边距stepper加一次：33→33.5、右465→465.02、上33/下519与格点50/50不变。再点减一次，精确回到33/465/33/519。浏览器回退后确认放弃改动，设置页默认棋盘/棋子、100%、坐标开、倒置关恢复。没有保存、应用或导出。证据记录在REFERENCE_EVIDENCE E85；局部操作结果为V，完整几何公式及边界仍U。

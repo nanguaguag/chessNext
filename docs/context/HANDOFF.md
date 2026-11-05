@@ -188,3 +188,7 @@ M4-63已单独以`e51388c feat(settings): 支持自建反馈预览与提交`提�
 实际验证：定向Flutter9/9；server `dart test --reporter expanded`6/6、`dart analyze lib bin test`干净、exe编译通过；根`flutter test --concurrency=1 --reporter expanded`598通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-68.log`，5项需官方Pikafish/NNUE；根`flutter analyze --no-pub`和`git diff --check`通过。完整结果已加TRACEABILITY。代码、ADR及矩阵/缺口/计划/上下文记录当前待单独中文commit。
 
 下一步提交M4-68后继续B24：沿参考设置页审计格点拖动、宽高比例、四边联动和预览保存/使用/reload事务，严格记录O/V/P/U，不外推公式；随后实现已证实缺口并逐项继续F27完整多语言及功能矩阵未完成项。别在本增量commit后停止，也不要宣称全站已对齐。
+
+## E84 追加 / B24 格点水平拖动局部样本
+
+在访客参考页空白未保存草稿中两个把手各水平拖约20截图像素，AX读数记录在`REFERENCE_EVIDENCE.md` E84。存在跨轴/对边小变化，但屏幕坐标未标定、可能是采样/画布映射/精度，整体算法仍U。返回确认丢弃并核对设置默认，没保存/使用/导出。当前工作树为M4-68后清洁基线，E84文档更新是独立待提交的audit docs片；随后不要停在审计提交，继续检查本机BoardGeometryEditor响应式几何、拖拽与输入映射，修复可证明的问题，再按门槛提交，之后推进其它登录外缺口。

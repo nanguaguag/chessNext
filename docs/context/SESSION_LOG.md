@@ -1086,3 +1086,9 @@ Dart自建server新增可选`CHESSNEXT_COPYRIGHT_ROOT`私有目录和`/v1/copyri
 定向Flutter9/9；server测试6/6，server analyze与exe编译通过；根`flutter test --concurrency=1 --reporter expanded`598通过/5跳过/0失败，5项缺官方Pikafish/NNUE，日志`/tmp/chessnext-root-test-m4-68.log`；`flutter analyze --no-pub`及`git diff --check`通过。测试早期编译/夹具/滚动和预览假图片异常均修复后复跑。
 
 M4-68代码和ADR-100、矩阵/缺口/追踪、README/部署说明及上下文记录待独立中文feature commit。之后立即继续B24几何映射和皮肤保存/应用/reload审计/实现，不因本次commit停工；继续登录外功能范围，未完成全站对齐。
+
+## 2026-11-05 / E84 / F21,B24 棋盘格点水平拖动审计
+
+M4-68提交后继续B24。读取feature-audit skill、矩阵/缺口/证据；参考IAB既有用户tab。只在空白未保存棋盘皮肤草稿上各水平拖动两个把手约20视口像素，没有保存、使用、导出或改动既有皮肤。左上把手后左/上/右/下AX=53.50/32.50/465.18/519.04；再拖右下后左/上保持，右/下=487.02/519.49。图像坐标是截图近似值、未标定；不能由小幅跨轴变化推出公式。浏览器返回弹窗确认丢弃后，设置AX复核默认棋盘/棋子、100%、坐标开、倒置关。
+
+E84已补REFERENCE_EVIDENCE、FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY和上下文。纯文档增量，不跑Flutter门槛；当前待中文docs commit。下一步检查本机BoardGeometryEditor在不同宽高/输入编辑时是否保持期望单轴映射、最小跨度，并查看棋盘皮肤表单保存/应用/恢复生命周期测试覆盖；继续登录外功能。

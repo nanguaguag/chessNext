@@ -931,3 +931,10 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 ## M4-75 / F21,B24 / ADR-080,105 file-backed 保存/重开生命周期回归
 
 新增集成测试使用实际`FilePreferencesRepository`、`FileBoardSkinLibraryRepository`与`FileBoardSkinImageRepository`，而非Memory仓储。先设定内置jade为当前皮肤，保存一套不应用的用户定义，修改六项几何属性并写入落点PNG；关闭全部controller后新建全套controller，验证profile几何与图片恢复且当前仍为jade。随后单独“使用”用户皮肤，再次重建controller，验证选中ID和定义几何均恢复。专项`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`9/9；根`flutter test --concurrency=1 --reporter expanded`604通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-75.log`；`flutter analyze --no-pub`和diff-check通过。macOS复用PID50598/runner50125，attach同步984ms、热重启1,278ms；脱离后App存活且无tester/attach残留。此为项目真实文件适配器验证，不证明源站reload行为；目录图片在manifest、清单提交分阶段失败之间的孤儿清理仍另行处理。
+
+
+## M4-76 / F21,B24 / ADR-107 自定义棋盘图像孤儿目录恢复
+
+`BoardSkinImageRepository`增加`pruneCustomSkins(retainedIds)`端口。文件适配器扫描受控棋盘图片根目录，仅删除格式正确且未被成功加载profile列表登记的`custom-*`目录；保留内置ID及仍登记皮肤，包括空资源。`BoardSkinImageLibraryController`同步移除已清理缓存。`BoardSkinLibraryController.initialize`将清理置于定义load成功之后；load/解析失败绝不运行清理，清理失败则提示错误并保留数据，不改用户当前选择/列表。用于收敛创建、删除在两仓储间崩溃产生的孤儿，不是多文件事务原子性保证。
+
+专项`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart test/application/board_skin_library_test.dart --reporter expanded`14/14；覆盖含图/空孤儿、保留profile/内置项，以及损坏清单时图像不清理。根`flutter test --concurrency=1 --reporter expanded`606通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-76.log`；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,083ms、热重启1,194ms；脱离后原App存活且无tester/attach残留。

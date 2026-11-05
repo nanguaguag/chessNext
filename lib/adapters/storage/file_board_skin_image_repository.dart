@@ -199,4 +199,22 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
       rethrow;
     }
   }
+
+  @override
+  Future<void> pruneCustomSkins(Set<String> retainedIds) async {
+    final base = await _base();
+    await for (final entity in base.list(followLinks: false)) {
+      if (entity is! Directory) continue;
+      final id = entity.uri.pathSegments.lastWhere(
+        (segment) => segment.isNotEmpty,
+      );
+      if (!RegExp(r'^custom-[a-z0-9-]{8,48}$').hasMatch(id) ||
+          retainedIds.contains(id) ||
+          await FileSystemEntity.type(entity.path, followLinks: false) !=
+              FileSystemEntityType.directory) {
+        continue;
+      }
+      await entity.delete(recursive: true);
+    }
+  }
 }

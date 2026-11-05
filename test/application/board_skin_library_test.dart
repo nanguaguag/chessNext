@@ -178,6 +178,13 @@ void main() {
       await first.images.importImages(profile.id, {
         BoardSkinImageSlot.landingMarker: _png(),
       });
+      const abandonedId = 'custom-87654321-dead';
+      await imageRepository.save(
+        abandonedId,
+        BoardSkinImageSlot.boardBackground,
+        'png',
+        _png(),
+      );
       expect(first.preferences.value.selectedBoardSkinId, BoardSkin.jade.name);
       closeControllers(first);
 
@@ -188,6 +195,8 @@ void main() {
         second.images.imagesFor(profile.id)[BoardSkinImageSlot.landingMarker],
         orderedEquals(_png()),
       );
+      expect(second.images.imagesFor(abandonedId), isEmpty);
+      expect((await imageRepository.load()).containsKey(abandonedId), isFalse);
       await second.library.select(profile.id);
       closeControllers(second);
 
@@ -197,6 +206,58 @@ void main() {
       closeControllers(third);
     },
   );
+
+  test('failed profile load never prunes custom board images', () async {
+    final temp = await Directory.systemTemp.createTemp(
+      'chessnext-board-corrupt-manifest-',
+    );
+    addTearDown(() => temp.delete(recursive: true));
+    const profileId = 'custom-12345678-abcd';
+    final imageRepository = FileBoardSkinImageRepository(() async => temp);
+    await imageRepository.save(
+      profileId,
+      BoardSkinImageSlot.landingMarker,
+      'png',
+      _png(),
+    );
+    final manifest = File('${temp.path}/chessnext-board-skins/profiles.json');
+    await manifest.parent.create(recursive: true);
+    await manifest.writeAsString('{broken');
+
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final preferences = PreferencesController(
+      engine,
+      MemoryPreferencesRepository(),
+    );
+    final images = BoardSkinImageLibraryController(
+      _NoopPicker(),
+      imageRepository,
+    );
+    final controller = BoardSkinLibraryController(
+      FileBoardSkinLibraryRepository(() async => temp),
+      images,
+      preferences,
+    );
+    try {
+      await preferences.initialize();
+      await images.initialize();
+      await controller.initialize();
+
+      expect(controller.error, isNotNull);
+      expect(
+        images.imageFor(profileId, BoardSkinImageSlot.landingMarker),
+        orderedEquals(_png()),
+      );
+      expect((await imageRepository.load()).containsKey(profileId), isTrue);
+    } finally {
+      controller.dispose();
+      images.dispose();
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
 
   test(
     'create clones current geometry and images; select, edit, and delete restore base',

@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-76 / F21,B24 / ADR-107 启动回收孤儿图片目录（验证完成，待提交）
+
+创建/删除流程分别写棋盘图片仓储与用户定义清单，进程可能在两次写操作之间终止。新增图片端口`pruneCustomSkins`：仅在`BoardSkinLibraryController.initialize`成功加载profile清单后调用，以有效用户ID作为保留集，文件适配器删除无定义的`custom-*`图片目录（含空文件夹）；内置皮肤和清单登记项目保留。若profile文件损坏/IO失败则跳过回收并保留所有图片；清理IO失败给出可重试错误，不改定义/选择。该机制不保证多文件原子提交，也不是源站支持证据。新增ADR-107。
+
+专项`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart test/application/board_skin_library_test.dart --reporter expanded`14/14；根`flutter test --concurrency=1 --reporter expanded`606通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-76.log`；5项需官方Pikafish/NNUE。`flutter analyze --no-pub`及`git diff --check`通过。macOS复用PID50598/runner50125，VM Service `61579/4bLZ1MhsyEk=`同步1,083ms、热重启1,194ms；Ctrl-C后App存活，无测试/attach残留或新App。
+
+代码、测试及ADR/决策/矩阵/计划/交接待单独中文feature commit。下一步继续审计图片层保存/清理的跨文件失败与进程中断安全，再推进F27完整语言覆盖和其它登录外缺口，不声称全站已对齐。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-75 / F21,B24 真实文件仓储保存/重开回归（待单独提交）
 
 新增跨controller生命周期测试，使用真实`FilePreferencesRepository`、`FileBoardSkinLibraryRepository`、`FileBoardSkinImageRepository`。先持久化当前内置jade，创建一套`apply:false`用户皮肤，写入四边/跨度/棋子比例/落点旋转几何和落点PNG；重建全部controller后几何与PNG仍在、jade仍选中。随后单独使用用户皮肤，再重建controller后用户ID与几何仍恢复。该测试验证本机项目适配器，不说明源站reload或重启行为。多文件崩溃原子性仍待研究。

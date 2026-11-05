@@ -43,6 +43,7 @@ final class BoardSkinLibraryController extends ChangeNotifier {
   Future<void> initialize() async {
     if (_disposed || loading) return;
     loading = true;
+    error = null;
     _notify();
     try {
       profiles = List.unmodifiable(await repository.load());
@@ -60,6 +61,15 @@ final class BoardSkinLibraryController extends ChangeNotifier {
       }
     } finally {
       loading = false;
+      _notify();
+    }
+    if (_disposed || error != null) return;
+    try {
+      await images.retainCustomSkins(
+        profiles.map((profile) => profile.id).toSet(),
+      );
+    } catch (_) {
+      error = '未登记的棋盘图片清理失败，已保留原目录供重试。';
       _notify();
     }
   }

@@ -97,6 +97,53 @@ void main() {
   });
 
   test(
+    'file repository prunes orphaned and empty custom skin directories',
+    () async {
+      final temp = await Directory.systemTemp.createTemp('chessnext-board-');
+      addTearDown(() => temp.delete(recursive: true));
+      final repository = FileBoardSkinImageRepository(() async => temp);
+      const retainedId = 'custom-12345678-abcd';
+      const abandonedId = 'custom-87654321-dead';
+      const emptyAbandonedId = 'custom-11111111-beef';
+      final bytes = _png();
+      await repository.save(
+        retainedId,
+        BoardSkinImageSlot.landingMarker,
+        'png',
+        bytes,
+      );
+      await repository.save(
+        abandonedId,
+        BoardSkinImageSlot.boardBackground,
+        'png',
+        bytes,
+      );
+      final emptyFolder = Directory(
+        '${temp.path}/chessnext-board-skin-images/$emptyAbandonedId',
+      );
+      await emptyFolder.create(recursive: true);
+      await repository.save(
+        BoardSkin.parchment.name,
+        BoardSkinImageSlot.startMarker,
+        'png',
+        bytes,
+      );
+
+      await repository.pruneCustomSkins({retainedId});
+
+      final loaded = await repository.load();
+      expect(loaded.keys, containsAll([retainedId, BoardSkin.parchment.name]));
+      expect(loaded.containsKey(abandonedId), isFalse);
+      expect(
+        await Directory(
+          '${temp.path}/chessnext-board-skin-images/$emptyAbandonedId',
+        ).exists(),
+        isFalse,
+      );
+    },
+  );
+
+  test(
     'file image repository clones and removes a custom skin by id',
     () async {
       final temp = await Directory.systemTemp.createTemp('chessnext-board-');

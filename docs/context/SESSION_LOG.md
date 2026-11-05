@@ -1175,3 +1175,11 @@ M4-74于`c32e2c3 feat(settings): 增加棋盘皮肤草稿编辑`单独提交。�
 
 
 M4-75最终门槛：定向9/9；根`flutter test --concurrency=1 --reporter expanded`604通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-75.log`，五项需官方Pikafish/NNUE；`flutter analyze --no-pub`通过。macOS复用PID50598 attach同步984ms、热重启1,278ms，脱离后原App存活；根测试仅一个串行tester，无tester/attach残留、新App。只余测试/文档改动，单独中文test commit后继续。
+
+## 2026-11-05 / M4-76 / F21,B24 / ADR-107 棋盘图片孤儿目录回收
+
+新增`BoardSkinImageRepository.pruneCustomSkins`端口；文件仓储只清除未被成功加载profile清单登记的custom目录，包含空目录，保留built-in和有效自定义皮肤。图片controller同步内存缓存。皮肤清单解析失败则不调用清理；清理I/O失败显示library error且不丢原数据。解决创建/删除跨清单/图片仓储中断后的磁盘孤儿，不承诺多文件原子提交。
+
+定向`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart test/application/board_skin_library_test.dart --reporter expanded`14/14；根`flutter test --concurrency=1 --reporter expanded`606通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-76.log`，跳过五项需本机未配置的官方Pikafish/NNUE；`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598 attach同步1,083ms、热重启1,194ms；脱离后原App存活。测试全程单串行tester，结束无tester/attach残留或新App，未运行`flutter run`。
+
+M4-76于`de068b0 fix(settings): 回收未登记的棋盘图片`单独提交。继续处理B24多文件事务与其它登录外差距。

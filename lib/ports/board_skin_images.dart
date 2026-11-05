@@ -36,4 +36,5 @@ abstract interface class BoardSkinImageRepository {
   Future<void> remove(String skinId, BoardSkinImageSlot slot);
   Future<void> removeSkin(String skinId);
   Future<void> cloneSkin(String sourceId, String destinationId);
+  Future<void> pruneCustomSkins(Set<String> retainedIds);
 }

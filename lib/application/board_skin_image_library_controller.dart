@@ -48,6 +48,19 @@ class BoardSkinImageLibraryController extends ChangeNotifier {
     _notify();
   }
 
+  Future<void> retainCustomSkins(Set<String> retainedIds) async {
+    await repository.pruneCustomSkins(retainedIds);
+    if (_disposed) return;
+    final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_images)
+      ..removeWhere(
+        (id, _) =>
+            RegExp(r'^custom-[a-z0-9-]{8,48}$').hasMatch(id) &&
+            !retainedIds.contains(id),
+      );
+    _images = Map.unmodifiable(next);
+    _notify();
+  }
+
   Future<void> importImages(
     String skinId,
     Map<BoardSkinImageSlot, Uint8List> images,
@@ -256,6 +269,15 @@ class MemoryBoardSkinImageRepository implements BoardSkinImageRepository {
     final next = Map<String, Map<BoardSkinImageSlot, Uint8List>>.from(_values)
       ..remove(skinId);
     _values = next;
+  }
+
+  @override
+  Future<void> pruneCustomSkins(Set<String> retainedIds) async {
+    _values.removeWhere(
+      (id, _) =>
+          RegExp(r'^custom-[a-z0-9-]{8,48}$').hasMatch(id) &&
+          !retainedIds.contains(id),
+    );
   }
 
   @override

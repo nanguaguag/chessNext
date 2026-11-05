@@ -1,5 +1,17 @@
 # 当前状态
 
+## 最新实现 M4-76 / F21,B24 / ADR-107（验证完成，待提交）
+
+成功加载皮肤定义后，以有效custom ID清理未登记的用户图片目录；保留内置/已登记皮肤，包括空孤儿目录。清单加载失败时不清理；清理失败报告错误，不破坏定义/选择/图片。定向14/14；根`flutter test --concurrency=1 --reporter expanded`606通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-76.log`；`flutter analyze --no-pub`、diff-check通过。
+
+macOS复用PID50598/runner50125，attach同步1,083ms、热重启1,194ms，脱离后原App存活；串行单tester且无残留，没有新App。锁屏视觉not run。代码、ADR-107及矩阵/交接待单独中文feature commit。继续B24图片/定义跨仓储失败矩阵及F27和其它登录外差距，全站仍未对齐。
+
+## 前序已提交
+
+M4-75 `d20b8f8` file-backed皮肤/图片重开测试；M4-74 `c34f246`独立几何草稿编辑；M4-73 `fc60883`保存与应用分离；M4-72 `3c82245`删除失败一致性。
+
+# 当前状态
+
 ## 最新进展 M4-75 / F21,B24 file-backed生命周期回归（验证完成，待提交）
 
 新增使用真实文件Preferences、棋盘皮肤清单和图片仓储的controller重建测试。保存非活动皮肤几何/落点PNG后重建controller，值/图像恢复且原内置皮肤仍选中；单独使用该用户皮肤后再次重建，当前ID/几何恢复。定向9/9，根`flutter test --concurrency=1 --reporter expanded`604通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-75.log`；`flutter analyze --no-pub`、diff-check通过。

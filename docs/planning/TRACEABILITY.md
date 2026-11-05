@@ -963,3 +963,11 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 新增独立可选`MasterGameDatabase`和`POST /v1/master-games/query`。运营者通过`CHESSNEXT_MASTER_GAMES_ROOT`装载自有/授权的索引；按精确FEN+完整history定位候选，并支持all/game/chessbook、玩家/赛事不区分大小写子串、年份闭区间、胜和负集合及有界分页。响应有数据集许可/署名、总量和索引元数据，保留清单顺序；没有第三方样本，也未实现Flutter筛选面板或完整棋局读取。该查询策略是依据可见字段的项目提案P，E87 DOM边界不解释为站点真实执行语义。服务请求体有32KiB上限、不落盘不记录；Nginx示例对此路由关闭access log并限速。
 
 专项`flutter test --concurrency=1 test/server/master_games_server_test.dart --reporter expanded`3/3；服务包`dart test`6/6、`dart analyze`无问题；根`flutter test --concurrency=1 --reporter expanded`616通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-80.log`；`flutter analyze --no-pub`无问题，`git diff --check`通过。5项跳过需官方Pikafish/NNUE环境。macOS复用PID50598/runner50125，TTY attach同步1,640ms、热重启2,180ms；Ctrl-C后核验PID50598存活，无tester/attach副本或第二个GUI。未做UI视觉验收，因本片仅服务端。
+
+## M4-81 / F15,F20 / ADR-111 大师谱筛选客户端
+
+`MasterGamesService`与`HttpMasterGamesService`独立于UI；显式自建endpoint、HTTPS远端/loopback HTTP、8秒超时、请求32KiB/响应2MiB上限；严格校验schema、页码、数据集许可/署名与metadata字段。`MasterGamesLookupController`仅在显式查询时捕获FEN/完整线路和过滤器；输入字段、云库/大师谱切换不请求；空endpoint离线；筛选和位置变化废弃旧响应；结果不改树且只返回metadata。UI支持全部/对局/棋书、棋手/赛事、年范围、结果chips和前后分页。
+
+专项`flutter test --concurrency=1 test/widgets/cloud_book_panel_test.dart test/adapters/network/http_master_games_service_test.dart test/application/master_games_lookup_controller_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-81-final.log`；5跳过需官方Pikafish/NNUE。`flutter analyze --no-pub`与`git diff --check`通过；`flutter build macos --no-pub`最终源码构建成功，伴随既有插件SwiftPM及未来Swift兼容警告。macOS复用既有PID50598/runner50125：历史及当前URL附着失败；自动发现也等待连接。未执行`flutter run`、未开第二个GUI。macOS app运行/热重启未验证。根测试只有一个串行flutter_tester，GUI始终唯一PID50598。
+
+源站筛选匹配/分页/排序与实际键盘年份边界、运营者授权语料及完整棋局读取仍U；本片不宣称F15或全站对齐。

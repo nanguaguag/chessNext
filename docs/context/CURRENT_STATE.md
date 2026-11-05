@@ -1,4 +1,10 @@
-## M4-80 / F15,F20 / ADR-110 自建大师谱索引查询（验证通过，待提交）
+## M4-81 / F15,F20 / ADR-111 大师谱筛选客户端（验证通过，macOS实际运行未验证）
+
+主工作区云库卡片可切换云库/大师谱。大师谱提供范围、棋手/赛事、年份和胜和负过滤，显式查询后才向配置的自建索引服务提交当前FEN+完整线路；请求和响应有界、来源字段校验、失败分类、前后分页、位置/过滤变化过期保护。无地址不联网；只展示metadata/许可署名，不读取整局、不落子。筛选匹配/排序/pagination语义为项目P。
+
+专项7/7；根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-81-final.log`；`flutter analyze --no-pub`及diff-check通过。`flutter build macos --no-pub`最终版本构建成功，输出仅含已存在的flutter_tts SwiftPM及插件Swift未来兼容警告。根测试用一个串行`flutter_tester`，没有启动GUI。当前只有原chessNext PID50598/runner50125。携已知VM URL及自动发现均附着超时，未开新App；macOS app运行/热重启/人工视觉未验证。取得现有VM连接后再做实机验证；不要无提示关闭可能含用户数据的现存App或重复`flutter run`。
+
+## M4-80 / F15,F20 / ADR-110 自建大师谱索引查询（已提交 457c904）
 
 新增可选`POST /v1/master-games/query`服务端契约与operator-supplied索引，不携带站点棋谱；可按精确FEN+history、分类、玩家/赛事子串、年份闭区间、结果和有界分页查询，响应提供索引元数据及license/attribution。默认无环境变量时不装载。具体匹配逻辑为项目P；Flutter客户端过滤器/整局读取和授权运营未完成。E87年份min/max仅是页面DOM声明O。
 

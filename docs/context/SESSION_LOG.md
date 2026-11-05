@@ -1,5 +1,13 @@
 # 会话日志
 
+## 2026-11-05 / M4-81 / F15,F20 / ADR-111 大师谱筛选客户端
+
+接入独立MasterGamesService、受限HTTP适配器、过期保护控制器及云库/大师谱筛选面板。显式查询才发送当前局面、完整历史和筛选字段；离线endpoint为空、筛选输入不查询，metadata可前后分页并带数据集来源，未取完整棋谱/未改变棋树。
+
+专项`flutter test --concurrency=1 test/widgets/cloud_book_panel_test.dart test/adapters/network/http_master_games_service_test.dart test/application/master_games_lookup_controller_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-81-final.log`；`flutter analyze --no-pub`、`git diff --check`通过；`flutter build macos --no-pub`最终源码构建成功，伴随既有插件Swift兼容警告。根测试单进程串行tester，期间唯一GUI为PID50598；并未导致新chessNext窗口。macOS尝试使用历史VM URL、runner当前URL及`flutter attach -d macos --no-dds`均没有附着成功，停止attach，没有运行`flutter run`，故实际macOS UI运行未验；此限制继续跟踪。
+
+此前回覆用户已确认删除仅本次创建的审计样本；E82磁盘交接显示该样本此前已删除并复核，未再次执行删除。
+
 ## 2026-11-05 / M4-57 / F15,F22,F23 / ADR-089 云库策略接入AI单步
 
 持久化自建BookService根地址、开局关闭/最佳/分差随机、残局开关、离库步数。只对分析界面AI单步请求；空地址不联网，并在设置中说明提交当前局面及完整历史。默认best/残局开/10个已完成全回合。保留epoch/positionRevision/tree结果校验；BookService候选逐个解析后经本机legalMoves复核；miss/服务失败/非法候选调用本机引擎。源站随机差距/残局定义/离库上界未知，项目P暂用100cp、≤8非将棋子、1–255全回合数（ADR-089）。

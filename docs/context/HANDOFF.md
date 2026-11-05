@@ -1,6 +1,12 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
-## M4-80 / F15,F20 / ADR-110 自建大师谱索引查询服务端（门槛通过，待提交）
+## M4-81 / F15,F20 / ADR-111 大师谱筛选客户端（代码门槛通过，macOS运行未验）
+
+新增`MasterGamesService`及HTTP适配器、`MasterGamesLookupController`和主界面大师谱筛选UI；无endpoint离线，字段编辑不触发请求，查询需显式按键，过滤/位置变化旧响应失效；分页metadata带许可/署名，不读取整局。M4-81专项7/7、根623通过/5跳过/0失败，analyze/diff-check通过，`flutter build macos --no-pub`构建通过（既有插件兼容警告）；测试期间只有串行flutter_tester，现有GUI仍仅PID50598。macOS attach用历史/当前runner URL及自动发现均未连上；未运行`flutter run`，未产生新App。还需补既有PID50598的macOS app运行/热重启/视觉验证，不能宣称macOS运行已验。
+
+下一步：M4-81代码门槛已过，可按独立中文feature commit提交并保留macOS运行未验记录；继续尝试安全复用PID50598运行验收。再拆分整局受授权读取/只读复盘，审计B24余下格点/边距设置与保存边界、F27全部语言资源，再按功能矩阵其它登录外未完成项持续推进。总目标仍未完成。
+
+## M4-80 / F15,F20 / ADR-110 自建大师谱索引查询服务端（已提交 457c904）
 
 服务端新增可选`CHESSNEXT_MASTER_GAMES_ROOT`与`POST /v1/master-games/query`，schema1索引文件仅由运营者供给，不附带站点/第三方棋谱。精确FEN+完整history定位，过滤字段与值域有界；响应只给索引metadata和数据集许可署名。Nginx样例关闭该端点access log并限速。Flutter筛选页面和整局读取未实现；匹配/排序/分页均是项目P，不能声称复刻参考站。E87只观察年份DOM min=1/max=9999，真实键盘/stepper和查询行为U；筛选窗已关且操作来源恢复云库。
 

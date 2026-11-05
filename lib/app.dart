@@ -31,6 +31,7 @@ import 'package:flutter/foundation.dart' as foundation;
 import 'application/app_preferences.dart';
 import 'application/preferences_controller.dart';
 import 'adapters/network/http_book_service.dart';
+import 'adapters/network/http_master_games_service.dart';
 import 'adapters/network/http_release_service.dart';
 import 'adapters/network/http_feedback_service.dart';
 import 'ports/feedback_service.dart' show FeedbackAttachmentPicker;
@@ -49,6 +50,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'application/board_session.dart';
 import 'application/book_lookup_controller.dart';
+import 'application/master_games_lookup_controller.dart';
 import 'application/engine_session_controller.dart';
 import 'features/analysis/analysis_panel.dart';
 import 'features/play/play_panel.dart';
@@ -160,6 +162,8 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final EngineSessionController analysis;
   late final HttpBookService bookService;
   late final BookLookupController bookLookup;
+  late final HttpMasterGamesService masterGamesService;
+  late final MasterGamesLookupController masterGamesLookup;
   late final HttpReleaseService releaseService;
   late final HttpFeedbackService feedbackService;
   BoardGifSettings gifSettings = BoardGifSettings();
@@ -170,6 +174,11 @@ class _ChessNextAppState extends State<ChessNextApp>
     WidgetsBinding.instance.addObserver(this);
     bookService = HttpBookService();
     bookLookup = BookLookupController(session, bookService);
+    masterGamesService = HttpMasterGamesService();
+    masterGamesLookup = MasterGamesLookupController(
+      session,
+      masterGamesService,
+    );
     releaseService = HttpReleaseService();
     feedbackService = HttpFeedbackService();
     analysis = EngineSessionController(
@@ -381,6 +390,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     preferences.removeListener(_preferencesChanged);
     recordPlayback.dispose();
     bookLookup.dispose();
+    masterGamesLookup.dispose();
     unawaited(boardFeedback.dispose());
     audioLibrary?.dispose();
     pieceImages.removeListener(_preferencesChanged);
@@ -395,6 +405,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     preferences.dispose();
     analysis.dispose();
     bookService.close();
+    masterGamesService.close();
     releaseService.close();
     feedbackService.close();
     if (drafts != null) {
@@ -509,6 +520,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       readings: readings,
       analysis: analysis,
       bookLookup: bookLookup,
+      masterGamesLookup: masterGamesLookup,
       showGuide: _showGuide,
       toggleTheme: () => unawaited(
         preferences.setTheme(
@@ -542,6 +554,7 @@ class _BoardPage extends StatelessWidget {
     required this.readings,
     required this.analysis,
     required this.bookLookup,
+    required this.masterGamesLookup,
     this.drafts,
     required this.preferences,
     required this.releaseService,
@@ -592,6 +605,7 @@ class _BoardPage extends StatelessWidget {
   final RecentReadingController readings;
   final EngineSessionController analysis;
   final BookLookupController bookLookup;
+  final MasterGamesLookupController masterGamesLookup;
   Widget _branchButton(String? target, String tooltip, IconData icon) {
     final epoch = session.epoch;
     final revision = session.revision;
@@ -1528,6 +1542,7 @@ class _BoardPage extends StatelessWidget {
           );
           final cloudBookPanel = CloudBookPanel(
             controller: bookLookup,
+            masterGamesController: masterGamesLookup,
             endpoint: preferences.value.bookServiceBaseUrl,
           );
           final rightPanels = preferences.value.showPanelSwitchBar

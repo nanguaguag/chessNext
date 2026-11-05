@@ -2,6 +2,7 @@ import 'package:chess_next/app.dart';
 import 'package:chess_next/features/settings/about_support_dialog.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:chess_next/ports/release_service.dart';
+import 'package:chess_next/ports/feedback_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -21,7 +22,7 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('当前版本 0.1.0+1'), findsOneWidget);
-    expect(find.textContaining('未配置更新服务'), findsOneWidget);
+    expect(find.textContaining('未配置更新/反馈服务'), findsOneWidget);
     expect(
       tester
           .widget<OutlinedButton>(
@@ -51,6 +52,7 @@ void main() {
                 builder: (_) => AboutSupportDialog(
                   releaseEndpoint: 'https://updates.example.test',
                   releaseService: service,
+                  feedbackService: _FakeFeedbackService(),
                 ),
               ),
               child: const Text('open'),
@@ -66,12 +68,20 @@ void main() {
       await tester.pumpAndSettle();
       expect(service.calls, 1);
       expect(service.endpoint, Uri.parse('https://updates.example.test'));
-    expect(find.text('发现新版本'), findsOneWidget);
+      expect(find.text('发现新版本'), findsOneWidget);
       expect(find.text('服务端版本 0.2.0+2 · 2026-11-05'), findsOneWidget);
       expect(find.text('修复和改进'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );
+}
+
+final class _FakeFeedbackService implements FeedbackService {
+  @override
+  Future<void> submit({
+    required Uri endpoint,
+    required FeedbackSubmission feedback,
+  }) async {}
 }
 
 final class _FakeReleaseService implements ReleaseService {

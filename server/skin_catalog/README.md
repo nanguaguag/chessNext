@@ -74,6 +74,20 @@ To serve operator-published version and release notes, also set
 `CHESSNEXT_RELEASE_ROOT=./release-data`. See the Release metadata section for
 the optional `releases.json` format and endpoint. No update package is served.
 
+To accept user-submitted problem reports and suggestions, explicitly set
+`CHESSNEXT_FEEDBACK_ROOT` to an existing private writable directory. The route stays
+disabled by default. Create the directory owned by the service account with
+mode `0700`; with the supplied systemd unit, uncomment both the environment
+setting and its matching `ReadWritePaths`. Each submission is a separate
+exclusive-create JSON file, with a hard limit of 5,000 records. There is no
+public read/list/delete endpoint, no email forwarding, and no automatic
+retention cleanup. Operators must define a retention period, review the inbox
+locally, and remove expired records through their deployment procedure. The
+Dart service does not log submitted fields or persist the request IP. The
+sample Nginx config disables access logs for this route and applies its own
+per-IP rate limit; network and hosting layers still see source-IP metadata,
+and operators control error-log policy.
+
 ## Linux VM deployment
 
 Build the executable on the same OS and CPU architecture as the target:
@@ -114,8 +128,17 @@ to the catalog directory.
 - `GET /v1/board-catalog/{id}`
 - `GET /v1/board-catalog/{id}/package`
 - `POST /v1/book/query` (optional book root, JSON schema 1)
+- `POST /v1/feedback` (optional feedback root, JSON schema 1)
 
-Only GET/HEAD, the bounded book-query POST, and CORS preflight are accepted. The API has bounded query,
+Only GET/HEAD, the bounded book-query POST, the optional bounded feedback POST,
+and CORS preflight are accepted. Feedback accepts only `kind` (`problem` or
+`suggestion`), `message` (1–2,000 characters), and optional `contact` (up to
+200 characters); unknown fields, including device/browser/record diagnostics,
+are rejected. Request bodies are capped at 16 KiB and stored submissions at
+5,000. The sample proxy disables access logs for this location and allows six
+submissions per IP per minute, with a burst of five. Network/hosting layers can
+still see source IP metadata; operators control error-log policy. The response confirms storage only; it does not imply that an operator
+has read or answered the feedback. The API has bounded query,
 pagination, manifest and package sizes. Package responses use a content hash as
 an ETag and immutable cache key. There are no mutations, tokens, or user
 profiles. API response schema is versioned independently from the downloadable

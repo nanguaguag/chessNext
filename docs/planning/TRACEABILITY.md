@@ -813,3 +813,13 @@ App偏好新增可选发布服务根地址，默认空；设置输入仅允许HT
 本机校准把手支持焦点方向键，各自沿水平/垂直每次调整1个百分点；Semantics暴露当前边距、操作提示和四个方向的读屏自定义动作。拖动总位移从pointer-down坐标计算，避免pan识别阈值造成首段位移损失；始终从pointer-down几何计算，不累积中间精度误差。仍遵循项目BoardSkinGeometry范围/最小跨度，不代表参考站键盘/读屏语义或坐标单位。
 
 专项`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`4/4；根串行`flutter test --concurrency=1 --reporter compact`586通过/5跳过；`flutter analyze --no-pub`与`git diff --check`通过。专项初次发现Pan在slop后首个delta遗漏指针起始距离（实际仅移动剩余位移），改用Listener pointer-down捕获后测试严格比较总位移。macOS复用PID50598/runner50125 `flutter attach --debug-uri=http://127.0.0.1:61579/4bLZ1MhsyEk=/`同步1648ms、热重启2103ms，Ctrl-C脱离后PID50598唯一存活。全量根测试只一个本项目flutter_tester；5跳过仍为未配置官方Pikafish/NNUE。屏幕锁定，视觉人工not run。
+
+## M4-63 / F31 / ADR-095 自建反馈与显式审阅后提交（2026-11-05）
+
+新增`FeedbackService`端口、HTTPS/loopback HTTP适配器与问题/建议表单。只可选发送类别、用户填写的描述和可选联系方式；必须先预览完整字段与地址再明确确认。默认地址空时离线/入口禁用；超时/HTTP拒绝/无效确认不自动重试，提示送达状态不确定，不传设备/浏览器/系统/棋谱/诊断数据。附件和版权投诉不在本片。
+
+自建Dart服务在设置`CHESSNEXT_FEEDBACK_ROOT`后启用`POST /v1/feedback`；严格JSON字段/schema/长度，16KiB请求和5,000记录上限；文件随机名exclusive创建，仅成功写入后返回accepted；无公开读取路由，Dart服务不记录请求IP/提交内容。部署要求先创建service-owned 0700目录并给systemd增加对应`ReadWritePaths`，Nginx样例关闭access log并限制每IP每分钟6次、突发5次；服务/托管层仍可看到来源IP，运营者控制error log。无自动删除/保留期限：由服务运营者本地制定与执行，用户提交界面明确告知。
+
+定向`flutter test --concurrency=1 test/adapters/network/http_feedback_service_test.dart test/widgets/feedback_dialog_test.dart test/widgets/about_support_test.dart --reporter expanded`7/7；server `dart test --reporter expanded`2/2、`dart analyze lib bin test`无问题、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；5跳过因未配置官方Pikafish/NNUE，不是本片失败。`flutter analyze --no-pub`及`git diff --check`通过。调试中曾修正Widget重复文本finder断言及Dart exclusive创建接口误用；最终专项、根测试通过。
+
+macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原Runner，文件同步1,054ms、热重启1,114ms；Ctrl-C脱离后原app PID50598仍存活。测试全程`--concurrency=1`单个flutter_tester；没有调用`flutter run`或启动新chessNext。屏幕锁定，实际视觉验收not run；未连接真实自建服务/部署收件目录，生产投递与运营流程not run。F31仍开放。

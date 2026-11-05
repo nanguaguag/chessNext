@@ -32,6 +32,7 @@ import 'application/app_preferences.dart';
 import 'application/preferences_controller.dart';
 import 'adapters/network/http_book_service.dart';
 import 'adapters/network/http_release_service.dart';
+import 'adapters/network/http_feedback_service.dart';
 import 'application/record_playback_controller.dart';
 import 'ports/preferences_repository.dart';
 import 'features/settings/preferences_dialog.dart';
@@ -154,6 +155,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final EngineSessionController analysis;
   late final HttpBookService bookService;
   late final HttpReleaseService releaseService;
+  late final HttpFeedbackService feedbackService;
   BoardGifSettings gifSettings = BoardGifSettings();
   bool floatingWorkspace = false;
   @override
@@ -162,6 +164,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     WidgetsBinding.instance.addObserver(this);
     bookService = HttpBookService();
     releaseService = HttpReleaseService();
+    feedbackService = HttpFeedbackService();
     analysis = EngineSessionController(
       session,
       widget.engineFactory,
@@ -385,6 +388,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     analysis.dispose();
     bookService.close();
     releaseService.close();
+    feedbackService.close();
     if (drafts != null) {
       unawaited(drafts!.flush());
       drafts!.dispose();
@@ -469,6 +473,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       drafts: drafts,
       preferences: preferences,
       releaseService: releaseService,
+      feedbackService: feedbackService,
       recordPlayback: recordPlayback,
       audioLibrary: audioLibrary,
       pieceImages: pieceImages,
@@ -527,6 +532,7 @@ class _BoardPage extends StatelessWidget {
     this.drafts,
     required this.preferences,
     required this.releaseService,
+    required this.feedbackService,
     required this.recordPlayback,
     this.audioLibrary,
     required this.pieceImages,
@@ -543,6 +549,7 @@ class _BoardPage extends StatelessWidget {
   final ValueChanged<bool> onFloatingWorkspaceChanged;
   final PreferencesController preferences;
   final HttpReleaseService releaseService;
+  final HttpFeedbackService feedbackService;
   final RecordPlaybackController recordPlayback;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController pieceImages;
@@ -975,6 +982,7 @@ class _BoardPage extends StatelessWidget {
         boardSkinImages: boardSkinImages,
         boardSkins: boardSkins,
         releaseService: releaseService,
+        feedbackService: feedbackService,
       ),
     );
   }

@@ -1013,3 +1013,11 @@ E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新�
 # 2026-11-05 / E77 / F21,B24 棋盘边距剩余端点样本
 
 继续空白草稿：右输500并移焦后加号禁用；下输550先显示549.96，按加号后精确550/按钮禁用；上输0后减号禁用。之后按左33/右465/上33/下519复位并核对，确认放弃草稿；回设置复核默认棋盘/棋子、100%、坐标开、倒置关。只覆盖三个端点，几何整体规则仍U，见REFERENCE_EVIDENCE E77。
+
+# 2026-11-05 / M4-63 / F31 / ADR-095 自建反馈投递
+
+用户指出测试期间重复打开多个chessNext后，本次先检查实际进程：只有既有App PID50598/runner50125，无根`flutter_tester`残留；说明`flutter test`运行测试引擎，开新App来自另行执行`flutter run`。全程根测试加`--concurrency=1`且未调用`flutter run`。仅通过`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`复用原App，sync1,054ms、hot restart1,114ms，Ctrl-C后App仍存活。
+
+M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完整目标地址和显式确认UI；默认无自建服务则离线/入口禁用。只发送用户填写的类别、描述与可选联系方式，不带设备、浏览器、OS、棋谱、诊断字段；预览说明接收服务/托管层可看到来源IP。自建服务可选启用`CHESSNEXT_FEEDBACK_ROOT`收件路由，严格字段和16KiB请求、5,000记录上限，私有目录exclusive文件写入、无读取/列举接口/Dart内不记请求IP；Nginx样例关闭access log但错误日志策略由运营者控制。部署说明涉及systemd可写目录与每IP限流。附件、版权投诉、外部讨论入口、真实服务部署/运营/保留期验收都未完成，F31开放。
+
+专项反馈UI/HTTP 7/7，server 2/2、server Dart analyze与compile通过。根全量`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；5跳过因官方Pikafish/NNUE未配置。`flutter analyze --no-pub`与`git diff --check`通过。调试中两轮定向测试因重复文本finder、一次接口误用而失败，修复后专项通过；全量测试通过。屏幕锁定，人工视觉验收not run，真实服务端提交not run。

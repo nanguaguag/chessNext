@@ -2,16 +2,20 @@ import 'package:flutter/material.dart';
 
 import '../../application/app_metadata.dart';
 import '../../ports/release_service.dart';
+import '../../ports/feedback_service.dart';
+import 'feedback_dialog.dart';
 
 class AboutSupportDialog extends StatefulWidget {
   const AboutSupportDialog({
     super.key,
     required this.releaseEndpoint,
     required this.releaseService,
+    required this.feedbackService,
   });
 
   final String releaseEndpoint;
   final ReleaseService releaseService;
+  final FeedbackService feedbackService;
 
   @override
   State<AboutSupportDialog> createState() => _AboutSupportDialogState();
@@ -73,9 +77,9 @@ class _AboutSupportDialogState extends State<AboutSupportDialog> {
             const Text('离线优先的中国象棋分析应用。检查仅读取用户配置的自建发布信息，不下载或安装程序。'),
             const SizedBox(height: 16),
             if (widget.releaseEndpoint.isEmpty)
-              const Text('未配置更新服务；应用保持离线，不会后台检查或发送设备信息。')
+              const Text('未配置更新/反馈服务；应用保持离线，不会后台检查或发送信息。')
             else
-              const Text('检查更新只发送一次无身份信息的GET请求至已配置服务。'),
+              const Text('更新仅在手动检查时读取服务清单；反馈只在预览内容与地址后由你明确确认发送。'),
             const SizedBox(height: 12),
             if (checking)
               const LinearProgressIndicator()
@@ -124,6 +128,19 @@ class _AboutSupportDialogState extends State<AboutSupportDialog> {
           applicationVersion: AppMetadata.displayVersion,
         ),
         child: const Text('开源许可'),
+      ),
+      TextButton(
+        key: const ValueKey('open-feedback'),
+        onPressed: widget.releaseEndpoint.isEmpty
+            ? null
+            : () => showDialog<void>(
+                context: context,
+                builder: (_) => FeedbackDialog(
+                  endpoint: widget.releaseEndpoint,
+                  service: widget.feedbackService,
+                ),
+              ),
+        child: const Text('问题反馈与建议'),
       ),
       OutlinedButton.icon(
         key: const ValueKey('check-release-updates'),

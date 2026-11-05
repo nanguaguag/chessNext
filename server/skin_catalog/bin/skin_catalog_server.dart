@@ -40,11 +40,16 @@ Future<void> main(List<String> args) async {
   final releaseManifest = releaseRoot == null || releaseRoot.trim().isEmpty
       ? null
       : await ReleaseManifest.load(Directory(releaseRoot));
+  final feedbackRoot = Platform.environment['CHESSNEXT_FEEDBACK_ROOT'];
+  final feedbackInbox = feedbackRoot == null || feedbackRoot.trim().isEmpty
+      ? null
+      : await FeedbackInbox.open(Directory(feedbackRoot));
   final server = await SkinCatalogHttpServer.bind(
     store: store,
     boardStore: boardStore,
     bookDatabase: bookDatabase,
     releaseManifest: releaseManifest,
+    feedbackInbox: feedbackInbox,
     address: address,
     port: port,
   );
@@ -63,6 +68,7 @@ Future<void> main(List<String> args) async {
       'Loaded ${releaseManifest.releases.length} operator-supplied releases.',
     );
   }
+  if (feedbackInbox != null) stdout.writeln('Feedback inbox enabled.');
   final stopped = Completer<void>();
   ProcessSignal.sigint.watch().listen((_) => stopped.complete());
   if (!Platform.isWindows) {

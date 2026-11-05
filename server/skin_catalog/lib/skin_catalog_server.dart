@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'dart:typed_data';
 
 import 'package:crypto/crypto.dart';
@@ -13,6 +14,7 @@ const _maxBookRequestBytes = 32 * 1024;
 const _maxBookEntries = 2000000;
 const _maxReleaseManifestBytes = 1024 * 1024;
 const _maxReleaseEntries = 100;
+const _maxFeedbackBytes = 16384;
 final _idPattern = RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$');
 final _sha256Pattern = RegExp(r'^[0-9a-f]{64}$');
 final _xiangqiMovePattern = RegExp(r'^[a-i][0-9][a-i][0-9]$');
@@ -122,6 +124,65 @@ final class ReleaseManifest {
     'current': current.toJson(),
     'history': releases.map((release) => release.toJson()).toList(),
   };
+}
+
+/// Private, append-only feedback inbox. No route exposes stored submissions.
+final class FeedbackInbox {
+  FeedbackInbox._(this._root, this._storedCount);
+  final Directory _root;
+  int _storedCount;
+  static const maxSubmissions = 5000;
+
+  static Future<FeedbackInbox> open(Directory root) async {
+    if (await FileSystemEntity.type(root.path, followLinks: false) !=
+        FileSystemEntityType.directory) {
+      throw const FormatException('Invalid feedback inbox directory');
+    }
+    var count = 0;
+    await for (final entity in root.list(followLinks: false)) {
+      if (entity is File && entity.path.endsWith('.json')) count++;
+    }
+    return FeedbackInbox._(root, count);
+  }
+
+  Future<void> store({
+    required String kind,
+    required String message,
+    String? contact,
+  }) async {
+    if (_storedCount >= maxSubmissions) throw const FeedbackInboxFull();
+    final secure = Random.secure();
+    final random = List<int>.generate(16, (_) => secure.nextInt(256));
+    final id = random
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
+    final file = File('${_root.path}/$id.json');
+    final record = <String, Object>{
+      'schema': 1,
+      'receivedAt': DateTime.now().toUtc().toIso8601String(),
+      'kind': kind,
+      'message': message,
+      if (contact != null && contact.isNotEmpty) 'contact': contact,
+    };
+    _storedCount++;
+    try {
+      await file.create(exclusive: true);
+      await file.writeAsString(jsonEncode(record), flush: true);
+    } catch (_) {
+      try {
+        if (await FileSystemEntity.type(file.path, followLinks: false) ==
+            FileSystemEntityType.file) {
+          await file.delete();
+        }
+      } catch (_) {}
+      _storedCount--;
+      rethrow;
+    }
+  }
+}
+
+final class FeedbackInboxFull implements Exception {
+  const FeedbackInboxFull();
 }
 
 enum BookKind { opening, endgame }
@@ -571,6 +632,7 @@ final class SkinCatalogHttpServer {
     this._boardStore,
     this._bookDatabase,
     this._releaseManifest,
+    this._feedbackInbox,
   );
 
   final HttpServer _server;
@@ -578,6 +640,7 @@ final class SkinCatalogHttpServer {
   final SkinCatalogStore? _boardStore;
   final BookDatabase? _bookDatabase;
   final ReleaseManifest? _releaseManifest;
+  final FeedbackInbox? _feedbackInbox;
   StreamSubscription<HttpRequest>? _subscription;
 
   String get baseUrl => 'http://${_server.address.address}:${_server.port}';
@@ -587,6 +650,7 @@ final class SkinCatalogHttpServer {
     SkinCatalogStore? boardStore,
     BookDatabase? bookDatabase,
     ReleaseManifest? releaseManifest,
+    FeedbackInbox? feedbackInbox,
     InternetAddress? address,
     int port = 8087,
   }) async {
@@ -601,6 +665,7 @@ final class SkinCatalogHttpServer {
       boardStore,
       bookDatabase,
       releaseManifest,
+      feedbackInbox,
     );
     service._subscription = server.listen(service._handle);
     return service;
@@ -655,10 +720,17 @@ final class SkinCatalogHttpServer {
       await _bookQuery(request, _bookDatabase);
       return;
     }
+    if (request.method == 'POST' &&
+        request.uri.path == '/v1/feedback' &&
+        _feedbackInbox != null) {
+      await _submitFeedback(request, _feedbackInbox);
+      return;
+    }
     if (request.method != 'GET' && request.method != 'HEAD') {
       response.headers.set(
         HttpHeaders.allowHeader,
-        request.uri.path == '/v1/book/query' && _bookDatabase != null
+        (request.uri.path == '/v1/book/query' && _bookDatabase != null) ||
+                (request.uri.path == '/v1/feedback' && _feedbackInbox != null)
             ? 'POST, OPTIONS'
             : 'GET, HEAD, OPTIONS',
       );
@@ -687,6 +759,75 @@ final class SkinCatalogHttpServer {
     } else {
       await _json(response, HttpStatus.notFound, {
         'error': {'code': 'not_found'},
+      });
+    }
+  }
+
+  Future<void> _submitFeedback(HttpRequest request, FeedbackInbox inbox) async {
+    final response = request.response;
+    if (request.headers.contentType?.mimeType != 'application/json' ||
+        request.contentLength == 0 ||
+        request.contentLength > _maxFeedbackBytes) {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
+      });
+      return;
+    }
+    final bytes = <int>[];
+    await for (final chunk in request) {
+      if (bytes.length + chunk.length > _maxFeedbackBytes) {
+        await _json(response, HttpStatus.requestEntityTooLarge, {
+          'error': {'code': 'request_too_large'},
+        });
+        return;
+      }
+      bytes.addAll(chunk);
+    }
+    try {
+      final body = jsonDecode(utf8.decode(bytes));
+      if (body is! Map<String, dynamic> ||
+          body.keys.toSet().difference({
+            'schema',
+            'kind',
+            'message',
+            'contact',
+          }).isNotEmpty ||
+          body['schema'] != 1 ||
+          !const {'problem', 'suggestion'}.contains(body['kind']) ||
+          body['message'] is! String ||
+          (body['message'] as String).trim().isEmpty ||
+          (body['message'] as String).length > 2000 ||
+          (body['message'] as String).contains(
+            RegExp(r'[\u0000-\u0008\u000b\u000c\u000e-\u001f]'),
+          ) ||
+          (body.containsKey('contact') &&
+              (body['contact'] is! String ||
+                  (body['contact'] as String).length > 200)) ||
+          (body['contact'] is String &&
+              (body['contact'] as String).contains(
+                RegExp(r'[\u0000-\u001f]'),
+              ))) {
+        await _json(response, HttpStatus.badRequest, {
+          'error': {'code': 'invalid_request'},
+        });
+        return;
+      }
+      await inbox.store(
+        kind: body['kind'] as String,
+        message: body['message'] as String,
+        contact: (body['contact'] as String?)?.trim(),
+      );
+      await _json(response, HttpStatus.created, {
+        'schema': 1,
+        'accepted': true,
+      });
+    } on FeedbackInboxFull {
+      await _json(response, HttpStatus.serviceUnavailable, {
+        'error': {'code': 'inbox_full'},
+      });
+    } on FormatException {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
       });
     }
   }

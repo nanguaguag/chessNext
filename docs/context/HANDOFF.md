@@ -96,3 +96,13 @@ E76参考站读到边距输入aria min0，水平max500/垂直max550；左500→�
 ## 追加 E77（2026-11-05）
 
 空白草稿验证余下三个边距端点：右max500、上min0、下max550；下输入550先显示549.96，按stepper+后精确550并禁用。左/右/上/下恢复33/465/33/519后放弃草稿，设置回默认棋盘/棋子、100%、坐标开、倒置关。E77及证据索引待docs单独提交。继续实现/审计F21格点保存、图层与用户皮肤事务，再处理F31反馈/版权等登录外剩余项。
+
+# 2026-11-05 最新交接 / M4-63
+
+用户再次说明持续开发目标：对齐登录外所有可确认功能/设置；不要在每个增量后停工。用户询问全量测试是否正常、为何反复打开多个App。本轮确认：现存只有ChessNext PID50598与其原runner PID50125；`flutter test --concurrency=1`仅串行启动单个flutter_tester，不启动macOS应用。重复窗口风险来自另行执行`flutter run`。本轮未执行`flutter run`，只用既有VM Service `flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`同步/热重启，约1,054/1,114ms，Ctrl-C后原App仍存活。另有PID70651/70890为tuner_flutter，与chessNext无关。
+
+M4-63/F31/ADR-095实现问题/建议自建投递：设置可选根地址留空默认离线；表单只含类别、描述和可选联系方式；先预览准确地址/字段再明确提交。HTTP适配仅HTTPS公网/loopback HTTP，严格响应校验，不自动重试。自建Dart服务通过`CHESSNEXT_FEEDBACK_ROOT`可选启用POST，字段有界、16KiB请求、5,000条上限、私有exclusive写入，无公开读取/服务内IP存储。UI告知服务/托管层会看到连接来源IP；Nginx样例关闭access log并每IP限6次/分钟、突发5次。运营者自行设定保留周期，界面明示。附件、版权投诉表、外部联系方式、真实服务部署/收件流程仍待；F31开放。
+
+最终验证：定向反馈7/7；server `dart test`2/2、`dart analyze lib bin test`干净、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`通过；根全量591通过/5条件跳过/0失败；根`flutter analyze --no-pub`、`git diff --check`干净。两次定向测试早期断言和FileMode接口失败已修复。屏幕锁定未人工视觉验收；无实际外部发送、生产部署或生产收件验证。最终热重启同步1,054ms/1,114ms，测试器运行时和结束后均未多开chessNext。
+
+后续先确认此M4-63单独中文提交及追踪文档，再继续F31版权/交流入口、F21棋盘几何保存生命周期与其它全站设置；保持各项证据O/V/D/P/U和未知边界。五项Pikafish/NNUE用例需配置官方制品才能运行。当前Mac运行实例仍唯一。

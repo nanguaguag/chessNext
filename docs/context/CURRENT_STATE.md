@@ -1,5 +1,11 @@
 # 当前状态
 
+## 最新实现 M4-63 / F31（验证通过，提交前）
+
+问题/建议表单复用可选自建服务根地址；用户填写类别、描述、可选联系方式后必须审阅目标地址和完整数据并明确确认。只发显式字段，不含设备/浏览器/OS/棋谱/诊断信息；连接本身会向服务/托管层暴露来源IP。Dart自建服务以`CHESSNEXT_FEEDBACK_ROOT`显式启用私有收件路由，请求≤16KiB、最多5,000条、无公网读取/服务内IP存储；样例Nginx关闭access log并设每IP每分钟6次、突发5次。附件、版权投诉、外部交流和生产运营仍未交付，F31开放（ADR-095）。
+
+定向7/7；服务端2/2、analyze/编译通过；根`flutter test --concurrency=1 --reporter compact`591通过/5跳过；根`flutter analyze --no-pub`及`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,054ms、热重启1,114ms，脱离后PID50598存活。仅一个串行根flutter_tester，无新chessNext。5跳过为缺少官方Pikafish/NNUE；屏幕锁定，视觉人工验收not run，生产自建服务未部署/未投递。
+
 ## 最新实现 M4-61（已提交 e880d69）
 
 F31关于页接入可选自建发布根地址（默认空/完全离线），仅手动点击后GET版本清单，展示当前/历史更新说明与版本比较；HTTPS公网、loopback HTTP，5秒/2MiB，校验schema/UTC/排序/身份，区分不可达、无效和HTTP拒绝。无设备/用户/棋谱字段，不下载或安装程序包（ADR-093）。

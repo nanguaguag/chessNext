@@ -17,6 +17,7 @@ import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/piece_skin_folder_picker.dart';
 import '../../ports/piece_skin_catalog.dart';
 import '../../ports/release_service.dart';
+import '../../ports/feedback_service.dart';
 import 'about_support_dialog.dart';
 
 class PreferencesDialog extends StatefulWidget {
@@ -34,6 +35,7 @@ class PreferencesDialog extends StatefulWidget {
     this.pieceSkinCatalog,
     this.boardSkinCatalog,
     required this.releaseService,
+    required this.feedbackService,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
@@ -47,6 +49,7 @@ class PreferencesDialog extends StatefulWidget {
   final PieceSkinCatalog? pieceSkinCatalog;
   final BoardSkinCatalog? boardSkinCatalog;
   final ReleaseService releaseService;
+  final FeedbackService feedbackService;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -258,6 +261,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                           releaseEndpoint:
                               widget.preferences.value.releaseServiceBaseUrl,
                           releaseService: widget.releaseService,
+                          feedbackService: widget.feedbackService,
                         ),
                       ),
                       icon: const Icon(Icons.info_outline),
@@ -384,9 +388,9 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   keyboardType: TextInputType.url,
                   maxLength: 2048,
                   decoration: const InputDecoration(
-                    labelText: '自建版本信息服务地址',
+                    labelText: '自建版本/反馈服务地址',
                     helperText:
-                        '留空时完全离线；仅在关于页手动检查时请求。公网必须HTTPS，本机可用localhost HTTP',
+                        '留空时离线；更新仅手动检查，反馈仅预览并确认后提交到同一服务根地址。公网HTTPS，本机可用localhost HTTP',
                   ),
                   validator: (text) {
                     final value = text!.trim().replaceFirst(RegExp(r'/+$'), '');

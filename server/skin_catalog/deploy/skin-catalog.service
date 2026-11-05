@@ -13,6 +13,9 @@ Environment=SKIN_CATALOG_ROOT=/srv/chessnext/skin-catalog/public
 # Environment=CHESSNEXT_BOOK_ROOT=/srv/chessnext/book/public
 # Public version metadata only; release notes are supplied by the operator.
 # Environment=CHESSNEXT_RELEASE_ROOT=/srv/chessnext/releases/public
+# Optional private, append-only feedback inbox. Create it for skin-catalog:skin-catalog first.
+# Environment=CHESSNEXT_FEEDBACK_ROOT=/srv/chessnext/feedback/inbox
+# If enabled, also uncomment the matching ReadWritePaths below.
 Environment=SKIN_CATALOG_ADDRESS=127.0.0.1
 Environment=SKIN_CATALOG_PORT=8087
 ExecStart=/usr/local/bin/chessnext-skin-catalog
@@ -22,6 +25,8 @@ NoNewPrivileges=true
 PrivateTmp=true
 ProtectHome=true
 ProtectSystem=strict
+# Optional feedback directory must be created with owner skin-catalog and mode 0700.
+# ReadWritePaths=/srv/chessnext/feedback/inbox
 UMask=0027
 
 [Install]

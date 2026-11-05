@@ -241,6 +241,22 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       icon: const Icon(Icons.play_circle_outline),
                       label: const Text('棋谱与操作'),
                     ),
+                    OutlinedButton.icon(
+                      key: const ValueKey('about-support'),
+                      onPressed: () => showAboutDialog(
+                        context: context,
+                        applicationName: 'chessNext',
+                        applicationVersion: '0.1.0+1',
+                        applicationIcon: const Icon(Icons.extension),
+                        applicationLegalese: '离线优先的中国象棋分析应用',
+                        children: const [
+                          SizedBox(height: 12),
+                          Text('本版本未配置更新或反馈服务，不会在后台联网检查更新或发送设备信息。'),
+                        ],
+                      ),
+                      icon: const Icon(Icons.info_outline),
+                      label: const Text('关于与开源许可'),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 12),

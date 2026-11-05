@@ -781,3 +781,9 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 ## E74 / F31 关于、反馈与投诉边界（2026-11-05）
 
 检查更新和更新日志AX操作后无可见反馈（不能推断未请求）；反馈页字段含≤2000字、联系方式、可选≤3图，默认附设备/版本JSON，可见platform、version、build、bundleSeq、bundleId、channel、os、model、UA、locale、screen尺寸。版权页含公开邮箱和权属/流程说明，投诉表单要求投诉人/邮箱、作品/权属、内容、真实性确认、可选附件。未填/提交/复制/上传。实际网络去向与保留策略U。
+
+## M4-59 / F31 / ADR-091 离线About与开源许可
+
+应用设置新增本机AboutDialog：应用名chessNext、当前pubspec版本0.1.0+1、离线/服务状态说明及Flutter依赖许可导航。未配更新/反馈服务明确说明无后台请求/设备信息外发。在线检查更新/日志/反馈/版权流程仍待实现，F31不关闭。
+
+专项`flutter test --concurrency=1 test/widgets/about_support_test.dart --reporter expanded`1/1；根串行`flutter test --concurrency=1 --reporter compact`575通过/5跳过；`flutter analyze --no-pub`无问题，`git diff --check`通过。复用PID50598/runner50125，VM attach同步1201ms、热重启1061ms；脱离后进程仍唯一。Mac锁屏，视觉验收not run。测试首次因应用名同时显示于对话框标题/副标题而调整为非唯一finder；再根据`MaterialLocalizations.viewLicensesButtonLabel`读取许可按钮标签，避免固定语言假设。浏览许可未改变PreferencesRepository。

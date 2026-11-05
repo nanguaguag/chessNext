@@ -25,5 +25,17 @@
   "textSizePreviewLine": "红方行棋 · 本地棋谱与分析",
   "textSizePersistenceHelp": "实时生效并保存在本机。手动调节会关闭跟随系统；重新关闭跟随时回到标准字号。",
   "retry": "重试",
-  "close": "关闭"
+  "close": "关闭",
+  "boardDisplayTitle": "棋盘显示",
+  "boardSkinLabel": "棋盘皮肤",
+  "pieceSkinLabel": "棋子皮肤",
+  "pieceScalePercent": "棋子大小：{percent}%",
+  "@pieceScalePercent": { "placeholders": { "percent": { "type": "int" } } },
+  "resetPieceSize": "恢复默认大小",
+  "pieceSizeHelp": "大小只影响显示，点击仍按交点。较大值可能使棋子重叠。",
+  "showCoordinates": "显示坐标",
+  "showCoordinatesHelp": "棋盘上下边的红黑方路数",
+  "rotateOppositePieces": "对面一方的棋子倒置",
+  "rotateOppositePiecesHelp": "上方那一方的棋子转180°，面对面摆棋时更顺眼。",
+  "boardDisplayPersistenceHelp": "实时应用到主棋盘与局面编辑器并保存在本机。翻转或镜像时，路数随棋盘方向变化。"
 }

@@ -48,4 +48,43 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get close => 'Close';
+
+  @override
+  String get boardDisplayTitle => 'Board display';
+
+  @override
+  String get boardSkinLabel => 'Board skin';
+
+  @override
+  String get pieceSkinLabel => 'Piece skin';
+
+  @override
+  String pieceScalePercent(int percent) {
+    return 'Piece size: $percent%';
+  }
+
+  @override
+  String get resetPieceSize => 'Reset size';
+
+  @override
+  String get pieceSizeHelp =>
+      'Size only affects appearance; clicks still target intersections. Larger values may overlap pieces.';
+
+  @override
+  String get showCoordinates => 'Show coordinates';
+
+  @override
+  String get showCoordinatesHelp =>
+      'Red and black move numbers along the top and bottom edges of the board.';
+
+  @override
+  String get rotateOppositePieces => 'Rotate the opponent\'s pieces';
+
+  @override
+  String get rotateOppositePiecesHelp =>
+      'Rotate the pieces on the far side by 180° for face-to-face play.';
+
+  @override
+  String get boardDisplayPersistenceHelp =>
+      'Applies to the main board and position editor, and is saved on this device. Coordinates follow board rotation and mirroring.';
 }

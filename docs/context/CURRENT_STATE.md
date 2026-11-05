@@ -1,3 +1,9 @@
+## M4-85 / F27 / 棋盘显示设置基础项ARB化（门槛通过，待提交）
+
+将棋盘显示弹窗标题、棋盘/棋子皮肤字段、全局棋子大小及语义、尺寸帮助、坐标开关、对面棋子旋转开关与本机应用说明迁入zh/en ARB。只覆盖基础显示项，其余皮肤/动画/音效/格点设置仍待逐项迁移；生产根Locale仍锁定zh。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-85.log`；`flutter analyze --no-pub`和`git diff --check`通过。运行单串行flutter_tester，最终退出；GUI只有既有PID50598。没有运行新的macOS app；本片macOS运行/视觉未验，避免用户担心的重复实例。代码/测试/资源待单独中文提交。
+
 ## M4-84 / F27 / ADR-114 ARB资源管线与字号对话框首片（门槛通过，待提交）
 
 建立Flutter `gen-l10n` ARB生成管线，简体中文模板和English资源；TextSizeDialog所有标签、说明、slider读屏格式及动态百分比占位经资源解析。根MaterialApp仍明确锁定`zh`且仅支持`zh`，不会让英语系统设备看到部分英语/中文混合页；暂无Locale选择和持久化。资源key覆盖目前仅这个弹窗，资源生成器齐全不等同全UI覆盖。

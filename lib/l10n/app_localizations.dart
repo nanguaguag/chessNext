@@ -169,6 +169,72 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'关闭'**
   String get close;
+
+  /// No description provided for @boardDisplayTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘显示'**
+  String get boardDisplayTitle;
+
+  /// No description provided for @boardSkinLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘皮肤'**
+  String get boardSkinLabel;
+
+  /// No description provided for @pieceSkinLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子皮肤'**
+  String get pieceSkinLabel;
+
+  /// No description provided for @pieceScalePercent.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子大小：{percent}%'**
+  String pieceScalePercent(int percent);
+
+  /// No description provided for @resetPieceSize.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复默认大小'**
+  String get resetPieceSize;
+
+  /// No description provided for @pieceSizeHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'大小只影响显示，点击仍按交点。较大值可能使棋子重叠。'**
+  String get pieceSizeHelp;
+
+  /// No description provided for @showCoordinates.
+  ///
+  /// In zh, this message translates to:
+  /// **'显示坐标'**
+  String get showCoordinates;
+
+  /// No description provided for @showCoordinatesHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘上下边的红黑方路数'**
+  String get showCoordinatesHelp;
+
+  /// No description provided for @rotateOppositePieces.
+  ///
+  /// In zh, this message translates to:
+  /// **'对面一方的棋子倒置'**
+  String get rotateOppositePieces;
+
+  /// No description provided for @rotateOppositePiecesHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'上方那一方的棋子转180°，面对面摆棋时更顺眼。'**
+  String get rotateOppositePiecesHelp;
+
+  /// No description provided for @boardDisplayPersistenceHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'实时应用到主棋盘与局面编辑器并保存在本机。翻转或镜像时，路数随棋盘方向变化。'**
+  String get boardDisplayPersistenceHelp;
 }
 
 class _AppLocalizationsDelegate

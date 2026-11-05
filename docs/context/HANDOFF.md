@@ -1,5 +1,11 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-85 / F27 棋盘显示基础项本地化（门槛通过，待提交）
+
+棋盘显示对话框基础标签、大小、坐标、对面棋子方向和本机保存说明已迁入ARB zh/en；补英文组件测试。当前根只开放zh，英文仍仅测试上下文可见。其它大量设置项仍未迁移。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-85.log`；`flutter analyze --no-pub`、格式/diff检查通过。flutter_tester单进程结束后已退出，只剩原GUI PID50598；未运行新的macOS app，以免再产生实例。macOS运行/视觉未验。下一步先单独提交本片，再继续F27剩余设置文案与B24几何/皮肤功能对齐；全站未完成。
+
 ## M4-84 / F27 / ADR-114 首个ARB本地化切片（验证完成，待提交）
 
 新增Flutter ARB生成器、zh模板/en资源，把字号弹窗静态文案、slider语义、状态和百分比参数迁到稳定资源key；应用根显式保持简体中文单Locale，英语系统设备不会出现半翻译界面。根暂不提供语言选择/持久化，当前English仅独立组件测试可见，其他99+ Dart UI文件待逐模块迁移。

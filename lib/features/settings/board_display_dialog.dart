@@ -2,6 +2,7 @@ import 'dart:async';
 import '../../application/board_appearance.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import '../../l10n/app_localizations.dart';
 import '../../application/preferences_controller.dart';
 import '../../application/app_preferences.dart';
 import '../../application/audio_library_controller.dart';
@@ -440,13 +441,14 @@ class BoardDisplayDialog extends StatelessWidget {
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: Listenable.merge([preferences, ?pieceSkins, ?boardSkins]),
     builder: (context, _) {
+      final l10n = AppLocalizations.of(context);
       final skinScale = _skinScale(preferences);
       final skinOffsetX = _skinOffsetX(preferences);
       final skinOffsetY = _skinOffsetY(preferences);
       final skinBusy =
           pieceSkins?.loading == true && _activeProfile(preferences) != null;
       return AlertDialog(
-        title: const Text('棋盘显示'),
+        title: Text(l10n.boardDisplayTitle),
         content: SizedBox(
           width: 460,
           child: SingleChildScrollView(
@@ -458,7 +460,7 @@ class BoardDisplayDialog extends StatelessWidget {
                   key: ValueKey(preferences.value.selectedBoardSkinId),
                   initialValue: preferences.value.selectedBoardSkinId,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: '棋盘皮肤'),
+                  decoration: InputDecoration(labelText: l10n.boardSkinLabel),
                   items: [
                     DropdownMenuItem(
                       value: BoardSkin.parchment.name,
@@ -533,7 +535,7 @@ class BoardDisplayDialog extends StatelessWidget {
                   key: ValueKey(preferences.value.selectedPieceSkinId),
                   initialValue: preferences.value.selectedPieceSkinId,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: '棋子皮肤'),
+                  decoration: InputDecoration(labelText: l10n.pieceSkinLabel),
                   items: [
                     const DropdownMenuItem(
                       value: 'roundSeal',
@@ -821,9 +823,13 @@ class BoardDisplayDialog extends StatelessWidget {
                 ),
                 const Text('只改变选中棋子的显示，点击区域保持在交点。'),
                 const SizedBox(height: 12),
-                Text('棋子大小：${preferences.value.pieceSizePercent}%'),
+                Text(
+                  l10n.pieceScalePercent(preferences.value.pieceSizePercent),
+                ),
                 Semantics(
-                  label: '棋子大小',
+                  label: l10n.pieceScalePercent(
+                    preferences.value.pieceSizePercent,
+                  ),
                   child: Slider(
                     key: const ValueKey('piece-size-slider'),
                     value: preferences.value.pieceSizePercent.toDouble(),
@@ -857,13 +863,13 @@ class BoardDisplayDialog extends StatelessWidget {
                   onPressed: preferences.loading
                       ? null
                       : () => unawaited(preferences.setPieceSize(100)),
-                  child: const Text('恢复默认大小'),
+                  child: Text(l10n.resetPieceSize),
                 ),
-                const Text('大小只影响显示，点击仍按交点。较大值可能使棋子重叠。'),
+                Text(l10n.pieceSizeHelp),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('显示坐标'),
-                  subtitle: const Text('棋盘上下边的红黑方路数'),
+                  title: Text(l10n.showCoordinates),
+                  subtitle: Text(l10n.showCoordinatesHelp),
                   value: preferences.value.showCoordinates,
                   onChanged: preferences.loading
                       ? null
@@ -872,8 +878,8 @@ class BoardDisplayDialog extends StatelessWidget {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('对面一方的棋子倒置'),
-                  subtitle: const Text('上方那一方的棋子转180°，面对面摆棋时更顺眼。'),
+                  title: Text(l10n.rotateOppositePieces),
+                  subtitle: Text(l10n.rotateOppositePiecesHelp),
                   value: preferences.value.rotateOppositePieces,
                   onChanged: preferences.loading
                       ? null
@@ -881,7 +887,7 @@ class BoardDisplayDialog extends StatelessWidget {
                           preferences.setRotateOppositePieces(enabled),
                         ),
                 ),
-                const Text('实时应用到主棋盘与局面编辑器并保存在本机。翻转或镜像时，路数随棋盘方向变化。'),
+                Text(l10n.boardDisplayPersistenceHelp),
                 if (preferences.loading || preferences.saving)
                   const LinearProgressIndicator(),
                 if (preferences.error != null) ...[

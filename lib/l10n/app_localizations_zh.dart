@@ -47,4 +47,40 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get close => '关闭';
+
+  @override
+  String get boardDisplayTitle => '棋盘显示';
+
+  @override
+  String get boardSkinLabel => '棋盘皮肤';
+
+  @override
+  String get pieceSkinLabel => '棋子皮肤';
+
+  @override
+  String pieceScalePercent(int percent) {
+    return '棋子大小：$percent%';
+  }
+
+  @override
+  String get resetPieceSize => '恢复默认大小';
+
+  @override
+  String get pieceSizeHelp => '大小只影响显示，点击仍按交点。较大值可能使棋子重叠。';
+
+  @override
+  String get showCoordinates => '显示坐标';
+
+  @override
+  String get showCoordinatesHelp => '棋盘上下边的红黑方路数';
+
+  @override
+  String get rotateOppositePieces => '对面一方的棋子倒置';
+
+  @override
+  String get rotateOppositePiecesHelp => '上方那一方的棋子转180°，面对面摆棋时更顺眼。';
+
+  @override
+  String get boardDisplayPersistenceHelp =>
+      '实时应用到主棋盘与局面编辑器并保存在本机。翻转或镜像时，路数随棋盘方向变化。';
 }

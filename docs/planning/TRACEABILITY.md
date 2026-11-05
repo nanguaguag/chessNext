@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-05 / M4-85 / F27 棋盘显示设置基础项本地化
+
+BoardDisplayDialog基础显示项消费M4-84 ARB资源：标题、棋盘/棋子皮肤字段、棋子大小/语义、尺寸帮助、显示坐标、对面一侧棋子旋转与本机应用说明。英文组件测试使用隔离MaterialApp locale，不改变产品根Locale(zh)，避免其它设置仍中文时暴露混合语言。皮肤/动画/声音/阴影/几何等大量设置尚未迁移，F27不关闭。
+
+验证：定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-85.log`）；`flutter analyze --no-pub`与`git diff --check`通过。5项跳过依赖官方Pikafish/NNUE。未执行`flutter run -d macos`，避免增加GUI实例；本片macOS运行/视觉未验。
+
 ## 2026-11-05 / M4-84 / F27 / ADR-114 首个ARB本地化切片
 
 增加Flutter `gen-l10n`/ARB管线及简体中文模板、English资源。把TextSizeDialog的标题、follow系统、当前值、预设、示例、帮助、关闭/重试、slider语义和系统字号百分比全部改为命名资源；默认App根强制简体中文且仅支持简体Locale，避免English系统设备看到混合界面。独立测试以English Localizations包裹同一组件，验证文案/slider语义；保留默认App的简体行为。该English资源只覆盖字号弹窗，尚无生产Locale切换；不代表F27完成。

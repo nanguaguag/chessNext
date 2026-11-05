@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-85 / F27 棋盘显示设置基础项本地化（门槛通过，待提交）
+
+延续M4-84 ARB资源管线，将BoardDisplayDialog标题、两种皮肤字段、棋子大小语义与百分比、尺寸帮助、坐标、对面棋子180°旋转及本机保存说明迁入zh/en资源；英文独立组件测试1/1。
+
+命令：`flutter gen-l10n`通过；`dart format lib/features/settings/board_display_dialog.dart test/widgets/board_display_localization_test.dart`通过；定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-85.log`；`flutter analyze --no-pub`与`git diff --check`通过。第一轮analyze仅报新增的冗余非空断言，已移除并复跑无问题。根测试一个串行tester，结束退出；原GUI PID50598仍唯一，无额外chessNext。遵从用户关于重复应用实例的顾虑，本片未执行`flutter run -d macos`；macOS运行/视觉未验。F27其余文案未完，代码待单独中文提交并持续推进。
+
 ## 2026-11-05 / M4-84 / F27 / ADR-114 ARB生成资源与字号对话框本地化（验证完成，待提交）
 
 增加Flutter `gen-l10n`配置和zh/en ARB，字号弹窗标签、提示、当前值、 slider label/semantics、读屏及动态OS字号百分比迁至资源key。应用根仍固定zh且仅支持zh，暂不开放部分覆盖语言。首次`flutter pub get`因`.dart_tool/l10n_untranslated.json`路径设置需目录而失败；配置改到`.dart_tool/l10n_untranslated.json`后再次pub get通过。

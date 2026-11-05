@@ -25,5 +25,17 @@
   "textSizePreviewLine": "Red to move · Local records and analysis",
   "textSizePersistenceHelp": "Changes apply immediately and are saved on this device. Manual adjustment turns off system following; turning it off again returns to standard size.",
   "retry": "Retry",
-  "close": "Close"
+  "close": "Close",
+  "boardDisplayTitle": "Board display",
+  "boardSkinLabel": "Board skin",
+  "pieceSkinLabel": "Piece skin",
+  "pieceScalePercent": "Piece size: {percent}%",
+  "@pieceScalePercent": { "placeholders": { "percent": { "type": "int" } } },
+  "resetPieceSize": "Reset size",
+  "pieceSizeHelp": "Size only affects appearance; clicks still target intersections. Larger values may overlap pieces.",
+  "showCoordinates": "Show coordinates",
+  "showCoordinatesHelp": "Red and black move numbers along the top and bottom edges of the board.",
+  "rotateOppositePieces": "Rotate the opponent's pieces",
+  "rotateOppositePiecesHelp": "Rotate the pieces on the far side by 180° for face-to-face play.",
+  "boardDisplayPersistenceHelp": "Applies to the main board and position editor, and is saved on this device. Coordinates follow board rotation and mirroring."
 }

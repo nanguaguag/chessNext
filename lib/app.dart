@@ -407,11 +407,11 @@ class _ChessNextAppState extends State<ChessNextApp>
     title: 'chessNext',
     debugShowCheckedModeBanner: false,
     theme: ThemeData(
-      colorSchemeSeed: const Color(0xff41634c),
+      colorSchemeSeed: Color(preferences.value.displayTone.seedColor),
       brightness: Brightness.light,
     ),
     darkTheme: ThemeData(
-      colorSchemeSeed: const Color(0xff41634c),
+      colorSchemeSeed: Color(preferences.value.displayTone.seedColor),
       brightness: Brightness.dark,
     ),
     themeMode: mode,

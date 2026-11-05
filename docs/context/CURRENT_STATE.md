@@ -1,5 +1,11 @@
 # 当前状态
 
+## 最新实现 M4-64 / F27 / ADR-096
+
+应用设置新增晴蓝/青玉/枫木/檀木/墨五色调选择，随确认写入schema1偏好并作用于Material 3 light/dark主题seed。色值是项目映射P；棋盘/棋子皮肤、夜间棋盘、标记颜色不改变；源站真实色值/全页面作用范围未知。F27不关闭，夜间棋盘及完整语言资源仍缺。
+
+专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10。首轮因测试断言空值安全编译失败，修正测试断言后专项通过。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；`flutter analyze --no-pub`无问题，`git diff --check`通过。复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`同步1,035ms、热重启1,082ms，Ctrl-C后App仍存活；测试单串行flutter_tester，无多开App。屏幕锁定，人工视觉验收not run。
+
 ## 最新审计 E78 / F27（2026-11-05）
 
 参考站显示与语言页观察五种色调、默认开启的“深色模式用夜间棋盘（只有默认棋盘有效）”及四种语言候选；色调青玉选择并复原晴蓝、语言菜单取消均有操作验证。色调影响范围/值、夜间显示行为和持久性仍U，未操作主题/夜间开关。审计追踪已更新，待文档提交。本机F27仍缺五色调、夜间棋盘设置和完整语言切换资源。

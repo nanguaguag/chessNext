@@ -827,3 +827,9 @@ macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原R
 ## E78 / F27 显示与语言菜单/色调选择审计
 
 来源`REFERENCE_EVIDENCE.md#e78--2026-11-05-显示与语言设置菜单及色调选择访客桌面iab`。显示页观察五种色调、夜间棋盘开关说明及四种语言（O）；选中青玉再复原晴蓝、打开语言菜单后取消均验证（V）。未触碰主题/夜间开关。色调色值与作用范围、夜间皮肤变换/条件、偏好持久性和多语言其余路由仍U。下项按B25检查本机主题/棋盘外观架构并设计独立色调偏好；语言完整覆盖先盘点资源后另案实现。
+
+## M4-64 / F27 / ADR-096 本机显示色调
+
+新增`DisplayTone`五选项偏好，在应用设置选色并点击“应用设置”提交；Material 3 light/dark theme共用所选seed。配色seed属项目P，不改变棋盘皮肤、最后着标记、棋子及引擎。新偏好默认晴蓝，schema1旧数据缺字段兼容映射晴蓝；异步读取时保留用户先选值。E78源站五色具体值/作用域、夜间棋盘真实行为仍U，本切片不宣称像素/全页对标。
+
+专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10。专项首轮有一项测试代码编译失败（`MaterialApp.theme`可空访问）；添加non-null断言后重跑10/10。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598/runner50125：`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`同步1,035ms、TTY热重启1,082ms，Ctrl-C脱离后原PID50598仍存活。测试串行单flutter_tester，无新chessNext。屏幕锁定，人工视觉验收not run。

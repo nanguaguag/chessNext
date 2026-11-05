@@ -114,6 +114,9 @@ class PreferencesController extends ChangeNotifier {
                 ? previous.arrowHead
                 : null,
             theme: _edited.contains('theme') ? previous.theme : null,
+            displayTone: _edited.contains('displayTone')
+                ? previous.displayTone
+                : null,
             boardLayoutPreset: _edited.contains('boardLayoutPreset')
                 ? previous.boardLayoutPreset
                 : null,
@@ -324,6 +327,8 @@ class PreferencesController extends ChangeNotifier {
 
   Future<void> setTheme(ThemePreference theme) =>
       apply(value.copyWith(theme: theme));
+  Future<void> setDisplayTone(DisplayTone tone) =>
+      apply(value.copyWith(displayTone: tone));
   Future<void> setBoardLayoutPreset(BoardLayoutPreset preset) =>
       apply(value.copyWith(boardLayoutPreset: preset));
   Future<void> setAnimationSpeed(AnimationSpeed speed) =>
@@ -475,6 +480,7 @@ class PreferencesController extends ChangeNotifier {
       _edited.add('arrowHead');
     }
     if (next.theme != value.theme) _edited.add('theme');
+    if (next.displayTone != value.displayTone) _edited.add('displayTone');
     if (next.boardLayoutPreset != value.boardLayoutPreset) {
       _edited.add('boardLayoutPreset');
     }

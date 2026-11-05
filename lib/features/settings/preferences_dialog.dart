@@ -60,6 +60,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
   late final TextEditingController bookServiceUrlController;
   late final TextEditingController releaseServiceUrlController;
   late ThemePreference theme;
+  late DisplayTone displayTone;
   late BoardLayoutPreset boardLayoutPreset;
   late int threads, hash, pv;
   late bool autoHash;
@@ -74,6 +75,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     super.initState();
     final value = widget.preferences.value;
     theme = value.theme;
+    displayTone = value.displayTone;
     boardLayoutPreset = value.boardLayoutPreset;
     threads = value.threads;
     autoHash = value.autoHash;
@@ -162,6 +164,34 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   ],
                   onChanged: (value) {
                     if (value != null) setState(() => theme = value);
+                  },
+                ),
+                const SizedBox(height: 12),
+                DropdownButtonFormField<DisplayTone>(
+                  key: const ValueKey('display-tone'),
+                  initialValue: displayTone,
+                  decoration: const InputDecoration(labelText: '界面色调'),
+                  items: const [
+                    DropdownMenuItem(
+                      value: DisplayTone.skyBlue,
+                      child: Text('晴蓝'),
+                    ),
+                    DropdownMenuItem(
+                      value: DisplayTone.jade,
+                      child: Text('青玉'),
+                    ),
+                    DropdownMenuItem(
+                      value: DisplayTone.maple,
+                      child: Text('枫木'),
+                    ),
+                    DropdownMenuItem(
+                      value: DisplayTone.sandalwood,
+                      child: Text('檀木'),
+                    ),
+                    DropdownMenuItem(value: DisplayTone.ink, child: Text('墨')),
+                  ],
+                  onChanged: (value) {
+                    if (value != null) setState(() => displayTone = value);
                   },
                 ),
                 const SizedBox(height: 12),
@@ -528,6 +558,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   await widget.preferences.apply(
                     widget.preferences.value.copyWith(
                       theme: theme,
+                      displayTone: displayTone,
                       boardLayoutPreset: boardLayoutPreset,
                       threads: threads,
                       autoHash: autoHash,

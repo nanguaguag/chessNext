@@ -1,5 +1,13 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## 最新 M4-64 / F27 / E78
+
+已在App设置接入晴蓝/青玉/枫木/檀木/墨五种色调，作为Material 3明/暗主题seed持久化；偏好缺字段默认晴蓝。具体seed是本机P映射，不控制棋盘皮肤、其它图片图层、棋子/标记，且不实现未经审计的夜间棋盘行为。ADR-096明确历史数据升级默认变化。参考站五色作用范围/值、夜间模式实际变化仍U，F27仍开放。
+
+M4-64专项10/10（专项首轮因测试断言缺少nullable theme的`!`编译失败，修复测试后通过）；根串行`flutter test --concurrency=1 --reporter compact`591通过/5条件跳过/0失败；`flutter analyze --no-pub`及`git diff --check`通过。5项Pikafish/NNUE用例因无官方本机资源跳过。macOS attach现有VM `61589/dTmglI9Y_pk=/`同步1,035ms、热重启1,082ms，Ctrl-C后PID50598仍存活。全程仅单一根flutter_tester，未启动新App。
+
+E78、ADR-096、F27追踪和本上下文均随独立提交待确认。当前工作树含M4-64代码及追踪文件变更。进程复核仅App PID50598和runner PID50125，无flutter_tester、attach任务；不得运行`flutter run`。下一步继续用访客设置页对夜间棋盘/主题切换做可恢复的只读审计；之后按证据设计项目实现，并盘点全页面语言资源。需继续其它登录外功能，不因M4-64停止或宣称全站对齐。
+
 ## 最新工作续接 / E78 与后台 App 检查
 
 用户要求继续对齐登录以外全站功能/设置，不得每项后停工。已重新读取AGENTS/README/CURRENT_STATE/HANDOFF/DECISIONS及相关Skills，并检查git状态/提交。当前唯一chessNext App PID50598，runner PID50125；没有`flutter_tester`残留。上一完整根测试最终591通过/5跳过/0失败，5跳过因本地未配置官方Pikafish/NNUE。串行根`flutter test --concurrency=1`运行一个测试宿主，不启动App；重复App只会来自`flutter run`/手动开程序。本轮继续禁止新`flutter run`，macOS变更需复用App attach。

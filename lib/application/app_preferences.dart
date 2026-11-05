@@ -31,6 +31,18 @@ bool _mapEquals<K, V>(Map<K, V> a, Map<K, V> b) {
 
 enum ThemePreference { system, light, dark }
 
+enum DisplayTone { skyBlue, jade, maple, sandalwood, ink }
+
+extension DisplayToneSeed on DisplayTone {
+  int get seedColor => switch (this) {
+    DisplayTone.skyBlue => 0xff397bb8,
+    DisplayTone.jade => 0xff41634c,
+    DisplayTone.maple => 0xffb84e32,
+    DisplayTone.sandalwood => 0xff826148,
+    DisplayTone.ink => 0xff454b59,
+  };
+}
+
 enum BoardLayoutPreset { centered, boardOnLeft }
 
 /// Project timing choices; the reference site does not expose numeric durations.
@@ -91,6 +103,7 @@ final class AppPreferences {
 
   AppPreferences({
     this.theme = ThemePreference.system,
+    this.displayTone = DisplayTone.skyBlue,
     this.boardLayoutPreset = BoardLayoutPreset.centered,
     this.animationSpeed = AnimationSpeed.standard,
     this.playMoveSound = true,
@@ -229,6 +242,7 @@ final class AppPreferences {
               (milliseconds <= 30000 && milliseconds % 100 == 0)));
 
   final ThemePreference theme;
+  final DisplayTone displayTone;
   final BoardLayoutPreset boardLayoutPreset;
   final AnimationSpeed animationSpeed;
   final bool playMoveSound;
@@ -284,6 +298,7 @@ final class AppPreferences {
   final List<SidePanel> visibleSidePanels;
   AppPreferences copyWith({
     ThemePreference? theme,
+    DisplayTone? displayTone,
     BoardLayoutPreset? boardLayoutPreset,
     AnimationSpeed? animationSpeed,
     bool? playMoveSound,
@@ -341,6 +356,7 @@ final class AppPreferences {
     List<SidePanel>? visibleSidePanels,
   }) => AppPreferences(
     theme: theme ?? this.theme,
+    displayTone: displayTone ?? this.displayTone,
     boardLayoutPreset: boardLayoutPreset ?? this.boardLayoutPreset,
     animationSpeed: animationSpeed ?? this.animationSpeed,
     playMoveSound: playMoveSound ?? this.playMoveSound,
@@ -409,6 +425,7 @@ final class AppPreferences {
     if (lastMoveMarker != LastMoveMarkerStyle.halo)
       'lastMoveMarker': lastMoveMarker.name,
     'theme': theme.name,
+    if (displayTone != DisplayTone.skyBlue) 'displayTone': displayTone.name,
     if (boardLayoutPreset != BoardLayoutPreset.centered)
       'boardLayoutPreset': boardLayoutPreset.name,
     if (animationSpeed != AnimationSpeed.standard)
@@ -514,6 +531,7 @@ final class AppPreferences {
             json['showAnalysisArrows'] is! bool) ||
         (json.containsKey('arrowHead') && json['arrowHead'] is! String) ||
         json['theme'] is! String ||
+        (json.containsKey('displayTone') && json['displayTone'] is! String) ||
         (json.containsKey('boardLayoutPreset') &&
             json['boardLayoutPreset'] is! String) ||
         (json.containsKey('textSize') && json['textSize'] is! String) ||
@@ -642,6 +660,9 @@ final class AppPreferences {
           json['arrowHead'] as String? ?? 'standard',
         ),
         theme: ThemePreference.values.byName(json['theme'] as String),
+        displayTone: DisplayTone.values.byName(
+          json['displayTone'] as String? ?? 'skyBlue',
+        ),
         boardLayoutPreset: BoardLayoutPreset.values.byName(
           json['boardLayoutPreset'] as String? ?? 'centered',
         ),
@@ -790,6 +811,7 @@ final class AppPreferences {
       showAnalysisArrows == other.showAnalysisArrows &&
       arrowHead == other.arrowHead &&
       theme == other.theme &&
+      displayTone == other.displayTone &&
       boardLayoutPreset == other.boardLayoutPreset &&
       animationSpeed == other.animationSpeed &&
       playMoveSound == other.playMoveSound &&
@@ -848,6 +870,7 @@ final class AppPreferences {
     showAnalysisArrows,
     arrowHead,
     theme,
+    displayTone,
     boardLayoutPreset,
     animationSpeed,
     playMoveSound,

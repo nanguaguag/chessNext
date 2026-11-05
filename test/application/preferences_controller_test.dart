@@ -54,6 +54,7 @@ void main() {
     () {
       final value = AppPreferences(
         theme: ThemePreference.dark,
+        displayTone: DisplayTone.maple,
         boardLayoutPreset: BoardLayoutPreset.boardOnLeft,
         threads: 4,
         hashMb: 128,
@@ -69,6 +70,11 @@ void main() {
         releaseServiceBaseUrl: 'https://updates.example.org/api',
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
+      final legacyTone = AppPreferences().toJson()..remove('displayTone');
+      expect(
+        AppPreferences.fromJson(legacyTone).displayTone,
+        DisplayTone.skyBlue,
+      );
       expect(
         AppPreferences().copyWith(
           releaseServiceBaseUrl: 'https://updates.example.org/api',
@@ -132,6 +138,7 @@ void main() {
       for (final entry in {
         'schema': 2,
         'theme': 'unknown',
+        'displayTone': 'unknown',
         'boardLayoutPreset': 'unknown',
         'threads': 0,
         'multiPv': 257,
@@ -225,6 +232,7 @@ void main() {
     () async {
       repository.value = AppPreferences(
         theme: ThemePreference.dark,
+        displayTone: DisplayTone.ink,
         threads: 2,
         hashMb: 128,
         multiPv: 3,
@@ -232,6 +240,7 @@ void main() {
       repository.readGate = Completer<void>();
       final reading = preferences.initialize();
       final choosing = preferences.setTheme(ThemePreference.light);
+      final choosingTone = preferences.setDisplayTone(DisplayTone.maple);
       final choosingCatalog = preferences.setSkinCatalogBaseUrl(
         'https://skins.example.org',
       );
@@ -267,6 +276,7 @@ void main() {
       repository.readGate!.complete();
       await reading;
       await choosing;
+      await choosingTone;
       await choosingCatalog;
       await choosingLayout;
       await choosingPanels;
@@ -280,6 +290,7 @@ void main() {
       await exiting;
       await preferences.flush();
       expect(preferences.value.theme, ThemePreference.light);
+      expect(preferences.value.displayTone, DisplayTone.maple);
       expect(preferences.value.skinCatalogBaseUrl, 'https://skins.example.org');
       expect(
         preferences.value.boardLayoutPreset,

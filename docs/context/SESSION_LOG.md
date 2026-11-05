@@ -1028,3 +1028,10 @@ M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完�
 复核访客显示语言页：观察五种色调、仅默认棋盘有效的深色夜间棋盘开关和简中/繁中/越南语/English候选；青玉选中后再切回晴蓝，AX确认恢复；打开语言菜单后取消仍简体中文。没有改主题/夜间开关或持久化语言。五项研究追踪记录色调作用范围、实际色值、夜间棋盘效果及完整翻译覆盖为U，待diff check和文档commit。
 
 用户反馈测试曾造成多个ChessNext后台实例。本次复核唯一ChessNext PID50598/runner50125，无flutter_tester残留。前次根全量最终591 passed/5 skipped/0 failed；5跳过需本地官方Pikafish/NNUE。`flutter test --concurrency=1`是单个flutter_tester测试宿主，不开App；新GUI实例由`flutter run`导致。后续macOS仅attach现有runner，不重复flutter run。
+# 2026-11-05 / M4-64 / F27 / ADR-096 本机显示色调
+
+依E78将五种色调接入Material 3 light/dark `colorSchemeSeed`。`DisplayTone`偏好新增schema1向后兼容/旧字段默认晴蓝，设置表单点击应用后保存；浅深模式共享seed，棋盘皮肤、棋子、标记不变。项目seed值为P，未推断源站具体色值/作用范围，也未实现夜间棋盘切换。
+
+专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`最终10/10；首轮测试编译失败因测试代码访问nullable `MaterialApp.theme`少`!`，修复后重跑。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；5跳过需本地官方Pikafish/NNUE。`flutter analyze --no-pub`无问题，`git diff --check`通过。macOS用`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`复用PID50598/runner50125，sync1035ms/hot restart1082ms，Ctrl-C后原app存活。屏幕锁定视觉not run。
+
+用户担心测试多开后台App：测试前/中串行，仅一个根flutter_tester；测试后无残留，App仍只有PID50598。非TTY attach未能发送热重启键，已结束该attach客户端且App未终止，后以TTY attach热重启并脱离。全程没有运行`flutter run`。

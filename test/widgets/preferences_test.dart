@@ -31,6 +31,10 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('深色').last);
       await tester.pumpAndSettle();
+      await tester.tap(find.byKey(const ValueKey('display-tone')));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('枫木').last);
+      await tester.pumpAndSettle();
       await tester.enterText(find.widgetWithText(TextFormField, '分析线程'), '2');
       await tester.enterText(
         find.widgetWithText(TextFormField, '分析内存（MB）'),
@@ -76,6 +80,7 @@ void main() {
       await tester.tap(find.widgetWithText(FilledButton, '应用设置'));
       await tester.pumpAndSettle();
       expect(repository.value!.theme, ThemePreference.dark);
+      expect(repository.value!.displayTone, DisplayTone.maple);
       expect(repository.value!.threads, 2);
       expect(repository.value!.aiWalkTimeMs, 0);
       expect(repository.value!.aiWalkMaxDepth, 42);
@@ -89,6 +94,17 @@ void main() {
       expect(
         tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
         ThemeMode.dark,
+      );
+      expect(
+        tester
+            .widget<MaterialApp>(find.byType(MaterialApp))
+            .theme!
+            .colorScheme
+            .primary,
+        ThemeData(
+          colorSchemeSeed: Color(DisplayTone.maple.seedColor),
+          brightness: Brightness.light,
+        ).colorScheme.primary,
       );
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
@@ -109,6 +125,7 @@ void main() {
         tester.widget<MaterialApp>(find.byType(MaterialApp)).themeMode,
         ThemeMode.dark,
       );
+      expect(repository.value!.displayTone, DisplayTone.maple);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
     },

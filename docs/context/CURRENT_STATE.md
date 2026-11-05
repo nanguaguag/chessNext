@@ -1,12 +1,16 @@
 # 当前状态
 
-# 最新实现 M4-66 / F21,B24 / ADR-098 棋盘边距精确输入（待提交）
+# 最新审计 E81 / F27,F31 English反馈与版权投诉表单
+
+E81从About打开反馈及版权投诉页面进行访客只读抽样。主要字段/文案英文，但两个附件入口“选择文件”仍中文；Feedback默认勾选设备/版本、未勾当前棋谱。未展开设备明细、未填表/上传/提交。随后回显示设置切回简中，复核系统主题/晴蓝/夜间棋盘开，状态恢复。E81追踪待文档commit；English全覆盖仍未达成。
+
+## 最新已提交 M4-66 / F21,B24 / ADR-098 棋盘边距精确输入（9c1470d）
 
 棋盘显示设置四边百分比滑杆旁新增可键入一位小数的字段。提交时按当前边界和至少55%横/纵跨度钳制，经现有偏好/用户棋盘皮肤控制器保存；滑杆、拖点校准仍可用。该项目百分比输入为P，与站点E76/E77显示0–500/0–550但完整单位/联动仍U的字段分离。
 
 专项`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`8/8；根`flutter test --concurrency=1 --reporter expanded`593通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-66-final.log`）；`flutter analyze --no-pub`无问题、`git diff --check`通过。根首次compact运行591通过/5跳过/2失败；定位为新字段增加垂直高度后，`piece_skin_images_test`两处旧测试点击滚动区外按钮。加入`ensureVisible`后相关套件8/8及完整根测试复跑通过。仅一个串行`flutter_tester`，结束无残留。
 
-macOS复用既有PID50598/runner50125，通过`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1012ms、热重启8613ms；脱离后PID50598仍存活。全程未执行`flutter run`，没有新开chessNext。屏幕锁定，窗口人工视觉验收not run。M4-66实现/ADR和追踪待中文feature commit。继续B24保存应用事务/几何差距、F27完整多语言和其他登录外缺口，不能声称F21或全站完成。
+macOS复用既有PID50598/runner50125，通过`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1012ms、热重启8613ms；脱离后PID50598仍存活。全程未执行`flutter run`，没有新开chessNext。屏幕锁定，窗口人工视觉验收not run。M4-66已于`9c1470d feat(settings): 增加棋盘边距精确输入`单独提交。继续B24保存应用事务/几何差距、F27完整多语言和其他登录外缺口，不能声称F21或全站完成。
 
 ## 最新审计 E80 / F27 英语多页面覆盖（2026-11-05）
 

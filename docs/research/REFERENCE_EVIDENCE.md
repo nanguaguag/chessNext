@@ -560,3 +560,12 @@ URL `https://xiangqiai.com/#/settings/skins/edit/new?type=board`，新建独立�
 - 清理：显示设置及语言恢复E79原值；同一站点访客内容状态未触发设置保存之外的副作用。
 - 边界：该抽样覆盖多个常用设置页和主界面导航，不覆盖所有弹窗/错误态/题库、棋谱编辑/导入导出、帮助/训练和外部页面；未核对资源清单、重启或跨设备。动态皮肤内容未翻译是O，但其是否纳入站点本地化承诺仍U；不据样本宣称English全站100%完成，繁体/越南语其它页面覆盖仍U。
 - 证据等级：页面所见语言和记谱变化O；切换后跨路由、复原状态V；全覆盖声明U。
+
+## E81 / 2026-11-05 英文反馈及版权投诉页面覆盖（访客桌面IAB）
+
+- URL：从`#/settings/display`语言菜单临时选择English，访问`#/settings/about`、`#/feedback`、`#/copyright`及`#/feedback?type=copyright`。
+- 前置：字号系统/100%、深色模式跟随系统、色调Azure/晴蓝、夜间棋盘开、默认棋盘与棋子；无表单内容、无账号/棋谱修改。
+- 观察：英文About页显示版本/更新、What's new、Feedback、Copyright and complaints及Discord联系方式。Feedback页正文框、Contact、Include device and version info、game checkbox、Submit等均英文，但附件入口仍显示中文“选择文件”。版权说明、投诉字段（Complainant/Contact email/Work/Proof of ownership/Content concerned/Additional details）、真实性声明和Submit complaint均英文，附件入口同样显示“选择文件”。访客反馈表默认勾选设备/版本信息，当前局面复现选项未勾选；本次未展开设备明细。
+- 操作边界：只打开页面阅读；未输入投诉人/邮箱、没有上传/复制/提交或触发检查更新。动态版本哈希/Discord标识保留原样，不按普通文案判未翻译。
+- 清理：回到显示页切回简体中文并关闭菜单，AX确认字号100/跟随系统、晴蓝、夜间棋盘开，状态与前置一致。
+- 证据等级：所见页面用语/附件按钮语言和默认checkbox为O；语言选择及恢复状态V；其它英语页面、跨reload/重启语言持久性及全覆盖U。此项只补E80页面之外的两个表单，不能宣称English全站完整。

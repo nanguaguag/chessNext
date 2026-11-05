@@ -1051,4 +1051,10 @@ M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完�
 
 定向`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`8/8。首轮精确字段测试因限制三位整数输入，越界值提前被formatter拒绝；放宽临时输入后由模型夹限，复跑通过。首轮根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/2失败，日志定位为`piece_skin_images_test`两处按钮因新表单高度增加而在滚动视口外；加入`ensureVisible`后两专项8/8。根最终`flutter test --concurrency=1 --reporter expanded`593通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-66-final.log`；5跳过因缺官方Pikafish/NNUE。`flutter analyze --no-pub`、`git diff --check`通过。
 
-复核进程：根测试前后只一个串行`flutter_tester`，最终无残留；既有App PID50598/runner50125未变。用`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1012ms、热重启8613ms；脱离后PID50598仍活。全程没用`flutter run`。另有`tuner_flutter` runner PID70651属于独立项目。Mac锁屏，视觉验收not run。M4-66中文feature commit待完成后继续全站登录外差距；E76/E77源站完整几何单位/公式仍U。
+复核进程：根测试前后只一个串行`flutter_tester`，最终无残留；既有App PID50598/runner50125未变。用`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1012ms、热重启8613ms；脱离后PID50598仍活。全程没用`flutter run`。另有`tuner_flutter` runner PID70651属于独立项目。Mac锁屏，视觉验收not run。M4-66已于`9c1470d feat(settings): 增加棋盘边距精确输入`提交，随后继续全站登录外差距；E76/E77源站完整几何单位/公式仍U。
+
+# 2026-11-05 / E81 / F27,F31 英文反馈与版权投诉页面抽样
+
+从显示页临时切English，审计About、反馈、版权说明及版权投诉表。主要字段/说明英文，但两个表单附件按钮显示中文“选择文件”；反馈默认勾选设备/版本，当前棋谱选项未勾。没有展开设备数据详情、填表、上传、复制或提交。返回显示页恢复简体中文，核对字号100/跟随系统、晴蓝、夜间棋盘开。
+
+E81证据、矩阵、缺口、交互规格及追溯已更新；本次只做只读参考站审计，不跑Flutter测试/analyze/Mac。下一步提交E81纯文档并持续F27全语言覆盖及其他登录外缺口。English不宣称100%完整。

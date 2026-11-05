@@ -853,3 +853,7 @@ macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原R
 在四边百分比滑杆旁新增文本输入，支持一位小数；提交解析后按该边当前合法动态区间钳制，并调用原棋盘皮肤/偏好控制器即时保存。新增自定义皮肤集成断言验证越界左值夹至最小跨度边界、有效小数20.5持久化。
 
 专项`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`8/8通过。数字输入专项首轮因格式器预先拒绝三位数而失败；允许暂时三位整数后由模型统一钳制，复跑通过。首轮根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/2失败；日志`/tmp/chessnext-root-test-m4-66.log`确认两项是`piece_skin_images_test`未把新增字段增高后的按钮滚入可视区。补`ensureVisible`后定向通过。最终根`flutter test --concurrency=1 --reporter expanded`593通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-66-final.log`；5跳过需官方Pikafish/NNUE环境。`flutter analyze --no-pub`、`git diff --check`通过。macOS复用PID50598/runner50125；`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1012ms、热重启8613ms，脱离后原App存活；全程未运行`flutter run`，测试单一串行flutter_tester并无残留。锁屏，视觉not run。
+
+## E81 / F27,F31 英文反馈/投诉表单翻译抽查
+
+英语样本中About、Feedback及Copyright/complaint页面主要文案可见英文，附件按钮“选择文件”仍为中文；反馈表默认勾设备/版本、未勾棋谱。未展开设备明细、填表、上传或提交。切回简中并复核主题系统/晴蓝/夜间开。全站English和其它语言未覆盖，不关闭F27。

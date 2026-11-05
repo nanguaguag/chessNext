@@ -1,6 +1,6 @@
-## M4-83 / F15,F20 / ADR-113 大师谱整局只读预览（验证通过，待提交）
+## M4-83 / F15,F20 / ADR-113 大师谱整局只读预览（已提交 a1b3bff）
 
-自建大师谱索引可选包含经运营者授权的PGN；查询仍只返回metadata与`hasRecord`，用户显式点开后按ID懒加载详情。服务和客户端限制大小并核对ID、数据集来源、license/署名、精确FEN/完整历史和PGN主线；局面/文档/筛选变化会丢弃旧响应。独立只读主线对话框不写入主棋谱。服务包`dart test`6/6、`dart analyze`无问题；定向Flutter16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、格式/diff检查通过；`flutter build macos --no-pub`成功（111.9MB，已有flutter_tts SwiftPM警告）。未能附着现有PID50598/runner50125，未打开新App；实际macOS运行/热重启/视觉验收未验证。测试使用单串行tester且无GUI，结束后tester退出，原桌面实例仍唯一。真实PGN授权与部署语料仍U；F15/全站不关闭。代码与文档待独立中文提交。
+自建大师谱索引可选包含经运营者授权的PGN；查询仍只返回metadata与`hasRecord`，用户显式点开后按ID懒加载详情。服务和客户端限制大小并核对ID、数据集来源、license/署名、精确FEN/完整历史和PGN主线；局面/文档/筛选变化会丢弃旧响应。独立只读主线对话框不写入主棋谱。服务包`dart test`6/6、`dart analyze`无问题；定向Flutter16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、格式/diff检查通过；`flutter build macos --no-pub`成功（111.9MB，已有flutter_tts SwiftPM警告）。未能附着现有PID50598/runner50125，未打开新App；实际macOS运行/热重启/视觉验收未验证。测试使用单串行tester且无GUI，结束后tester退出，原桌面实例仍唯一。真实PGN授权与部署语料仍U；F15/全站不关闭。
 
 ## M4-82 / F15,F20 / ADR-112 来源选择跨路由持久化（已提交 943cc14）
 

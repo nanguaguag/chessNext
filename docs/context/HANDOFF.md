@@ -1,8 +1,16 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
-## M4-83 / F15,F20 / ADR-113 大师谱整局只读预览（门槛通过，待提交）
+## M4-83 / F15,F20 / ADR-113 大师谱整局只读预览（已提交 a1b3bff）
 
-代码已实现详情API/客户端按ID懒加载/来源与PGN校验/独立只读主线棋盘导航；Nginx关闭详情访问日志并限速。定向16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、server Dart包`dart test`6/6与`dart analyze`、format/diff检查均通过；`flutter build macos --no-pub`成功（111.9MB，既有flutter_tts SwiftPM warning）。根测试单串行tester，无GUI；结束后tester已退出，只有原`chessNext` PID50598，runner PID50125。`flutter attach -d macos`等候未连接后中止；为避免重复窗口未运行`flutter run`。运行态/热重启/视觉验收未验证。代码与文档待单独中文提交。只接受运营者有权展示的PGN；仓库不携真实语料，授权数据、部署仍U。
+代码已实现详情API/客户端按ID懒加载/来源与PGN校验/独立只读主线棋盘导航；Nginx关闭详情访问日志并限速。已于`a1b3bff feat(book): 增加大师谱整局只读预览`提交。定向16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、server Dart包`dart test`6/6与`dart analyze`、format/diff检查均通过；`flutter build macos --no-pub`成功（111.9MB，既有flutter_tts SwiftPM warning）。根测试单串行tester，无GUI；结束后tester已退出，只有原`chessNext` PID50598，runner PID50125。`flutter attach -d macos`等候未连接后中止；为避免重复窗口未运行`flutter run`。运行态/热重启/视觉验收未验证。只接受运营者有权展示的PGN；仓库不携真实语料，授权数据、部署仍U。
+
+## E88 / B24 棋盘四边stepper局部审计（已提交 3e8ad08）
+
+参考证据和B24剩余未知见REFERENCE_EVIDENCE E88、FEATURE_MATRIX/FEATURE_GAPS/INTERACTION_SPEC/BACKLOG；四边正向单步各一个，显示小数与配对联动未构成完整公式。临时草稿丢弃，检查默认皮肤/棋子、100%、坐标开、倒置关及无本机皮肤残留。`docs(audit): 记录棋盘边距步进样本`单独提交。
+
+## F27 / B25 下一步资源盘点
+
+用一次性静态扫描统计`lib/`含汉字字符串字面量约1,197次、1,006个不同字面值，分布98个Dart文件；`lib/`目前未发现ARB/本地化实现。该计数含非UI文案/领域错误，需基于调用位置再分用户可见/协议/棋谱/动态内容。参考站有简体、繁體、越南语和English选项，但用户可见覆盖尚不完整；现阶段不露半翻译Locale选择器。下一步先按功能模块建立键/参数资源表和回退策略，优先完整切片及错误态，再逐步扩大覆盖。
 
 ## M4-82 / F15,F20 / ADR-112 云库来源选择持久化（已提交 943cc14）
 

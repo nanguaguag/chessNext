@@ -1,10 +1,18 @@
 # 会话日志
 
-## 2026-11-05 / M4-83 / F15,F20 / ADR-113 大师谱整局懒加载与只读预览（门槛通过，待提交）
+## 2026-11-05 / M4-83 / F15,F20 / ADR-113 大师谱整局懒加载与只读预览（已提交 a1b3bff）
 
 扩展operator-supplied索引可选授权PGN，增加无日志、有限响应的单记录详情端点；Flutter按结果显式请求，校验schema/许可/署名/ID/PGN标签，回到独立只读主线预览。位置或过滤变化时旧详情丢弃，不更改主棋树。
 
-定向Flutter16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、`dart format --output=none --set-exit-if-changed ...`与`git diff --check`通过；`server/skin_catalog`的`dart test`6/6、`dart analyze`通过；`flutter build macos --no-pub`成功（111.9MB，既有flutter_tts SwiftPM warning）。测试后进程确认无flutter_tester、只保留既有App PID50598；不执行`flutter run`。`flutter attach -d macos`等待约60秒未连接并Ctrl-C中止；macOS运行态/热重启/视觉未验。仅一个串行flutter_tester参与根测试。功能待单独中文commit；真实授权数据、部署及源站全站行为仍U。
+定向Flutter16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、`dart format --output=none --set-exit-if-changed ...`与`git diff --check`通过；`server/skin_catalog`的`dart test`6/6、`dart analyze`通过；`flutter build macos --no-pub`成功（111.9MB，既有flutter_tts SwiftPM warning）。测试后进程确认无flutter_tester、只保留既有App PID50598；不执行`flutter run`。`flutter attach -d macos`等待约60秒未连接并Ctrl-C中止；macOS运行态/热重启/视觉未验。仅一个串行flutter_tester参与根测试。已于`a1b3bff`单独中文提交；真实授权数据、部署及源站全站行为仍U。
+
+## 2026-11-05 / E88 / B24 棋盘几何局部复测（已提交 3e8ad08）
+
+访客桌面IAB在新建未保存棋盘草稿中分别正向操作左/上/下/右stepper各一次，AX读数和清理见REFERENCE_EVIDENCE E88。下/上轴配对显示小数增量差异，原因U。样本在本次创建后丢弃、确认默认设置并无用户皮肤残留；没有保存/使用/导出。审计文档以`3e8ad08 docs(audit): 记录棋盘边距步进样本`提交。
+
+## 2026-11-05 / F27 / B25 资源盘点（未开始本地化实现）
+
+静态字符串粗扫：`lib/`含汉字字面量约1,197次、1,006个不同值、涉及98个Dart文件；此正则计数含非用户文案，后续需分层。无现成ARB/Locale入口；遵循既有计划，翻译覆盖完成前不开放语言选择。下次建立按模块的资源覆盖表、确定动态内容/协议字段/棋谱记法不翻译的边界，并选一条完成切片实现。
 
 ## 2026-11-05 / M4-82 / F15,F20 / ADR-112 来源选择持久化（已提交 943cc14）
 

@@ -144,10 +144,14 @@ to the catalog directory.
 Only GET/HEAD, the bounded book-query POST, optional bounded feedback and
 copyright complaint POSTs,
 and CORS preflight are accepted. Feedback accepts only `kind` (`problem` or
-`suggestion`), `message` (1–2,000 characters), and optional `contact` (up to
-200 characters); unknown fields, including device/browser/record diagnostics,
-are rejected. Request bodies are capped at 16 KiB and stored submissions at
-5,000. The sample proxy disables access logs for this location and allows six
+`suggestion`), `message` (1–2,000 characters), optional `contact` (up to
+200 characters), and optionally up to three user-selected PNG/JPEG attachments
+(256 KiB each, 512 KiB total). Attachment bytes are base64-encoded in the
+private inbox record. Unknown fields, including device/browser/record
+diagnostics, are rejected. Feedback request bodies are capped at 768 KiB and
+stored submissions at 5,000. The service stores only base64 content with the
+feedback record and exposes no attachment read/download route. The Nginx sample sets this route to a 1 MiB body
+limit. The sample proxy disables access logs for this location and allows six
 submissions per IP per minute, with a burst of five. Network/hosting layers can
 still see source IP metadata; operators control error-log policy. The response confirms storage only; it does not imply that an operator
 has read or answered the feedback. The API has bounded query,

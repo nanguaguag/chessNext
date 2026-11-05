@@ -33,6 +33,7 @@ import 'application/preferences_controller.dart';
 import 'adapters/network/http_book_service.dart';
 import 'adapters/network/http_release_service.dart';
 import 'adapters/network/http_feedback_service.dart';
+import 'ports/feedback_service.dart' show FeedbackAttachmentPicker;
 import 'application/record_playback_controller.dart';
 import 'ports/preferences_repository.dart';
 import 'features/settings/preferences_dialog.dart';
@@ -81,6 +82,7 @@ class ChessNextApp extends StatefulWidget {
     this.preferencesRepository,
     this.clipboard,
     this.filePicker,
+    this.feedbackAttachmentPicker,
     this.fileExporter,
     this.pngExporter,
     this.imageClipboard,
@@ -109,6 +111,7 @@ class ChessNextApp extends StatefulWidget {
   final DraftRepository? draftRepository;
   final TextClipboard? clipboard;
   final RecordFilePicker? filePicker;
+  final FeedbackAttachmentPicker? feedbackAttachmentPicker;
   final RecordFileExporter? fileExporter;
   final PngFileExporter? pngExporter;
   final ImageClipboard? imageClipboard;
@@ -476,6 +479,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       preferences: preferences,
       releaseService: releaseService,
       feedbackService: feedbackService,
+      feedbackAttachmentPicker: widget.feedbackAttachmentPicker,
       recordPlayback: recordPlayback,
       audioLibrary: audioLibrary,
       pieceImages: pieceImages,
@@ -535,6 +539,7 @@ class _BoardPage extends StatelessWidget {
     required this.preferences,
     required this.releaseService,
     required this.feedbackService,
+    this.feedbackAttachmentPicker,
     required this.recordPlayback,
     this.audioLibrary,
     required this.pieceImages,
@@ -552,6 +557,7 @@ class _BoardPage extends StatelessWidget {
   final PreferencesController preferences;
   final HttpReleaseService releaseService;
   final HttpFeedbackService feedbackService;
+  final FeedbackAttachmentPicker? feedbackAttachmentPicker;
   final RecordPlaybackController recordPlayback;
   final AudioLibraryController? audioLibrary;
   final PieceImageLibraryController pieceImages;
@@ -985,6 +991,7 @@ class _BoardPage extends StatelessWidget {
         boardSkins: boardSkins,
         releaseService: releaseService,
         feedbackService: feedbackService,
+        feedbackAttachmentPicker: feedbackAttachmentPicker,
         copyrightComplaintService: feedbackService,
       ),
     );

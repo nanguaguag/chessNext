@@ -1076,3 +1076,13 @@ Dart自建server新增可选`CHESSNEXT_COPYRIGHT_ROOT`私有目录和`/v1/copyri
 ## 2026-11-05 / E83 / F21,B24 上边距单步审计
 
 访客空白未保存棋盘草稿：上边距减一次从33到32.5，下边距AX显示519.04；上加号反向后上33、下519，左33/右465/格点50/50/缩放100%未变。只记录局部值，不推公式。未保存/使用/导出；浏览器返回确认丢弃，最终设置页默认棋盘/棋子、100%、坐标开、对面倒置关。E83录入证据与追踪；所有格点/边距一般关系仍U。
+
+## 2026-11-05 / M4-68 / F31 / ADR-100 问题反馈图片附件
+
+用户关注测试是否正常以及重复打开ChessNext。本轮先确认唯一现有macOS进程PID50598/runner50125，`flutter test --concurrency=1`仅启动单个`flutter_tester`，不启动GUI；全程未使用`flutter run`。根测试前后都没有额外ChessNext。根测试结束后复用VM Service attach同步1,191ms、热重启1,494ms，Ctrl-C后PID50598仍存活，attach/tester无残留。
+
+问题/建议反馈表增加用户显式选择最多3张PNG/JPEG（256KiB/张、512KiB总量），提供缩略图、名称、移除、完整目的地及附件预览；只有二次确认后才发送。客户端限制JSON体768KiB，自建服务校验base64/MIME/PNG-JPEG签名/文件名/大小并只保存到私有inbox，不开放读取。Nginx对应location体积限制1MiB。未真实上传/部署，屏幕锁定人工视觉验收not run；版权投诉附件、运营访问/留存、外部交流仍缺，F31开放。
+
+定向Flutter9/9；server测试6/6，server analyze与exe编译通过；根`flutter test --concurrency=1 --reporter expanded`598通过/5跳过/0失败，5项缺官方Pikafish/NNUE，日志`/tmp/chessnext-root-test-m4-68.log`；`flutter analyze --no-pub`及`git diff --check`通过。测试早期编译/夹具/滚动和预览假图片异常均修复后复跑。
+
+M4-68代码和ADR-100、矩阵/缺口/追踪、README/部署说明及上下文记录待独立中文feature commit。之后立即继续B24几何映射和皮肤保存/应用/reload审计/实现，不因本次commit停工；继续登录外功能范围，未完成全站对齐。

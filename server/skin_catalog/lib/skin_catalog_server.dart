@@ -14,7 +14,11 @@ const _maxBookRequestBytes = 32 * 1024;
 const _maxBookEntries = 2000000;
 const _maxReleaseManifestBytes = 1024 * 1024;
 const _maxReleaseEntries = 100;
-const _maxFeedbackBytes = 16384;
+const _maxFeedbackTextBytes = 16384;
+const _maxFeedbackRequestBytes = 786432;
+const _maxFeedbackAttachmentBytes = 256 * 1024;
+const _maxFeedbackAttachments = 3;
+const _maxFeedbackAttachmentTotalBytes = 512 * 1024;
 final _idPattern = RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$');
 final _sha256Pattern = RegExp(r'^[0-9a-f]{64}$');
 final _xiangqiMovePattern = RegExp(r'^[a-i][0-9][a-i][0-9]$');
@@ -149,6 +153,7 @@ final class FeedbackInbox {
     required String kind,
     required String message,
     String? contact,
+    List<Map<String, Object>> attachments = const [],
   }) async {
     if (_storedCount >= maxSubmissions) throw const FeedbackInboxFull();
     final secure = Random.secure();
@@ -163,6 +168,7 @@ final class FeedbackInbox {
       'kind': kind,
       'message': message,
       if (contact != null && contact.isNotEmpty) 'contact': contact,
+      if (attachments.isNotEmpty) 'attachments': attachments,
     };
     _storedCount++;
     try {
@@ -829,7 +835,7 @@ final class SkinCatalogHttpServer {
     final response = request.response;
     if (request.headers.contentType?.mimeType != 'application/json' ||
         request.contentLength == 0 ||
-        request.contentLength > _maxFeedbackBytes) {
+        request.contentLength > _maxFeedbackRequestBytes) {
       await _json(response, HttpStatus.badRequest, {
         'error': {'code': 'invalid_request'},
       });
@@ -837,7 +843,7 @@ final class SkinCatalogHttpServer {
     }
     final bytes = <int>[];
     await for (final chunk in request) {
-      if (bytes.length + chunk.length > _maxFeedbackBytes) {
+      if (bytes.length + chunk.length > _maxFeedbackRequestBytes) {
         await _json(response, HttpStatus.requestEntityTooLarge, {
           'error': {'code': 'request_too_large'},
         });
@@ -853,6 +859,7 @@ final class SkinCatalogHttpServer {
             'kind',
             'message',
             'contact',
+            'attachments',
           }).isNotEmpty ||
           body['schema'] != 1 ||
           !const {'problem', 'suggestion'}.contains(body['kind']) ||
@@ -878,6 +885,7 @@ final class SkinCatalogHttpServer {
         kind: body['kind'] as String,
         message: body['message'] as String,
         contact: (body['contact'] as String?)?.trim(),
+        attachments: _decodeFeedbackAttachments(body['attachments']),
       );
       await _json(response, HttpStatus.created, {
         'schema': 1,
@@ -894,6 +902,61 @@ final class SkinCatalogHttpServer {
     }
   }
 
+  List<Map<String, Object>> _decodeFeedbackAttachments(dynamic raw) {
+    if (raw == null) return const [];
+    if (raw is! List || raw.length > _maxFeedbackAttachments) {
+      throw const FormatException('Invalid feedback attachments');
+    }
+    var totalBytes = 0;
+    final result = <Map<String, Object>>[];
+    for (final item in raw) {
+      if (item is! Map<String, dynamic> ||
+          item.keys.toSet().difference({
+            'name',
+            'mimeType',
+            'data',
+          }).isNotEmpty ||
+          item['name'] is! String ||
+          item['mimeType'] is! String ||
+          item['data'] is! String) {
+        throw const FormatException('Invalid feedback attachment');
+      }
+      final name = item['name'] as String;
+      final mimeType = item['mimeType'] as String;
+      final encoded = item['data'] as String;
+      if (name.trim().isEmpty ||
+          name.length > 120 ||
+          name.contains(RegExp(r'[/\\\u0000-\u001f]')) ||
+          !const {'image/png', 'image/jpeg'}.contains(mimeType)) {
+        throw const FormatException('Invalid feedback attachment metadata');
+      }
+      final bytes = base64Decode(encoded);
+      if (base64Encode(bytes) != encoded ||
+          bytes.isEmpty ||
+          bytes.length > _maxFeedbackAttachmentBytes) {
+        throw const FormatException('Invalid feedback attachment data');
+      }
+      final png =
+          mimeType == 'image/png' &&
+          bytes.length >= 8 &&
+          bytes.take(8).join(',') == '137,80,78,71,13,10,26,10';
+      final jpeg =
+          mimeType == 'image/jpeg' &&
+          bytes.length >= 3 &&
+          bytes[0] == 0xff &&
+          bytes[1] == 0xd8 &&
+          bytes[2] == 0xff;
+      if (!(png || jpeg))
+        throw const FormatException('Invalid image signature');
+      totalBytes += bytes.length;
+      if (totalBytes > _maxFeedbackAttachmentTotalBytes) {
+        throw const FormatException('Feedback attachments too large');
+      }
+      result.add({'name': name, 'mimeType': mimeType, 'data': encoded});
+    }
+    return List.unmodifiable(result);
+  }
+
   Future<void> _submitCopyrightComplaint(
     HttpRequest request,
     CopyrightComplaintInbox inbox,
@@ -901,7 +964,7 @@ final class SkinCatalogHttpServer {
     final response = request.response;
     if (request.headers.contentType?.mimeType != 'application/json' ||
         request.contentLength == 0 ||
-        request.contentLength > _maxFeedbackBytes) {
+        request.contentLength > _maxFeedbackTextBytes) {
       await _json(response, HttpStatus.badRequest, {
         'error': {'code': 'invalid_request'},
       });
@@ -909,7 +972,7 @@ final class SkinCatalogHttpServer {
     }
     final bytes = <int>[];
     await for (final chunk in request) {
-      if (bytes.length + chunk.length > _maxFeedbackBytes) {
+      if (bytes.length + chunk.length > _maxFeedbackTextBytes) {
         await _json(response, HttpStatus.requestEntityTooLarge, {
           'error': {'code': 'request_too_large'},
         });

@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:chess_next/adapters/network/http_feedback_service.dart';
 import 'package:chess_next/ports/feedback_service.dart';
@@ -85,6 +86,34 @@ void main() {
     });
     expect(requestCount, 1);
   });
+
+  test(
+    'sends explicitly selected attachments as bounded base64 fields',
+    () async {
+      final bytes = Uint8List.fromList([137, 80, 78, 71, 13, 10, 26, 10, 1]);
+      await service.submit(
+        endpoint: Uri.parse('http://localhost:${server.port}'),
+        feedback: FeedbackSubmission(
+          kind: FeedbackKind.suggestion,
+          message: '看一下棋盘',
+          attachments: [
+            FeedbackAttachment(
+              name: 'board.png',
+              mimeType: 'image/png',
+              bytes: bytes,
+            ),
+          ],
+        ),
+      );
+      expect(requestBody!['attachments'], [
+        {
+          'name': 'board.png',
+          'mimeType': 'image/png',
+          'data': base64Encode(bytes),
+        },
+      ]);
+    },
+  );
 
   test('rejects public insecure endpoint without network access', () async {
     await expectLater(

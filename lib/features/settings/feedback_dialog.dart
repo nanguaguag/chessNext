@@ -7,10 +7,12 @@ class FeedbackDialog extends StatefulWidget {
     super.key,
     required this.endpoint,
     required this.service,
+    this.attachmentPicker,
   });
 
   final String endpoint;
   final FeedbackService service;
+  final FeedbackAttachmentPicker? attachmentPicker;
 
   @override
   State<FeedbackDialog> createState() => _FeedbackDialogState();
@@ -24,6 +26,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
   String? _status;
   bool _sending = false;
   bool _sent = false;
+  final List<FeedbackAttachment> _attachments = [];
 
   @override
   void dispose() {
@@ -38,6 +41,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       kind: _kind,
       message: _message.text,
       contact: _contact.text,
+      attachments: _attachments,
     );
     final accepted = await showDialog<bool>(
       context: context,
@@ -59,6 +63,27 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 Text(
                   '联系方式：${feedback.contact.trim().isEmpty ? '未提供' : feedback.contact.trim()}',
                 ),
+                const SizedBox(height: 8),
+                Text('附件（${feedback.attachments.length}）'),
+                if (feedback.attachments.isEmpty)
+                  const Text('未选择附件')
+                else
+                  for (final attachment in feedback.attachments)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Image.memory(
+                        attachment.bytes,
+                        width: 52,
+                        height: 52,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) =>
+                            const Icon(Icons.image_outlined),
+                      ),
+                      title: Text(attachment.name),
+                      subtitle: Text(
+                        '${attachment.mimeType} · ${attachment.bytes.length} B',
+                      ),
+                    ),
                 const SizedBox(height: 12),
                 const Text(
                   '只发送以上内容，不附加设备、浏览器、系统、棋谱或诊断信息。连接本身会让服务及托管层看到来源IP等网络信息。收件内容保存在目标服务私有目录，保留期限由运营者设置。',
@@ -159,6 +184,43 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
                 validator: (value) =>
                     value == null || value.trim().isEmpty ? '请填写描述' : null,
               ),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  key: const ValueKey('pick-feedback-attachments'),
+                  onPressed:
+                      _sending ||
+                          widget.attachmentPicker == null ||
+                          _attachments.length >=
+                              FeedbackAttachment.maxAttachments
+                      ? null
+                      : _pickAttachments,
+                  icon: const Icon(Icons.attach_file),
+                  label: Text('添加图片（${_attachments.length}/3）'),
+                ),
+              ),
+              for (var index = 0; index < _attachments.length; index++)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Image.memory(
+                    _attachments[index].bytes,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => const Icon(Icons.image_outlined),
+                  ),
+                  title: Text(_attachments[index].name),
+                  subtitle: Text(
+                    '${(_attachments[index].bytes.length / 1024).ceil()} KiB',
+                  ),
+                  trailing: IconButton(
+                    tooltip: '移除${_attachments[index].name}',
+                    onPressed: _sending
+                        ? null
+                        : () => setState(() => _attachments.removeAt(index)),
+                    icon: const Icon(Icons.close),
+                  ),
+                ),
               TextFormField(
                 key: const ValueKey('feedback-contact'),
                 controller: _contact,
@@ -168,7 +230,7 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
               const SizedBox(height: 8),
               Text('反馈服务：${widget.endpoint.trim()}'),
               const Text(
-                '内容会保存到自建服务的私有收件目录；保留期限由服务运营者设置。请勿填写敏感信息。连接会让服务/托管层看到来源IP等网络信息。不会自动收集设备或棋谱信息；附件暂不可用。',
+                '可选附加最多3张PNG/JPEG图片，每张不超过256KiB、合计不超过512KiB。只有在下方预览并确认后才会发送。内容会保存在自建服务私有目录；保留期限由运营者设置。不会自动收集设备或棋谱信息。连接会让服务/托管层看到来源IP等网络信息。',
               ),
               if (_status != null)
                 Padding(
@@ -198,4 +260,36 @@ class _FeedbackDialogState extends State<FeedbackDialog> {
       ),
     ],
   );
+
+  Future<void> _pickAttachments() async {
+    final picker = widget.attachmentPicker;
+    if (picker == null) return;
+    try {
+      final selected = await picker.pickAttachments(
+        remaining: FeedbackAttachment.maxAttachments - _attachments.length,
+      );
+      if (selected == null || !mounted) return;
+      final combined = [..._attachments, ...selected];
+      if (combined.fold<int>(0, (sum, item) => sum + item.bytes.length) >
+          FeedbackAttachment.maxTotalBytes) {
+        setState(() => _status = '附件合计不能超过512KiB，请移除部分图片后重试。');
+        return;
+      }
+      setState(() {
+        _attachments
+          ..clear()
+          ..addAll(combined);
+        _status = null;
+      });
+    } on FeedbackAttachmentPickerException catch (error) {
+      final message = switch (error.reason) {
+        FeedbackAttachmentPickerFailure.limit => '最多选择3张图片。',
+        FeedbackAttachmentPickerFailure.size => '单张不能超过256KiB，附件合计不能超过512KiB。',
+        FeedbackAttachmentPickerFailure.format => '仅支持有效的PNG或JPEG图片。',
+        FeedbackAttachmentPickerFailure.unavailable => '此平台当前无法打开图片选择器。',
+        FeedbackAttachmentPickerFailure.read => '无法读取所选图片。',
+      };
+      if (mounted) setState(() => _status = message);
+    }
+  }
 }

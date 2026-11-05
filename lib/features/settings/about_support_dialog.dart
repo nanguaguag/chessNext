@@ -13,12 +13,14 @@ class AboutSupportDialog extends StatefulWidget {
     required this.releaseEndpoint,
     required this.releaseService,
     required this.feedbackService,
+    this.feedbackAttachmentPicker,
     required this.copyrightComplaintService,
   });
 
   final String releaseEndpoint;
   final ReleaseService releaseService;
   final FeedbackService feedbackService;
+  final FeedbackAttachmentPicker? feedbackAttachmentPicker;
   final CopyrightComplaintService copyrightComplaintService;
 
   @override
@@ -142,6 +144,7 @@ class _AboutSupportDialogState extends State<AboutSupportDialog> {
                 builder: (_) => FeedbackDialog(
                   endpoint: widget.releaseEndpoint,
                   service: widget.feedbackService,
+                  attachmentPicker: widget.feedbackAttachmentPicker,
                 ),
               ),
         child: const Text('问题反馈与建议'),

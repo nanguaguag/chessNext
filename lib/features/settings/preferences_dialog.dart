@@ -37,6 +37,7 @@ class PreferencesDialog extends StatefulWidget {
     this.boardSkinCatalog,
     required this.releaseService,
     required this.feedbackService,
+    this.feedbackAttachmentPicker,
     required this.copyrightComplaintService,
   });
   final PreferencesController preferences;
@@ -52,6 +53,7 @@ class PreferencesDialog extends StatefulWidget {
   final BoardSkinCatalog? boardSkinCatalog;
   final ReleaseService releaseService;
   final FeedbackService feedbackService;
+  final FeedbackAttachmentPicker? feedbackAttachmentPicker;
   final CopyrightComplaintService copyrightComplaintService;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
@@ -307,6 +309,8 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                               widget.preferences.value.releaseServiceBaseUrl,
                           releaseService: widget.releaseService,
                           feedbackService: widget.feedbackService,
+                          feedbackAttachmentPicker:
+                              widget.feedbackAttachmentPicker,
                           copyrightComplaintService:
                               widget.copyrightComplaintService,
                         ),

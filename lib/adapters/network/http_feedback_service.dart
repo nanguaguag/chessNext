@@ -33,7 +33,17 @@ final class HttpFeedbackService
         'message': feedback.message,
         if (feedback.contact.trim().isNotEmpty)
           'contact': feedback.contact.trim(),
+        if (feedback.attachments.isNotEmpty)
+          'attachments': [
+            for (final attachment in feedback.attachments)
+              {
+                'name': attachment.name,
+                'mimeType': attachment.mimeType,
+                'data': base64Encode(attachment.bytes),
+              },
+          ],
       },
+      maxRequestBytes: 786432,
     );
   }
 
@@ -41,6 +51,7 @@ final class HttpFeedbackService
     required Uri endpoint,
     required String path,
     required Map<String, Object> body,
+    int maxRequestBytes = 16384,
   }) async {
     if (!_validEndpoint(endpoint)) throw const FeedbackServiceInvalidResponse();
     final uri = endpoint.replace(
@@ -48,13 +59,17 @@ final class HttpFeedbackService
       query: null,
       fragment: null,
     );
+    final encodedBody = utf8.encode(jsonEncode(body));
+    if (encodedBody.length > maxRequestBytes) {
+      throw const FeedbackServiceInvalidResponse();
+    }
     try {
       final request = await _client.postUrl(uri).timeout(timeout);
       request.headers
         ..contentType = ContentType.json
         ..set(HttpHeaders.acceptHeader, 'application/json');
       request.followRedirects = false;
-      request.add(utf8.encode(jsonEncode(body)));
+      request.add(encodedBody);
       final response = await request.close().timeout(timeout);
       if (response.statusCode != HttpStatus.created) {
         await response.drain<void>();

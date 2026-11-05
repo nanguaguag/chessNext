@@ -178,3 +178,13 @@ M4-63已单独以`e51388c feat(settings): 支持自建反馈预览与提交`提�
 ## E83 B24 几何小样本
 
 空白未保存棋盘草稿操作上边距减/加一步：上33→32.5→33，下519→519.04→519；左33/右465/格点50/50/缩放100%未变。已确认丢弃草稿并回棋盘设置默认态。证据只限单步，不把它外推为公式。下一步继续边距/格点跨轴操作和保存—应用—reload差异审计，所有临时样本优先不保存。
+
+## 2026-11-05 最新交接 / M4-68 / ADR-100
+
+用户要求持续推进登录外全站功能/设置，不要每项结束就停。用户指出每次测试似乎多开ChessNext；核实根`flutter test --concurrency=1`只运行一个`flutter_tester`，不会启动macOS GUI。危险操作是`flutter run`；本轮未使用。唯一既有ChessNext PID50598 / runner50125持续运行。复用VM Service `http://127.0.0.1:61579/4bLZ1MhsyEk=/`执行attach同步1,191ms、热重启1,494ms，Ctrl-C脱离后PID50598仍存活；结束时无根`flutter_tester`/`flutter attach`/`flutter run`残留。`tuner_flutter`的后台frontend_server与本项目无关。
+
+本轮完成M4-68 / F31 / ADR-100普通反馈附件首片：显式文件选择PNG/JPEG，最多3张/每张256KiB/总512KiB；展示/移除/预览确认；自建服务严格校验并只写私有记录。投诉表单附件、真实部署运营的访问/删除/留存、外部交流方式仍待完成，F31开放。真实发送/部署未进行，屏幕锁定未人工视觉验收。
+
+实际验证：定向Flutter9/9；server `dart test --reporter expanded`6/6、`dart analyze lib bin test`干净、exe编译通过；根`flutter test --concurrency=1 --reporter expanded`598通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-68.log`，5项需官方Pikafish/NNUE；根`flutter analyze --no-pub`和`git diff --check`通过。完整结果已加TRACEABILITY。代码、ADR及矩阵/缺口/计划/上下文记录当前待单独中文commit。
+
+下一步提交M4-68后继续B24：沿参考设置页审计格点拖动、宽高比例、四边联动和预览保存/使用/reload事务，严格记录O/V/P/U，不外推公式；随后实现已证实缺口并逐项继续F27完整多语言及功能矩阵未完成项。别在本增量commit后停止，也不要宣称全站已对齐。

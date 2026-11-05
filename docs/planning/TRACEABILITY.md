@@ -868,6 +868,14 @@ macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原R
 
 M4-67门槛复核（最终）：根`flutter test --concurrency=1 --reporter expanded`完成595通过/5跳过/0失败，根`flutter analyze --no-pub`与`git diff --check`通过。macOS在原PID50598上attach同步953ms、热重启1085ms；attach CLI及frontend_server短暂残留已退出/清理。未启动额外App。
 
+## M4-68 / F31 / ADR-100 问题反馈图片附件
+
+用户选择PNG/JPEG后，界面显示附件缩略图、名称、大小，可移除；发送预览列出目标地址、文字字段及每个附件，预览/取消不发请求，只有明确确认才提交。项目上限为3张、每张256KiB、合计512KiB。平台文件选择经`FeedbackAttachmentPicker`端口注入；无法打开、读取失败、格式/大小超限均显示可恢复状态。传输附件采用base64，客户端序列化请求上限768KiB。自建反馈服务仅接受严格结构、验证文件名/MIME/PNG或JPEG签名/尺寸和总量，并与文本写入私有有界收件记录，无附件读取接口；Nginx反馈路径设1MiB body限额。
+
+定向Flutter`flutter test --concurrency=1 test/widgets/feedback_dialog_test.dart test/adapters/network/http_feedback_service_test.dart test/adapters/platform/file_selector_feedback_attachment_picker_test.dart --reporter expanded`9/9通过；服务端`cd server/skin_catalog && dart test --reporter expanded`6/6通过。服务端`dart analyze lib bin test`、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server-m4-68`通过；根`flutter analyze --no-pub`及`git diff --check`通过。最终根`flutter test --concurrency=1 --reporter expanded`598通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-68.log`；5跳过因未配置官方Pikafish/NNUE。macOS复用原App PID50598/runner50125，VM Service `61579/4bLZ1MhsyEk=` attach同步1,191ms、热重启1,494ms成功；Ctrl-C脱离后PID50598存活。根测试期间仅一个`flutter_tester`，完成后无残留；全程未运行`flutter run`，未打开新App。屏幕锁定，人工视觉not run；未部署服务或进行实际外发。
+
+该切片仅解决普通反馈的可选附件。版权投诉附件、生产运营者访问/删除/保留流程、邮件/群等外部联系入口及实际部署仍待交付，F31开放。
+
 ## E82 / F21,B24 审计样本删除及设置恢复
 
 访客IAB中，棋盘设置皮肤库只看到一个“我的棋盘”本次审计样本，其余为站点在线项。删除确认框明确称不可恢复，用户就该样本确认后执行删除；复读皮肤库该本地条目消失，取消选择器，主设置回到默认棋子/棋盘、全局大小100%、坐标开、对面倒置关。V。只证明删除与状态恢复，不说明几何值或reload行为。操作截图通过本轮UI记录展示，未把站点素材复制到仓库。

@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:chess_next/features/settings/feedback_dialog.dart';
 import 'package:chess_next/ports/feedback_service.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +10,7 @@ void main() {
     'shows exact payload and sends only after explicit confirmation',
     (tester) async {
       final service = _FakeFeedbackService();
+      final picker = _FakeAttachmentPicker();
       await tester.pumpWidget(
         MaterialApp(
           home: Builder(
@@ -17,6 +20,7 @@ void main() {
                 builder: (_) => FeedbackDialog(
                   endpoint: 'https://feedback.example.test',
                   service: service,
+                  attachmentPicker: picker,
                 ),
               ),
               child: const Text('open'),
@@ -34,6 +38,12 @@ void main() {
         find.byKey(const ValueKey('feedback-contact')),
         'mail@example.test',
       );
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('pick-feedback-attachments')),
+      );
+      await tester.tap(find.byKey(const ValueKey('pick-feedback-attachments')));
+      await tester.pumpAndSettle();
+      expect(find.text('board.png'), findsOneWidget);
       await tester.tap(find.byKey(const ValueKey('preview-feedback')));
       await tester.pumpAndSettle();
       expect(service.calls, 0);
@@ -51,6 +61,8 @@ void main() {
       expect(service.endpoint, Uri.parse('https://feedback.example.test'));
       expect(service.feedback?.message, '建议增加夜间主题');
       expect(service.feedback?.contact, 'mail@example.test');
+      expect(service.feedback?.attachments.single.name, 'board.png');
+      expect(service.feedback?.attachments.single.bytes, _pngBytes);
       expect(tester.takeException(), isNull);
     },
   );
@@ -72,6 +84,34 @@ void main() {
     expect(find.text('请填写描述'), findsOneWidget);
     expect(service.calls, 0);
   });
+}
+
+final _pngBytes = Uint8List.fromList([
+  137,
+  80,
+  78,
+  71,
+  13,
+  10,
+  26,
+  10,
+  0,
+  0,
+  0,
+  0,
+]);
+
+final class _FakeAttachmentPicker implements FeedbackAttachmentPicker {
+  @override
+  Future<List<FeedbackAttachment>?> pickAttachments({
+    required int remaining,
+  }) async => [
+    FeedbackAttachment(
+      name: 'board.png',
+      mimeType: 'image/png',
+      bytes: _pngBytes,
+    ),
+  ];
 }
 
 final class _FakeFeedbackService implements FeedbackService {

@@ -21,6 +21,7 @@ import 'adapters/speech/flutter_tts_move_speech.dart';
 import 'adapters/platform/file_selector_audio_picker.dart';
 import 'adapters/storage/file_audio_override_repository.dart';
 import 'adapters/platform/file_selector_piece_image_picker.dart';
+import 'adapters/platform/file_selector_feedback_attachment_picker.dart';
 import 'adapters/storage/file_piece_image_repository.dart';
 import 'adapters/storage/file_board_skin_image_repository.dart';
 import 'adapters/storage/file_board_skin_library_repository.dart';
@@ -37,6 +38,7 @@ void main() {
     ChessNextApp(
       showFirstRunGuide: true,
       filePicker: FileSelectorRecordPicker(),
+      feedbackAttachmentPicker: FileSelectorFeedbackAttachmentPicker(),
       fileExporter: Platform.isMacOS ? MacOsRecordFileExporter() : null,
       pngExporter: Platform.isMacOS ? MacOsPngFileExporter() : null,
       imageClipboard: Platform.isMacOS ? MacOsImageClipboard() : null,

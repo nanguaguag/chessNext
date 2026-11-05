@@ -857,3 +857,13 @@ macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原R
 ## E81 / F27,F31 英文反馈/投诉表单翻译抽查
 
 英语样本中About、Feedback及Copyright/complaint页面主要文案可见英文，附件按钮“选择文件”仍为中文；反馈表默认勾设备/版本、未勾棋谱。未展开设备明细、填表、上传或提交。切回简中并复核主题系统/晴蓝/夜间开。全站English和其它语言未覆盖，不关闭F27。
+
+## M4-67 / F31 / ADR-099 版权投诉文字表单与隔离收件
+
+关于页复用用户显式配置的自建发布服务地址，新增版权投诉入口。必填投诉人、邮箱、作品/权利、权属说明及涉及内容链接，可选补充说明；要求真实性勾选。预览阶段零请求，显示准确地址和全部字段，只有再次明确确认后才POST `/v1/copyright/complaints`。附件上传暂不支持；测试未用真实个人数据。公网HTTPS/loopback HTTP、超时与接受响应沿用反馈HTTP适配器。
+
+自建Dart服务仅在`CHESSNEXT_COPYRIGHT_ROOT`配置私有收件目录后启用；schema1拒绝未知字段/越界和无效邮箱，请求最多16KiB、最多1,000条；与反馈目录隔离，无公开读取/列举/删除、邮件转发、附件或自动清理。部署文档要求运营者先设置私有目录、访问授权和删除/保留流程；Nginx关闭access log并限制每IP每分钟2次。托管层仍能看到来源IP等连接信息。
+
+定向`flutter test --concurrency=1 test/widgets/copyright_complaint_dialog_test.dart test/widgets/about_support_test.dart test/adapters/network/http_feedback_service_test.dart --reporter expanded`7/7；`server/skin_catalog`的`dart test --reporter expanded`4/4、`dart analyze lib bin test`无问题、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server-m4-67`通过。根全量/analyze/macOS attach结果待补。首轮定向测试发现可选字段漏required参数、composition root误加到_boardPage、滚动测试未ensureVisible和重复字段断言，逐项修正后定向通过；服务端测试通过。macOS视觉/实际自建部署/真实投诉投递not run。附件与运营实务未交付，F31开放。
+
+M4-67门槛复核（最终）：根`flutter test --concurrency=1 --reporter expanded`完成595通过/5跳过/0失败，根`flutter analyze --no-pub`与`git diff --check`通过。macOS在原PID50598上attach同步953ms、热重启1085ms；attach CLI及frontend_server短暂残留已退出/清理。未启动额外App。

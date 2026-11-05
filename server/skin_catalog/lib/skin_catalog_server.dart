@@ -185,6 +185,55 @@ final class FeedbackInboxFull implements Exception {
   const FeedbackInboxFull();
 }
 
+/// Separate private store for reports containing identifying/legal information.
+final class CopyrightComplaintInbox {
+  CopyrightComplaintInbox._(this._root, this._storedCount);
+  final Directory _root;
+  int _storedCount;
+  static const maxSubmissions = 1000;
+
+  static Future<CopyrightComplaintInbox> open(Directory root) async {
+    if (await FileSystemEntity.type(root.path, followLinks: false) !=
+        FileSystemEntityType.directory) {
+      throw const FormatException('Invalid copyright inbox directory');
+    }
+    var count = 0;
+    await for (final entity in root.list(followLinks: false)) {
+      if (entity is File && entity.path.endsWith('.json')) count++;
+    }
+    return CopyrightComplaintInbox._(root, count);
+  }
+
+  Future<void> store(Map<String, String> fields) async {
+    if (_storedCount >= maxSubmissions) throw const FeedbackInboxFull();
+    final random = List<int>.generate(16, (_) => Random.secure().nextInt(256));
+    final id = random
+        .map((byte) => byte.toRadixString(16).padLeft(2, '0'))
+        .join();
+    final file = File('${_root.path}/$id.json');
+    _storedCount++;
+    try {
+      await file.create(exclusive: true);
+      await file.writeAsString(
+        jsonEncode({
+          'schema': 1,
+          'receivedAt': DateTime.now().toUtc().toIso8601String(),
+          ...fields,
+        }),
+        flush: true,
+      );
+    } catch (_) {
+      try {
+        if (await FileSystemEntity.type(file.path, followLinks: false) ==
+            FileSystemEntityType.file)
+          await file.delete();
+      } catch (_) {}
+      _storedCount--;
+      rethrow;
+    }
+  }
+}
+
 enum BookKind { opening, endgame }
 
 final class BookCandidate {
@@ -633,6 +682,7 @@ final class SkinCatalogHttpServer {
     this._bookDatabase,
     this._releaseManifest,
     this._feedbackInbox,
+    this._copyrightComplaintInbox,
   );
 
   final HttpServer _server;
@@ -641,6 +691,7 @@ final class SkinCatalogHttpServer {
   final BookDatabase? _bookDatabase;
   final ReleaseManifest? _releaseManifest;
   final FeedbackInbox? _feedbackInbox;
+  final CopyrightComplaintInbox? _copyrightComplaintInbox;
   StreamSubscription<HttpRequest>? _subscription;
 
   String get baseUrl => 'http://${_server.address.address}:${_server.port}';
@@ -651,6 +702,7 @@ final class SkinCatalogHttpServer {
     BookDatabase? bookDatabase,
     ReleaseManifest? releaseManifest,
     FeedbackInbox? feedbackInbox,
+    CopyrightComplaintInbox? copyrightComplaintInbox,
     InternetAddress? address,
     int port = 8087,
   }) async {
@@ -666,6 +718,7 @@ final class SkinCatalogHttpServer {
       bookDatabase,
       releaseManifest,
       feedbackInbox,
+      copyrightComplaintInbox,
     );
     service._subscription = server.listen(service._handle);
     return service;
@@ -726,11 +779,20 @@ final class SkinCatalogHttpServer {
       await _submitFeedback(request, _feedbackInbox);
       return;
     }
+    if (request.method == 'POST' &&
+        request.uri.path == '/v1/copyright/complaints' &&
+        _copyrightComplaintInbox != null) {
+      await _submitCopyrightComplaint(request, _copyrightComplaintInbox);
+      return;
+    }
     if (request.method != 'GET' && request.method != 'HEAD') {
       response.headers.set(
         HttpHeaders.allowHeader,
         (request.uri.path == '/v1/book/query' && _bookDatabase != null) ||
-                (request.uri.path == '/v1/feedback' && _feedbackInbox != null)
+                (request.uri.path == '/v1/feedback' &&
+                    _feedbackInbox != null) ||
+                (request.uri.path == '/v1/copyright/complaints' &&
+                    _copyrightComplaintInbox != null)
             ? 'POST, OPTIONS'
             : 'GET, HEAD, OPTIONS',
       );
@@ -817,6 +879,89 @@ final class SkinCatalogHttpServer {
         message: body['message'] as String,
         contact: (body['contact'] as String?)?.trim(),
       );
+      await _json(response, HttpStatus.created, {
+        'schema': 1,
+        'accepted': true,
+      });
+    } on FeedbackInboxFull {
+      await _json(response, HttpStatus.serviceUnavailable, {
+        'error': {'code': 'inbox_full'},
+      });
+    } on FormatException {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
+      });
+    }
+  }
+
+  Future<void> _submitCopyrightComplaint(
+    HttpRequest request,
+    CopyrightComplaintInbox inbox,
+  ) async {
+    final response = request.response;
+    if (request.headers.contentType?.mimeType != 'application/json' ||
+        request.contentLength == 0 ||
+        request.contentLength > _maxFeedbackBytes) {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
+      });
+      return;
+    }
+    final bytes = <int>[];
+    await for (final chunk in request) {
+      if (bytes.length + chunk.length > _maxFeedbackBytes) {
+        await _json(response, HttpStatus.requestEntityTooLarge, {
+          'error': {'code': 'request_too_large'},
+        });
+        return;
+      }
+      bytes.addAll(chunk);
+    }
+    try {
+      final value = jsonDecode(utf8.decode(bytes));
+      const limits = {
+        'complainant': 160,
+        'email': 254,
+        'work': 500,
+        'ownership': 2000,
+        'content': 2000,
+        'details': 2000,
+      };
+      if (value is! Map<String, dynamic> ||
+          value['schema'] != 1 ||
+          value.keys.toSet().difference({
+            'schema',
+            ...limits.keys,
+          }).isNotEmpty ||
+          limits.entries.any(
+            (field) =>
+                value.containsKey(field.key) &&
+                (value[field.key] is! String ||
+                    (value[field.key] as String).length > field.value),
+          ) ||
+          limits.entries
+              .where((field) => field.key != 'details')
+              .any(
+                (field) =>
+                    value[field.key] is! String ||
+                    (value[field.key] as String).trim().isEmpty,
+              ) ||
+          !(value['email'] as String).contains('@') ||
+          value.values.whereType<String>().any(
+            (field) => field.contains(
+              RegExp(r'[\u0000-\u0008\u000b\u000c\u000e-\u001f]'),
+            ),
+          )) {
+        await _json(response, HttpStatus.badRequest, {
+          'error': {'code': 'invalid_request'},
+        });
+        return;
+      }
+      await inbox.store({
+        for (final key in limits.keys)
+          if (value[key] is String && (value[key] as String).trim().isNotEmpty)
+            key: (value[key] as String).trim(),
+      });
       await _json(response, HttpStatus.created, {
         'schema': 1,
         'accepted': true,

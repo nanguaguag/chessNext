@@ -1,5 +1,15 @@
 # 当前状态
 
+## 最新实现 M4-67 / F31 / ADR-099（待本片提交）
+
+关于页已加版权投诉文字表单与显式预览确认；独立`CopyrightComplaintService`复用安全HTTP传输。自建服务通过`CHESSNEXT_COPYRIGHT_ROOT`启用隔离私有收件路由；16KiB请求/1,000条，拒绝未知字段，无公开读取，文档含Linux/Nginx隔离配置。附件、实际投诉处理/运营、公开外链与生产部署验收未做，F31仍开放。
+
+定向Flutter 7/7、服务端Dart 4/4；服务端`dart analyze lib bin test`和exe编译通过。根`flutter test --concurrency=1 --reporter expanded`595通过/5跳过/0失败；5跳过缺官方Pikafish/NNUE。根`flutter analyze --no-pub`通过；首次分析的两条花括号info已修正后复跑通过。`git diff --check`通过。首轮定向有编译/滚动/断言问题，均记录并修正后通过。
+
+macOS没有新开App；复用PID50598/runner50125，attach同步953ms、热重启1,085ms，脱离后App仍活。根测试单并发，仅一个tester，结束无残留。attach退出后曾短暂遗留attach CLI PID95102及frontend_server PID95152，已TERM清理并复核退出；当前不应存在测试/attach后台任务。锁屏，人工视觉not run。禁止以`flutter run`验证以免增加App实例。
+
+完成M4-67单独中文feature commit后继续用户授权的登录外全站差距，不在此停止。下一阶段优先回到B24：审计棋盘几何/边距、拖点与保存应用/reload事务；另继续F27全语言资源及FEATURE_GAPS其它缺口。全站仍未对齐。
+
 # 最新审计 E81 / F27,F31 English反馈与版权投诉表单
 
 E81从About打开反馈及版权投诉页面进行访客只读抽样。主要字段/文案英文，但两个附件入口“选择文件”仍中文；Feedback默认勾选设备/版本、未勾当前棋谱。未展开设备明细、未填表/上传/提交。随后回显示设置切回简中，复核系统主题/晴蓝/夜间棋盘开，状态恢复。E81追踪待文档commit；English全覆盖仍未达成。

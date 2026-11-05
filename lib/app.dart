@@ -985,6 +985,7 @@ class _BoardPage extends StatelessWidget {
         boardSkins: boardSkins,
         releaseService: releaseService,
         feedbackService: feedbackService,
+        copyrightComplaintService: feedbackService,
       ),
     );
   }

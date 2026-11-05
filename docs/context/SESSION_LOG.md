@@ -1058,3 +1058,13 @@ M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完�
 从显示页临时切English，审计About、反馈、版权说明及版权投诉表。主要字段/说明英文，但两个表单附件按钮显示中文“选择文件”；反馈默认勾选设备/版本，当前棋谱选项未勾。没有展开设备数据详情、填表、上传、复制或提交。返回显示页恢复简体中文，核对字号100/跟随系统、晴蓝、夜间棋盘开。
 
 E81证据、矩阵、缺口、交互规格及追溯已更新；本次只做只读参考站审计，不跑Flutter测试/analyze/Mac。下一步提交E81纯文档并持续F27全语言覆盖及其他登录外缺口。English不宣称100%完整。
+
+## 2026-11-05 / M4-67 / F31 / ADR-099 版权投诉文字表单
+
+About页增加版权投诉入口和独立端口。用户需填写投诉人/联系邮箱/作品与权利/权属说明/涉及内容及可选说明，勾选真实性声明；先看到准确目标地址和完整表单预览，再明确确认，才发送。使用仅测试样本字段，不含真实个人信息，不上传附件。客户端复用反馈HTTP安全策略但发独立POST路径。
+
+Dart自建server新增可选`CHESSNEXT_COPYRIGHT_ROOT`私有目录和`/v1/copyright/complaints`，另存与问题建议隔离；严格schema/字段/长度/email校验、16KiB请求/1,000记录上限、无公网读写管理接口/转发/自动清理。加systemd部署说明和独立Nginx速率2r/m、关闭access log。运营访问/留存/投诉处理需部署者建立；附件、外链、生产收件验证缺失，F31开放。
+
+定向Flutter7/7、server `dart test`4/4；server analyze与exe编译通过。根串行`flutter test --concurrency=1 --reporter expanded`595 passed/5 skipped/0 failed（跳过需官方Pikafish/NNUE）；`flutter analyze --no-pub`与`git diff --check`通过。早期定向/UI测试和一次analyze有失败/信息，已逐项修复并最终重跑通过。macOS复用PID50598/runner50125 attach sync953ms、hot restart1085ms；原App仍在。根测试只有一个flutter_tester，测试后无残留。attach退出后有PID95102/95152残余CLI/frontend_server，已TERM并确认消失；无新App。Mac锁屏，人工视觉、真实服务部署和投诉投递未做。
+
+本片代码和ADR/矩阵/缺口/追踪/上下文待单独中文提交；下一步继续B24棋盘几何及保存应用/reload事务、F27完整语言资源与选择，以及剩余登录外矩阵缺口。总目标未完成。

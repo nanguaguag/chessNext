@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import '../../application/app_metadata.dart';
 import '../../ports/release_service.dart';
 import '../../ports/feedback_service.dart';
+import '../../ports/copyright_complaint_service.dart';
 import 'feedback_dialog.dart';
+import 'copyright_complaint_dialog.dart';
 
 class AboutSupportDialog extends StatefulWidget {
   const AboutSupportDialog({
@@ -11,11 +13,13 @@ class AboutSupportDialog extends StatefulWidget {
     required this.releaseEndpoint,
     required this.releaseService,
     required this.feedbackService,
+    required this.copyrightComplaintService,
   });
 
   final String releaseEndpoint;
   final ReleaseService releaseService;
   final FeedbackService feedbackService;
+  final CopyrightComplaintService copyrightComplaintService;
 
   @override
   State<AboutSupportDialog> createState() => _AboutSupportDialogState();
@@ -141,6 +145,19 @@ class _AboutSupportDialogState extends State<AboutSupportDialog> {
                 ),
               ),
         child: const Text('问题反馈与建议'),
+      ),
+      TextButton(
+        key: const ValueKey('open-copyright-complaint'),
+        onPressed: widget.releaseEndpoint.isEmpty
+            ? null
+            : () => showDialog<void>(
+                context: context,
+                builder: (_) => CopyrightComplaintDialog(
+                  endpoint: widget.releaseEndpoint,
+                  service: widget.copyrightComplaintService,
+                ),
+              ),
+        child: const Text('版权投诉'),
       ),
       OutlinedButton.icon(
         key: const ValueKey('check-release-updates'),

@@ -88,6 +88,17 @@ sample Nginx config disables access logs for this route and applies its own
 per-IP rate limit; network and hosting layers still see source-IP metadata,
 and operators control error-log policy.
 
+Copyright complaints use a separate private directory and route. To enable,
+set `CHESSNEXT_COPYRIGHT_ROOT` to an existing service-owned directory with mode
+`0700`, and add that exact path to the systemd unit's `ReadWritePaths`. The
+route `POST /v1/copyright/complaints` accepts only bounded text fields under
+schema 1, stores at most 1,000 records, and has no public read/list/delete API,
+email forwarding, attachment upload, or automatic retention cleanup. Because
+these records contain identifying and legal information, operators must define
+access and deletion procedures before enabling the endpoint. The sample Nginx
+location disables access logs and limits this route to two requests/minute per
+IP; hosting layers can still observe connection metadata.
+
 ## Linux VM deployment
 
 Build the executable on the same OS and CPU architecture as the target:
@@ -130,7 +141,8 @@ to the catalog directory.
 - `POST /v1/book/query` (optional book root, JSON schema 1)
 - `POST /v1/feedback` (optional feedback root, JSON schema 1)
 
-Only GET/HEAD, the bounded book-query POST, the optional bounded feedback POST,
+Only GET/HEAD, the bounded book-query POST, optional bounded feedback and
+copyright complaint POSTs,
 and CORS preflight are accepted. Feedback accepts only `kind` (`problem` or
 `suggestion`), `message` (1–2,000 characters), and optional `contact` (up to
 200 characters); unknown fields, including device/browser/record diagnostics,

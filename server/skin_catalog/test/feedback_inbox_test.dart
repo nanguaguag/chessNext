@@ -7,6 +7,7 @@ import 'package:test/test.dart';
 void main() {
   late Directory root;
   late Directory inboxDir;
+  late Directory copyrightInboxDir;
   late SkinCatalogHttpServer server;
 
   setUp(() async {
@@ -17,9 +18,14 @@ void main() {
     ).writeAsString('{"schema":1,"skins":[]}');
     inboxDir = Directory('${root.path}/inbox');
     await inboxDir.create();
+    copyrightInboxDir = Directory('${root.path}/copyright-inbox');
+    await copyrightInboxDir.create();
     server = await SkinCatalogHttpServer.bind(
       store: await SkinCatalogStore.load(manifest),
       feedbackInbox: await FeedbackInbox.open(inboxDir),
+      copyrightComplaintInbox: await CopyrightComplaintInbox.open(
+        copyrightInboxDir,
+      ),
       port: 0,
     );
   });
@@ -94,6 +100,79 @@ void main() {
       await response.drain<void>();
     }
     expect(await inboxDir.list().length, 0);
+    client.close(force: true);
+  });
+
+  test('accepts complaint fields into the separate private inbox', () async {
+    final client = HttpClient();
+    final request = await client.postUrl(
+      Uri.parse('${server.baseUrl}/v1/copyright/complaints'),
+    );
+    request.headers.contentType = ContentType.json;
+    request.write(
+      jsonEncode({
+        'schema': 1,
+        'complainant': 'Sample person',
+        'email': 'person@example.test',
+        'work': 'Sample work',
+        'ownership': 'Created by complainant',
+        'content': 'https://example.test/work',
+      }),
+    );
+    final response = await request.close();
+    expect(response.statusCode, HttpStatus.created);
+    await response.drain<void>();
+    final files = await copyrightInboxDir
+        .list()
+        .where((entity) => entity is File)
+        .toList();
+    expect(files, hasLength(1));
+    final saved =
+        jsonDecode(await (files.single as File).readAsString())
+            as Map<String, dynamic>;
+    expect(saved['complainant'], 'Sample person');
+    expect(saved['email'], 'person@example.test');
+    expect(await inboxDir.list().length, 0);
+    final read = await client.getUrl(
+      Uri.parse('${server.baseUrl}/v1/copyright/complaints'),
+    );
+    final readResponse = await read.close();
+    expect(readResponse.statusCode, HttpStatus.notFound);
+    await readResponse.drain<void>();
+    client.close(force: true);
+  });
+
+  test('rejects complaint payloads with unknown or invalid fields', () async {
+    final client = HttpClient();
+    for (final payload in [
+      {
+        'schema': 1,
+        'complainant': 'x',
+        'email': 'x@y',
+        'work': 'x',
+        'ownership': 'x',
+        'content': 'x',
+        'device': 'private',
+      },
+      {
+        'schema': 1,
+        'complainant': 'x',
+        'email': 'bad',
+        'work': 'x',
+        'ownership': 'x',
+        'content': 'x',
+      },
+    ]) {
+      final request = await client.postUrl(
+        Uri.parse('${server.baseUrl}/v1/copyright/complaints'),
+      );
+      request.headers.contentType = ContentType.json;
+      request.write(jsonEncode(payload));
+      final response = await request.close();
+      expect(response.statusCode, HttpStatus.badRequest);
+      await response.drain<void>();
+    }
+    expect(await copyrightInboxDir.list().length, 0);
     client.close(force: true);
   });
 }

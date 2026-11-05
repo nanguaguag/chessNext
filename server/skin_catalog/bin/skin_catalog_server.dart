@@ -44,12 +44,18 @@ Future<void> main(List<String> args) async {
   final feedbackInbox = feedbackRoot == null || feedbackRoot.trim().isEmpty
       ? null
       : await FeedbackInbox.open(Directory(feedbackRoot));
+  final copyrightRoot = Platform.environment['CHESSNEXT_COPYRIGHT_ROOT'];
+  final copyrightComplaintInbox =
+      copyrightRoot == null || copyrightRoot.trim().isEmpty
+      ? null
+      : await CopyrightComplaintInbox.open(Directory(copyrightRoot));
   final server = await SkinCatalogHttpServer.bind(
     store: store,
     boardStore: boardStore,
     bookDatabase: bookDatabase,
     releaseManifest: releaseManifest,
     feedbackInbox: feedbackInbox,
+    copyrightComplaintInbox: copyrightComplaintInbox,
     address: address,
     port: port,
   );
@@ -69,6 +75,8 @@ Future<void> main(List<String> args) async {
     );
   }
   if (feedbackInbox != null) stdout.writeln('Feedback inbox enabled.');
+  if (copyrightComplaintInbox != null)
+    stdout.writeln('Copyright complaint inbox enabled.');
   final stopped = Completer<void>();
   ProcessSignal.sigint.watch().listen((_) => stopped.complete());
   if (!Platform.isWindows) {

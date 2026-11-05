@@ -2,11 +2,13 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import '../../ports/copyright_complaint_service.dart';
 import '../../ports/feedback_service.dart';
 
 const _maxFeedbackResponseBytes = 4096;
 
-final class HttpFeedbackService implements FeedbackService {
+final class HttpFeedbackService
+    implements FeedbackService, CopyrightComplaintService {
   HttpFeedbackService({
     HttpClient? client,
     this.timeout = const Duration(seconds: 8),
@@ -22,20 +24,29 @@ final class HttpFeedbackService implements FeedbackService {
     required Uri endpoint,
     required FeedbackSubmission feedback,
   }) async {
-    if (!_validEndpoint(endpoint)) throw const FeedbackServiceInvalidResponse();
-    final uri = endpoint.replace(
-      path: '${endpoint.path.replaceFirst(RegExp(r'/+$'), '')}/v1/feedback',
-      query: null,
-      fragment: null,
-    );
-    final body = utf8.encode(
-      jsonEncode({
+    await _post(
+      endpoint: endpoint,
+      path: '/v1/feedback',
+      body: <String, Object>{
         'schema': 1,
         'kind': feedback.kind.name,
         'message': feedback.message,
         if (feedback.contact.trim().isNotEmpty)
           'contact': feedback.contact.trim(),
-      }),
+      },
+    );
+  }
+
+  Future<void> _post({
+    required Uri endpoint,
+    required String path,
+    required Map<String, Object> body,
+  }) async {
+    if (!_validEndpoint(endpoint)) throw const FeedbackServiceInvalidResponse();
+    final uri = endpoint.replace(
+      path: '${endpoint.path.replaceFirst(RegExp(r'/+$'), '')}$path',
+      query: null,
+      fragment: null,
     );
     try {
       final request = await _client.postUrl(uri).timeout(timeout);
@@ -43,7 +54,7 @@ final class HttpFeedbackService implements FeedbackService {
         ..contentType = ContentType.json
         ..set(HttpHeaders.acceptHeader, 'application/json');
       request.followRedirects = false;
-      request.add(body);
+      request.add(utf8.encode(jsonEncode(body)));
       final response = await request.close().timeout(timeout);
       if (response.statusCode != HttpStatus.created) {
         await response.drain<void>();
@@ -78,6 +89,27 @@ final class HttpFeedbackService implements FeedbackService {
     } on FormatException {
       throw const FeedbackServiceInvalidResponse();
     }
+  }
+
+  @override
+  Future<void> submitCopyrightComplaint({
+    required Uri endpoint,
+    required CopyrightComplaintSubmission complaint,
+  }) async {
+    await _post(
+      endpoint: endpoint,
+      path: '/v1/copyright/complaints',
+      body: <String, Object>{
+        'schema': 1,
+        'complainant': complaint.complainant.trim(),
+        'email': complaint.email.trim(),
+        'work': complaint.work.trim(),
+        'ownership': complaint.ownership.trim(),
+        'content': complaint.content.trim(),
+        if (complaint.details.trim().isNotEmpty)
+          'details': complaint.details.trim(),
+      },
+    );
   }
 
   static bool _validEndpoint(Uri uri) {

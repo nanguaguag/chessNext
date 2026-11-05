@@ -18,6 +18,7 @@ import '../../ports/piece_skin_folder_picker.dart';
 import '../../ports/piece_skin_catalog.dart';
 import '../../ports/release_service.dart';
 import '../../ports/feedback_service.dart';
+import '../../ports/copyright_complaint_service.dart';
 import 'about_support_dialog.dart';
 
 class PreferencesDialog extends StatefulWidget {
@@ -36,6 +37,7 @@ class PreferencesDialog extends StatefulWidget {
     this.boardSkinCatalog,
     required this.releaseService,
     required this.feedbackService,
+    required this.copyrightComplaintService,
   });
   final PreferencesController preferences;
   final AudioLibraryController? audioLibrary;
@@ -50,6 +52,7 @@ class PreferencesDialog extends StatefulWidget {
   final BoardSkinCatalog? boardSkinCatalog;
   final ReleaseService releaseService;
   final FeedbackService feedbackService;
+  final CopyrightComplaintService copyrightComplaintService;
   @override
   State<PreferencesDialog> createState() => _PreferencesDialogState();
 }
@@ -304,6 +307,8 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                               widget.preferences.value.releaseServiceBaseUrl,
                           releaseService: widget.releaseService,
                           feedbackService: widget.feedbackService,
+                          copyrightComplaintService:
+                              widget.copyrightComplaintService,
                         ),
                       ),
                       icon: const Icon(Icons.info_outline),

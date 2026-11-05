@@ -3,6 +3,7 @@ import 'package:chess_next/features/settings/about_support_dialog.dart';
 import 'package:chess_next/ports/preferences_repository.dart';
 import 'package:chess_next/ports/release_service.dart';
 import 'package:chess_next/ports/feedback_service.dart';
+import 'package:chess_next/ports/copyright_complaint_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -53,6 +54,7 @@ void main() {
                   releaseEndpoint: 'https://updates.example.test',
                   releaseService: service,
                   feedbackService: _FakeFeedbackService(),
+                  copyrightComplaintService: _FakeComplaintService(),
                 ),
               ),
               child: const Text('open'),
@@ -74,6 +76,14 @@ void main() {
       expect(tester.takeException(), isNull);
     },
   );
+}
+
+final class _FakeComplaintService implements CopyrightComplaintService {
+  @override
+  Future<void> submitCopyrightComplaint({
+    required Uri endpoint,
+    required CopyrightComplaintSubmission complaint,
+  }) async {}
 }
 
 final class _FakeFeedbackService implements FeedbackService {

@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-67 / F31 / ADR-099 版权投诉表单与自建隔离收件（功能验证完成，提交待做）
+
+用户明确要求继续登录外全站功能/设置对齐，不以一个功能结束。此次处理问题/建议之后的版权投诉文字首片：About入口复用已配置的自建发布根地址；独立投诉端口/表单，必填投诉人与邮箱、作品/权属、涉及内容链接，可选说明，须勾选真实性声明；先完整预览目标和字段，再二次确认发送。未实现附件，不能视为F31完成。
+
+服务端新增独立`CHESSNEXT_COPYRIGHT_ROOT`收件目录与`POST /v1/copyright/complaints`，最多16KiB/1,000条、严格字段/长度/邮箱校验、不公开读取；Nginx关access log并单独限制2r/m。部署文档要求目录、访问与删除/保留策略。未部署服务、未投递真实投诉；无个人真实数据。
+
+定向Flutter7/7、server Dart4/4/analyze/compile pass；根全量595 passed/5 skipped/0 failed，根analyze及diff check pass。5 skipped为本机无官方Pikafish/NNUE环境；首轮定向编译/测试和首次analyze info均已修复，最终门槛通过。macOS复用PID50598/runner50125：attach同步953ms、热重启1085ms，之后原App仍存活。测试使用`--concurrency=1`，无tester残留；退出attach后发现PID95102/95152残余attach/编译server并已TERM清理。无flutter run/新App。锁屏，视觉验收not run。
+
+本片代码、ADR-099、服务部署文档、矩阵/缺口/追踪/交接已更新，`git diff --check`通过；尚未commit。下一步复核工作树并单独提交中文Conventional Commit，然后直接继续B24几何/保存应用事务及F27完整本地化/其他登录外缺口。不要因M4-67结束总目标。根测试不是新开App的原因；以后仍串行单tester，macOS只复用实例attach并清理attach进程。
+
 # 2026-11-05 E81 / F27,F31 英文表单抽样与最新交接
 
 E81审计英语About、反馈、版权说明与投诉表。字段和主要说明英文，两个表单的附件按钮仍中文“选择文件”；反馈页默认勾选设备/版本、未勾当前棋谱。本次未展开设备明细、未填表/上传/提交。切回简中，复核系统主题、晴蓝、夜间棋盘开。E81 evidence/matrix/gaps/spec/traceability待文档commit。
@@ -154,3 +164,9 @@ M4-63/F31/ADR-095实现问题/建议自建投递：设置可选根地址留空�
 最终验证：定向反馈7/7；server `dart test`2/2、`dart analyze lib bin test`干净、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`通过；根全量591通过/5条件跳过/0失败；根`flutter analyze --no-pub`、`git diff --check`干净。两次定向测试早期断言和FileMode接口失败已修复。屏幕锁定未人工视觉验收；无实际外部发送、生产部署或生产收件验证。最终热重启同步1,054ms/1,114ms，测试器运行时和结束后均未多开chessNext。
 
 M4-63已单独以`e51388c feat(settings): 支持自建反馈预览与提交`提交；相关追踪、矩阵与ADR-095已写入。下一步继续F31版权/交流入口取证，和F21棋盘几何保存生命周期/其它全站设置；保持O/V/D/P/U边界。五项Pikafish/NNUE用例需配置官方制品才能运行。当前Mac运行实例仍唯一；工作树应保持干净。
+
+## M4-67 门槛及交接补记（2026-11-05）
+
+根目录最终`flutter test --concurrency=1 --reporter expanded`：595 passed、5 skipped、0 failed；跳过项依赖未配置的官方Pikafish/NNUE。`flutter analyze --no-pub`、server `dart analyze lib bin test`、server `dart test --reporter expanded` 4/4、server exe compile及`git diff --check`通过。专项Flutter 7/7。根全量测试运行一个串行tester，没有GUI App；当前原chessNext PID50598/runner50125维持不变。复用既有VM Service attach sync953ms/hot restart1085ms成功。attach退出遗留PID95102/95152已清理，后续再复核状态；没有执行flutter run。
+
+实现F31投诉文字表单及自建隔离收件并未完成投诉附件、邮箱/群外链、真实运营/保留/法务流程，因此只是M4-67首片，不能关闭F31。全站登录外对齐仍长期目标，继续按矩阵/缺口推进；下一个可执行项优先审计并补B24棋盘几何、格点/四边耦合未知和草稿保存—应用—reload事务，再推进F27完整语言资源，不应在本片后停工。

@@ -3,6 +3,7 @@ import 'dart:io';
 
 import 'package:chess_next/adapters/network/http_feedback_service.dart';
 import 'package:chess_next/ports/feedback_service.dart';
+import 'package:chess_next/ports/copyright_complaint_service.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -56,6 +57,31 @@ void main() {
       'kind': 'problem',
       'message': '按钮无响应',
       'contact': 'user@example.test',
+    });
+    expect(requestCount, 1);
+  });
+
+  test('posts bounded complaint fields to dedicated route', () async {
+    await service.submitCopyrightComplaint(
+      endpoint: Uri.parse('http://localhost:${server.port}'),
+      complaint: CopyrightComplaintSubmission(
+        complainant: 'Test Person',
+        email: 'person@example.test',
+        work: 'Test work',
+        ownership: 'Created by complainant',
+        content: 'https://example.test/item',
+        details: 'No attachment',
+      ),
+    );
+    expect(requestPath, '/v1/copyright/complaints');
+    expect(requestBody, {
+      'schema': 1,
+      'complainant': 'Test Person',
+      'email': 'person@example.test',
+      'work': 'Test work',
+      'ownership': 'Created by complainant',
+      'content': 'https://example.test/item',
+      'details': 'No attachment',
     });
     expect(requestCount, 1);
   });

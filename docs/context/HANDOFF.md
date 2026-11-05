@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-77 / F21,B24 / ADR-108 单槽图片替换中断回收（验证完成，待提交）
+
+`FileBoardSkinImageRepository.save`将新图片移入皮肤目录后再原子替换槽manifest。进程中断时可能留下未引用的项目命名图片或`.slot-pending-*`目录。现在`load`只在manifest不存在，或有效manifest引用的图片解码校验通过时，才回收对应槽中可识别的未引用image file/pending directory；按固定槽名、图片后缀、数字时间戳并以`followLinks:false`确认普通文件/目录。未知文件保留。manifest存在但无效/是链接、引用缺失或图片损坏时，不做该槽回收，保留恢复线索。不是跨文件原子写入。
+
+定向`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`607通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-77.log`；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，VM Service `61579/4bLZ1MhsyEk=`同步1,067ms、热重启1,112ms，Ctrl-C后App仍存活。串行单tester，测试和attach结束无残留，无新App。
+
+工作树包含文件适配器/测试与ADR-108、研究/context更新；请单独中文feature commit。之后继续审计图层映射批量导入/保存的失败事务，并持续推进F27完整语言资源与其余登录外网站差异，不宣称全站完成。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-76 / F21,B24 / ADR-107 启动回收孤儿图片目录（验证完成，待提交）
 
 创建/删除流程分别写棋盘图片仓储与用户定义清单，进程可能在两次写操作之间终止。新增图片端口`pruneCustomSkins`：仅在`BoardSkinLibraryController.initialize`成功加载profile清单后调用，以有效用户ID作为保留集，文件适配器删除无定义的`custom-*`图片目录（含空文件夹）；内置皮肤和清单登记项目保留。若profile文件损坏/IO失败则跳过回收并保留所有图片；清理IO失败给出可重试错误，不改定义/选择。该机制不保证多文件原子提交，也不是源站支持证据。新增ADR-107。

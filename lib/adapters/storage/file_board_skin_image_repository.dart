@@ -87,6 +87,17 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
       final folder = entity;
       final images = <BoardSkinImageSlot, Uint8List>{};
       for (final slot in BoardSkinImageSlot.values) {
+        final manifestFile = _manifest(folder, slot);
+        final manifestType = await FileSystemEntity.type(
+          manifestFile.path,
+          followLinks: false,
+        );
+        if (manifestType == FileSystemEntityType.link) continue;
+        if (manifestType == FileSystemEntityType.notFound) {
+          await _cleanupInterruptedWrites(folder, slot);
+          continue;
+        }
+        if (manifestType != FileSystemEntityType.file) continue;
         final manifest = await _readManifest(folder, slot);
         if (manifest == null) continue;
         final file = File('${folder.path}/${manifest['file']}');
@@ -101,6 +112,11 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
             SelectedPieceImage(manifest['extension']!, bytes),
           );
           images[slot] = bytes;
+          await _cleanupInterruptedWrites(
+            folder,
+            slot,
+            retainedFile: manifest['file'],
+          );
         } on PieceImageException {
           // Ignore damaged local images without making the board unavailable.
         }
@@ -108,6 +124,34 @@ class FileBoardSkinImageRepository implements BoardSkinImageRepository {
       if (images.isNotEmpty) result[skinId] = images;
     }
     return result;
+  }
+
+  Future<void> _cleanupInterruptedWrites(
+    Directory folder,
+    BoardSkinImageSlot slot, {
+    String? retainedFile,
+  }) async {
+    final imagePattern = RegExp('^${slot.name}-[0-9]+\\.(png|jpg|jpeg)\$');
+    final stagingPattern = RegExp('^\\.${slot.name}-pending-[A-Za-z0-9_-]+\$');
+    await for (final entity in folder.list(followLinks: false)) {
+      final name = entity.uri.pathSegments.lastWhere(
+        (segment) => segment.isNotEmpty,
+      );
+      if (entity is File &&
+          name != retainedFile &&
+          imagePattern.hasMatch(name) &&
+          await FileSystemEntity.type(entity.path, followLinks: false) ==
+              FileSystemEntityType.file) {
+        await entity.delete();
+        continue;
+      }
+      if (entity is Directory &&
+          stagingPattern.hasMatch(name) &&
+          await FileSystemEntity.type(entity.path, followLinks: false) ==
+              FileSystemEntityType.directory) {
+        await entity.delete(recursive: true);
+      }
+    }
   }
 
   @override

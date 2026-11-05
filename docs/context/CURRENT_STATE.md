@@ -1,5 +1,17 @@
 # 当前状态
 
+## 最新进展 M4-77 / F21,B24 / ADR-108（验证完成，待提交）
+
+图片仓储读取时清理项目已知命名格式下未引用的单槽图片文件/中断staging目录；仅对槽清单不存在或清单/图片有效的槽执行；保留当前引用、未知文件、坏manifest和损坏图片。定向5/5；根`flutter test --concurrency=1 --reporter expanded`607通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-77.log`；`flutter analyze --no-pub`和diff-check通过。
+
+macOS复用PID50598/runner50125，attach同步1,067ms、热重启1,112ms，脱离后原App仍活；根测试串行单tester、结束无残留、无新App。锁屏视觉not run。测试/ADR/研究文档待单独中文提交。B24图层映射继续，之后推进F27完整本地化及其它登录外差距；全站仍未完成。
+
+## 前序已提交
+
+M4-76 `0d9079b`回收未登记皮肤图像目录；M4-75 `d20b8f8`真实文件仓储重开测试；M4-74 `c34f246`几何草稿编辑；M4-73 `fc60883`保存与应用分离。
+
+# 当前状态
+
 ## 最新实现 M4-76 / F21,B24 / ADR-107（验证完成，待提交）
 
 成功加载皮肤定义后，以有效custom ID清理未登记的用户图片目录；保留内置/已登记皮肤，包括空孤儿目录。清单加载失败时不清理；清理失败报告错误，不破坏定义/选择/图片。定向14/14；根`flutter test --concurrency=1 --reporter expanded`606通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-76.log`；`flutter analyze --no-pub`、diff-check通过。

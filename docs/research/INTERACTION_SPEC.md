@@ -190,3 +190,6 @@ E67/M4-74 / ADR-106：已保存用户棋盘皮肤在列表提供几何编辑。�
 
 
 M4-76/ADR-107本机文件恢复：`BoardSkinLibraryController.initialize`只有成功解析用户定义清单后才调用图片端口`pruneCustomSkins(profileIDs)`。只删不在有效列表的自定义ID目录，内置资源/登记皮肤永远保留；清单读失败或清理出错不删用户图片，后者显示错误以便重试。该启动清理是项目P，不是站点支持相同机制的证据。
+
+
+M4-77/ADR-108：`FileBoardSkinImageRepository.load()`仅在槽清单不存在，或清单、引用文件及图像校验均成功后，回收该槽未引用的项目命名图片文件和pending目录；未知文件不碰，manifest无效/引用丢失/图像损坏时保留槽内文件。

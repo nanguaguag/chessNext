@@ -143,6 +143,48 @@ void main() {
     },
   );
 
+  test('file repository cleans only known interrupted slot writes', () async {
+    final temp = await Directory.systemTemp.createTemp('chessnext-board-');
+    addTearDown(() => temp.delete(recursive: true));
+    final repository = FileBoardSkinImageRepository(() async => temp);
+    const skinId = 'custom-12345678-abcd';
+    final bytes = _png();
+    await repository.save(
+      skinId,
+      BoardSkinImageSlot.landingMarker,
+      'png',
+      bytes,
+    );
+    final folder = Directory(
+      '${temp.path}/chessnext-board-skin-images/$skinId',
+    );
+    final staleImage = File('${folder.path}/landingMarker-123456.png');
+    await staleImage.writeAsBytes(bytes);
+    final abandonedStage = Directory(
+      '${folder.path}/.landingMarker-pending-crash123',
+    );
+    await abandonedStage.create();
+    final unknownFile = File('${folder.path}/operator-note.txt');
+    await unknownFile.writeAsString('preserve');
+
+    final brokenManifest = File('${folder.path}/startMarker.json');
+    await brokenManifest.writeAsString('{broken');
+    final untrustedImage = File('${folder.path}/startMarker-987654321.png');
+    await untrustedImage.writeAsBytes(bytes);
+
+    final loaded = await repository.load();
+
+    expect(
+      loaded[skinId]![BoardSkinImageSlot.landingMarker],
+      orderedEquals(bytes),
+    );
+    expect(await staleImage.exists(), isFalse);
+    expect(await abandonedStage.exists(), isFalse);
+    expect(await unknownFile.readAsString(), 'preserve');
+    expect(await brokenManifest.readAsString(), '{broken');
+    expect(await untrustedImage.exists(), isTrue);
+  });
+
   test(
     'file image repository clones and removes a custom skin by id',
     () async {

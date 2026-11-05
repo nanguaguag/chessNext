@@ -1183,3 +1183,11 @@ M4-75最终门槛：定向9/9；根`flutter test --concurrency=1 --reporter expa
 定向`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart test/application/board_skin_library_test.dart --reporter expanded`14/14；根`flutter test --concurrency=1 --reporter expanded`606通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-76.log`，跳过五项需本机未配置的官方Pikafish/NNUE；`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598 attach同步1,083ms、热重启1,194ms；脱离后原App存活。测试全程单串行tester，结束无tester/attach残留或新App，未运行`flutter run`。
 
 M4-76于`de068b0 fix(settings): 回收未登记的棋盘图片`单独提交。继续处理B24多文件事务与其它登录外差距。
+
+## 2026-11-05 / M4-77 / F21,B24 / ADR-108 单槽图片替换中断恢复
+
+文件图片替换移动新图片后才原子替换slot manifest，中断窗口会留下未引用文件和pending目录。读取时仅针对manifest不存在，或manifest引用图片有效的槽，清理本应用命名模式的孤儿图片/pending目录；manifest损坏/链接/引用损失/图片损坏及未知文件均保留。
+
+专项`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`607通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-77.log`；`flutter analyze --no-pub`和diff-check通过。macOS复用PID50598 attach同步1,067ms、热重启1,112ms；Ctrl-C后原App仍活。测试单tester且无残留，新App为0。
+
+M4-77尚待单独中文feature commit，随后继续B24批量图层事务与F27及其它登录外差距。

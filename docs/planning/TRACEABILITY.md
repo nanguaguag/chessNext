@@ -938,3 +938,8 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 `BoardSkinImageRepository`增加`pruneCustomSkins(retainedIds)`端口。文件适配器扫描受控棋盘图片根目录，仅删除格式正确且未被成功加载profile列表登记的`custom-*`目录；保留内置ID及仍登记皮肤，包括空资源。`BoardSkinImageLibraryController`同步移除已清理缓存。`BoardSkinLibraryController.initialize`将清理置于定义load成功之后；load/解析失败绝不运行清理，清理失败则提示错误并保留数据，不改用户当前选择/列表。用于收敛创建、删除在两仓储间崩溃产生的孤儿，不是多文件事务原子性保证。
 
 专项`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart test/application/board_skin_library_test.dart --reporter expanded`14/14；覆盖含图/空孤儿、保留profile/内置项，以及损坏清单时图像不清理。根`flutter test --concurrency=1 --reporter expanded`606通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-76.log`；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,083ms、热重启1,194ms；脱离后原App存活且无tester/attach残留。
+
+
+## M4-77 / F21,B24 / ADR-108 单槽图片替换中断恢复
+
+文件保存顺序为写入临时目录、移动唯一图片文件、最后原子替换槽manifest。已知崩溃窗口会留下未引用`slot-timestamp.(png|jpg|jpeg)`或`.slot-pending-*`。`FileBoardSkinImageRepository.load`仅在slot manifest不存在，或manifest/image均合法且解码验证成功时对该槽回收项目命名格式的剩余文件/临时目录；保留当前引用、所有未知内容及损坏/缺失引用情况下的整槽数据。实体需是普通file/directory且禁跟随symlink。专项`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`607通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-77.log`；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,067ms、热重启1,112ms；脱离后原App存活且无tester/attach残留。规则不能保证多文件原子性。

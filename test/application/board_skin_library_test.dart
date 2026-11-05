@@ -224,6 +224,55 @@ void main() {
     },
   );
 
+  test('failed delete preserves the selected profile and its images', () async {
+    final profile = BoardSkinDefinition(
+      id: 'custom-12345678-abcd',
+      name: '保留中的棋盘',
+      baseSkin: BoardSkin.jade,
+    );
+    final repository = _FailingBoardSkinLibraryRepository([profile]);
+    final imageRepository = MemoryBoardSkinImageRepository();
+    await imageRepository.save(
+      profile.id,
+      BoardSkinImageSlot.boardBackground,
+      'png',
+      _png(),
+    );
+    final session = BoardSession();
+    final engine = EngineSessionController(session, null);
+    final preferences = PreferencesController(
+      engine,
+      MemoryPreferencesRepository(),
+    );
+    final boardImages = BoardSkinImageLibraryController(
+      _NoopPicker(),
+      imageRepository,
+    );
+    final controller = BoardSkinLibraryController(
+      repository,
+      boardImages,
+      preferences,
+    );
+    try {
+      await preferences.initialize();
+      await boardImages.initialize();
+      await controller.initialize();
+      await preferences.selectBoardSkin(profile.baseSkin, profile.id);
+      repository.failNextSave = true;
+
+      expect(await controller.delete(profile.id), isFalse);
+      expect(preferences.value.selectedBoardSkinId, profile.id);
+      expect(controller.profiles, [profile]);
+      expect((await imageRepository.load()).containsKey(profile.id), isTrue);
+    } finally {
+      controller.dispose();
+      boardImages.dispose();
+      preferences.dispose();
+      engine.dispose();
+      session.dispose();
+    }
+  });
+
   test('create rejects blank duplicate and over-capacity profiles', () async {
     final session = BoardSession();
     final engine = EngineSessionController(session, null);
@@ -352,6 +401,26 @@ final class _DelayedBoardSkinLibraryRepository
       _blockNext = false;
       saveStarted.complete();
       await releaseSave.future;
+    }
+    this.profiles = List.unmodifiable(profiles);
+  }
+}
+
+final class _FailingBoardSkinLibraryRepository
+    implements BoardSkinLibraryRepository {
+  _FailingBoardSkinLibraryRepository(this.profiles);
+
+  List<BoardSkinDefinition> profiles;
+  bool failNextSave = false;
+
+  @override
+  Future<List<BoardSkinDefinition>> load() async => profiles;
+
+  @override
+  Future<void> save(List<BoardSkinDefinition> profiles) async {
+    if (failNextSave) {
+      failNextSave = false;
+      throw const FileSystemException('simulated manifest write failure');
     }
     this.profiles = List.unmodifiable(profiles);
   }

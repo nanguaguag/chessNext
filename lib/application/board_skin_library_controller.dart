@@ -270,12 +270,12 @@ final class BoardSkinLibraryController extends ChangeNotifier {
     error = null;
     _notify();
     try {
-      if (preferences.value.selectedBoardSkinId == id) {
-        await preferences.setBoardSkin(profile.baseSkin);
-      }
       final next = profiles.where((item) => item.id != id).toList();
       await repository.save(next);
       profiles = List.unmodifiable(next);
+      if (preferences.value.selectedBoardSkinId == id) {
+        await preferences.setBoardSkin(profile.baseSkin);
+      }
       try {
         await images.removeSkin(id);
       } catch (_) {

@@ -1125,3 +1125,22 @@ E84已补REFERENCE_EVIDENCE、FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC�
 定向`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`601通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-71.log`，跳过需官方Pikafish/NNUE）；`flutter analyze --no-pub`与`git diff --check`通过。macOS通过`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`复用既有PID50598，sync1,053.6ms、hot restart1,158ms。Ctrl-C脱离后原App存活；无flutter_tester/attach残留或新增App。未使用`flutter run`，锁屏视觉not run。
 
 本功能代码/测试及ADR-103、决策/差距/计划/追踪/交接待commit。继续B24存取事务和非登录全站差异，不在本增量后停止。
+
+
+## 2026-11-05 / M4-72 / F21,B24 / ADR-104 删除当前棋盘皮肤失败原子性
+
+事务检查发现`delete`此前先`setBoardSkin(profile.baseSkin)`，再`repository.save(next)`。如果清单写入失败，虽然删除返回false且皮肤仍留在列表，当前选择却已切换。调整为清单先成功，再更新profiles/回退选择/删除图像。失败注入测试确认当前ID、定义及图像都保留。
+
+定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`8/8；根/analyze/macOS复用待跑。新建ADR-104并更新决策/矩阵/缺口/待办/追踪。源站失败/重载行为仍U。
+
+
+## 2026-11-05 / M4-72 / F21,B24 / ADR-104 棋盘皮肤删除顺序
+
+delete先回退偏好再保存manifest会在manifest失败时留下“删除失败但选择已变”。已将定义清单成功写入提前到回退选择之前；失败注入确保当前选择、条目和图片不变。
+
+专项8/8；根`flutter test --concurrency=1 --reporter expanded`602通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-72.log`，跳过项要求官方Pikafish/NNUE。`flutter analyze --no-pub`和diff-check通过。复用macOS PID50598/runner50125，attach同步1,188ms、热重启1,060ms；脱离后app PID不变。根测试期间一个串行tester，无残留；无额外app。
+
+M4-72代码、测试与ADR/矩阵/追踪/上下文待单独commit。全站登录外对齐继续中。
+
+
+M4-72于`6bee7ed fix(settings): 保持棋盘删除失败状态一致`单独提交；随后继续B24事务审计。

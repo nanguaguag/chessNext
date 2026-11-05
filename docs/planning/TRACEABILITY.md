@@ -908,3 +908,8 @@ macOS复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:6
 ## M4-71 / F21,B24 / ADR-103 拖动预览不被旧父值覆盖
 
 `BoardGeometryEditor.didUpdateWidget`原先无条件以父级属性重置本地geometry。自定义皮肤controller保存时先发loading通知，父级可能以旧profiles重新构建，导致拖动预览瞬间回跳。现仅在父级geometry实际改变且不处于拖动时同步。验收测试让`StatefulBuilder`在每次`onChanged`后以同一个旧geometry重建，并确认最终状态与格点屏幕位置继续前进。定向`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`5/5。根`flutter test --concurrency=1 --reporter expanded`601通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-71.log`；五项需官方Pikafish/NNUE。`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,053.6ms、热重启1,158ms，脱离后原App存活且无tester/attach残留。该交互时序修复不改变项目几何映射P，也不验证源站公式。
+
+
+## M4-72 / F21,B24 / ADR-104 当前棋盘皮肤删除失败原子性
+
+删除当前用户皮肤原先先写入内置皮肤偏好，再保存定义列表；若列表写入失败，方法返回false但活动皮肤已改变。现在先提交清单变更，成功后才更新运行时目录、回退当前选择和清理图片。失败注入测试验证false时所选profile ID、完整定义及图片均保留。定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`8/8。根`flutter test --concurrency=1 --reporter expanded`602通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-72.log`；五项需官方Pikafish/NNUE。`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,188ms、热重启1,060ms，脱离后原App存活且无测试/attach残留。此为项目失败策略P；源站实际失败/部分提交与重载仍U。

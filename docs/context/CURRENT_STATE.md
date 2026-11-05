@@ -1,10 +1,21 @@
 # 当前状态
 
-## 最新实现 M4-71 / F21,B24 / ADR-103（待提交）
+## 最新实现 M4-72 / F21,B24 / ADR-104（已提交 6bee7ed）
+
+删除当前用户棋盘皮肤原来先将偏好切到内置基底再写定义清单，清单写入失败时造成“删除失败但已切换”。现在清单保存成功后才更新运行列表、回退当前选择和清理皮肤图片；失败保留当前ID/定义/图像。故障注入专项8/8；根`flutter test --concurrency=1 --reporter expanded`602通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-72.log`，5跳过需官方Pikafish/NNUE；`flutter analyze --no-pub`、diff-check通过。
+
+macOS复用PID50598/runner50125，attach同步1,188ms、热重启1,060ms，脱离后原App仍活。根测试单并发单tester，结束无残留；未使用`flutter run`或新开App。视觉验收锁屏not run。代码、ADR-104及研究/上下文记录已随`6bee7ed fix(settings): 保持棋盘删除失败状态一致`单独提交；继续B24皮肤存取事务和登录外全站差异，不能标全站完成。
+
+## 前序棋盘几何修复（已提交）
+
+M4-71 `45dcb69`保留格点拖动乐观预览（根601/5跳过）；M4-70 `283d01f`串行持久化高频拖动最终值（根600/5跳过）。细节见各自TRACEABILITY和HANDOFF。
+
+
+## 前序实现 M4-71 / F21,B24 / ADR-103（已提交 45dcb69）
 
 棋盘格点编辑器此前在父级用旧的持久化几何重建时会覆盖拖动预览；现在拖动中保留本地乐观几何，仅在无拖动且父值实际改变时同步。回归测试模拟每次拖动回调后父组件都用旧值重建，并校验把手不回跳。专项5/5；根`flutter test --concurrency=1 --reporter expanded`601通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-71.log`，5跳过需官方Pikafish/NNUE；`flutter analyze --no-pub`、diff-check通过。
 
-macOS复用PID50598/runner50125，VM Service attach同步1,053.6ms、热重启1,158ms；Ctrl-C后原App存活。根测试单并发、单tester、结束无残留；attach无残留，没有新开App。未用`flutter run`。屏幕锁定，人工视觉验收not run。代码、ADR-103和追踪文档待单独中文commit。之后继续B24棋盘皮肤保存/应用/删除/reload事务与参考几何审计，以及F27语言资源和其他登录外差距；全站仍未对齐。
+macOS复用PID50598/runner50125，VM Service attach同步1,053.6ms、热重启1,158ms；Ctrl-C后原App存活。根测试单并发、单tester、结束无残留；attach无残留，没有新开App。未用`flutter run`。屏幕锁定，人工视觉验收not run。代码、ADR-103和追踪文档已于`45dcb69`单独中文提交。之后继续B24棋盘皮肤保存/应用/删除/reload事务与参考几何审计，以及F27语言资源和其他登录外差距；全站仍未对齐。
 
 ## 前一实现 M4-70 / F21,B24 / ADR-102（已提交 283d01f）
 

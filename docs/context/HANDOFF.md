@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-72 / F21,B24 / ADR-104 当前棋盘皮肤删除失败一致性（已提交 6bee7ed）
+
+修正`BoardSkinLibraryController.delete`的顺序：之前先切换当前选择到皮肤基底，再尝试写删除后的定义清单；若清单保存失败，调用返回失败但选择已经改变。现先持久化列表移除，成功后才更新运行态列表/回退选择/删除图像。测试用故障仓储使保存失败，验证当前profile ID、定义和图片全部保留。新增ADR-104并更新DECISIONS/矩阵/缺口/待办/TRACEABILITY。项目错误处理P，不推断站点语义；失败后的源站状态及reload仍U。
+
+定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`8/8；根`flutter test --concurrency=1 --reporter expanded`602通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-72.log`（五项依赖本机未配置官方Pikafish/NNUE）；`flutter analyze --no-pub`、`git diff --check`通过。macOS复用PID50598/runner50125，VM Service `61579/4bLZ1MhsyEk=` attach同步1,188ms、热重启1,060ms；Ctrl-C脱离后原App仍运行。根测试只一个串行tester，测试和attach结束无残留；无第二个App。
+
+M4-72代码/测试、ADR-104及上下文文档已于`6bee7ed fix(settings): 保持棋盘删除失败状态一致`单独提交。下一步继续B24棋盘皮肤保存—使用—删除—重载的完整本机故障矩阵和设置差距，不在此提交后停止；之后继续F27完整语言覆盖及FEATURE_MATRIX中其它登录外项目。总目标仍未完成。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-71 / F21,B24 / ADR-103 棋盘格点拖动预览修复（验证完成，待提交）
 
 `BoardGeometryEditor.didUpdateWidget`原先每次父级重建都覆盖本地预览。自定义几何保存启动会先触发loading通知，而profiles仍是旧持久化值，于是拖动把手视觉回跳。现在仅当父级几何实际更新且当前没有拖动时同步；拖动期间保留本地乐观状态。测试由`StatefulBuilder`在每次`onChanged`后以旧几何重建，最终断言几何和把手位置仍前进。新增ADR-103，DECISIONS/矩阵/缺口/待办/TRACEABILITY已同步。映射仍为项目P，源站完整几何/保存应用reload语义仍U。

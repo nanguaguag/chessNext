@@ -722,4 +722,67 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get catalogAddressSaveFailed =>
       'Could not save the service address. Try again.';
+
+  @override
+  String audioSettingsTitle(String name) {
+    return '$name sound';
+  }
+
+  @override
+  String get audioCurrentCustom => 'Current: custom sound';
+
+  @override
+  String audioCurrentChoice(String choice, String skin) {
+    return 'Current: $choice$skin';
+  }
+
+  @override
+  String get audioCurrentDefault => 'Current: default sound';
+
+  @override
+  String audioReplaceHelp(String name) {
+    return 'Only replaces the $name sound. Files stay on this device and are not uploaded.';
+  }
+
+  @override
+  String get audioFileLimits => 'WAV or MP3, up to 512 KiB and 5 seconds.';
+
+  @override
+  String get audioPlan => 'Sound plan';
+
+  @override
+  String get audioResetToChoosePlan =>
+      'Restore the default sound to choose a built-in plan.';
+
+  @override
+  String get audioSkinChoice => 'Follow piece skin';
+
+  @override
+  String get audioSoundChoice1 => 'Sound 1';
+
+  @override
+  String get audioSoundChoice2 => 'Sound 2';
+
+  @override
+  String get audioFollowSkin => 'Follow piece skin';
+
+  @override
+  String audioPreviewChoice(String choice) {
+    return 'Preview $choice';
+  }
+
+  @override
+  String get audioPreviewCurrent => 'Preview current sound';
+
+  @override
+  String get audioImportCustom => 'Import custom sound';
+
+  @override
+  String get audioRestoreDefault => 'Restore default sound';
+
+  @override
+  String get audioRoundSealSkin => 'Traditional seal';
+
+  @override
+  String get audioSquareInkSkin => 'Square ink style';
 }

@@ -685,4 +685,66 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get catalogAddressSaveFailed => '服务地址保存失败，可重试。';
+
+  @override
+  String audioSettingsTitle(String name) {
+    return '$name音效';
+  }
+
+  @override
+  String get audioCurrentCustom => '当前：自定义音效';
+
+  @override
+  String audioCurrentChoice(String choice, String skin) {
+    return '当前：$choice$skin';
+  }
+
+  @override
+  String get audioCurrentDefault => '当前：默认音效';
+
+  @override
+  String audioReplaceHelp(String name) {
+    return '只替换$name音效。文件仅保存在本机，不上传。';
+  }
+
+  @override
+  String get audioFileLimits => '支持 WAV / MP3，最多512 KiB、5秒。';
+
+  @override
+  String get audioPlan => '音效方案';
+
+  @override
+  String get audioResetToChoosePlan => '恢复默认音效后可选择内置方案。';
+
+  @override
+  String get audioSkinChoice => '随棋子皮肤';
+
+  @override
+  String get audioSoundChoice1 => '音效1';
+
+  @override
+  String get audioSoundChoice2 => '音效2';
+
+  @override
+  String get audioFollowSkin => '随棋子皮肤';
+
+  @override
+  String audioPreviewChoice(String choice) {
+    return '试听$choice';
+  }
+
+  @override
+  String get audioPreviewCurrent => '试听当前音效';
+
+  @override
+  String get audioImportCustom => '导入自定义音效';
+
+  @override
+  String get audioRestoreDefault => '恢复默认音效';
+
+  @override
+  String get audioRoundSealSkin => '传统圆章';
+
+  @override
+  String get audioSquareInkSkin => '方章墨韵';
 }

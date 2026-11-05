@@ -1322,3 +1322,10 @@ macOS没有执行新`flutter run`；复用runner50125/App50598 TTY attach `http:
 新增隔离English组件测试，和原目录导入许可/本机增删改专项合计4/4。根命令`flutter test --concurrency=1 --reporter expanded`634通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-92.log`；跳过仍为缺官方Pikafish/NNUE。`flutter analyze --no-pub`、`git diff --check`通过。首轮专项因动态文案落在const上下文编译失败；移除const并复跑通过。首次analyze仅提示新增测试unused import，删除后复跑无问题。根测试期间只有一个串行flutter_tester、结束退出；原GUI PID50598仍唯一。
 
 macOS未执行新`flutter run`。使用已有PID50598的VM端口61579 `flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/`同步成功，并执行热重启，`Restarted application in 3,268ms`。Ctrl-C脱离后复核PID50598和61579监听仍在，只有一个chessNext GUI，无tester/attach残留；没有人工窗口视觉验收。参考站自定义皮肤库的未核实范围、登录外其他功能、F27完整多语言覆盖均开放。功能代码及上下文/追踪文档待独立中文feature commit，之后继续全站登录外范围。
+
+
+## 2026-11-06 / M4-93 / F27 音效编辑弹窗ARB化
+
+音效弹窗静态文本（事件名、当前/自定义状态、走棋方案、随棋子皮肤对应样式、仅本机说明、WAV/MP3与512KiB/5秒限制、试听/导入/恢复/关闭）迁入zh/en ARB。应用层返回的动态中文音效错误仍留待后续错误code模型。增加English隔离组件测试；现有中文交互测试的MaterialApp新增中文Localizations delegates。没有改变数据/导入/试听语义。
+
+专项`flutter test --concurrency=1 test/audio_library_test.dart --reporter expanded`6/6。根`flutter test --concurrency=1 --reporter expanded`635通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-93.log`；`flutter analyze --no-pub`与`git diff --check`通过。首轮测试发现测试宿主缺delegate使l10n查找null，补中文delegate及独立英语测试后复跑通过。macOS复用App PID50598，VM端口61579 attach同步成功，热重启`Restarted application in 1,831ms`；Ctrl-C脱离后PID50598仍唯一，无tester/attach残留。未做人工视觉验收。F27与其它登录外范围继续开放。功能提交`a74a370 feat(l10n): 本地化音效编辑设置`已完成。

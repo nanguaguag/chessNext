@@ -1,3 +1,9 @@
+## 2026-11-06 / M4-93 / F27 音效替换设置文案
+
+`AudioOptionsDialog`通过zh/en资源显示事件标题、当前自定义/内置音效状态、Sound1/2/随皮肤选项、当前棋子预设名称、仅本机处理说明、格式/大小/时长边界、试听/选择文件/恢复操作。没有改变`AudioLibraryController`、文件验证或播放逻辑；其动态error message仍中文。根Locale锁定zh。
+
+验收：定向`flutter test --concurrency=1 test/audio_library_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`635通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-93.log`）；`flutter analyze --no-pub`、`git diff --check`通过。首次专项发现旧MaterialApp宿主缺Localizations delegate，补充zh delegate且新增隔离英文显示用例后重跑通过。macOS复用PID50598，attach同步并热重启成功（1831ms）；脱离后PID仍存活且唯一，未视觉验收。
+
 ## 2026-11-06 / M4-92 / F27 棋盘皮肤库与在线目录文案本地化
 
 BoardSkinLibraryDialog将静态文案迁入ARB：自建目录地址/搜索/排序/分页、离线缓存、请求失败、详情字段、SHA与许可证/署名确认、在线包下载导入、项目ZIP导入导出、本机内置/用户皮肤管理和名称表单。目录地址校验与错误分支均使用本地化资源。动态`BoardSkinLibraryController.error`仍为中文，未修改错误模型；动态作者/皮肤名/许可证内容为服务数据，按用户提供字段显示。根Locale仍固定zh。

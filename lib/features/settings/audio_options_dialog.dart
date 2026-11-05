@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../l10n/app_localizations.dart';
 
 import '../../application/audio_library_controller.dart';
 import '../../application/board_appearance.dart';
@@ -19,13 +20,21 @@ class AudioOptionsDialog extends StatelessWidget {
   final AudioLibraryController library;
   final PieceSkin pieceSkin;
 
+  String _choiceLabel(AppLocalizations l10n, MoveSoundChoice choice) =>
+      switch (choice) {
+        MoveSoundChoice.sound1 => l10n.audioSoundChoice1,
+        MoveSoundChoice.sound2 => l10n.audioSoundChoice2,
+        MoveSoundChoice.followPieceSkin => l10n.audioFollowSkin,
+      };
+
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: library,
     builder: (context, _) {
+      final l10n = AppLocalizations.of(context);
       final busy = library.busyKind == kind;
       return AlertDialog(
-        title: Text('$title音效'),
+        title: Text(l10n.audioSettingsTitle(title)),
         content: SizedBox(
           width: 420,
           child: SingleChildScrollView(
@@ -35,15 +44,20 @@ class AudioOptionsDialog extends StatelessWidget {
               children: [
                 Text(
                   library.hasCustom(kind)
-                      ? '当前：自定义音效'
+                      ? l10n.audioCurrentCustom
                       : kind == AudioFeedbackKind.move
-                      ? '当前：${library.moveChoice.label}${library.moveChoice == MoveSoundChoice.followPieceSkin ? '（${pieceSkin == PieceSkin.roundSeal ? '传统圆章' : '方章墨韵'}）' : ''}'
-                      : '当前：默认音效',
+                      ? l10n.audioCurrentChoice(
+                          _choiceLabel(l10n, library.moveChoice),
+                          library.moveChoice == MoveSoundChoice.followPieceSkin
+                              ? '（${pieceSkin == PieceSkin.roundSeal ? l10n.audioRoundSealSkin : l10n.audioSquareInkSkin}）'
+                              : '',
+                        )
+                      : l10n.audioCurrentDefault,
                 ),
                 const SizedBox(height: 8),
-                Text('只替换$title音效。文件仅保存在本机，不上传。'),
+                Text(l10n.audioReplaceHelp(title)),
                 const SizedBox(height: 4),
-                const Text('支持 WAV / MP3，最多512 KiB、5秒。'),
+                Text(l10n.audioFileLimits),
                 if (kind == AudioFeedbackKind.move) ...[
                   const SizedBox(height: 12),
                   DropdownButtonFormField<MoveSoundChoice>(
@@ -51,12 +65,12 @@ class AudioOptionsDialog extends StatelessWidget {
                       'move-sound-choice-${library.moveChoice.name}',
                     ),
                     initialValue: library.moveChoice,
-                    decoration: const InputDecoration(labelText: '音效方案'),
+                    decoration: InputDecoration(labelText: l10n.audioPlan),
                     items: MoveSoundChoice.values
                         .map(
                           (choice) => DropdownMenuItem(
                             value: choice,
-                            child: Text(choice.label),
+                            child: Text(_choiceLabel(l10n, choice)),
                           ),
                         )
                         .toList(),
@@ -68,7 +82,8 @@ class AudioOptionsDialog extends StatelessWidget {
                             }
                           },
                   ),
-                  if (library.hasCustom(kind)) const Text('恢复默认音效后可选择内置方案。'),
+                  if (library.hasCustom(kind))
+                    Text(l10n.audioResetToChoosePlan),
                   Wrap(
                     spacing: 8,
                     runSpacing: 8,
@@ -85,7 +100,11 @@ class AudioOptionsDialog extends StatelessWidget {
                                         : MoveSoundChoice.sound2,
                                   ),
                             icon: const Icon(Icons.play_arrow),
-                            label: Text('试听${choice.label}'),
+                            label: Text(
+                              l10n.audioPreviewChoice(
+                                _choiceLabel(l10n, choice),
+                              ),
+                            ),
                           ),
                         )
                         .toList(),
@@ -115,21 +134,21 @@ class AudioOptionsDialog extends StatelessWidget {
           TextButton.icon(
             onPressed: busy ? null : () => library.preview(kind),
             icon: const Icon(Icons.play_arrow),
-            label: const Text('试听当前音效'),
+            label: Text(l10n.audioPreviewCurrent),
           ),
           TextButton.icon(
             onPressed: busy ? null : () => library.importCustom(kind),
             icon: const Icon(Icons.file_open),
-            label: const Text('导入自定义音效'),
+            label: Text(l10n.audioImportCustom),
           ),
           if (library.hasCustom(kind))
             TextButton(
               onPressed: busy ? null : () => library.reset(kind),
-              child: const Text('恢复默认音效'),
+              child: Text(l10n.audioRestoreDefault),
             ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
+            child: Text(l10n.close),
           ),
         ],
       );

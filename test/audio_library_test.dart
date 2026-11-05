@@ -9,6 +9,7 @@ import 'package:chess_next/ports/audio_library.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter/material.dart';
 import 'package:chess_next/features/settings/audio_options_dialog.dart';
+import 'package:chess_next/l10n/app_localizations.dart';
 
 void main() {
   test('validates WAV/MP3 size, structure, and duration boundaries', () {
@@ -156,6 +157,9 @@ void main() {
     final library = AudioLibraryController(picker, repository, _Audio());
     await tester.pumpWidget(
       MaterialApp(
+        locale: const Locale('zh'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
         home: Scaffold(
           body: AudioOptionsDialog(
             kind: AudioFeedbackKind.move,
@@ -182,6 +186,38 @@ void main() {
     await tester.tap(find.text('恢复默认音效'));
     await tester.pumpAndSettle();
     expect(find.text('当前：音效1'), findsOneWidget);
+    library.dispose();
+  });
+
+  testWidgets('audio options resolve labels from the selected locale', (
+    tester,
+  ) async {
+    final library = AudioLibraryController(
+      _Picker(),
+      _MemoryOverrides(),
+      _Audio(),
+    );
+    await tester.pumpWidget(
+      MaterialApp(
+        locale: const Locale('en'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: AudioOptionsDialog(
+            kind: AudioFeedbackKind.move,
+            title: 'Move',
+            library: library,
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('Move sound'), findsOneWidget);
+    expect(find.text('Current: Sound 1'), findsOneWidget);
+    expect(find.text('Sound plan'), findsOneWidget);
+    expect(find.text('Preview current sound'), findsOneWidget);
+    expect(find.text('Import custom sound'), findsOneWidget);
+    expect(find.textContaining('只替换'), findsNothing);
     library.dispose();
   });
 }

@@ -1,10 +1,18 @@
 # 当前交接（2026-11-06，Asia/Shanghai）
 
-## M4-92 / F27 棋盘皮肤库与自建在线目录界面ARB化（验收通过，待提交）
+## M4-93 / F27 音效编辑弹窗ARB化（已提交）
+
+音效选项弹窗静态文案、当前方案与自定义状态、皮肤联动名、格式/大小/时长限制、试听/导入/恢复和关闭操作均迁入zh/en ARB。音频控制器动态`error`仍中文；没有改文件选择、解码或播放行为。产品根Locale保持zh，不称F27完成。
+
+专项`flutter test --concurrency=1 test/audio_library_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`635通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-93.log`）；`flutter analyze --no-pub`与`git diff --check`通过。第一轮组件测试缺失Localizations delegate时报空值异常；为中文回归宿主添加delegate并另增English隔离测试后专项通过。串行根测试只有一个headless tester，完成退出。macOS复用PID50598；attach同步成功，热重启1831ms，Ctrl-C脱离后App仍唯一，无残留tester/attach；未作人工视觉验收。变更与交接记录已随独立中文feature commit提交。
+
+后续继续其它设置子dialog与外观/操作设置页本地化，再按FEATURE_MATRIX推进全部登录外缺口；不开放部分覆盖的Locale切换，也不称全站已对齐。
+
+## M4-92 / F27 棋盘皮肤库与自建在线目录界面ARB化（已提交 ce1e4cf）
 
 本机库、在线目录搜索/排序/分页、动态目录错误、详情、许可证确认、本机ZIP导入导出、创建/重命名/删除等静态界面文案迁入zh/en ARB。`BoardSkinLibraryDialog`无硬编码汉字静态文案；控制器的动态中文`error`字符串仍留待错误码/显示分离。产品根Locale仍仅zh；不宣称F27或全站翻译完成。
 
-专项`flutter test --concurrency=1 test/widgets/board_skin_library_localization_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`4/4；根`flutter test --concurrency=1 --reporter expanded`634通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-92.log`；`flutter analyze --no-pub`和`git diff --check`通过。首轮专项const编译错误、analyze unused import均修正后重跑通过。串行根测试只启动一个headless tester，测试后退出。macOS复用PID50598进行attach同步和热重启（3268ms）；Ctrl-C脱离后该PID仍运行且唯一GUI，无tester/attach残留。没有人工视觉验收。变更及本交接/状态/追踪记录待独立中文feature commit。
+专项`flutter test --concurrency=1 test/widgets/board_skin_library_localization_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`4/4；根`flutter test --concurrency=1 --reporter expanded`634通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-92.log`；`flutter analyze --no-pub`和`git diff --check`通过。首轮专项const编译错误、analyze unused import均修正后重跑通过。串行根测试只启动一个headless tester，测试后退出。macOS复用PID50598进行attach同步和热重启（3268ms）；Ctrl-C脱离后该PID仍运行且唯一GUI，无tester/attach残留。没有人工视觉验收。变更及交接/状态/追踪记录已提交。
 
 下一步继续F27其余设置子对话框、错误/无障碍文本与更多路由本地化，并逐模块审计/推进功能矩阵所有登录外差距；不要开放部分翻译的Locale选择器，也不要将全站标记对齐。
 

@@ -115,6 +115,8 @@ macOS构建从.local校验制品hash、复制资源并签名继承沙箱helper�
 
 M4-92 / F27：棋盘皮肤本机库/在线目录的静态UI与请求/缓存/许可提示完成zh/en ARB化。专项4/4、根634/5、analyze和既有macOS实例attach热重启通过；由控制器返回的动态中文错误仍待分离。继续处理其它设置子dialog和其它主路由；Locale选择保持关闭至完整覆盖。
 
+M4-93 / F27：音效设置编辑弹窗静态UI迁移zh/en，专项6/6、根635/5、analyze和复用既有macOS实例热重启通过。动态AudioLibraryController.error仍中文；继续音效错误模型/其它设置弹窗和全站其它页面。
+
 ## 2026-11-02 / M3-04 / F22,F24,F25,F27部分 → B08 设置持久化
 
 AppPreferences/schema1与PreferencesRepository，ApplicationSupport独立文件、备份/损坏原件保留、读取失败默认值/明确重试；主题/线程/Hash/MultiPV/AI用时持久化，旧参数面板更改同样保存。初始化逐字段合并并发编辑，串行最新值写入，退出flush等待初始化，不恢复AI角色。握手后按设备/引擎能力钳制；主题改变不重启搜索。Material3统一设置对话框含200%窄窗/NaN校验。

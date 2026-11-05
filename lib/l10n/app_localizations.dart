@@ -1315,6 +1315,114 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'服务地址保存失败，可重试。'**
   String get catalogAddressSaveFailed;
+
+  /// No description provided for @audioSettingsTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'{name}音效'**
+  String audioSettingsTitle(String name);
+
+  /// No description provided for @audioCurrentCustom.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前：自定义音效'**
+  String get audioCurrentCustom;
+
+  /// No description provided for @audioCurrentChoice.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前：{choice}{skin}'**
+  String audioCurrentChoice(String choice, String skin);
+
+  /// No description provided for @audioCurrentDefault.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前：默认音效'**
+  String get audioCurrentDefault;
+
+  /// No description provided for @audioReplaceHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'只替换{name}音效。文件仅保存在本机，不上传。'**
+  String audioReplaceHelp(String name);
+
+  /// No description provided for @audioFileLimits.
+  ///
+  /// In zh, this message translates to:
+  /// **'支持 WAV / MP3，最多512 KiB、5秒。'**
+  String get audioFileLimits;
+
+  /// No description provided for @audioPlan.
+  ///
+  /// In zh, this message translates to:
+  /// **'音效方案'**
+  String get audioPlan;
+
+  /// No description provided for @audioResetToChoosePlan.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复默认音效后可选择内置方案。'**
+  String get audioResetToChoosePlan;
+
+  /// No description provided for @audioSkinChoice.
+  ///
+  /// In zh, this message translates to:
+  /// **'随棋子皮肤'**
+  String get audioSkinChoice;
+
+  /// No description provided for @audioSoundChoice1.
+  ///
+  /// In zh, this message translates to:
+  /// **'音效1'**
+  String get audioSoundChoice1;
+
+  /// No description provided for @audioSoundChoice2.
+  ///
+  /// In zh, this message translates to:
+  /// **'音效2'**
+  String get audioSoundChoice2;
+
+  /// No description provided for @audioFollowSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'随棋子皮肤'**
+  String get audioFollowSkin;
+
+  /// No description provided for @audioPreviewChoice.
+  ///
+  /// In zh, this message translates to:
+  /// **'试听{choice}'**
+  String audioPreviewChoice(String choice);
+
+  /// No description provided for @audioPreviewCurrent.
+  ///
+  /// In zh, this message translates to:
+  /// **'试听当前音效'**
+  String get audioPreviewCurrent;
+
+  /// No description provided for @audioImportCustom.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入自定义音效'**
+  String get audioImportCustom;
+
+  /// No description provided for @audioRestoreDefault.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复默认音效'**
+  String get audioRestoreDefault;
+
+  /// No description provided for @audioRoundSealSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'传统圆章'**
+  String get audioRoundSealSkin;
+
+  /// No description provided for @audioSquareInkSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'方章墨韵'**
+  String get audioSquareInkSkin;
 }
 
 class _AppLocalizationsDelegate

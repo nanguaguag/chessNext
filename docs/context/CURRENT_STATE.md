@@ -1,5 +1,16 @@
 # 当前状态
 
+## M4-78 / F15 / ADR-109（门槛通过，待提交）
+
+主工作区增加只读云库面板：显式选择开局/残局，按下查询才向偏好中配置的自建服务发送当前FEN与完整线路；无地址不联网。返回着法经当前合法着复核，仅显示及保留数据集许可/署名，不自动落子。导航/新局和切换库类型均使旧响应失效。
+
+定向`book_lookup_controller_test.dart`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-78-final.log`；`flutter analyze --no-pub`和diff-check通过。macOS复用PID50598/runner50125，最终TTY attach同步1,266ms、热重启787ms，脱离后原进程仍存；最终进程检查无tester/attach副本。锁屏，人工视觉验收未做。代码/ADR/追踪文档待单独中文feature commit。继续推进登录外全部范围；站点大师谱筛选/查询语义、在线部署/授权及F27完整语言资源未解决，全站仍未对齐。
+
+## 上一进展 M4-77 / F21,B24 / ADR-108
+
+单槽图片写入中断回收已于`5fb9eb4`提交；详情见其后历史交接条目。
+
+
 ## 最新进展 M4-77 / F21,B24 / ADR-108（验证完成，待提交）
 
 图片仓储读取时清理项目已知命名格式下未引用的单槽图片文件/中断staging目录；仅对槽清单不存在或清单/图片有效的槽执行；保留当前引用、未知文件、坏manifest和损坏图片。定向5/5；根`flutter test --concurrency=1 --reporter expanded`607通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-77.log`；`flutter analyze --no-pub`和diff-check通过。

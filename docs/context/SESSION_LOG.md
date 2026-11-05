@@ -1191,3 +1191,20 @@ M4-76于`de068b0 fix(settings): 回收未登记的棋盘图片`单独提交。�
 专项`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`607通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-77.log`；`flutter analyze --no-pub`和diff-check通过。macOS复用PID50598 attach同步1,067ms、热重启1,112ms；Ctrl-C后原App仍活。测试单tester且无残留，新App为0。
 
 M4-77尚待单独中文feature commit，随后继续B24批量图层事务与F27及其它登录外差距。
+
+
+## 2026-11-05 / M4-78 / F15 主界面手动云库查询（验证待重跑）
+
+先恢复仓库上下文（AGENTS/README/CURRENT_STATE/HANDOFF/DECISIONS）、feature-audit与flutter-feature skill，并核实HEAD `5fb9eb4`、工作树干净。用户提出测试曾造成多个chessNext；进程核查确认GUI始终单一PID50598、根`flutter test --concurrency=1`仅一个`flutter_tester`且退出无残留。提醒避免`flutter run`，macOS用既有VM attach。
+
+参考站可见设置页“新建”棋盘皮肤编辑器初值33/33/465/519与100%。一次临时单轴像素拖动因实际点位校准不准确出现较大读值变化，立即浏览器返回并确认丢弃，无保存/应用用户内容；该操作不构成可靠几何证据，不将其加入几何公式，也未改变参考站默认设置。
+
+新增`BookLookupController`、workspace `CloudBookPanel`，用既有`BookService`自建端点：只在用户显式点击时发送FEN/当前线路；无地址不联网；手动开局/残局；合法候选只读展示数据集/许可/署名，导航、新局或换库使异步旧结果过期。未自动落子。首次定向测试使用错误的matcher比较int，修正后4/4通过；之后新增kind切换过期与非法命中隐藏两个测试，现需重跑至6/6。曾第一次analyze报两条brace info并修正。根测试此前611/5跳过/0失败，但在新增两测前运行；须重跑得到准确结果。
+
+macOS既有app PID50598/runner50125。非TTY attach文件同步1,480ms但无stdin无法发热重启；TTY第二次同步1,530ms、热重启2,065ms，Ctrl-C后PID50598仍在。非TTY首次attach遗留frontend_server PID11530，已精准TERM并核对退出；原runner前端PID50168仍在。不应计作新chessNext。锁屏视觉未验。
+
+已新增ADR-109、矩阵/缺口/交互/追踪/待办与handoff/current-state文档。此时代码在`lib/app.dart`、新控制器/面板/测试中，尚未提交；后续重跑6项专项、根`flutter test --concurrency=1 --reporter expanded`、`flutter analyze --no-pub`，修订trace计数，macOS针对最终代码attach一次，确认只一个GUI；`git diff --check`后用中文Conventional Commit单独提交M4-78。之后按用户长期授权继续其它登录外网站差距。
+
+M4-78最终验证（2026-11-05）：定向`flutter test --concurrency=1 test/application/book_lookup_controller_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，最终日志`/tmp/chessnext-root-test-m4-78-final.log`；`flutter analyze --no-pub`无问题；`git diff --check`通过。最终代码对macOS既有PID50598/runner50125执行TTY `flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`，同步1,266ms、R热重启787ms，Ctrl-C脱离后PID50598仍活；复核无tester/attach残留及新chessNext GUI。过程还有一次非TTY attach同步成功但不能交互，随后使用TTY流程成功；其孤立frontend_server已准确清理。全量单并发测试用时约5分14秒，期间只有一个`flutter_tester`。屏幕锁定未作人工视觉验收。\nEOF
+
+git diff --check; git status --short; git diff --stat; wc -l docs/context/SESSION_LOG.md

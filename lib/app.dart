@@ -48,6 +48,7 @@ import 'features/transfer/text_transfer_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'application/board_session.dart';
+import 'application/book_lookup_controller.dart';
 import 'application/engine_session_controller.dart';
 import 'features/analysis/analysis_panel.dart';
 import 'features/play/play_panel.dart';
@@ -72,6 +73,7 @@ import 'ports/piece_skin_library.dart';
 import 'ports/piece_skin_catalog.dart';
 import 'application/piece_skin_library_controller.dart';
 import 'features/workspace/resizable_workspace.dart';
+import 'features/workspace/cloud_book_panel.dart';
 
 class ChessNextApp extends StatefulWidget {
   const ChessNextApp({
@@ -157,6 +159,7 @@ class _ChessNextAppState extends State<ChessNextApp>
   late final BoardSkinLibraryController boardSkins;
   late final EngineSessionController analysis;
   late final HttpBookService bookService;
+  late final BookLookupController bookLookup;
   late final HttpReleaseService releaseService;
   late final HttpFeedbackService feedbackService;
   BoardGifSettings gifSettings = BoardGifSettings();
@@ -166,6 +169,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     bookService = HttpBookService();
+    bookLookup = BookLookupController(session, bookService);
     releaseService = HttpReleaseService();
     feedbackService = HttpFeedbackService();
     analysis = EngineSessionController(
@@ -376,6 +380,7 @@ class _ChessNextAppState extends State<ChessNextApp>
     WidgetsBinding.instance.removeObserver(this);
     preferences.removeListener(_preferencesChanged);
     recordPlayback.dispose();
+    bookLookup.dispose();
     unawaited(boardFeedback.dispose());
     audioLibrary?.dispose();
     pieceImages.removeListener(_preferencesChanged);
@@ -503,6 +508,7 @@ class _ChessNextAppState extends State<ChessNextApp>
       library: library,
       readings: readings,
       analysis: analysis,
+      bookLookup: bookLookup,
       showGuide: _showGuide,
       toggleTheme: () => unawaited(
         preferences.setTheme(
@@ -535,6 +541,7 @@ class _BoardPage extends StatelessWidget {
     required this.library,
     required this.readings,
     required this.analysis,
+    required this.bookLookup,
     this.drafts,
     required this.preferences,
     required this.releaseService,
@@ -584,6 +591,7 @@ class _BoardPage extends StatelessWidget {
   final LibraryController library;
   final RecentReadingController readings;
   final EngineSessionController analysis;
+  final BookLookupController bookLookup;
   Widget _branchButton(String? target, String tooltip, IconData icon) {
     final epoch = session.epoch;
     final revision = session.revision;
@@ -1518,14 +1526,19 @@ class _BoardPage extends StatelessWidget {
               ],
             ],
           );
+          final cloudBookPanel = CloudBookPanel(
+            controller: bookLookup,
+            endpoint: preferences.value.bookServiceBaseUrl,
+          );
           final rightPanels = preferences.value.showPanelSwitchBar
               ? <Widget>[
                   if (activeSidePanel != null) panelContent(activeSidePanel),
-                  const SizedBox.shrink(),
+                  cloudBookPanel,
                 ]
               : <Widget>[
                   if (visibleSidePanels.isEmpty) const SizedBox.shrink(),
                   for (final item in visibleSidePanels) panelContent(item),
+                  cloudBookPanel,
                 ];
           final splitAt = (rightPanels.length / 2).ceil();
           final rightTop = rightPanels.take(splitAt).toList();

@@ -943,3 +943,9 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 ## M4-77 / F21,B24 / ADR-108 单槽图片替换中断恢复
 
 文件保存顺序为写入临时目录、移动唯一图片文件、最后原子替换槽manifest。已知崩溃窗口会留下未引用`slot-timestamp.(png|jpg|jpeg)`或`.slot-pending-*`。`FileBoardSkinImageRepository.load`仅在slot manifest不存在，或manifest/image均合法且解码验证成功时对该槽回收项目命名格式的剩余文件/临时目录；保留当前引用、所有未知内容及损坏/缺失引用情况下的整槽数据。实体需是普通file/directory且禁跟随symlink。专项`flutter test --concurrency=1 test/application/board_skin_image_library_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`607通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-77.log`；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,067ms、热重启1,112ms；脱离后原App存活且无tester/attach残留。规则不能保证多文件原子性。
+
+## M4-78 / F15 / ADR-109 主界面手动云库查询
+
+主工作区增加独立“云库”只读卡片，显式选择opening/endgame、显式查询当前节点。`BookLookupController`只依赖`BoardSession`和`BookService`端口，将当前FEN及根到当前游标完整线路（上限512步）提交到当前偏好中的自建服务地址；空地址不会请求。返回命中时逐候选以当前合法着集合复核，非法命中不暴露；有效候选显示UCI、scoreCp、weight及服务响应许可/署名，不自动落子、不写棋树。HTTP拒绝、不可达、无效响应及有效miss分别投影。位置/新局/库类型改变使在途任务token失效并清空旧数据。
+
+专项`flutter test --concurrency=1 test/application/book_lookup_controller_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-78-final.log`，5项需官方Pikafish/NNUE）；`flutter analyze --no-pub`无问题；`git diff --check`通过。macOS复用PID50598/runner50125，早期attach同步1,480ms但非TTY未能发送热重启；最终代码的TTY attach同步1,266ms、热重启787ms，Ctrl-C脱离后原PID50598仍在，无测试/attach/chessNext副本。锁屏人工视觉检查未做。首次定向测试暴露测试断言使用`isEmpty`/`hasLength`匹配int的错误；更正后专项通过。首次analyze有两条花括号info，修正后无问题。

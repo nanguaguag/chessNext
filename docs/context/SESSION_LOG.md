@@ -997,3 +997,8 @@ E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新�
 # 2026-11-05 / E75 按授权清理审计样本
 
 用户回复“确认删除（仅本次创建）”后，在访客棋盘皮肤列表只删除既有审计样本“我的棋盘”，确认前页面明确提示删除后不能恢复。AX核实该项从“我的皮肤”移除；关闭选择器后设置为默认棋盘/棋子、100%、坐标开、倒置关。未删除其他皮肤或变更棋谱/账号。REFERENCE_EVIDENCE及交接新增E75，文档待diff check和commit。
+# 2026-11-05 / M4-59 / F31 / ADR-091 离线关于与许可
+
+设置增加“关于与开源许可”入口，使用AboutDialog显示chessNext、当前pubspec版0.1.0+1、离线/未配更新和反馈服务声明；Flutter LicenseRegistry页面列依赖许可。浏览许可不访问自建服务/不改PreferencesRepository。专项`flutter test --concurrency=1 test/widgets/about_support_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter compact`575通过/5跳过；`flutter analyze --no-pub`、`git diff --check`过。复用PID50598/runner50125，attach sync1201ms、热重启1061ms；脱离后仅原App。Mac锁屏，视觉not run。已提交`512915c`；后续context docs commit待做。
+
+本次全量测试只运行一个flutter_tester，没有新开chessNext。继续F31远端/反馈及全站其它登录外差距，不止步M4-59。

@@ -1,5 +1,11 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-88 / F27 标记/动画/声音/选择设置本地化（门槛通过，待提交）
+
+棋子图片入口、内置皮肤名、落点样式、动画档位、五类本机声音、选子样式及着法朗读设置迁入ARB。音频管理和图片管理等子dialog文案还在中文，F27未完成。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/last_move_markers_test.dart test/widgets/selection_style_test.dart test/widgets/feedback_dialog_test.dart --reporter expanded`15/15；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-88.log`）；`flutter analyze --no-pub`、格式/diff检查通过。根测试只开单串行tester并退出；唯一原GUI PID50598。macOS run/视觉not run以免新建实例。下一步提交后继续图片与音频库/其它外观设置的文案和功能覆盖。
+
 ## M4-87 / F27 棋子样式比例/位置/阴影本地化（门槛通过，待提交）
 
 BoardDisplayDialog的自定义棋子大小位置与阴影可见静态文案、参数名和控制tooltip已有zh/en资源，阴影预设经实际Dropdown英文选项测试。棋子图片按钮、样式关联音效说明、动画/系统音效等还未迁移；产品仍固定zh。

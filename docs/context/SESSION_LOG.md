@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-88 / F27 棋盘显示声音、动画、选择文案ARB化（门槛通过，待提交）
+
+完成BoardDisplayDialog剩余主要可见控制文案：内置棋子名/图片入口、最后着标记及动画速度、五类声音开关/说明、音效替换按钮、选子样式、着法朗读。子library/audio编辑dialog仍待处理。第一次专项因为动态l10n字符串处在const ButtonSegment报编译错，去掉const后恢复；将不存在的`move_sound_test.dart`路径改成仓库现有`feedback_dialog_test.dart`等真实测试。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/last_move_markers_test.dart test/widgets/selection_style_test.dart test/widgets/feedback_dialog_test.dart --reporter expanded`15/15；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-88.log`）；`flutter analyze --no-pub`和format/diff通过。根tester串行结束后退出，PID50598既有GUI仍唯一；未运行macOS app/视觉未验。资源/API只有zh根Locale开放，更多模块待迁移，待单独中文提交。
+
 ## 2026-11-05 / M4-87 / F27 棋子样式大小/位置/阴影ARB化（门槛通过，待提交）
 
 资源化当前棋子样式比例/位置数值与帮助、四方向tooltip/自动对正、阴影模式/选项、方向/距离/模糊/浓淡滑杆及解释。英文测试打开真实阴影Dropdown验证None/Soft/Strong。两次测试检查错误：先找不可见滑杆文字，再对TextField标签直接tap；最终用Dropdown widget及菜单覆盖完成验证。

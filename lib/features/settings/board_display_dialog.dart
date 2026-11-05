@@ -431,6 +431,7 @@ class BoardDisplayDialog extends StatelessWidget {
     AudioFeedbackKind kind,
     String label,
   ) {
+    final l10n = AppLocalizations.of(context);
     final library = audioLibrary;
     if (library == null) return const SizedBox.shrink();
     return Align(
@@ -446,7 +447,7 @@ class BoardDisplayDialog extends StatelessWidget {
           ),
         ),
         icon: const Icon(Icons.tune),
-        label: Text('更换$label音效'),
+        label: Text(l10n.replaceSound(label)),
       ),
     );
   }
@@ -551,13 +552,13 @@ class BoardDisplayDialog extends StatelessWidget {
                   isExpanded: true,
                   decoration: InputDecoration(labelText: l10n.pieceSkinLabel),
                   items: [
-                    const DropdownMenuItem(
+                    DropdownMenuItem(
                       value: 'roundSeal',
-                      child: Text('传统圆章'),
+                      child: Text(l10n.roundSealPieceSkin),
                     ),
-                    const DropdownMenuItem(
+                    DropdownMenuItem(
                       value: 'squareInk',
-                      child: Text('方章墨韵'),
+                      child: Text(l10n.squareInkPieceSkin),
                     ),
                     for (final skin in pieceSkins?.profiles ?? const [])
                       DropdownMenuItem(value: skin.id, child: Text(skin.name)),
@@ -604,7 +605,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     label: const Text('管理皮肤库'),
                   ),
                 ),
-                const Text('棋子样式会同步决定“随棋子皮肤”的走棋音效。'),
+                Text(l10n.pieceStyleMoveSoundHelp),
                 Text(l10n.pieceSkinScaleCurrent(skinScale)),
                 Slider(
                   key: ValueKey(
@@ -701,13 +702,13 @@ class BoardDisplayDialog extends StatelessWidget {
                                   pieceSkins?.selectedName ??
                                   (preferences.value.pieceSkin ==
                                           PieceSkin.roundSeal
-                                      ? '传统圆章'
-                                      : '方章墨韵'),
+                                      ? l10n.roundSealPieceSkin
+                                      : l10n.squareInkPieceSkin),
                               library: pieceImages!,
                             ),
                           ),
                     icon: const Icon(Icons.image_outlined),
-                    label: const Text('编辑棋子图片'),
+                    label: Text(l10n.editPieceImages),
                   ),
                 ),
                 const SizedBox(height: 12),
@@ -715,15 +716,15 @@ class BoardDisplayDialog extends StatelessWidget {
                   key: ValueKey(preferences.value.lastMoveMarker),
                   initialValue: preferences.value.lastMoveMarker,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: '落子标记'),
-                  items: const [
+                  decoration: InputDecoration(labelText: l10n.lastMoveMarker),
+                  items: [
                     DropdownMenuItem(
                       value: LastMoveMarkerStyle.halo,
-                      child: Text('旋转光圈'),
+                      child: Text(l10n.lastMoveHalo),
                     ),
                     DropdownMenuItem(
                       value: LastMoveMarkerStyle.box,
-                      child: Text('方框'),
+                      child: Text(l10n.lastMoveBox),
                     ),
                   ],
                   onChanged: preferences.loading
@@ -734,18 +735,27 @@ class BoardDisplayDialog extends StatelessWidget {
                           }
                         },
                 ),
-                const Text('动画速度控制棋子走动和自定义标记；系统减少动态效果时静止。'),
+                Text(l10n.lastMoveAnimationHelp),
                 const SizedBox(height: 12),
                 SegmentedButton<AnimationSpeed>(
                   key: const ValueKey('animation-speed'),
-                  segments: const [
-                    ButtonSegment(value: AnimationSpeed.off, label: Text('关')),
-                    ButtonSegment(value: AnimationSpeed.fast, label: Text('快')),
+                  segments: [
+                    ButtonSegment(
+                      value: AnimationSpeed.off,
+                      label: Text(l10n.animationOff),
+                    ),
+                    ButtonSegment(
+                      value: AnimationSpeed.fast,
+                      label: Text(l10n.animationFast),
+                    ),
                     ButtonSegment(
                       value: AnimationSpeed.standard,
-                      label: Text('标准'),
+                      label: Text(l10n.animationStandard),
                     ),
-                    ButtonSegment(value: AnimationSpeed.slow, label: Text('慢')),
+                    ButtonSegment(
+                      value: AnimationSpeed.slow,
+                      label: Text(l10n.animationSlow),
+                    ),
                   ],
                   selected: {preferences.value.animationSpeed},
                   onSelectionChanged: preferences.loading
@@ -754,56 +764,64 @@ class BoardDisplayDialog extends StatelessWidget {
                           preferences.setAnimationSpeed(selection.single),
                         ),
                 ),
-                const Text('控制落子光圈旋转一周的时长：关、300毫秒、600毫秒或1200毫秒。系统减少动画时始终静止。'),
+                Text(l10n.animationDurationHelp),
                 const SizedBox(height: 12),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('走棋音效'),
-                  subtitle: const Text('落子后播放本机离线音效'),
+                  title: Text(l10n.moveSound),
+                  subtitle: Text(l10n.moveSoundHelp),
                   value: preferences.value.playMoveSound,
                   onChanged: preferences.loading
                       ? null
                       : (enabled) =>
                             unawaited(preferences.setPlayMoveSound(enabled)),
                 ),
-                _soundOptions(context, AudioFeedbackKind.move, '走棋'),
+                _soundOptions(context, AudioFeedbackKind.move, l10n.moveSound),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('吃子音效'),
-                  subtitle: const Text('吃掉对方棋子时播放本机离线音效'),
+                  title: Text(l10n.captureSound),
+                  subtitle: Text(l10n.captureSoundHelp),
                   value: preferences.value.playCaptureSound,
                   onChanged: preferences.loading
                       ? null
                       : (enabled) =>
                             unawaited(preferences.setPlayCaptureSound(enabled)),
                 ),
-                _soundOptions(context, AudioFeedbackKind.capture, '吃子'),
+                _soundOptions(
+                  context,
+                  AudioFeedbackKind.capture,
+                  l10n.captureSound,
+                ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('将军音效'),
-                  subtitle: const Text('将军时播放；将死提示优先'),
+                  title: Text(l10n.checkSound),
+                  subtitle: Text(l10n.checkSoundHelp),
                   value: preferences.value.playCheckSound,
                   onChanged: preferences.loading
                       ? null
                       : (enabled) =>
                             unawaited(preferences.setPlayCheckSound(enabled)),
                 ),
-                _soundOptions(context, AudioFeedbackKind.check, '将军'),
+                _soundOptions(
+                  context,
+                  AudioFeedbackKind.check,
+                  l10n.checkSound,
+                ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('绝杀音效'),
-                  subtitle: const Text('将死时播放；与普通走棋音效互斥'),
+                  title: Text(l10n.mateSound),
+                  subtitle: Text(l10n.mateSoundHelp),
                   value: preferences.value.playMateSound,
                   onChanged: preferences.loading
                       ? null
                       : (enabled) =>
                             unawaited(preferences.setPlayMateSound(enabled)),
                 ),
-                _soundOptions(context, AudioFeedbackKind.mate, '绝杀'),
+                _soundOptions(context, AudioFeedbackKind.mate, l10n.mateSound),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('选子音效'),
-                  subtitle: const Text('选中己方棋子时播放本机离线音效'),
+                  title: Text(l10n.selectionSound),
+                  subtitle: Text(l10n.selectionSoundHelp),
                   value: preferences.value.playSelectionSound,
                   onChanged: preferences.loading
                       ? null
@@ -811,20 +829,24 @@ class BoardDisplayDialog extends StatelessWidget {
                           preferences.setPlaySelectionSound(enabled),
                         ),
                 ),
-                _soundOptions(context, AudioFeedbackKind.select, '选子'),
+                _soundOptions(
+                  context,
+                  AudioFeedbackKind.select,
+                  l10n.selectionSound,
+                ),
                 DropdownButtonFormField<SelectionStyle>(
                   key: ValueKey(preferences.value.selectionStyle),
                   initialValue: preferences.value.selectionStyle,
                   isExpanded: true,
-                  decoration: const InputDecoration(labelText: '选子样式'),
-                  items: const [
+                  decoration: InputDecoration(labelText: l10n.selectionStyle),
+                  items: [
                     DropdownMenuItem(
                       value: SelectionStyle.lift,
-                      child: Text('抬起'),
+                      child: Text(l10n.selectionLift),
                     ),
                     DropdownMenuItem(
                       value: SelectionStyle.frame,
-                      child: Text('选择框'),
+                      child: Text(l10n.selectionFrame),
                     ),
                   ],
                   onChanged: preferences.loading
@@ -835,7 +857,7 @@ class BoardDisplayDialog extends StatelessWidget {
                           }
                         },
                 ),
-                const Text('只改变选中棋子的显示，点击区域保持在交点。'),
+                Text(l10n.selectionStyleHelp),
                 const SizedBox(height: 12),
                 Text(
                   l10n.pieceScalePercent(preferences.value.pieceSizePercent),
@@ -861,8 +883,8 @@ class BoardDisplayDialog extends StatelessWidget {
                 ),
                 SwitchListTile(
                   contentPadding: EdgeInsets.zero,
-                  title: const Text('着法朗读'),
-                  subtitle: const Text('使用本机已安装的中文系统语音，独立于走棋音效；无离线中文语音时不朗读'),
+                  title: Text(l10n.speakMoves),
+                  subtitle: Text(l10n.speakMovesHelp),
                   value: preferences.value.speakMoves,
                   onChanged: preferences.loading
                       ? null
@@ -915,7 +937,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     onPressed: preferences.loading || preferences.saving
                         ? null
                         : () => unawaited(preferences.retryPersistence()),
-                    child: const Text('重试'),
+                    child: Text(l10n.retry),
                   ),
                 ],
               ],
@@ -925,7 +947,7 @@ class BoardDisplayDialog extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
+            child: Text(l10n.close),
           ),
         ],
       );

@@ -59,6 +59,19 @@ void main() {
       expect(find.text('Left margin'), findsNWidgets(2));
       expect(find.text('Rotate the landing marker image'), findsOneWidget);
       expect(find.text('Piece shadow'), findsOneWidget);
+      expect(find.text('Edit piece images'), findsOneWidget);
+      expect(find.text('Last-move marker'), findsOneWidget);
+      expect(find.text('Off'), findsOneWidget);
+      expect(find.text('Fast'), findsOneWidget);
+      expect(find.text('Standard'), findsOneWidget);
+      expect(find.text('Slow'), findsOneWidget);
+      expect(find.text('Move sound'), findsOneWidget);
+      expect(find.text('Capture sound'), findsOneWidget);
+      expect(find.text('Check sound'), findsOneWidget);
+      expect(find.text('Checkmate sound'), findsOneWidget);
+      expect(find.text('Selection sound'), findsOneWidget);
+      expect(find.text('Piece selection style'), findsOneWidget);
+      expect(find.text('Read moves aloud'), findsOneWidget);
       expect(
         find.textContaining('Current piece style size: 100%'),
         findsOneWidget,

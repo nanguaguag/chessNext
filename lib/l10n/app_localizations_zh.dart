@@ -221,4 +221,97 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get pieceShadowHelp => '方向0°向右，90°向下；距离、模糊按棋格宽计算，值域为本机设计。';
+
+  @override
+  String get roundSealPieceSkin => '传统圆章';
+
+  @override
+  String get squareInkPieceSkin => '方章墨韵';
+
+  @override
+  String get pieceStyleMoveSoundHelp => '棋子样式会同步决定“随棋子皮肤”的走棋音效。';
+
+  @override
+  String get editPieceImages => '编辑棋子图片';
+
+  @override
+  String get lastMoveMarker => '落子标记';
+
+  @override
+  String get lastMoveHalo => '旋转光圈';
+
+  @override
+  String get lastMoveBox => '方框';
+
+  @override
+  String get lastMoveAnimationHelp => '动画速度控制棋子走动和自定义标记；系统减少动态效果时静止。';
+
+  @override
+  String get animationOff => '关';
+
+  @override
+  String get animationFast => '快';
+
+  @override
+  String get animationStandard => '标准';
+
+  @override
+  String get animationSlow => '慢';
+
+  @override
+  String get animationDurationHelp =>
+      '控制落子光圈旋转一周的时长：关、300毫秒、600毫秒或1200毫秒。系统减少动画时始终静止。';
+
+  @override
+  String get moveSound => '走棋音效';
+
+  @override
+  String get moveSoundHelp => '落子后播放本机离线音效';
+
+  @override
+  String get captureSound => '吃子音效';
+
+  @override
+  String get captureSoundHelp => '吃掉对方棋子时播放本机离线音效';
+
+  @override
+  String get checkSound => '将军音效';
+
+  @override
+  String get checkSoundHelp => '将军时播放；将死提示优先';
+
+  @override
+  String get mateSound => '绝杀音效';
+
+  @override
+  String get mateSoundHelp => '将死时播放；与普通走棋音效互斥';
+
+  @override
+  String get selectionSound => '选子音效';
+
+  @override
+  String get selectionSoundHelp => '选中己方棋子时播放本机离线音效';
+
+  @override
+  String replaceSound(String kind) {
+    return '更换$kind音效';
+  }
+
+  @override
+  String get selectionStyle => '选子样式';
+
+  @override
+  String get selectionLift => '抬起';
+
+  @override
+  String get selectionFrame => '选择框';
+
+  @override
+  String get selectionStyleHelp => '只改变选中棋子的显示，点击区域保持在交点。';
+
+  @override
+  String get speakMoves => '着法朗读';
+
+  @override
+  String get speakMovesHelp => '使用本机已安装的中文系统语音，独立于走棋音效；无离线中文语音时不朗读';
 }

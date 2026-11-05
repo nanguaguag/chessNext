@@ -231,4 +231,105 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get pieceShadowHelp =>
       '0° points right and 90° down. Distance and blur use grid width; range is defined by this app.';
+
+  @override
+  String get roundSealPieceSkin => 'Traditional round seal';
+
+  @override
+  String get squareInkPieceSkin => 'Square ink';
+
+  @override
+  String get pieceStyleMoveSoundHelp =>
+      'The piece style also determines the sound used when following the piece skin.';
+
+  @override
+  String get editPieceImages => 'Edit piece images';
+
+  @override
+  String get lastMoveMarker => 'Last-move marker';
+
+  @override
+  String get lastMoveHalo => 'Rotating halo';
+
+  @override
+  String get lastMoveBox => 'Box';
+
+  @override
+  String get lastMoveAnimationHelp =>
+      'Animation speed controls piece movement and custom markers. They stay still when reduced motion is enabled.';
+
+  @override
+  String get animationOff => 'Off';
+
+  @override
+  String get animationFast => 'Fast';
+
+  @override
+  String get animationStandard => 'Standard';
+
+  @override
+  String get animationSlow => 'Slow';
+
+  @override
+  String get animationDurationHelp =>
+      'Controls one rotation of the landing halo: off, 300, 600 or 1200 ms. Reduced motion always stops it.';
+
+  @override
+  String get moveSound => 'Move sound';
+
+  @override
+  String get moveSoundHelp =>
+      'Play an offline sound on this device after a move.';
+
+  @override
+  String get captureSound => 'Capture sound';
+
+  @override
+  String get captureSoundHelp =>
+      'Play an offline sound on this device when a piece is captured.';
+
+  @override
+  String get checkSound => 'Check sound';
+
+  @override
+  String get checkSoundHelp => 'Play on check; checkmate sound takes priority.';
+
+  @override
+  String get mateSound => 'Checkmate sound';
+
+  @override
+  String get mateSoundHelp =>
+      'Play on checkmate; mutually exclusive with the ordinary move sound.';
+
+  @override
+  String get selectionSound => 'Selection sound';
+
+  @override
+  String get selectionSoundHelp =>
+      'Play an offline sound on this device when selecting one of your pieces.';
+
+  @override
+  String replaceSound(String kind) {
+    return 'Change $kind sound';
+  }
+
+  @override
+  String get selectionStyle => 'Piece selection style';
+
+  @override
+  String get selectionLift => 'Lift';
+
+  @override
+  String get selectionFrame => 'Selection frame';
+
+  @override
+  String get selectionStyleHelp =>
+      'Changes only how the selected piece looks. Click targets remain at intersections.';
+
+  @override
+  String get speakMoves => 'Read moves aloud';
+
+  @override
+  String get speakMovesHelp =>
+      'Uses an installed system voice in Chinese, independently of move sounds. Silent if no offline Chinese voice is installed.';
 }

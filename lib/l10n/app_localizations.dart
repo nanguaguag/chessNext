@@ -487,6 +487,186 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'方向0°向右，90°向下；距离、模糊按棋格宽计算，值域为本机设计。'**
   String get pieceShadowHelp;
+
+  /// No description provided for @roundSealPieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'传统圆章'**
+  String get roundSealPieceSkin;
+
+  /// No description provided for @squareInkPieceSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'方章墨韵'**
+  String get squareInkPieceSkin;
+
+  /// No description provided for @pieceStyleMoveSoundHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子样式会同步决定“随棋子皮肤”的走棋音效。'**
+  String get pieceStyleMoveSoundHelp;
+
+  /// No description provided for @editPieceImages.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑棋子图片'**
+  String get editPieceImages;
+
+  /// No description provided for @lastMoveMarker.
+  ///
+  /// In zh, this message translates to:
+  /// **'落子标记'**
+  String get lastMoveMarker;
+
+  /// No description provided for @lastMoveHalo.
+  ///
+  /// In zh, this message translates to:
+  /// **'旋转光圈'**
+  String get lastMoveHalo;
+
+  /// No description provided for @lastMoveBox.
+  ///
+  /// In zh, this message translates to:
+  /// **'方框'**
+  String get lastMoveBox;
+
+  /// No description provided for @lastMoveAnimationHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'动画速度控制棋子走动和自定义标记；系统减少动态效果时静止。'**
+  String get lastMoveAnimationHelp;
+
+  /// No description provided for @animationOff.
+  ///
+  /// In zh, this message translates to:
+  /// **'关'**
+  String get animationOff;
+
+  /// No description provided for @animationFast.
+  ///
+  /// In zh, this message translates to:
+  /// **'快'**
+  String get animationFast;
+
+  /// No description provided for @animationStandard.
+  ///
+  /// In zh, this message translates to:
+  /// **'标准'**
+  String get animationStandard;
+
+  /// No description provided for @animationSlow.
+  ///
+  /// In zh, this message translates to:
+  /// **'慢'**
+  String get animationSlow;
+
+  /// No description provided for @animationDurationHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'控制落子光圈旋转一周的时长：关、300毫秒、600毫秒或1200毫秒。系统减少动画时始终静止。'**
+  String get animationDurationHelp;
+
+  /// No description provided for @moveSound.
+  ///
+  /// In zh, this message translates to:
+  /// **'走棋音效'**
+  String get moveSound;
+
+  /// No description provided for @moveSoundHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'落子后播放本机离线音效'**
+  String get moveSoundHelp;
+
+  /// No description provided for @captureSound.
+  ///
+  /// In zh, this message translates to:
+  /// **'吃子音效'**
+  String get captureSound;
+
+  /// No description provided for @captureSoundHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'吃掉对方棋子时播放本机离线音效'**
+  String get captureSoundHelp;
+
+  /// No description provided for @checkSound.
+  ///
+  /// In zh, this message translates to:
+  /// **'将军音效'**
+  String get checkSound;
+
+  /// No description provided for @checkSoundHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'将军时播放；将死提示优先'**
+  String get checkSoundHelp;
+
+  /// No description provided for @mateSound.
+  ///
+  /// In zh, this message translates to:
+  /// **'绝杀音效'**
+  String get mateSound;
+
+  /// No description provided for @mateSoundHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'将死时播放；与普通走棋音效互斥'**
+  String get mateSoundHelp;
+
+  /// No description provided for @selectionSound.
+  ///
+  /// In zh, this message translates to:
+  /// **'选子音效'**
+  String get selectionSound;
+
+  /// No description provided for @selectionSoundHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'选中己方棋子时播放本机离线音效'**
+  String get selectionSoundHelp;
+
+  /// No description provided for @replaceSound.
+  ///
+  /// In zh, this message translates to:
+  /// **'更换{kind}音效'**
+  String replaceSound(String kind);
+
+  /// No description provided for @selectionStyle.
+  ///
+  /// In zh, this message translates to:
+  /// **'选子样式'**
+  String get selectionStyle;
+
+  /// No description provided for @selectionLift.
+  ///
+  /// In zh, this message translates to:
+  /// **'抬起'**
+  String get selectionLift;
+
+  /// No description provided for @selectionFrame.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择框'**
+  String get selectionFrame;
+
+  /// No description provided for @selectionStyleHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'只改变选中棋子的显示，点击区域保持在交点。'**
+  String get selectionStyleHelp;
+
+  /// No description provided for @speakMoves.
+  ///
+  /// In zh, this message translates to:
+  /// **'着法朗读'**
+  String get speakMoves;
+
+  /// No description provided for @speakMovesHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用本机已安装的中文系统语音，独立于走棋音效；无离线中文语音时不朗读'**
+  String get speakMovesHelp;
 }
 
 class _AppLocalizationsDelegate

@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-05 / M4-88 / F27 棋盘标记、声音、动画与选子设置文案
+
+BoardDisplayDialog的棋子图片入口、内置棋子名、落点样式、动画速度、五种音效设置与提示、选择样式和系统语音使用说明加入zh/en ARB。未改变音频、棋盘或偏好行为。音效编辑器和图片/皮肤库弹窗、其它路由文案还未完整本地化。
+
+验收：定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/last_move_markers_test.dart test/widgets/selection_style_test.dart test/widgets/feedback_dialog_test.dart --reporter expanded`15/15；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败；`flutter analyze --no-pub`和`git diff --check`通过。5跳过依赖官方Pikafish/NNUE。macOS实际运行/视觉未验。
+
 ## 2026-11-05 / M4-87 / F27 棋子样式比例、偏移和阴影文案
 
 棋子样式独立大小、位置值、四方向/自动归中语义、阴影预设和参数滑杆说明加入zh/en ARB；不改偏好/绘制逻辑。仍有棋子图片/样式与音效说明、动画/声音、皮肤库/导入导出子对话框等文本未迁移。根Locale固定zh。

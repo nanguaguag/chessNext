@@ -1,3 +1,9 @@
+## M4-88 / F27 棋盘显示里的标记、动画和音效ARB化（门槛通过，待提交）
+
+本地化棋子图片入口、内置棋子样式名称和样式/音效关联提示、最后一着标记、动画速度与说明、走棋/吃子/将军/将死/选子音效及说明、更换音效按钮格式、选子样式和着法朗读设置。图片子对话框和音频库编辑器自身文案仍未迁移；App根Locale仍为zh。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/last_move_markers_test.dart test/widgets/selection_style_test.dart test/widgets/feedback_dialog_test.dart --reporter expanded`15/15；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-88.log`；`flutter analyze --no-pub`、格式/diff检查通过。先发现SegmentedButton动态Text误留`const`导致编译错误，移除后定向及全量通过；另曾把move_sound_test误写为不存在路径，最终改用现存对应组件测试。macOS运行/视觉未验，原PID50598唯一GUI，根测试单tester结束。待单独中文提交。
+
 ## M4-87 / F27 棋子样式比例、位置和阴影ARB化（门槛通过，待提交）
 
 将棋子样式比例/当前大小、横纵位置值与四向调节提示/自动对正、阴影开关与无/柔和/明显选项、方向距离模糊浓淡名称和说明迁入zh/en资源。棋子图片入口、样式关联音效说明和全局动画/音效项仍未迁移，根Locale锁zh。

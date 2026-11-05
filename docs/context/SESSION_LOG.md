@@ -1002,3 +1002,10 @@ E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新�
 设置增加“关于与开源许可”入口，使用AboutDialog显示chessNext、当前pubspec版0.1.0+1、离线/未配更新和反馈服务声明；Flutter LicenseRegistry页面列依赖许可。浏览许可不访问自建服务/不改PreferencesRepository。专项`flutter test --concurrency=1 test/widgets/about_support_test.dart --reporter expanded`1/1；根`flutter test --concurrency=1 --reporter compact`575通过/5跳过；`flutter analyze --no-pub`、`git diff --check`过。复用PID50598/runner50125，attach sync1201ms、热重启1061ms；脱离后仅原App。Mac锁屏，视觉not run。已提交`512915c`；后续context docs commit待做。
 
 本次全量测试只运行一个flutter_tester，没有新开chessNext。继续F31远端/反馈及全站其它登录外差距，不止步M4-59。
+# 2026-11-05 / M4-61 / F31 / ADR-093 自建版本检查客户端
+
+设置新增可选自建更新根地址，空时离线；关于页由用户显式点击后通过ReleaseService请求版本清单，显示版本比较与历史说明。限制HTTPS公网/loopback HTTP、5秒和2MiB，验证schema/UTC/历史唯一降序，区分不可达/HTTP拒绝/无效响应。无用户、设备、棋谱字段，不下载或安装包。专项13/13，根串行测试584通过/5条件跳过，analyze/diff check通过。进程盘点测试中仅1个本仓库flutter_tester和chessNext PID50598；额外PID70651/70890是tuner_flutter run/app，属于另一个项目，与chessNext测试无关。复用PID50598/runner50125执行attach sync1066ms、hot restart1052ms，Ctrl-C脱离后app存活。全站继续推进。
+
+# 2026-11-05 / E76 / F21,B24 棋盘边距极值与配对行为
+
+从设置新建未保存棋盘草稿；四字段ARIA min0、左右max500、上下max550。左输入500→右跟500；左输入0→右保持500；右输入0后显示8；上输入550→下550；下输入0后上保持550。DOM结果和AX均读，局部值操作V，ARIA范围声明O。随后恢复33/33/465/519，确认放弃，核对默认棋盘/棋子、100%、坐标开、倒置关。几何公式、字段单位和配对完整规则仍未知。详REFERENCE_EVIDENCE E76；未保存或保留自建皮肤。

@@ -798,4 +798,8 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 
 App偏好新增可选发布服务根地址，默认空；设置输入仅允许HTTPS公网/loopback HTTP，最大2048字符。关于页只响应用户显式点击检查；HTTP适配器5秒超时/2MiB边界，检查schema、当前/首条一致、UTC日期、唯一版本身份与降序历史；不发送账号、设备或棋谱信息。展示当前版本比较和历史说明，按不可达/无效响应/HTTP拒绝区分失败。无包下载/安装。UI用Fake验证仅显式触发；loopback HTTP适配器专项验证请求和协议。
 
-专项：`flutter test --concurrency=1 test/adapters/network/http_release_service_test.dart test/widgets/about_support_test.dart --reporter expanded`6/6；`flutter analyze --no-pub`通过。首轮关于Widget集成测试尝试使用真实loopback网络，在flutter_tester异步调度下请求未到达；改为Fake验证UI调用时机，并保留适配器真实loopback独立测试。根全量与macOS复用进程热重启待执行。测试按串行单测试host执行；执行前进程快照仅一个chessNext PID50598/runner50125，另一个长期flutter run属tuner_flutter PID70651/PID70890，并非chessNext或测试进程，不予干预。
+专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/adapters/network/http_release_service_test.dart test/widgets/about_support_test.dart --reporter expanded`13/13；根串行`flutter test --concurrency=1 --reporter compact`584通过/5跳过；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125：`flutter attach --debug-uri=http://127.0.0.1:61579/4bLZ1MhsyEk=/`同步1066ms，热重启1052ms；Ctrl-C脱离后PID50598仍存活唯一。测试只用一个根目录flutter_tester；进程盘点另见PID70890的tuner_flutter实例/其它测试宿主，不属于本仓库。本机锁屏，视觉人工验收not run。根测试5项跳过为官方Pikafish/NNUE未配置，不是失败。
+
+## E76 / F21,B24 边距极值与局部联动审计
+
+新建编辑草稿DOM声明四个字段min0、左右max500、上下max550（O）。实操左500将右推至500，左0后右保持500，右输入0移焦显示8；上输入550将下带至550，下输入0移焦后上保持550（V）。按默认33/33/465/519复原，放弃草稿，复核设置页默认皮肤/棋子、100%、坐标开、倒置关。该不对称局部结果不能用于推断全局公式、单位或有效最小格距，继续U。证据见REFERENCE_EVIDENCE E76。

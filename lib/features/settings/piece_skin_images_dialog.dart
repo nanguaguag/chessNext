@@ -3,7 +3,9 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 
 import '../../application/piece_image_library_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../ports/piece_images.dart';
+import 'image_slot_localizations.dart';
 import 'piece_skin_batch_import_dialog.dart';
 
 class PieceSkinImagesDialog extends StatelessWidget {
@@ -22,13 +24,13 @@ class PieceSkinImagesDialog extends StatelessWidget {
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: library,
     builder: (context, _) => AlertDialog(
-      title: Text('编辑$skinLabel图片'),
+      title: Text(AppLocalizations.of(context).editPieceSkinImages(skinLabel)),
       content: SizedBox(
         width: 520,
         height: 520,
         child: Column(
           children: [
-            const Text('仅替换选中的棋子，PNG/JPEG、512 KiB以内、最长边1024像素；文件保存在本机。'),
+            Text(AppLocalizations.of(context).pieceImagesHelp),
             Align(
               alignment: Alignment.centerRight,
               child: TextButton.icon(
@@ -51,12 +53,18 @@ class PieceSkinImagesDialog extends StatelessWidget {
                         );
                         if (imported != null && context.mounted) {
                           ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(content: Text('已导入$imported张棋子图片。')),
+                            SnackBar(
+                              content: Text(
+                                AppLocalizations.of(
+                                  context,
+                                ).importedPieceImages(imported),
+                              ),
+                            ),
                           );
                         }
                       },
                 icon: const Icon(Icons.file_upload_outlined),
-                label: const Text('批量导入图片'),
+                label: Text(AppLocalizations.of(context).batchImportImages),
               ),
             ),
             if (library.loading) const LinearProgressIndicator(),
@@ -101,7 +109,7 @@ class PieceSkinImagesDialog extends StatelessWidget {
           onPressed: library.busySlot == null && !library.batchBusy
               ? () => Navigator.pop(context)
               : null,
-          child: const Text('关闭'),
+          child: Text(AppLocalizations.of(context).close),
         ),
       ],
     ),
@@ -128,54 +136,57 @@ class _PieceImageRow extends StatelessWidget {
   final VoidCallback? onReset;
 
   @override
-  Widget build(BuildContext context) => Card(
-    child: Padding(
-      padding: const EdgeInsets.all(8),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              SizedBox(
-                width: 48,
-                height: 48,
-                child: image == null
-                    ? Center(
-                        child: Text(
-                          slot.label.substring(1),
-                          style: TextStyle(
-                            fontSize: 30,
-                            color: slot.name.startsWith('red')
-                                ? const Color(0xffa12f29)
-                                : const Color(0xff26362d),
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                SizedBox(
+                  width: 48,
+                  height: 48,
+                  child: image == null
+                      ? Center(
+                          child: Text(
+                            slot.label.substring(1),
+                            style: TextStyle(
+                              fontSize: 30,
+                              color: slot.name.startsWith('red')
+                                  ? const Color(0xffa12f29)
+                                  : const Color(0xff26362d),
+                            ),
                           ),
-                        ),
-                      )
-                    : Image.memory(image!, fit: BoxFit.contain),
-              ),
-              const SizedBox(width: 12),
-              Expanded(child: Text(slot.label)),
-              TextButton.icon(
-                key: ValueKey('replace-piece-image-${slot.name}'),
-                onPressed: canEdit ? onReplace : null,
-                icon: const Icon(Icons.image_outlined),
-                label: const Text('替换'),
-              ),
-              TextButton(
-                key: ValueKey('reset-piece-image-${slot.name}'),
-                onPressed: canEdit ? onReset : null,
-                child: const Text('恢复默认'),
-              ),
-            ],
-          ),
-          if (busy) const LinearProgressIndicator(),
-          if (error != null)
-            Text(
-              error!,
-              style: TextStyle(color: Theme.of(context).colorScheme.error),
+                        )
+                      : Image.memory(image!, fit: BoxFit.contain),
+                ),
+                const SizedBox(width: 12),
+                Expanded(child: Text(slot.localizedLabel(l10n))),
+                TextButton.icon(
+                  key: ValueKey('replace-piece-image-${slot.name}'),
+                  onPressed: canEdit ? onReplace : null,
+                  icon: const Icon(Icons.image_outlined),
+                  label: Text(l10n.replaceImage),
+                ),
+                TextButton(
+                  key: ValueKey('reset-piece-image-${slot.name}'),
+                  onPressed: canEdit ? onReset : null,
+                  child: Text(l10n.resetImage),
+                ),
+              ],
             ),
-        ],
+            if (busy) const LinearProgressIndicator(),
+            if (error != null)
+              Text(
+                error!,
+                style: TextStyle(color: Theme.of(context).colorScheme.error),
+              ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
+  }
 }

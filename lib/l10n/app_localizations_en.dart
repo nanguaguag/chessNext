@@ -332,4 +332,122 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get speakMovesHelp =>
       'Uses an installed system voice in Chinese, independently of move sounds. Silent if no offline Chinese voice is installed.';
+
+  @override
+  String editPieceSkinImages(String skin) {
+    return 'Edit $skin piece images';
+  }
+
+  @override
+  String get pieceImagesHelp =>
+      'Only the selected pieces are replaced. PNG/JPEG, up to 512 KiB and 1024 pixels on the longest side. Files stay on this device.';
+
+  @override
+  String get batchImportImages => 'Import images in batch';
+
+  @override
+  String importedPieceImages(int count) {
+    return 'Imported $count piece images.';
+  }
+
+  @override
+  String editBoardSkinImages(String skin) {
+    return 'Edit $skin board images';
+  }
+
+  @override
+  String get boardImagesHelp =>
+      'Files stay on this device. PNG/JPEG, up to 512 KiB per image.';
+
+  @override
+  String get boardImageBackground => 'Board background';
+
+  @override
+  String get boardImageStartMarker => 'Starting-square marker';
+
+  @override
+  String get boardImageLandingMarker => 'Landing-square marker';
+
+  @override
+  String get boardImageSelectionFrame => 'Selection frame';
+
+  @override
+  String get defaultBoardBackground =>
+      'Use the board color as the default background';
+
+  @override
+  String defaultBoardImageSlot(String slot) {
+    return 'Use the default $slot';
+  }
+
+  @override
+  String get selectImage => 'Choose image';
+
+  @override
+  String get replaceBoardImage => 'Replace image';
+
+  @override
+  String get replaceImage => 'Replace image';
+
+  @override
+  String get resetImage => 'Reset to default';
+
+  @override
+  String get pieceImageRedRook => 'Red rook';
+
+  @override
+  String get pieceImageRedHorse => 'Red horse';
+
+  @override
+  String get pieceImageRedElephant => 'Red elephant';
+
+  @override
+  String get pieceImageRedAdvisor => 'Red advisor';
+
+  @override
+  String get pieceImageRedGeneral => 'Red general';
+
+  @override
+  String get pieceImageRedCannon => 'Red cannon';
+
+  @override
+  String get pieceImageRedPawn => 'Red pawn';
+
+  @override
+  String get pieceImageBlackRook => 'Black rook';
+
+  @override
+  String get pieceImageBlackHorse => 'Black horse';
+
+  @override
+  String get pieceImageBlackElephant => 'Black elephant';
+
+  @override
+  String get pieceImageBlackAdvisor => 'Black advisor';
+
+  @override
+  String get pieceImageBlackGeneral => 'Black general';
+
+  @override
+  String get pieceImageBlackCannon => 'Black cannon';
+
+  @override
+  String get pieceImageBlackPawn => 'Black pawn';
+
+  @override
+  String get batchImportPieceImagesTitle => 'Batch import piece images';
+
+  @override
+  String batchImportPieceImagesHelp(int count) {
+    return 'Selected $count images. Choose a target piece for each. Unmapped or duplicate slots cannot be imported.';
+  }
+
+  @override
+  String get chooseTargetPiece => 'Choose a target piece';
+
+  @override
+  String get cancel => 'Cancel';
+
+  @override
+  String get importImages => 'Import images';
 }

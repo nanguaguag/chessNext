@@ -1,3 +1,9 @@
+## M4-89 / F27 棋子与棋盘图片管理对话框ARB化（门槛通过，待提交）
+
+棋子图片槽、棋盘四图层槽、格式/容量限制、批量映射/完成提示、选择/替换/恢复/默认占位和对话框动作均迁入zh/en ARB。棋子图像仍以中国象棋字形作为无图预览；仓储控制器返回的具体失败原因仍为中文，需以后将错误码与显示分离后本地化。未改图片数据/导入行为。
+
+定向`flutter test --concurrency=1 test/widgets/image_dialog_localization_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`632通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-89.log`；`flutter analyze --no-pub`及diff检查通过。macOS`flutter run -d macos --no-pub`成功Build/Sync并启动PID29579，验证后TERM退出；只剩原PID50598。未人工视觉验收。待单独中文提交。
+
 ## M4-88 / F27 棋盘显示里的标记、动画和音效ARB化（门槛通过，待提交）
 
 本地化棋子图片入口、内置棋子样式名称和样式/音效关联提示、最后一着标记、动画速度与说明、走棋/吃子/将军/将死/选子音效及说明、更换音效按钮格式、选子样式和着法朗读设置。图片子对话框和音频库编辑器自身文案仍未迁移；App根Locale仍为zh。

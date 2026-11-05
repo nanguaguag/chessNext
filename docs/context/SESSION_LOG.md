@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-89 / F27 图片管理子对话框本地化（门槛通过，待提交）
+
+新增UI slot-name adapter，给14个棋子槽与4个棋盘图层槽映射zh/en资源，不改变ports中的中文标签/文件名导入别名。棋子图、棋盘图与批量导入弹窗的标题、约束、占位、操作、映射和计数均迁资源。仓储控制器现有中文error.message保持原样，留待错误模型分层；默认象棋字形预览继续使用汉字面容。
+
+验证：`flutter gen-l10n`通过；格式/diff通过；定向`flutter test --concurrency=1 test/widgets/image_dialog_localization_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`632通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-89.log`）；`flutter analyze --no-pub`通过。`flutter run -d macos --no-pub`构建/sync/启动成功，日志PID29579；TERM退出验证进程后只有原PID50598存活。无人工视觉验收。门槛前一度因ARBs中文模板漏两个键和动态DropdownMenuItem残留const导致专项编译失败，修正并复跑全量通过；另调整惰性列表中的测试滚动顺序。待单独中文commit。
+
 ## 2026-11-05 / M4-88 / F27 棋盘显示声音、动画、选择文案ARB化（门槛通过，待提交）
 
 完成BoardDisplayDialog剩余主要可见控制文案：内置棋子名/图片入口、最后着标记及动画速度、五类声音开关/说明、音效替换按钮、选子样式、着法朗读。子library/audio编辑dialog仍待处理。第一次专项因为动态l10n字符串处在const ButtonSegment报编译错，去掉const后恢复；将不存在的`move_sound_test.dart`路径改成仓库现有`feedback_dialog_test.dart`等真实测试。

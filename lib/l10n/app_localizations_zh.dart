@@ -314,4 +314,120 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get speakMovesHelp => '使用本机已安装的中文系统语音，独立于走棋音效；无离线中文语音时不朗读';
+
+  @override
+  String editPieceSkinImages(String skin) {
+    return '编辑$skin图片';
+  }
+
+  @override
+  String get pieceImagesHelp =>
+      '仅替换选中的棋子，PNG/JPEG、512 KiB以内、最长边1024像素；文件保存在本机。';
+
+  @override
+  String get batchImportImages => '批量导入图片';
+
+  @override
+  String importedPieceImages(int count) {
+    return '已导入$count张棋子图片。';
+  }
+
+  @override
+  String editBoardSkinImages(String skin) {
+    return '编辑$skin棋盘图片';
+  }
+
+  @override
+  String get boardImagesHelp => '仅保存在本机；支持 PNG/JPEG，单张不超过512 KiB。';
+
+  @override
+  String get boardImageBackground => '棋盘背景';
+
+  @override
+  String get boardImageStartMarker => '起点标记';
+
+  @override
+  String get boardImageLandingMarker => '落点标记';
+
+  @override
+  String get boardImageSelectionFrame => '选中框';
+
+  @override
+  String get defaultBoardBackground => '使用棋盘配色默认背景';
+
+  @override
+  String defaultBoardImageSlot(String slot) {
+    return '使用默认$slot';
+  }
+
+  @override
+  String get selectImage => '选择图片';
+
+  @override
+  String get replaceBoardImage => '替换图片';
+
+  @override
+  String get replaceImage => '替换';
+
+  @override
+  String get resetImage => '恢复默认';
+
+  @override
+  String get pieceImageRedRook => '红车';
+
+  @override
+  String get pieceImageRedHorse => '红马';
+
+  @override
+  String get pieceImageRedElephant => '红相';
+
+  @override
+  String get pieceImageRedAdvisor => '红仕';
+
+  @override
+  String get pieceImageRedGeneral => '红帅';
+
+  @override
+  String get pieceImageRedCannon => '红炮';
+
+  @override
+  String get pieceImageRedPawn => '红兵';
+
+  @override
+  String get pieceImageBlackRook => '黑车';
+
+  @override
+  String get pieceImageBlackHorse => '黑马';
+
+  @override
+  String get pieceImageBlackElephant => '黑象';
+
+  @override
+  String get pieceImageBlackAdvisor => '黑士';
+
+  @override
+  String get pieceImageBlackGeneral => '黑将';
+
+  @override
+  String get pieceImageBlackCannon => '黑炮';
+
+  @override
+  String get pieceImageBlackPawn => '黑卒';
+
+  @override
+  String get batchImportPieceImagesTitle => '批量导入棋子图片';
+
+  @override
+  String batchImportPieceImagesHelp(int count) {
+    return '已选$count张。为每张图片选择目标棋子；未映射或重复槽位不能导入。';
+  }
+
+  @override
+  String get chooseTargetPiece => '请选择目标棋子';
+
+  @override
+  String get cancel => '取消';
+
+  @override
+  String get importImages => '导入图片';
 }

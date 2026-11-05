@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-05 / M4-89 / F27 棋子/棋盘图像编辑界面与批量映射
+
+棋子图片编辑器14槽及棋盘背景/三类标记4槽使用zh/en资源；说明、占位、选择/替换/恢复、批量选图计数和映射控件本地化。Slot port labels仍保留中文作为文件名兼容/领域元信息，不从显示文案反向改协议。控制器错误message当前为中文，未迁移。图像读写/错误处理逻辑保持不变。
+
+验收：定向`flutter test --concurrency=1 test/widgets/image_dialog_localization_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`632通过/5跳过/0失败；`flutter analyze --no-pub`、`git diff --check`通过。macOS`flutter run -d macos --no-pub`Build/Sync成功，临时PID29579结束后原PID50598唯一；视觉not run。
+
 ## 2026-11-05 / M4-88 / F27 棋盘标记、声音、动画与选子设置文案
 
 BoardDisplayDialog的棋子图片入口、内置棋子名、落点样式、动画速度、五种音效设置与提示、选择样式和系统语音使用说明加入zh/en ARB。未改变音频、棋盘或偏好行为。音效编辑器和图片/皮肤库弹窗、其它路由文案还未完整本地化。

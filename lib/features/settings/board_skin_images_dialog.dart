@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../application/board_skin_image_library_controller.dart';
+import '../../l10n/app_localizations.dart';
 import '../../ports/board_skin_images.dart';
+import 'image_slot_localizations.dart';
 
 class BoardSkinImagesDialog extends StatelessWidget {
   const BoardSkinImagesDialog({
@@ -19,7 +21,7 @@ class BoardSkinImagesDialog extends StatelessWidget {
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: library,
     builder: (context, _) => AlertDialog(
-      title: Text('编辑$skinLabel棋盘图片'),
+      title: Text(AppLocalizations.of(context).editBoardSkinImages(skinLabel)),
       content: SizedBox(
         width: 520,
         child: ConstrainedBox(
@@ -27,7 +29,7 @@ class BoardSkinImagesDialog extends StatelessWidget {
           child: ListView(
             shrinkWrap: true,
             children: [
-              const Text('仅保存在本机；支持 PNG/JPEG，单张不超过512 KiB。'),
+              Text(AppLocalizations.of(context).boardImagesHelp),
               for (final slot in BoardSkinImageSlot.values)
                 _slot(context, slot),
               if (library.error != null && library.errorSlot == null)
@@ -49,13 +51,14 @@ class BoardSkinImagesDialog extends StatelessWidget {
           onPressed: library.busySlot == null
               ? () => Navigator.pop(context)
               : null,
-          child: const Text('关闭'),
+          child: Text(AppLocalizations.of(context).close),
         ),
       ],
     ),
   );
 
   Widget _slot(BuildContext context, BoardSkinImageSlot slot) {
+    final l10n = AppLocalizations.of(context);
     final image = library.imageFor(skinId, slot);
     final busy = library.busySlot == slot;
     final error = library.errorSlot == slot ? library.error : null;
@@ -67,7 +70,10 @@ class BoardSkinImagesDialog extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(slot.label, style: Theme.of(context).textTheme.titleSmall),
+              Text(
+                slot.localizedLabel(l10n),
+                style: Theme.of(context).textTheme.titleSmall,
+              ),
               const SizedBox(height: 8),
               SizedBox(
                 height: slot == BoardSkinImageSlot.boardBackground ? 140 : 72,
@@ -83,8 +89,10 @@ class BoardSkinImagesDialog extends StatelessWidget {
                       ? Center(
                           child: Text(
                             slot == BoardSkinImageSlot.boardBackground
-                                ? '使用棋盘配色默认背景'
-                                : '使用默认${slot.label}',
+                                ? l10n.defaultBoardBackground
+                                : l10n.defaultBoardImageSlot(
+                                    slot.localizedLabel(l10n),
+                                  ),
                           ),
                         )
                       : ClipRRect(
@@ -116,7 +124,9 @@ class BoardSkinImagesDialog extends StatelessWidget {
                             child: CircularProgressIndicator(strokeWidth: 2),
                           )
                         : const Icon(Icons.image_outlined),
-                    label: Text(image == null ? '选择图片' : '替换图片'),
+                    label: Text(
+                      image == null ? l10n.selectImage : l10n.replaceBoardImage,
+                    ),
                   ),
                   TextButton(
                     onPressed:
@@ -126,7 +136,7 @@ class BoardSkinImagesDialog extends StatelessWidget {
                             library.busySlot != null
                         ? null
                         : () => library.reset(skinId, slot),
-                    child: const Text('恢复默认'),
+                    child: Text(l10n.resetImage),
                   ),
                 ],
               ),

@@ -1,5 +1,11 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-89 / F27 棋子/棋盘图片编辑与批量映射本地化（门槛通过，待提交）
+
+图片管理主对话框和棋子批量映射的可见槽位名、格式限制、按钮、默认态、计数和映射说明使用zh/en ARB。控制器具体错误字符串仍为中文，待以错误码改造后处理；象棋字形占位有意保持字形而非英文象棋图标。
+
+专项`flutter test --concurrency=1 test/widgets/image_dialog_localization_test.dart test/widgets/piece_skin_images_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`632通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-89.log`）；`flutter analyze --no-pub`/`git diff --check`通过。`flutter run -d macos --no-pub`Build/Sync成功并启动PID29579；已终止该验证实例，只有原PID50598存活，未做人工视觉操作。下一步提交后继续其他棋盘/棋子皮肤、音频等子dialog和其余路由文案。
+
 ## M4-88 / F27 标记/动画/声音/选择设置本地化（门槛通过，待提交）
 
 棋子图片入口、内置皮肤名、落点样式、动画档位、五类本机声音、选子样式及着法朗读设置迁入ARB。音频管理和图片管理等子dialog文案还在中文，F27未完成。

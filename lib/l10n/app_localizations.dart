@@ -667,6 +667,216 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'使用本机已安装的中文系统语音，独立于走棋音效；无离线中文语音时不朗读'**
   String get speakMovesHelp;
+
+  /// No description provided for @editPieceSkinImages.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑{skin}图片'**
+  String editPieceSkinImages(String skin);
+
+  /// No description provided for @pieceImagesHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'仅替换选中的棋子，PNG/JPEG、512 KiB以内、最长边1024像素；文件保存在本机。'**
+  String get pieceImagesHelp;
+
+  /// No description provided for @batchImportImages.
+  ///
+  /// In zh, this message translates to:
+  /// **'批量导入图片'**
+  String get batchImportImages;
+
+  /// No description provided for @importedPieceImages.
+  ///
+  /// In zh, this message translates to:
+  /// **'已导入{count}张棋子图片。'**
+  String importedPieceImages(int count);
+
+  /// No description provided for @editBoardSkinImages.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑{skin}棋盘图片'**
+  String editBoardSkinImages(String skin);
+
+  /// No description provided for @boardImagesHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'仅保存在本机；支持 PNG/JPEG，单张不超过512 KiB。'**
+  String get boardImagesHelp;
+
+  /// No description provided for @boardImageBackground.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘背景'**
+  String get boardImageBackground;
+
+  /// No description provided for @boardImageStartMarker.
+  ///
+  /// In zh, this message translates to:
+  /// **'起点标记'**
+  String get boardImageStartMarker;
+
+  /// No description provided for @boardImageLandingMarker.
+  ///
+  /// In zh, this message translates to:
+  /// **'落点标记'**
+  String get boardImageLandingMarker;
+
+  /// No description provided for @boardImageSelectionFrame.
+  ///
+  /// In zh, this message translates to:
+  /// **'选中框'**
+  String get boardImageSelectionFrame;
+
+  /// No description provided for @defaultBoardBackground.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用棋盘配色默认背景'**
+  String get defaultBoardBackground;
+
+  /// No description provided for @defaultBoardImageSlot.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用默认{slot}'**
+  String defaultBoardImageSlot(String slot);
+
+  /// No description provided for @selectImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'选择图片'**
+  String get selectImage;
+
+  /// No description provided for @replaceBoardImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'替换图片'**
+  String get replaceBoardImage;
+
+  /// No description provided for @replaceImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'替换'**
+  String get replaceImage;
+
+  /// No description provided for @resetImage.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复默认'**
+  String get resetImage;
+
+  /// No description provided for @pieceImageRedRook.
+  ///
+  /// In zh, this message translates to:
+  /// **'红车'**
+  String get pieceImageRedRook;
+
+  /// No description provided for @pieceImageRedHorse.
+  ///
+  /// In zh, this message translates to:
+  /// **'红马'**
+  String get pieceImageRedHorse;
+
+  /// No description provided for @pieceImageRedElephant.
+  ///
+  /// In zh, this message translates to:
+  /// **'红相'**
+  String get pieceImageRedElephant;
+
+  /// No description provided for @pieceImageRedAdvisor.
+  ///
+  /// In zh, this message translates to:
+  /// **'红仕'**
+  String get pieceImageRedAdvisor;
+
+  /// No description provided for @pieceImageRedGeneral.
+  ///
+  /// In zh, this message translates to:
+  /// **'红帅'**
+  String get pieceImageRedGeneral;
+
+  /// No description provided for @pieceImageRedCannon.
+  ///
+  /// In zh, this message translates to:
+  /// **'红炮'**
+  String get pieceImageRedCannon;
+
+  /// No description provided for @pieceImageRedPawn.
+  ///
+  /// In zh, this message translates to:
+  /// **'红兵'**
+  String get pieceImageRedPawn;
+
+  /// No description provided for @pieceImageBlackRook.
+  ///
+  /// In zh, this message translates to:
+  /// **'黑车'**
+  String get pieceImageBlackRook;
+
+  /// No description provided for @pieceImageBlackHorse.
+  ///
+  /// In zh, this message translates to:
+  /// **'黑马'**
+  String get pieceImageBlackHorse;
+
+  /// No description provided for @pieceImageBlackElephant.
+  ///
+  /// In zh, this message translates to:
+  /// **'黑象'**
+  String get pieceImageBlackElephant;
+
+  /// No description provided for @pieceImageBlackAdvisor.
+  ///
+  /// In zh, this message translates to:
+  /// **'黑士'**
+  String get pieceImageBlackAdvisor;
+
+  /// No description provided for @pieceImageBlackGeneral.
+  ///
+  /// In zh, this message translates to:
+  /// **'黑将'**
+  String get pieceImageBlackGeneral;
+
+  /// No description provided for @pieceImageBlackCannon.
+  ///
+  /// In zh, this message translates to:
+  /// **'黑炮'**
+  String get pieceImageBlackCannon;
+
+  /// No description provided for @pieceImageBlackPawn.
+  ///
+  /// In zh, this message translates to:
+  /// **'黑卒'**
+  String get pieceImageBlackPawn;
+
+  /// No description provided for @batchImportPieceImagesTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'批量导入棋子图片'**
+  String get batchImportPieceImagesTitle;
+
+  /// No description provided for @batchImportPieceImagesHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'已选{count}张。为每张图片选择目标棋子；未映射或重复槽位不能导入。'**
+  String batchImportPieceImagesHelp(int count);
+
+  /// No description provided for @chooseTargetPiece.
+  ///
+  /// In zh, this message translates to:
+  /// **'请选择目标棋子'**
+  String get chooseTargetPiece;
+
+  /// No description provided for @cancel.
+  ///
+  /// In zh, this message translates to:
+  /// **'取消'**
+  String get cancel;
+
+  /// No description provided for @importImages.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入图片'**
+  String get importImages;
 }
 
 class _AppLocalizationsDelegate

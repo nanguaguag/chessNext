@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import '../../l10n/app_localizations.dart';
 import '../../application/piece_image_library_controller.dart';
 import '../../ports/piece_images.dart';
+import 'image_slot_localizations.dart';
 
 class PieceSkinBatchImportDialog extends StatefulWidget {
   const PieceSkinBatchImportDialog({
@@ -58,96 +60,101 @@ class _PieceSkinBatchImportDialogState
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: widget.library,
-    builder: (context, _) => AlertDialog(
-      title: const Text('批量导入棋子图片'),
-      content: SizedBox(
-        width: 560,
-        height: 520,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('已选${widget.images.length}张。为每张图片选择目标棋子；未映射或重复槽位不能导入。'),
-            const SizedBox(height: 8),
-            if (widget.library.batchBusy) const LinearProgressIndicator(),
-            if (widget.library.error != null)
-              Padding(
-                padding: const EdgeInsets.only(bottom: 8),
-                child: Text(
-                  widget.library.error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+    builder: (context, _) {
+      final l10n = AppLocalizations.of(context);
+      return AlertDialog(
+        title: Text(l10n.batchImportPieceImagesTitle),
+        content: SizedBox(
+          width: 560,
+          height: 520,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.batchImportPieceImagesHelp(widget.images.length)),
+              const SizedBox(height: 8),
+              if (widget.library.batchBusy) const LinearProgressIndicator(),
+              if (widget.library.error != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(
+                    widget.library.error!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
+                  ),
+                ),
+              Expanded(
+                child: ListView.builder(
+                  itemCount: widget.images.length,
+                  itemBuilder: (context, index) {
+                    final file = widget.images[index];
+                    return Card(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8),
+                        child: Row(
+                          children: [
+                            SizedBox(
+                              width: 44,
+                              height: 44,
+                              child: Image.memory(
+                                file.image.bytes,
+                                fit: BoxFit.contain,
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: DropdownButtonFormField<PieceImageSlot?>(
+                                key: ValueKey('batch-piece-slot-$index'),
+                                initialValue: slots[index],
+                                isExpanded: true,
+                                decoration: InputDecoration(
+                                  labelText: file.name,
+                                  isDense: true,
+                                ),
+                                items: [
+                                  DropdownMenuItem<PieceImageSlot?>(
+                                    value: null,
+                                    child: Text(l10n.chooseTargetPiece),
+                                  ),
+                                  for (final slot in PieceImageSlot.values)
+                                    DropdownMenuItem<PieceImageSlot?>(
+                                      value: slot,
+                                      child: Text(slot.localizedLabel(l10n)),
+                                    ),
+                                ],
+                                onChanged: widget.library.batchBusy
+                                    ? null
+                                    : (slot) =>
+                                          setState(() => slots[index] = slot),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
                 ),
               ),
-            Expanded(
-              child: ListView.builder(
-                itemCount: widget.images.length,
-                itemBuilder: (context, index) {
-                  final file = widget.images[index];
-                  return Card(
-                    child: Padding(
-                      padding: const EdgeInsets.all(8),
-                      child: Row(
-                        children: [
-                          SizedBox(
-                            width: 44,
-                            height: 44,
-                            child: Image.memory(
-                              file.image.bytes,
-                              fit: BoxFit.contain,
-                            ),
-                          ),
-                          const SizedBox(width: 8),
-                          Expanded(
-                            child: DropdownButtonFormField<PieceImageSlot?>(
-                              key: ValueKey('batch-piece-slot-$index'),
-                              initialValue: slots[index],
-                              isExpanded: true,
-                              decoration: InputDecoration(
-                                labelText: file.name,
-                                isDense: true,
-                              ),
-                              items: [
-                                const DropdownMenuItem<PieceImageSlot?>(
-                                  value: null,
-                                  child: Text('请选择目标棋子'),
-                                ),
-                                for (final slot in PieceImageSlot.values)
-                                  DropdownMenuItem<PieceImageSlot?>(
-                                    value: slot,
-                                    child: Text(slot.label),
-                                  ),
-                              ],
-                              onChanged: widget.library.batchBusy
-                                  ? null
-                                  : (slot) =>
-                                        setState(() => slots[index] = slot),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: widget.library.batchBusy
-              ? null
-              : () => Navigator.pop(context),
-          child: const Text('取消'),
-        ),
-        FilledButton.icon(
-          key: const ValueKey('apply-piece-image-batch'),
-          onPressed: _validMapping && !widget.library.batchBusy
-              ? _import
-              : null,
-          icon: const Icon(Icons.file_download_done),
-          label: const Text('导入图片'),
-        ),
-      ],
-    ),
+        actions: [
+          TextButton(
+            onPressed: widget.library.batchBusy
+                ? null
+                : () => Navigator.pop(context),
+            child: Text(l10n.cancel),
+          ),
+          FilledButton.icon(
+            key: const ValueKey('apply-piece-image-batch'),
+            onPressed: _validMapping && !widget.library.batchBusy
+                ? _import
+                : null,
+            icon: const Icon(Icons.file_download_done),
+            label: Text(l10n.importImages),
+          ),
+        ],
+      );
+    },
   );
 }

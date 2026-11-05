@@ -11,6 +11,8 @@ Environment=SKIN_CATALOG_ROOT=/srv/chessnext/skin-catalog/public
 # Environment=SKIN_BOARD_CATALOG_ROOT=/srv/chessnext/board-skin-catalog/public
 # Enable only with an operator-supplied, licensed book data set.
 # Environment=CHESSNEXT_BOOK_ROOT=/srv/chessnext/book/public
+# Public version metadata only; release notes are supplied by the operator.
+# Environment=CHESSNEXT_RELEASE_ROOT=/srv/chessnext/releases/public
 Environment=SKIN_CATALOG_ADDRESS=127.0.0.1
 Environment=SKIN_CATALOG_PORT=8087
 ExecStart=/usr/local/bin/chessnext-skin-catalog

@@ -787,3 +787,9 @@ E71追加：难度Home/End操作验证0/20端点；自定义步时从1秒经0.5�
 应用设置新增本机AboutDialog：应用名chessNext、当前pubspec版本0.1.0+1、离线/服务状态说明及Flutter依赖许可导航。未配更新/反馈服务明确说明无后台请求/设备信息外发。在线检查更新/日志/反馈/版权流程仍待实现，F31不关闭。
 
 专项`flutter test --concurrency=1 test/widgets/about_support_test.dart --reporter expanded`1/1；根串行`flutter test --concurrency=1 --reporter compact`575通过/5跳过；`flutter analyze --no-pub`无问题，`git diff --check`通过。复用PID50598/runner50125，VM attach同步1201ms、热重启1061ms；脱离后进程仍唯一。Mac锁屏，视觉验收not run。测试首次因应用名同时显示于对话框标题/副标题而调整为非唯一finder；再根据`MaterialLocalizations.viewLicensesButtonLabel`读取许可按钮标签，避免固定语言假设。浏览许可未改变PreferencesRepository。
+
+## M4-60 / F31 / ADR-092 自建只读版本清单服务端
+
+新增operator-only `ReleaseManifest`从可选`CHESSNEXT_RELEASE_ROOT/releases.json`加载schema1 newest-first发布清单；最多100条、单文件1MiB、SemVer/正build/UTC时间/4000字符说明，拒绝未知字段、控制字符、重复身份、乱序及畸形数据。`GET /v1/releases/latest`提供当前条目和历史，未配置时404；POST不允许。仅发公共元数据、不接收用户/设备标识、不分发binary。
+
+专项`flutter test --concurrency=1 test/server/release_manifest_test.dart test/server/skin_catalog_server_test.dart --reporter expanded`10/10；服务`dart analyze server/skin_catalog/lib server/skin_catalog/bin`通过；`dart compile exe server/skin_catalog/bin/skin_catalog_server.dart -o /tmp/chessnext-release-server`成功；根`flutter analyze --no-pub`通过；根`flutter test --concurrency=1 --reporter compact`579通过/5跳过；`git diff --check`通过。服务端无Flutter/UI/原生代码变化，不需Mac重启；进程检查仅见既有PID50598/runner50125，无额外chessNext。

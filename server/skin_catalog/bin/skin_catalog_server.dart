@@ -36,10 +36,15 @@ Future<void> main(List<String> args) async {
   final bookDatabase = bookRoot == null || bookRoot.trim().isEmpty
       ? null
       : await BookDatabase.load(Directory(bookRoot));
+  final releaseRoot = Platform.environment['CHESSNEXT_RELEASE_ROOT'];
+  final releaseManifest = releaseRoot == null || releaseRoot.trim().isEmpty
+      ? null
+      : await ReleaseManifest.load(Directory(releaseRoot));
   final server = await SkinCatalogHttpServer.bind(
     store: store,
     boardStore: boardStore,
     bookDatabase: bookDatabase,
+    releaseManifest: releaseManifest,
     address: address,
     port: port,
   );
@@ -51,6 +56,11 @@ Future<void> main(List<String> args) async {
   if (bookDatabase != null) {
     stdout.writeln(
       'Loaded ${bookDatabase.entryCount} operator-supplied book positions.',
+    );
+  }
+  if (releaseManifest != null) {
+    stdout.writeln(
+      'Loaded ${releaseManifest.releases.length} operator-supplied releases.',
     );
   }
   final stopped = Completer<void>();

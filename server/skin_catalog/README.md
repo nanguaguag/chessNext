@@ -70,6 +70,10 @@ schema; clients validate them again before import. The piece catalog uses
 copy new package files first, atomically replace `catalog.json`, then restart
 the process. Keep old package files until the prior catalog has been retired.
 
+To serve operator-published version and release notes, also set
+`CHESSNEXT_RELEASE_ROOT=./release-data`. See the Release metadata section for
+the optional `releases.json` format and endpoint. No update package is served.
+
 ## Linux VM deployment
 
 Build the executable on the same OS and CPU architecture as the target:
@@ -116,6 +120,21 @@ pagination, manifest and package sizes. Package responses use a content hash as
 an ETag and immutable cache key. There are no mutations, tokens, or user
 profiles. API response schema is versioned independently from the downloadable
 application skin ZIP schema.
+
+### Release metadata
+
+Set `CHESSNEXT_RELEASE_ROOT` to a directory containing `releases.json` to enable
+`GET /v1/releases/latest`. The schema is 1 and contains a newest-first `releases`
+array with semantic version, positive build number, UTC publication timestamp,
+and plain-text notes. The server rejects unknown keys, duplicate version/build
+identities, unsorted dates, more than 100 entries, and notes over 4,000
+characters. [`releases.example.json`](releases.example.json) is an illustrative
+template; replace it with release details you publish.
+
+This endpoint serves public metadata only. It never distributes or installs
+binaries and contains no machine identifiers. Clients should call it only when
+the user explicitly asks to check. An empty/unconfigured root leaves it
+disabled (404). Replace the file atomically and restart to publish changes.
 
 ## Optional operator supplied book data
 

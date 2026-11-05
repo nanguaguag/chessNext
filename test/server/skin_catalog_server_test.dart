@@ -14,6 +14,7 @@ final packageBytes = <String, List<int>>{
 void main() {
   late Directory root;
   late Directory boardRoot;
+  late Directory releaseRoot;
   late SkinCatalogHttpServer server;
   late HttpClient client;
 
@@ -21,6 +22,9 @@ void main() {
     root = await Directory.systemTemp.createTemp('skin-catalog-server-');
     boardRoot = await Directory.systemTemp.createTemp(
       'board-skin-catalog-server-',
+    );
+    releaseRoot = await Directory.systemTemp.createTemp(
+      'release-catalog-server-',
     );
     final packages = Directory('${root.path}/packages');
     await packages.create();
@@ -54,9 +58,29 @@ void main() {
       manifestName: 'board-catalog.json',
       packageDirectoryName: 'board-packages',
     );
+    await File('${releaseRoot.path}/releases.json').writeAsString(
+      jsonEncode({
+        'schema': 1,
+        'releases': [
+          {
+            'version': '0.2.0',
+            'build': 2,
+            'publishedAt': '2026-11-05T00:00:00Z',
+            'notes': 'Improved board controls.',
+          },
+          {
+            'version': '0.1.0',
+            'build': 1,
+            'publishedAt': '2026-10-05T00:00:00Z',
+            'notes': 'First release.',
+          },
+        ],
+      }),
+    );
     server = await SkinCatalogHttpServer.bind(
       store: store,
       boardStore: boardStore,
+      releaseManifest: await ReleaseManifest.load(releaseRoot),
       port: 0,
     );
     client = HttpClient();
@@ -67,6 +91,45 @@ void main() {
     await server.close();
     await root.delete(recursive: true);
     await boardRoot.delete(recursive: true);
+    await releaseRoot.delete(recursive: true);
+  });
+
+  test(
+    'serves operator supplied version and newest-first release notes',
+    () async {
+      final result = await _getJson(server, client, '/v1/releases/latest');
+      expect(result['schema'], 1);
+      expect(result['current'], {
+        'version': '0.2.0',
+        'build': 2,
+        'publishedAt': '2026-11-05T00:00:00.000Z',
+        'notes': 'Improved board controls.',
+      });
+      expect((result['history'] as List).length, 2);
+      expect((result['history'] as List).first['version'], '0.2.0');
+    },
+  );
+
+  test('release endpoint is optional and read-only', () async {
+    final request = await client.postUrl(
+      Uri.parse('${server.baseUrl}/v1/releases/latest'),
+    );
+    request.write('{}');
+    final response = await request.close();
+    expect(response.statusCode, HttpStatus.methodNotAllowed);
+    await response.drain<void>();
+
+    final disabled = await SkinCatalogHttpServer.bind(
+      store: await SkinCatalogStore.load(root),
+      port: 0,
+    );
+    final unavailable = await client.getUrl(
+      Uri.parse('${disabled.baseUrl}/v1/releases/latest'),
+    );
+    final unavailableResponse = await unavailable.close();
+    expect(unavailableResponse.statusCode, HttpStatus.notFound);
+    await unavailableResponse.drain<void>();
+    await disabled.close();
   });
 
   test(

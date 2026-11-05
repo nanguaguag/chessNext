@@ -11,9 +11,118 @@ const _maxPackageBytes = 8 * 1024 * 1024;
 const _maxBookManifestBytes = 128 * 1024 * 1024;
 const _maxBookRequestBytes = 32 * 1024;
 const _maxBookEntries = 2000000;
+const _maxReleaseManifestBytes = 1024 * 1024;
+const _maxReleaseEntries = 100;
 final _idPattern = RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$');
 final _sha256Pattern = RegExp(r'^[0-9a-f]{64}$');
 final _xiangqiMovePattern = RegExp(r'^[a-i][0-9][a-i][0-9]$');
+final _releaseVersionPattern = RegExp(r'^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$');
+
+final class ReleaseEntry {
+  const ReleaseEntry({
+    required this.version,
+    required this.build,
+    required this.publishedAt,
+    required this.notes,
+  });
+
+  final String version;
+  final int build;
+  final DateTime publishedAt;
+  final String notes;
+
+  Map<String, Object> toJson() => {
+    'version': version,
+    'build': build,
+    'publishedAt': publishedAt.toUtc().toIso8601String(),
+    'notes': notes,
+  };
+
+  factory ReleaseEntry.fromJson(Object? value) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'version',
+          'build',
+          'publishedAt',
+          'notes',
+        }).isNotEmpty ||
+        value['version'] is! String ||
+        !_releaseVersionPattern.hasMatch(value['version'] as String) ||
+        value['build'] is! int ||
+        (value['build'] as int) < 1 ||
+        value['publishedAt'] is! String ||
+        value['notes'] is! String ||
+        (value['notes'] as String).length > 4000 ||
+        (value['notes'] as String).contains(
+          RegExp(r'[\u0000-\u0008\u000b\u000c\u000e-\u001f]'),
+        )) {
+      throw const FormatException('Invalid release entry');
+    }
+    final publishedAt = DateTime.tryParse(value['publishedAt'] as String);
+    if (publishedAt == null || !publishedAt.isUtc) {
+      throw const FormatException('Invalid release date');
+    }
+    return ReleaseEntry(
+      version: value['version'] as String,
+      build: value['build'] as int,
+      publishedAt: publishedAt,
+      notes: value['notes'] as String,
+    );
+  }
+}
+
+/// Operator-supplied read-only release notes and version metadata.
+final class ReleaseManifest {
+  ReleaseManifest._(this.releases);
+
+  final List<ReleaseEntry> releases;
+  ReleaseEntry get current => releases.first;
+
+  static Future<ReleaseManifest> load(
+    Directory root, {
+    String fileName = 'releases.json',
+  }) async {
+    if (await FileSystemEntity.type(root.path, followLinks: false) !=
+            FileSystemEntityType.directory ||
+        !RegExp(r'^[a-z][a-z0-9_-]{0,63}\.json$').hasMatch(fileName)) {
+      throw const FormatException('Invalid release data root');
+    }
+    final file = File('${root.path}/$fileName');
+    if (await FileSystemEntity.type(file.path, followLinks: false) !=
+            FileSystemEntityType.file ||
+        await file.length() > _maxReleaseManifestBytes) {
+      throw const FormatException('Release manifest unavailable or too large');
+    }
+    final decoded = jsonDecode(await file.readAsString());
+    if (decoded is! Map<String, dynamic> ||
+        decoded.keys.toSet().difference({'schema', 'releases'}).isNotEmpty ||
+        decoded['schema'] != 1 ||
+        decoded['releases'] is! List ||
+        (decoded['releases'] as List).isEmpty ||
+        (decoded['releases'] as List).length > _maxReleaseEntries) {
+      throw const FormatException('Invalid release manifest');
+    }
+    final releases = (decoded['releases'] as List)
+        .map(ReleaseEntry.fromJson)
+        .toList(growable: false);
+    final identities = releases.map((item) => '${item.version}+${item.build}');
+    if (identities.toSet().length != releases.length) {
+      throw const FormatException('Duplicate release identity');
+    }
+    for (var i = 1; i < releases.length; i++) {
+      if (!releases[i - 1].publishedAt.isAfter(releases[i].publishedAt)) {
+        throw const FormatException('Release history must be newest first');
+      }
+    }
+    return ReleaseManifest._(List.unmodifiable(releases));
+  }
+
+  Map<String, Object> toJson() => {
+    'schema': 1,
+    'current': current.toJson(),
+    'history': releases.map((release) => release.toJson()).toList(),
+  };
+}
 
 enum BookKind { opening, endgame }
 
@@ -461,12 +570,14 @@ final class SkinCatalogHttpServer {
     this._store,
     this._boardStore,
     this._bookDatabase,
+    this._releaseManifest,
   );
 
   final HttpServer _server;
   final SkinCatalogStore _store;
   final SkinCatalogStore? _boardStore;
   final BookDatabase? _bookDatabase;
+  final ReleaseManifest? _releaseManifest;
   StreamSubscription<HttpRequest>? _subscription;
 
   String get baseUrl => 'http://${_server.address.address}:${_server.port}';
@@ -475,6 +586,7 @@ final class SkinCatalogHttpServer {
     required SkinCatalogStore store,
     SkinCatalogStore? boardStore,
     BookDatabase? bookDatabase,
+    ReleaseManifest? releaseManifest,
     InternetAddress? address,
     int port = 8087,
   }) async {
@@ -488,6 +600,7 @@ final class SkinCatalogHttpServer {
       store,
       boardStore,
       bookDatabase,
+      releaseManifest,
     );
     service._subscription = server.listen(service._handle);
     return service;
@@ -557,6 +670,8 @@ final class SkinCatalogHttpServer {
     final path = request.uri.path;
     if (path == '/healthz') {
       await _json(response, HttpStatus.ok, {'status': 'ok'});
+    } else if (path == '/v1/releases/latest' && _releaseManifest != null) {
+      await _json(response, HttpStatus.ok, _releaseManifest.toJson());
     } else if (path == '/v1/catalog') {
       await _list(request, _store);
     } else if (path.startsWith('/v1/catalog/')) {

@@ -807,3 +807,9 @@ App偏好新增可选发布服务根地址，默认空；设置输入仅允许HT
 ## E77 / F21,B24 余下边距端点审计
 
 右字段输入并验证max500；上字段min0；下字段输入550后显示549.96，stepper加至550且按钮禁用（V）。按默认值复原并丢弃空白草稿，设置状态复核无变化。与E76合并后覆盖每字段至少一个端点，但多个端点还属于ARIA声明而非各自实操；完整约束/公式仍U。详REFERENCE_EVIDENCE E77。
+
+## M4-62 / F21,B24 / ADR-094 校准点可访问调整
+
+本机校准把手支持焦点方向键，各自沿水平/垂直每次调整1个百分点；Semantics暴露当前边距、操作提示和四个方向的读屏自定义动作。拖动总位移从pointer-down坐标计算，避免pan识别阈值造成首段位移损失；始终从pointer-down几何计算，不累积中间精度误差。仍遵循项目BoardSkinGeometry范围/最小跨度，不代表参考站键盘/读屏语义或坐标单位。
+
+专项`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`4/4；根串行`flutter test --concurrency=1 --reporter compact`586通过/5跳过；`flutter analyze --no-pub`与`git diff --check`通过。专项初次发现Pan在slop后首个delta遗漏指针起始距离（实际仅移动剩余位移），改用Listener pointer-down捕获后测试严格比较总位移。macOS复用PID50598/runner50125 `flutter attach --debug-uri=http://127.0.0.1:61579/4bLZ1MhsyEk=/`同步1648ms、热重启2103ms，Ctrl-C脱离后PID50598唯一存活。全量根测试只一个本项目flutter_tester；5跳过仍为未配置官方Pikafish/NNUE。屏幕锁定，视觉人工not run。

@@ -913,3 +913,10 @@ macOS复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:6
 ## M4-72 / F21,B24 / ADR-104 当前棋盘皮肤删除失败原子性
 
 删除当前用户皮肤原先先写入内置皮肤偏好，再保存定义列表；若列表写入失败，方法返回false但活动皮肤已改变。现在先提交清单变更，成功后才更新运行时目录、回退当前选择和清理图片。失败注入测试验证false时所选profile ID、完整定义及图片均保留。定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`8/8。根`flutter test --concurrency=1 --reporter expanded`602通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-72.log`；五项需官方Pikafish/NNUE。`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,188ms、热重启1,060ms，脱离后原App存活且无测试/attach残留。此为项目失败策略P；源站实际失败/部分提交与重载仍U。
+
+
+## M4-73 / F21,B24 / ADR-105 棋盘皮肤保存与应用分离
+
+E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前设置保持默认，选择器出现“我的棋盘”；稍后单独选择“使用这套”才应用；编辑已存皮肤改值再次保存也不自动应用。站点仅在当前会话重新进入可读回几何，reload/重启U。
+
+本机`BoardSkinLibraryController.create`增加`apply`意图；皮肤库新增“仅保存”与“新建并使用”，两者从当前皮肤复制几何及图层并保存独立定义。仅保存不改变偏好选择，已存未选中项可由列表独立使用；保留原创建即使用流程兼容。Widget测试验证仅保存新增profile且当前ID和BoardDisplayScope仍为默认内置棋盘；原“新建并使用”测试继续验证新ID被选中。定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`11/11。首轮根`flutter test --concurrency=1 --reporter expanded`603项中遇到一项既有`engine_candidates_test.dart`并发抢占用例30秒间歇超时（602完成、1失败）；该用例单独重跑1/1通过，完整根测试复跑`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-73-final.log`。根`flutter analyze --no-pub`通过。macOS复用PID50598/runner50125，attach同步984ms、热重启2,045ms；脱离后原App存活，测试/attach无残留。源站跨reload/重启仍U；项目ZIP导入另有显式导入并使用协议。

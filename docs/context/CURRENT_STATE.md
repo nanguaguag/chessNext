@@ -1,5 +1,16 @@
 # 当前状态
 
+## 最新实现 M4-73 / F21,B24 / ADR-105（验证完成，待提交）
+
+依据E67已验证的“保存不应用，后续使用单独切换”，本机棋盘皮肤库新增“仅保存”，保留原“新建并使用”并能从列表独立“使用”。两者都复制当前几何与图层；仅保存时当前选择不变。定向11/11。首轮根测试里既有`engine_candidates_test.dart`并发抢占用例触发30秒间歇超时；单测重跑1/1通过，根全量复跑`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-73-final.log`）。`flutter analyze --no-pub`、diff-check通过。
+
+macOS复用PID50598/runner50125，attach同步984ms、热重启2,045ms，脱离后原App仍在；无额外App/tester/attach残留，未使用`flutter run`。锁屏视觉验收not run。代码、ADR-105与矩阵/追踪/上下文待单独中文feature commit；继续B24跨进程file-backed皮肤事务、F27完整语言资源及其它登录外缺口，全站仍不完整。
+
+## 前序增量已提交
+
+M4-72 `3c82245`删除失败原子性；M4-71 `45dcb69`保留格点拖动预览；M4-70 `283d01f`串行持久化高频几何。
+
+
 ## 最新实现 M4-72 / F21,B24 / ADR-104（已提交 6bee7ed）
 
 删除当前用户棋盘皮肤原来先将偏好切到内置基底再写定义清单，清单写入失败时造成“删除失败但已切换”。现在清单保存成功后才更新运行列表、回退当前选择和清理皮肤图片；失败保留当前ID/定义/图像。故障注入专项8/8；根`flutter test --concurrency=1 --reporter expanded`602通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-72.log`，5跳过需官方Pikafish/NNUE；`flutter analyze --no-pub`、diff-check通过。

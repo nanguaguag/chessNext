@@ -79,7 +79,7 @@ final class BoardSkinLibraryController extends ChangeNotifier {
     await preferences.selectBoardSkin(profile.baseSkin, profile.id);
   }
 
-  Future<bool> create({required String name}) async {
+  Future<bool> create({required String name, bool apply = true}) async {
     final normalized = name.trim();
     if (loading ||
         profiles.length >= 64 ||
@@ -117,7 +117,7 @@ final class BoardSkinLibraryController extends ChangeNotifier {
       ];
       await repository.save(next);
       profiles = List.unmodifiable(next);
-      await preferences.selectBoardSkin(baseSkin, id);
+      if (apply) await preferences.selectBoardSkin(baseSkin, id);
       return true;
     } catch (_) {
       try {

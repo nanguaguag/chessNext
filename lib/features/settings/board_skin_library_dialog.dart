@@ -328,10 +328,10 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
     builder: (_) => _BoardSkinNameDialog(title: title, initial: initial),
   );
 
-  Future<void> _create(BuildContext context) async {
+  Future<void> _create(BuildContext context, {required bool apply}) async {
     final name = await _name(context, title: '新建棋盘皮肤');
     if (name == null || !context.mounted) return;
-    final saved = await library.create(name: name);
+    final saved = await library.create(name: name, apply: apply);
     if (!saved && context.mounted && library.error != null) {
       ScaffoldMessenger.of(
         context,
@@ -517,25 +517,40 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
                         ),
                 ),
               const Divider(),
-              Row(
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: Text(
-                      '我的棋盘',
-                      style: Theme.of(context).textTheme.titleSmall,
+                  Text('我的棋盘', style: Theme.of(context).textTheme.titleSmall),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Wrap(
+                      alignment: WrapAlignment.end,
+                      spacing: 4,
+                      children: [
+                        TextButton.icon(
+                          key: const ValueKey('save-board-skin-without-use'),
+                          onPressed: library.loading
+                              ? null
+                              : () => _create(context, apply: false),
+                          icon: const Icon(Icons.save_outlined),
+                          label: const Text('仅保存'),
+                        ),
+                        FilledButton.tonalIcon(
+                          onPressed: library.loading
+                              ? null
+                              : () => _create(context, apply: true),
+                          icon: const Icon(Icons.add),
+                          label: const Text('新建并使用'),
+                        ),
+                        IconButton(
+                          tooltip: '导入棋盘皮肤包',
+                          onPressed: picker == null || library.loading
+                              ? null
+                              : () => _import(context),
+                          icon: const Icon(Icons.archive_outlined),
+                        ),
+                      ],
                     ),
-                  ),
-                  FilledButton.tonalIcon(
-                    onPressed: library.loading ? null : () => _create(context),
-                    icon: const Icon(Icons.add),
-                    label: const Text('新建并使用'),
-                  ),
-                  IconButton(
-                    tooltip: '导入棋盘皮肤包',
-                    onPressed: picker == null || library.loading
-                        ? null
-                        : () => _import(context),
-                    icon: const Icon(Icons.archive_outlined),
                   ),
                 ],
               ),

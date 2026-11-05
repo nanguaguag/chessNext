@@ -1144,3 +1144,13 @@ M4-72代码、测试与ADR/矩阵/追踪/上下文待单独commit。全站登录
 
 
 M4-72于`6bee7ed fix(settings): 保持棋盘删除失败状态一致`单独提交；随后继续B24事务审计。
+
+
+## 2026-11-05 / M4-73 / F21,B24 / ADR-105 保存棋盘皮肤但不应用
+
+参考E67已确认两个站点动作的实际区别：保存后当前皮肤仍默认，列表出现我的棋盘；需后续点“使用这套”才应用。本机新增“仅保存”和“新建并使用”分离；controller create增加apply参数。仅保存仍复制当前几何/图片、写入定义并保留当前选择；未选定义从列表可独立使用。新增UI测试。
+
+定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`最终11/11；第一次新测因MemoryPreferencesRepository从未持久化时value为空造成断言空安全失败，修正断言考虑应用默认值后最终通过。根/analyze/macOS门槛待跑。同步ADR-105、决定和追踪矩阵。站点reload/重启仍U。
+
+
+M4-73最终根门槛：首次全量出现`engine_candidates_test.dart`并发抢占既有用例30秒timeout；独立`flutter test --concurrency=1 test/application/engine_candidates_test.dart --plain-name 'analysis, AI and batch review preempt the same candidate engine' --reporter expanded`1/1通过。全量复跑`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-73-final.log`；analyze无问题。macOS复用PID50598 attach同步984ms、热重启2,045ms，脱离后仍存活；测试串行仅一个tester，无attach/tester残留或新App。M4-73及ADR-105等文档等候单独commit。

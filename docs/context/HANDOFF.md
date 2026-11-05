@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-73 / F21,B24 / ADR-105 棋盘皮肤保存与应用分离（验证完成，待提交）
+
+E67验证源站新建页“保存”后仍留在编辑器，当前设置仍是默认棋盘；列表出现“我的棋盘”，之后单独点“使用这套”才切换。已存皮肤重新编辑并保存也不自动应用。项目原来只有“新建并使用”，现controller create显式接收apply；棋盘库有“仅保存”和“新建并使用”，未选定义可从列表独立“使用”。复制格网/几何与图片、偏好选择/失败边界保留原逻辑。跨reload/重启持久性仍U。
+
+定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`11/11。首轮根全量有一项既有`engine_candidates_test.dart`测试超时；该用例单测重跑1/1，随后完整根`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，最终日志`/tmp/chessnext-root-test-m4-73-final.log`；五项因缺官方Pikafish/NNUE跳过。`flutter analyze --no-pub`及`git diff --check`通过。macOS复用PID50598/runner50125，VM service `61579/4bLZ1MhsyEk=`同步984ms、热重启2,045ms，Ctrl-C脱离后原App仍活。全量测试与attach退出无残留、无新GUI App。
+
+此轮首次新增Widget test因默认偏好未落盘时`MemoryPreferencesRepository.value`为空而断言抛空安全异常；已改断言按应用默认值核验后定向11/11。无业务失败残留。代码、测试、ADR-105及研究/上下文现待独立中文feature commit。提交后继续B24真实文件仓储重载/图片与定义一致性，以及F27所有语言资源和矩阵其它登录外缺口，不停止于单个增量。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-72 / F21,B24 / ADR-104 当前棋盘皮肤删除失败一致性（已提交 6bee7ed）
 
 修正`BoardSkinLibraryController.delete`的顺序：之前先切换当前选择到皮肤基底，再尝试写删除后的定义清单；若清单保存失败，调用返回失败但选择已经改变。现先持久化列表移除，成功后才更新运行态列表/回退选择/删除图像。测试用故障仓储使保存失败，验证当前profile ID、定义和图片全部保留。新增ADR-104并更新DECISIONS/矩阵/缺口/待办/TRACEABILITY。项目错误处理P，不推断站点语义；失败后的源站状态及reload仍U。

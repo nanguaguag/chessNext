@@ -208,4 +208,47 @@ void main() {
       BoardSkin.parchment,
     );
   });
+
+  testWidgets('save-only adds a local skin without applying it', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1120, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+    final preferences = MemoryPreferencesRepository();
+    final skins = MemoryBoardSkinLibraryRepository();
+    await tester.pumpWidget(
+      ChessNextApp(
+        preferencesRepository: preferences,
+        boardSkinLibraryRepository: skins,
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.byTooltip('应用设置'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('棋盘显示'));
+    await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('管理棋盘皮肤库'));
+    await tester.tap(find.text('管理棋盘皮肤库'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('save-board-skin-without-use')));
+    await tester.pumpAndSettle();
+    await tester.enterText(find.byType(TextField).last, '仅保存的棋盘');
+    await tester.tap(find.text('保存').last);
+    await tester.pumpAndSettle();
+
+    final profile = (await skins.load()).single;
+    expect(profile.name, '仅保存的棋盘');
+    expect(
+      preferences.value?.selectedBoardSkinId ?? BoardSkin.parchment.name,
+      BoardSkin.parchment.name,
+    );
+    expect(
+      tester
+          .widget<BoardDisplayScope>(find.byType(BoardDisplayScope))
+          .boardSkin,
+      BoardSkin.parchment,
+    );
+  });
 }

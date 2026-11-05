@@ -1109,3 +1109,19 @@ E84已补REFERENCE_EVIDENCE、FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC�
 定向Flutter13/13；根`flutter test --concurrency=1 --reporter expanded`600通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-70.log`；五项需本机未配置的官方Pikafish/NNUE。`flutter analyze --no-pub`、`git diff --check`通过。macOS复用PID50598/runner50125，VM service attach同步1,186ms、热重启1,027ms；脱离后原App存活。根测试串行单tester，测试前后无额外chessNext/残留tester/attach；没有执行`flutter run`。锁屏视觉验收not run。
 
 用户担心多开：根Flutter测试不会打开GUI，重复ChessNext来自macOS `flutter run`校验流程的风险；后续只attach既有App并核对PID。本功能及上下文待commit，下一项继续B24事务审计/修复与登录外全站缺口。
+
+
+## 2026-11-05 / M4-71 / F21,B24 / ADR-103 棋盘格点拖动乐观预览
+
+持续B24复核发现`BoardGeometryEditor.didUpdateWidget`无条件用父级geometry覆盖本地状态。用户拖动产生更新后，自定义皮肤控制器开始异步保存并通知loading；父级仍传旧profile geometry，导致把手视觉状态回跳。改为拖动期间忽略旧父值，新的真实外部geometry且未拖动时正常同步。新增测试模拟父组件每次回调后都用旧persisted几何重建。
+
+专项`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`5/5。根/analyze/macOS门槛待跑；新增ADR-103并更新DECISIONS、矩阵、缺口、待办、追踪。源站完整格点/边距映射仍U。
+
+
+## 2026-11-05 / M4-71 / F21,B24 / ADR-103 拖动预览保留
+
+针对父级持久化loading通知携带旧几何造成拖柄回跳，`didUpdateWidget`改为拖动期间保留乐观本地geometry；静止时收到不同的新值才从父级同步。新增旧props父级强制重建的widget回归测试。
+
+定向`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`5/5；根`flutter test --concurrency=1 --reporter expanded`601通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-71.log`，跳过需官方Pikafish/NNUE）；`flutter analyze --no-pub`与`git diff --check`通过。macOS通过`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`复用既有PID50598，sync1,053.6ms、hot restart1,158ms。Ctrl-C脱离后原App存活；无flutter_tester/attach残留或新增App。未使用`flutter run`，锁屏视觉not run。
+
+本功能代码/测试及ADR-103、决策/差距/计划/追踪/交接待commit。继续B24存取事务和非登录全站差异，不在本增量后停止。

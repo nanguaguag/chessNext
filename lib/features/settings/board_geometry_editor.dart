@@ -38,7 +38,12 @@ class _BoardGeometryEditorState extends State<BoardGeometryEditor> {
   @override
   void didUpdateWidget(covariant BoardGeometryEditor oldWidget) {
     super.didUpdateWidget(oldWidget);
-    _geometry = widget.geometry;
+    // Keep optimistic drag feedback when the parent rebuilds with the last
+    // persisted value. The controller may notify once when a write starts,
+    // before the repository has accepted the new geometry.
+    if (widget.geometry != oldWidget.geometry && _dragOriginPosition == null) {
+      _geometry = widget.geometry;
+    }
   }
 
   void _move(

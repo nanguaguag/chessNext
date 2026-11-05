@@ -903,3 +903,8 @@ M4-67门槛复核（最终）：根`flutter test --concurrency=1 --reporter expa
 测试`test/application/board_skin_library_test.dart`以延迟仓储阻塞首写入，在等待期间连续提交三次几何值，确认所有调用得到成功、仓储最终值及controller状态均为最后一次几何。定向命令`flutter test --concurrency=1 test/application/board_skin_library_test.dart test/widgets/board_geometry_editor_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`13/13。根`flutter test --concurrency=1 --reporter expanded`600通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-70.log`；5跳过依赖未配置的官方Pikafish/NNUE。根`flutter analyze --no-pub`及`git diff --check`通过。
 
 macOS复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1,186ms、热重启1,027ms；Ctrl-C脱离后PID50598仍存活。测试用单并发单tester，结束无残留；未使用`flutter run`或另开GUI。屏幕锁定，人工窗口视觉验收not run。该提交仅修复本机持久化竞态，不证明源站边距/格点映射公式；F21/B24与登录外全站对齐仍开放。
+
+
+## M4-71 / F21,B24 / ADR-103 拖动预览不被旧父值覆盖
+
+`BoardGeometryEditor.didUpdateWidget`原先无条件以父级属性重置本地geometry。自定义皮肤controller保存时先发loading通知，父级可能以旧profiles重新构建，导致拖动预览瞬间回跳。现仅在父级geometry实际改变且不处于拖动时同步。验收测试让`StatefulBuilder`在每次`onChanged`后以同一个旧geometry重建，并确认最终状态与格点屏幕位置继续前进。定向`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`5/5。根`flutter test --concurrency=1 --reporter expanded`601通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-71.log`；五项需官方Pikafish/NNUE。`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598/runner50125，attach同步1,053.6ms、热重启1,158ms，脱离后原App存活且无tester/attach残留。该交互时序修复不改变项目几何映射P，也不验证源站公式。

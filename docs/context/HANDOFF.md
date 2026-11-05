@@ -1,5 +1,17 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-71 / F21,B24 / ADR-103 棋盘格点拖动预览修复（验证完成，待提交）
+
+`BoardGeometryEditor.didUpdateWidget`原先每次父级重建都覆盖本地预览。自定义几何保存启动会先触发loading通知，而profiles仍是旧持久化值，于是拖动把手视觉回跳。现在仅当父级几何实际更新且当前没有拖动时同步；拖动期间保留本地乐观状态。测试由`StatefulBuilder`在每次`onChanged`后以旧几何重建，最终断言几何和把手位置仍前进。新增ADR-103，DECISIONS/矩阵/缺口/待办/TRACEABILITY已同步。映射仍为项目P，源站完整几何/保存应用reload语义仍U。
+
+定向`flutter test --concurrency=1 test/widgets/board_geometry_editor_test.dart --reporter expanded`5/5。根`flutter test --concurrency=1 --reporter expanded`601通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-71.log`（五项需官方Pikafish/NNUE）；`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598/runner50125，VM service `61579/4bLZ1MhsyEk=` attach同步1,053.6ms、热重启1,158ms，Ctrl-C脱离后原App仍活。根测试期间一个串行tester，完成后无残留；全程未运行`flutter run`或新开App。锁屏，视觉验收not run。
+
+关于多开：确认根`flutter test`只创建`flutter_tester`，没有GUI App；`flutter run -d macos`才可能重复启动App。以后统一复用既有VM attach并检查前后PID。当前独立chessNext仍只有PID50598，runner 50125；无根tester/attach残留；PID50168 frontend_server属于原runner，PID95554属于无关`tuner_flutter`，均非新增实例。
+
+当前工作树含M4-71代码/测试、ADR-103和context之外相关矩阵/追踪文档，需diff复核并单独中文feature commit。提交后继续B24棋盘皮肤保存—使用—删除—重载事务以及源站几何未知值审计，继而继续F27全语言资源与功能矩阵其它非登录差距，不停于单个commit。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-70 / F21,B24 / ADR-102 棋盘几何串行持久化（验证完成，待提交）
 
 修复`BoardSkinLibraryController.updateGeometry`在目录控制器`loading`时将拖动更新传入`_save`并立即返回false、可能丢失最后位置的问题。每个用户皮肤现只启动一个写入冲刷器，合并中间拖动值并在忙碌操作完成后写入最新值。测试使用延迟仓储阻塞首写，连续发送三次几何，验证三次Future成功、最终仓储与controller均为第三次值。新增ADR-102，矩阵/缺口/交互规格/待办已记录。此为本机可靠性修复；参考站跨轴微变、边界及完整公式仍U。

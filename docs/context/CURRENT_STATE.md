@@ -1,5 +1,16 @@
 # 当前状态
 
+## 最新实现 M4-71 / F21,B24 / ADR-103（待提交）
+
+棋盘格点编辑器此前在父级用旧的持久化几何重建时会覆盖拖动预览；现在拖动中保留本地乐观几何，仅在无拖动且父值实际改变时同步。回归测试模拟每次拖动回调后父组件都用旧值重建，并校验把手不回跳。专项5/5；根`flutter test --concurrency=1 --reporter expanded`601通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-71.log`，5跳过需官方Pikafish/NNUE；`flutter analyze --no-pub`、diff-check通过。
+
+macOS复用PID50598/runner50125，VM Service attach同步1,053.6ms、热重启1,158ms；Ctrl-C后原App存活。根测试单并发、单tester、结束无残留；attach无残留，没有新开App。未用`flutter run`。屏幕锁定，人工视觉验收not run。代码、ADR-103和追踪文档待单独中文commit。之后继续B24棋盘皮肤保存/应用/删除/reload事务与参考几何审计，以及F27语言资源和其他登录外差距；全站仍未对齐。
+
+## 前一实现 M4-70 / F21,B24 / ADR-102（已提交 283d01f）
+
+自定义皮肤几何高频变化按皮肤ID串行合并写入，持久化拖动最终值。定向13/13，根600通过/5跳过，analyze通过，attach复用原实例。详情见TRACEABILITY。
+
+
 ## 最新实现 M4-70 / F21,B24 / ADR-102（待提交）
 
 自定义棋盘皮肤格点/边距调整现按皮肤ID串行合并高频几何写入。目录忙碌时保留最新拖动值，等待当前保存结束后再写，避免`loading`期间更新被静默拒绝；内置皮肤仍用偏好仓储。定向13/13；根`flutter test --concurrency=1 --reporter expanded`600通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-70.log`，跳过需官方Pikafish/NNUE）；`flutter analyze --no-pub`和diff-check通过。

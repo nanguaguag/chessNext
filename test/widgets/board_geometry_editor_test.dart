@@ -41,6 +41,39 @@ void main() {
     },
   );
 
+  testWidgets('stale parent rebuild does not snap an active drag backwards', (
+    tester,
+  ) async {
+    const persisted = BoardSkinGeometry.standard();
+    var latest = persisted;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 216,
+                child: BoardGeometryEditor(
+                  geometry: persisted,
+                  onChanged: (next) => setState(() => latest = next),
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+
+    final handle = find.byKey(const ValueKey('board-grid-handle-top-left'));
+    final origin = tester.getCenter(handle);
+    await tester.drag(handle, const Offset(48, 0), touchSlopY: 0);
+    await tester.pump();
+
+    expect(latest.leftPercent, greaterThan(persisted.leftPercent));
+    expect(tester.getCenter(handle).dx, greaterThan(origin.dx + 20));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets(
     'dragging bottom-right handle respects grid span and canvas bounds',
     (tester) async {

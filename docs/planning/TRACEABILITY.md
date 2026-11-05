@@ -1,5 +1,13 @@
 # 需求追踪
 
+## 2026-11-05 / M4-83 / F15,F20 / ADR-113 大师谱授权整局只读预览
+
+自建索引记录增加可选受权PGN。`POST /v1/master-games/query`仍仅返回metadata和`hasRecord`；用户点击结果后由`GET /v1/master-games/records/<id>`按ID懒加载。服务端对PGN限制64,000 UTF-8字节并校验控制字符，未提供/未知ID明确404，详情附dataset/license/attribution和精确查询FEN/完整历史。客户端适配器严格校验响应大小/字段/记录ID；控制器核对当前查询来源/局面/完整历史、主线PGN到目标位置的路径以及可用棋手/赛事标签，并在筛选、文档、位置变化后丢弃迟到结果。独立对话框复制PGN树提供棋盘、主线及着法导航，不改主`BoardSession`。Nginx关闭两个路径的访问日志并应用目录限速。本仓库仍不含棋谱语料；授权真实性、真实自托管部署及源站整局操作语义仍U，F15不关闭。
+
+验收：定向Flutter16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-83-final.log`）；`flutter analyze --no-pub`、格式及diff检查通过；`cd server/skin_catalog && dart test`6/6，`dart analyze`通过；`flutter build macos --no-pub`成功。macOS实际运行/热重启/视觉未验证：既有PID50598无法attach，为避免重复窗口未执行`flutter run`。根测试仅一个串行tester，结束后已退出。
+
+定向`flutter test --concurrency=1 test/server/master_games_server_test.dart test/adapters/network/http_master_games_service_test.dart test/application/master_games_lookup_controller_test.dart test/widgets/cloud_book_panel_test.dart test/widgets/master_game_review_dialog_test.dart --reporter expanded`16/16通过；`flutter analyze --no-pub`通过。随后一致性校验又更新了代码；因此最终根全量、独立服务包测试/analyze、macOS构建/复用实例运行验收须以本条目后续结果为准，尚未将功能提交。
+
 ## 2026-11-05 / E72 / F21,B24 棋盘边距stepper单步复核
 
 访客桌面IAB `/settings`→棋盘与棋子→棋盘→既有“我的棋盘”编辑，初始格点50/50、左33/上33/右465/下519、缩放100%。左边距加号一次后左33.5、右465.02；再点减号复原33/465。退出编辑确认丢弃，返回后页面复读默认棋盘/棋子、全局100%、坐标开、对面倒置关，再回原`#/settings`。未保存/使用/导出。该单步补强E44/E64左步进联动，不扩展为其它轴或全局公式；完整几何继续U。证据见REFERENCE_EVIDENCE E72。

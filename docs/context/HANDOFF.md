@@ -1,5 +1,9 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-83 / F15,F20 / ADR-113 大师谱整局只读预览（门槛通过，待提交）
+
+代码已实现详情API/客户端按ID懒加载/来源与PGN校验/独立只读主线棋盘导航；Nginx关闭详情访问日志并限速。定向16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、server Dart包`dart test`6/6与`dart analyze`、format/diff检查均通过；`flutter build macos --no-pub`成功（111.9MB，既有flutter_tts SwiftPM warning）。根测试单串行tester，无GUI；结束后tester已退出，只有原`chessNext` PID50598，runner PID50125。`flutter attach -d macos`等候未连接后中止；为避免重复窗口未运行`flutter run`。运行态/热重启/视觉验收未验证。代码与文档待单独中文提交。只接受运营者有权展示的PGN；仓库不携真实语料，授权数据、部署仍U。
+
 ## M4-82 / F15,F20 / ADR-112 云库来源选择持久化（已提交 943cc14）
 
 偏好字段`bookLookupSource`默认cloud并兼容旧数据；设置页/主面板都写同一字段，异步加载合并及持久化测试通过，来源切换不查询。定向8/8、根623通过/5跳过/0失败、analyze和macOS build通过；实际GUI runtime/视觉未验，原PID50598唯一运行。

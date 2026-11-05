@@ -12,6 +12,7 @@ void main() {
 
   const fen = 'fixture-position';
   const history = ['a0a1'];
+  const fixturePgn = '[Game "Chinese Chess"]\n[Format "ICCS"]\n\n1. a0a1 *';
 
   setUp(() async {
     final root = await Directory.systemTemp.createTemp('master-games-test-');
@@ -39,6 +40,7 @@ void main() {
             'event': 'Spring Open',
             'year': 2024,
             'result': 'red_win',
+            'pgn': fixturePgn,
           },
           {
             'id': 'game-autumn',
@@ -117,7 +119,51 @@ void main() {
       'event': 'Spring Open',
       'year': 2024,
       'result': 'red_win',
+      'hasRecord': true,
     });
+  });
+
+  test('full records require an explicit bounded detail request', () async {
+    final queryResponse = await _post(server, client, {
+      'schema': 1,
+      'fen': fen,
+      'history': history,
+      'category': 'game',
+      'text': 'spring',
+    });
+    final queryBody =
+        jsonDecode(await _read(queryResponse)) as Map<String, dynamic>;
+    expect(queryBody['records'].single, isNot(contains('pgn')));
+    expect(queryBody['records'].single['hasRecord'], isTrue);
+
+    final details = await client.getUrl(
+      Uri.parse('${server.baseUrl}/v1/master-games/records/game-spring'),
+    );
+    final response = await details.close();
+    final body = jsonDecode(await _read(response)) as Map<String, dynamic>;
+    expect(response.statusCode, HttpStatus.ok);
+    expect(body['dataset']['license'], 'CC0-1.0');
+    expect(body['dataset']['attribution'], 'Operator-authored fixture');
+    expect(body['record'], {
+      'id': 'game-spring',
+      'fen': fen,
+      'history': history,
+      'pgn': fixturePgn,
+    });
+  });
+
+  test('detail endpoint does not expose absent or unknown records', () async {
+    for (final id in ['game-autumn', 'not-present']) {
+      final request = await client.getUrl(
+        Uri.parse('${server.baseUrl}/v1/master-games/records/$id'),
+      );
+      final response = await request.close();
+      expect(response.statusCode, HttpStatus.notFound);
+      expect(
+        jsonDecode(await _read(response))['error']['code'],
+        'record_unavailable',
+      );
+    }
   });
 
   test('all category and result filters page in manifest order', () async {

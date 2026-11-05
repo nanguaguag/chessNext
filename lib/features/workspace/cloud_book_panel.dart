@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../application/book_lookup_controller.dart';
 import '../../application/master_games_lookup_controller.dart';
+import 'master_game_review_dialog.dart';
 import '../../application/app_preferences.dart';
 import '../../ports/book_service.dart';
 import '../../ports/master_games_service.dart';
@@ -258,6 +259,10 @@ class _CloudBookPanelState extends State<CloudBookPanel> {
                   MasterGameResult.blackWin => '黑胜',
                 }} · ${record.category == MasterGameCategory.game ? '对局' : '棋书'}',
               ),
+              trailing: record.hasRecord ? const Icon(Icons.open_in_new) : null,
+              onTap: !record.hasRecord || busy
+                  ? null
+                  : () => _openRecord(context, controller, record),
             ),
           if (controller.total > 0)
             Wrap(
@@ -294,6 +299,49 @@ class _CloudBookPanelState extends State<CloudBookPanel> {
       );
     },
   );
+
+  Future<void> _openRecord(
+    BuildContext context,
+    MasterGamesLookupController controller,
+    MasterGameRecord record,
+  ) async {
+    try {
+      final parsed = await controller.readRecord(record, widget.endpoint);
+      if (!context.mounted || parsed == null) return;
+      await showDialog<void>(
+        context: context,
+        builder: (context) => MasterGameReviewDialog(
+          record: record,
+          pgn: parsed,
+          datasetId: controller.datasetId ?? '',
+          license: controller.license ?? '',
+          attribution: controller.attribution ?? '',
+        ),
+      );
+    } on MasterGamesRejected catch (error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text(
+              error.statusCode == 404 ? '该索引条目暂未提供整局棋谱。' : '自建大师谱服务拒绝读取。',
+            ),
+          ),
+        );
+      }
+    } on MasterGamesUnavailable {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('暂时无法连接自建大师谱服务。')));
+      }
+    } catch (error) {
+      if (context.mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('棋谱无效或与资料不一致：$error')));
+      }
+    }
+  }
 
   Widget _yearField(
     String label,

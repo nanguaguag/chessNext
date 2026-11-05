@@ -96,4 +96,10 @@ final class _MasterGamesService implements MasterGamesService {
       ],
     );
   }
+
+  @override
+  Future<MasterGameDetail> readRecord({
+    required Uri endpoint,
+    required String id,
+  }) async => throw UnimplementedError();
 }

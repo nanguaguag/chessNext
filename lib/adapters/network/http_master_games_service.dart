@@ -6,6 +6,8 @@ import '../../ports/master_games_service.dart';
 
 const _maxRequestBytes = 32 * 1024;
 const _maxResponseBytes = 2 * 1024 * 1024;
+const _maxRecordBytes = 160 * 1024;
+const _maxPgnBytes = 64000;
 final _idPattern = RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$');
 
 /// Bounded transport for an explicitly configured operator managed index.
@@ -86,6 +88,56 @@ final class HttpMasterGamesService implements MasterGamesService {
     }
   }
 
+  @override
+  Future<MasterGameDetail> readRecord({
+    required Uri endpoint,
+    required String id,
+  }) async {
+    if (!_validEndpoint(endpoint) || !_idPattern.hasMatch(id)) {
+      throw const MasterGamesInvalidResponse();
+    }
+    final uri = endpoint.replace(
+      path:
+          '${endpoint.path.replaceFirst(RegExp(r'/+$'), '')}/v1/master-games/records/$id',
+      query: null,
+      fragment: null,
+    );
+    try {
+      final request = await _client.getUrl(uri).timeout(timeout);
+      request.headers.set(HttpHeaders.acceptHeader, 'application/json');
+      final response = await request.close().timeout(timeout);
+      if (response.statusCode != HttpStatus.ok) {
+        await response.drain<void>();
+        if (response.statusCode == HttpStatus.notFound) {
+          throw const MasterGamesRejected(HttpStatus.notFound);
+        }
+        throw MasterGamesRejected(response.statusCode);
+      }
+      if (response.contentLength > _maxRecordBytes + 4096) {
+        await response.drain<void>();
+        throw const MasterGamesInvalidResponse();
+      }
+      final body = <int>[];
+      await for (final chunk in response.timeout(timeout)) {
+        if (body.length + chunk.length > _maxRecordBytes + 4096) {
+          throw const MasterGamesInvalidResponse();
+        }
+        body.addAll(chunk);
+      }
+      return _decodeRecord(utf8.decode(body), id);
+    } on MasterGamesServiceException {
+      rethrow;
+    } on TimeoutException {
+      throw const MasterGamesUnavailable();
+    } on SocketException {
+      throw const MasterGamesUnavailable();
+    } on HttpException {
+      throw const MasterGamesUnavailable();
+    } on FormatException {
+      throw const MasterGamesInvalidResponse();
+    }
+  }
+
   static bool _validEndpoint(Uri uri) {
     if (uri.userInfo.isNotEmpty || uri.hasQuery || uri.hasFragment) {
       return false;
@@ -148,6 +200,7 @@ final class HttpMasterGamesService implements MasterGamesService {
                 'event',
                 'year',
                 'result',
+                'hasRecord',
               }).isNotEmpty ||
               raw['id'] is! String ||
               !_idPattern.hasMatch(raw['id'] as String) ||
@@ -162,7 +215,8 @@ final class HttpMasterGamesService implements MasterGamesService {
               (raw['event'] as String).runes.length > 200 ||
               raw['year'] is! int ||
               (raw['year'] as int) < 1 ||
-              (raw['year'] as int) > 9999) {
+              (raw['year'] as int) > 9999 ||
+              (raw.containsKey('hasRecord') && raw['hasRecord'] is! bool)) {
             throw const FormatException('Invalid master game record');
           }
           final category = switch (raw['category']) {
@@ -184,6 +238,7 @@ final class HttpMasterGamesService implements MasterGamesService {
             event: raw['event'] as String,
             year: raw['year'] as int,
             result: result,
+            hasRecord: raw['hasRecord'] == true,
           );
         })
         .toList(growable: false);
@@ -199,6 +254,66 @@ final class HttpMasterGamesService implements MasterGamesService {
       pageSize: value['pageSize'] as int,
       total: value['total'] as int,
       records: List.unmodifiable(records),
+    );
+  }
+
+  static MasterGameDetail _decodeRecord(String body, String requestedId) {
+    final value = jsonDecode(body);
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'schema',
+          'dataset',
+          'record',
+        }).isNotEmpty ||
+        value['schema'] != 1) {
+      throw const FormatException('Invalid master game detail');
+    }
+    final dataset = value['dataset'];
+    final record = value['record'];
+    if (dataset is! Map<String, dynamic> ||
+        dataset.keys.toSet().difference({
+          'id',
+          'license',
+          'attribution',
+        }).isNotEmpty ||
+        dataset['id'] is! String ||
+        !_idPattern.hasMatch(dataset['id'] as String) ||
+        dataset['license'] is! String ||
+        (dataset['license'] as String).trim().isEmpty ||
+        (dataset['license'] as String).runes.length > 120 ||
+        dataset['attribution'] is! String ||
+        (dataset['attribution'] as String).runes.length > 200 ||
+        record is! Map<String, dynamic> ||
+        record.keys.toSet().difference({
+          'id',
+          'fen',
+          'history',
+          'pgn',
+        }).isNotEmpty ||
+        record['id'] != requestedId ||
+        record['fen'] is! String ||
+        (record['fen'] as String).trim().isEmpty ||
+        (record['fen'] as String).length > 256 ||
+        record['history'] is! List ||
+        (record['history'] as List).length > 512 ||
+        (record['history'] as List).any(
+          (move) =>
+              move is! String ||
+              !RegExp(r'^[a-i][0-9][a-i][0-9]$').hasMatch(move),
+        ) ||
+        record['pgn'] is! String ||
+        (record['pgn'] as String).trim().isEmpty ||
+        utf8.encode(record['pgn'] as String).length > _maxPgnBytes) {
+      throw const FormatException('Invalid master game provenance or record');
+    }
+    return MasterGameDetail(
+      id: requestedId,
+      pgn: record['pgn'] as String,
+      fen: (record['fen'] as String).trim(),
+      history: List.unmodifiable((record['history'] as List).cast<String>()),
+      datasetId: dataset['id'] as String,
+      license: dataset['license'] as String,
+      attribution: dataset['attribution'] as String,
     );
   }
 }

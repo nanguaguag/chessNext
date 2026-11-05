@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/foundation.dart';
+import 'package:xiangqi_core/xiangqi_core.dart';
 
 import '../ports/master_games_service.dart';
 import 'board_session.dart';
@@ -38,6 +39,76 @@ final class MasterGamesLookupController extends ChangeNotifier {
   Set<MasterGameResult> results = const {};
   int _generation = 0, _epoch = 0, _revision = 0;
   bool _invalidFilters = false;
+
+  Future<PgnRecord?> readRecord(
+    MasterGameRecord record,
+    String configuredEndpoint,
+  ) async {
+    if (!record.hasRecord ||
+        status != MasterGamesStatus.hit ||
+        !records.any((item) => item.id == record.id)) {
+      return null;
+    }
+    final generation = _generation;
+    final epoch = session.epoch;
+    final revision = session.positionRevision;
+    final tree = session.tree;
+    final detail = await service.readRecord(
+      endpoint: Uri.parse(configuredEndpoint.trim()),
+      id: record.id,
+    );
+    if (generation != _generation ||
+        epoch != session.epoch ||
+        revision != session.positionRevision ||
+        !identical(tree, session.tree) ||
+        !records.any((item) => item.id == record.id)) {
+      return null;
+    }
+    if (detail.datasetId != datasetId ||
+        detail.license != license ||
+        detail.attribution != attribution) {
+      throw const FormatException('棋谱来源与当前索引结果不一致。');
+    }
+    final expectedHistory = tree.path
+        .skip(1)
+        .map((node) => node.move.toString())
+        .toList(growable: false);
+    if (detail.fen != tree.current.position.toFen() ||
+        !listEquals(detail.history, expectedHistory)) {
+      throw const FormatException('棋谱索引局面与查询位置不一致。');
+    }
+    final parsed = PgnCodec.parse(detail.pgn);
+    for (final pair in [
+      ('Red', record.red),
+      ('Black', record.black),
+      ('Event', record.event),
+    ]) {
+      final declared = parsed.tags[pair.$1];
+      if (declared != null && declared != pair.$2) {
+        throw const FormatException('棋谱资料与索引元数据不一致。');
+      }
+    }
+    final line = parsed.tree.currentLine;
+    final historyLength = expectedHistory.length;
+    final hasPosition = line.asMap().entries.any((entry) {
+      final end = entry.key;
+      final start = end - historyLength;
+      if (start < 0 ||
+          line[start].position.toFen() != tree.root.position.toFen() ||
+          entry.value.position.toFen() != detail.fen) {
+        return false;
+      }
+      final moves = line
+          .skip(start + 1)
+          .take(historyLength)
+          .map((node) => node.move.toString());
+      return listEquals(moves.toList(growable: false), expectedHistory);
+    });
+    if (!hasPosition) {
+      throw const FormatException('整局棋谱不包含本次查询的局面与历史。');
+    }
+    return parsed;
+  }
 
   void setFilters({
     MasterGameCategory? category,

@@ -205,12 +205,18 @@ allows a 32 KiB request body for this endpoint.
 ### Optional operator supplied master-game index
 
 Set `CHESSNEXT_MASTER_GAMES_ROOT` to a directory containing
-`master-games.json` to enable `POST /v1/master-games/query`. This is a separate
+`master-games.json` to enable `POST /v1/master-games/query` and
+`GET /v1/master-games/records/<id>`. This is a separate
 index from the opening/endgame book endpoint. The version 1 manifest contains
 `dataset: {id, license, attribution}` and `records`. Each record has a unique
 operator-assigned `id`, `category` (`game` or `chessbook`), exact current
 `fen` and complete `history`, red/black player names, event, year from 1 to
-9999, and result (`red_win`, `draw`, or `black_win`). Index only positions and
+9999, and result (`red_win`, `draw`, or `black_win`). An optional `pgn` field
+contains an operator-supplied licensed full game and is limited to 64,000 UTF-8
+bytes. Query responses return only metadata plus `hasRecord`; the client fetches
+PGN explicitly after the user opens a result. The detail route returns dataset
+license/attribution with the PGN and responds 404 when that row has no record.
+Index only positions and
 metadata from games the operator owns or is licensed to index and display; this
 repository ships no game corpus or sample game records.
 
@@ -224,14 +230,14 @@ or event case-insensitively. Results preserve manifest order and are paged at
 up to 50 metadata rows; responses carry dataset license/attribution. This is a
 project contract proposed from visible filter fields; it does not assert that
 the reference site's position matching, text semantics, ranking, or paging
-behaves the same way. It returns metadata only and does not provide full game
-records in this slice.
+behaves the same way. Full records are optional and fetched separately by
+record ID.
 
 The manifest is loaded at startup, limited to 128 MiB and 2,000,000 index rows;
 requests are capped at 32 KiB, history at 512 moves, text at 120 Unicode code
 points, and page size at 50. The service neither logs nor persists request
-bodies. The Nginx sample disables access logs for this route and applies the
-catalog rate limit. Replace the manifest atomically and restart the service to
+bodies. The Nginx sample disables access logs for query and detail routes and
+applies the catalog rate limit. Replace the manifest atomically and restart the service to
 publish updates. [`master-games.example.json`](master-games.example.json) is an empty template; replace all
 dataset identity/license details and add only authorized records before
 enabling the endpoint.

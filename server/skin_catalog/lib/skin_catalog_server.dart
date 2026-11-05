@@ -14,6 +14,7 @@ const _maxBookRequestBytes = 32 * 1024;
 const _maxBookEntries = 2000000;
 const _maxMasterGamesRequestBytes = 32 * 1024;
 const _maxMasterGameEntries = 2000000;
+const _maxMasterGamePgnBytes = 64000;
 const _maxReleaseManifestBytes = 1024 * 1024;
 const _maxReleaseEntries = 100;
 const _maxAttachmentRequestBytes = 786432;
@@ -24,6 +25,7 @@ final _idPattern = RegExp(r'^[a-z0-9][a-z0-9-]{0,63}$');
 final _sha256Pattern = RegExp(r'^[0-9a-f]{64}$');
 final _xiangqiMovePattern = RegExp(r'^[a-i][0-9][a-i][0-9]$');
 final _releaseVersionPattern = RegExp(r'^\d+\.\d+\.\d+(?:-[0-9A-Za-z.-]+)?$');
+final _masterPgnControl = RegExp(r'[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]');
 
 final class ReleaseEntry {
   const ReleaseEntry({
@@ -462,6 +464,7 @@ final class MasterGameRecord {
     required this.event,
     required this.year,
     required this.result,
+    this.pgn,
   });
 
   final String id;
@@ -473,6 +476,7 @@ final class MasterGameRecord {
   final String event;
   final int year;
   final MasterGameResult result;
+  final String? pgn;
 
   Map<String, Object> toJson() => {
     'id': id,
@@ -486,6 +490,7 @@ final class MasterGameRecord {
       MasterGameResult.draw => 'draw',
       MasterGameResult.blackWin => 'black_win',
     },
+    'hasRecord': pgn != null,
   };
 
   factory MasterGameRecord.fromJson(Object? value) {
@@ -500,6 +505,7 @@ final class MasterGameRecord {
           'event',
           'year',
           'result',
+          'pgn',
         }).isNotEmpty ||
         value['id'] is! String ||
         !_idPattern.hasMatch(value['id'] as String) ||
@@ -535,6 +541,14 @@ final class MasterGameRecord {
       'black_win' => MasterGameResult.blackWin,
       _ => throw const FormatException('Invalid master-game result'),
     };
+    final pgn = value['pgn'];
+    if (pgn != null &&
+        (pgn is! String ||
+            pgn.trim().isEmpty ||
+            _masterPgnControl.hasMatch(pgn) ||
+            utf8.encode(pgn).length > _maxMasterGamePgnBytes)) {
+      throw const FormatException('Invalid master-game record body');
+    }
     return MasterGameRecord(
       id: value['id'] as String,
       category: category,
@@ -545,6 +559,7 @@ final class MasterGameRecord {
       event: (value['event'] as String).trim(),
       year: value['year'] as int,
       result: result,
+      pgn: pgn as String?,
     );
   }
 }
@@ -669,15 +684,19 @@ final class MasterGameDatabase {
     required this.license,
     required this.attribution,
     required List<MasterGameRecord> records,
-  }) : _records = List.unmodifiable(records),
-       _byPosition = _groupByPosition(records);
+  }) : _byPosition = _groupByPosition(records),
+       _byId = Map.unmodifiable({
+         for (final record in records) record.id: record,
+       });
 
   final String id;
   final String license;
   final String attribution;
-  final List<MasterGameRecord> _records;
   final Map<String, List<MasterGameRecord>> _byPosition;
-  int get recordCount => _records.length;
+  final Map<String, MasterGameRecord> _byId;
+  int get recordCount => _byId.length;
+
+  MasterGameRecord? byId(String id) => _byId[id];
 
   static Future<MasterGameDatabase> load(
     Directory root, {
@@ -1141,6 +1160,19 @@ final class SkinCatalogHttpServer {
       await _bookQuery(request, _bookDatabase);
       return;
     }
+    final masterRecordMatch = RegExp(
+      r'^/v1/master-games/records/([a-z0-9][a-z0-9-]{0,63})$',
+    ).firstMatch(request.uri.path);
+    if (request.method == 'GET' &&
+        masterRecordMatch != null &&
+        _masterGameDatabase != null) {
+      await _masterGameRecord(
+        request,
+        _masterGameDatabase,
+        masterRecordMatch.group(1)!,
+      );
+      return;
+    }
     if (request.method == 'POST' &&
         request.uri.path == '/v1/master-games/query' &&
         _masterGameDatabase != null) {
@@ -1522,6 +1554,46 @@ final class SkinCatalogHttpServer {
         'error': {'code': 'invalid_request'},
       });
     }
+  }
+
+  Future<void> _masterGameRecord(
+    HttpRequest request,
+    MasterGameDatabase database,
+    String id,
+  ) async {
+    final response = request.response;
+    final record = database.byId(id);
+    if (record == null || record.pgn == null) {
+      await _json(response, HttpStatus.notFound, {
+        'error': {'code': 'record_unavailable'},
+      });
+      return;
+    }
+    final body = jsonEncode({
+      'schema': 1,
+      'dataset': {
+        'id': database.id,
+        'license': database.license,
+        'attribution': database.attribution,
+      },
+      'record': {
+        'id': record.id,
+        'fen': record.fen,
+        'history': record.history,
+        'pgn': record.pgn,
+      },
+    });
+    if (utf8.encode(body).length > (_maxMasterGamePgnBytes * 2) + 16384) {
+      await _json(response, HttpStatus.internalServerError, {
+        'error': {'code': 'record_too_large'},
+      });
+      return;
+    }
+    await _json(
+      response,
+      HttpStatus.ok,
+      jsonDecode(body) as Map<String, dynamic>,
+    );
   }
 
   Future<void> _list(HttpRequest request, SkinCatalogStore store) async {

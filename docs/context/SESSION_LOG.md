@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-83 / F15,F20 / ADR-113 大师谱整局懒加载与只读预览（门槛通过，待提交）
+
+扩展operator-supplied索引可选授权PGN，增加无日志、有限响应的单记录详情端点；Flutter按结果显式请求，校验schema/许可/署名/ID/PGN标签，回到独立只读主线预览。位置或过滤变化时旧详情丢弃，不更改主棋树。
+
+定向Flutter16/16；根`flutter test --concurrency=1 --reporter expanded`629通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-83-final.log`；`flutter analyze --no-pub`、`dart format --output=none --set-exit-if-changed ...`与`git diff --check`通过；`server/skin_catalog`的`dart test`6/6、`dart analyze`通过；`flutter build macos --no-pub`成功（111.9MB，既有flutter_tts SwiftPM warning）。测试后进程确认无flutter_tester、只保留既有App PID50598；不执行`flutter run`。`flutter attach -d macos`等待约60秒未连接并Ctrl-C中止；macOS运行态/热重启/视觉未验。仅一个串行flutter_tester参与根测试。功能待单独中文commit；真实授权数据、部署及源站全站行为仍U。
+
 ## 2026-11-05 / M4-82 / F15,F20 / ADR-112 来源选择持久化（已提交 943cc14）
 
 `bookLookupSource`设置本机持久化；应用设置和主面板共享来源；旧字段默认cloud；显式切换仅切换模式，不查询。修复M4-81面板状态离开后复原的问题，覆盖E55已验证的同tab导航保留，不推断源站重启行为。

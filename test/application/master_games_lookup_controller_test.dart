@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:xiangqi_core/xiangqi_core.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/application/master_games_lookup_controller.dart';
 import 'package:chess_next/ports/master_games_service.dart';
@@ -77,6 +78,57 @@ void main() {
       expect(service.lastQuery!.toYear, 2025);
     },
   );
+
+  test('reads licensed PGN without changing the active game', () async {
+    await controller.query('http://localhost:8080');
+    final game = GameTree().play(Move.parse('h2e2'));
+    service.detail = MasterGameDetail(
+      id: 'game',
+      pgn: PgnCodec.path(
+        PgnRecord(
+          tree: game,
+          tags: {'Red': '红方', 'Black': '黑方', 'Event': '公开赛'},
+        ),
+      ),
+      fen: Position.initialFen,
+      history: const [],
+      datasetId: 'operator-index',
+      license: 'CC0',
+      attribution: 'operator',
+    );
+    final parsed = await controller.readRecord(
+      controller.records.single,
+      'http://localhost:8080',
+    );
+    expect(parsed, isNotNull);
+    expect(parsed!.tree.currentLine, hasLength(2));
+    expect(session.tree.path, hasLength(1));
+    expect(session.position.toFen(), Position.initialFen);
+  });
+
+  test('drops detail response after active position changes', () async {
+    await controller.query('http://localhost:8080');
+    final game = GameTree().play(Move.parse('h2e2'));
+    final pending = Completer<MasterGameDetail>();
+    service.detailPending = pending;
+    final read = controller.readRecord(
+      controller.records.single,
+      'http://localhost:8080',
+    );
+    session.playMove(session.legalMoves.first);
+    pending.complete(
+      MasterGameDetail(
+        id: 'game',
+        pgn: PgnCodec.path(PgnRecord(tree: game)),
+        fen: Position.initialFen,
+        history: const [],
+        datasetId: 'operator-index',
+        license: 'CC0',
+        attribution: 'operator',
+      ),
+    );
+    expect(await read, isNull);
+  });
 }
 
 MasterGamesPage _page() => const MasterGamesPage(
@@ -95,6 +147,7 @@ MasterGamesPage _page() => const MasterGamesPage(
       event: '公开赛',
       year: 2024,
       result: MasterGameResult.redWin,
+      hasRecord: true,
     ),
   ],
 );
@@ -104,6 +157,14 @@ final class _FakeService implements MasterGamesService {
   Uri? lastEndpoint;
   MasterGamesQuery? lastQuery;
   Completer<MasterGamesPage>? pending;
+  MasterGameDetail? detail;
+  Completer<MasterGameDetail>? detailPending;
+
+  @override
+  Future<MasterGameDetail> readRecord({
+    required Uri endpoint,
+    required String id,
+  }) => detailPending?.future ?? Future.value(detail!);
 
   @override
   Future<MasterGamesPage> query({

@@ -55,6 +55,7 @@ final class MasterGameRecord {
     required this.event,
     required this.year,
     required this.result,
+    this.hasRecord = false,
   });
 
   final String id;
@@ -64,6 +65,27 @@ final class MasterGameRecord {
   final String event;
   final int year;
   final MasterGameResult result;
+  final bool hasRecord;
+}
+
+final class MasterGameDetail {
+  const MasterGameDetail({
+    required this.id,
+    required this.pgn,
+    required this.fen,
+    required this.history,
+    required this.datasetId,
+    required this.license,
+    required this.attribution,
+  });
+
+  final String id;
+  final String pgn;
+  final String fen;
+  final List<String> history;
+  final String datasetId;
+  final String license;
+  final String attribution;
 }
 
 final class MasterGamesPage {
@@ -90,6 +112,11 @@ abstract interface class MasterGamesService {
   Future<MasterGamesPage> query({
     required Uri endpoint,
     required MasterGamesQuery query,
+  });
+
+  Future<MasterGameDetail> readRecord({
+    required Uri endpoint,
+    required String id,
   });
 }
 

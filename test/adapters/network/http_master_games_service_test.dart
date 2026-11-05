@@ -11,6 +11,7 @@ void main() {
   late Map<String, Object?> requestBody;
   var statusCode = HttpStatus.ok;
   Object response = const {};
+  const gamePgn = '[Game "Chinese Chess"]\n[Format "ICCS"]\n\n1. a0a1 *';
 
   setUp(() async {
     statusCode = HttpStatus.ok;
@@ -35,6 +36,29 @@ void main() {
     };
     server = await HttpServer.bind(InternetAddress.loopbackIPv4, 0);
     server.listen((request) async {
+      if (request.method == 'GET') {
+        requestBody = {'path': request.uri.path};
+        request.response.statusCode = statusCode;
+        request.response.headers.contentType = ContentType.json;
+        request.response.write(
+          jsonEncode({
+            'schema': 1,
+            'dataset': {
+              'id': 'sample',
+              'license': 'CC0',
+              'attribution': 'operator',
+            },
+            'record': {
+              'id': 'game-1',
+              'fen': 'position-fen',
+              'history': ['a0a1'],
+              'pgn': gamePgn,
+            },
+          }),
+        );
+        await request.response.close();
+        return;
+      }
       requestBody = (jsonDecode(await utf8.decoder.bind(request).join()) as Map)
           .cast<String, Object?>();
       request.response.statusCode = statusCode;
@@ -103,6 +127,27 @@ void main() {
         query: query(),
       ),
       throwsA(isA<MasterGamesRejected>()),
+    );
+  });
+
+  test('reads bounded full record only by explicit ID request', () async {
+    final result = await service.readRecord(
+      endpoint: Uri.parse('http://localhost:${server.port}'),
+      id: 'game-1',
+    );
+    expect(requestBody['path'], '/v1/master-games/records/game-1');
+    expect(result.id, 'game-1');
+    expect(result.pgn, gamePgn);
+    expect(result.fen, 'position-fen');
+    expect(result.history, ['a0a1']);
+    expect(result.license, 'CC0');
+    expect(result.attribution, 'operator');
+    await expectLater(
+      service.readRecord(
+        endpoint: Uri.parse('http://localhost:${server.port}'),
+        id: '../other',
+      ),
+      throwsA(isA<MasterGamesInvalidResponse>()),
     );
   });
 

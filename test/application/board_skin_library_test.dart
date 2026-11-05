@@ -3,6 +3,8 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:chess_next/adapters/storage/file_board_skin_library_repository.dart';
+import 'package:chess_next/adapters/storage/file_board_skin_image_repository.dart';
+import 'package:chess_next/adapters/storage/file_preferences_repository.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/application/board_skin_geometry.dart';
 import 'package:chess_next/application/board_skin_image_library_controller.dart';
@@ -92,6 +94,107 @@ void main() {
         throwsFormatException,
       );
       expect(await repository.load(), [first]);
+    },
+  );
+
+  test(
+    'saved geometry and images survive fresh controllers without applying; use persists',
+    () async {
+      final temp = await Directory.systemTemp.createTemp(
+        'chessnext-board-profile-restart-',
+      );
+      addTearDown(() => temp.delete(recursive: true));
+      final preferencesRepository = FilePreferencesRepository(() async => temp);
+      final definitions = FileBoardSkinLibraryRepository(() async => temp);
+      final imageRepository = FileBoardSkinImageRepository(() async => temp);
+
+      Future<
+        ({
+          BoardSession session,
+          EngineSessionController engine,
+          PreferencesController preferences,
+          BoardSkinImageLibraryController images,
+          BoardSkinLibraryController library,
+        })
+      >
+      openControllers() async {
+        final session = BoardSession();
+        final engine = EngineSessionController(session, null);
+        final preferences = PreferencesController(
+          engine,
+          preferencesRepository,
+        );
+        final images = BoardSkinImageLibraryController(
+          _NoopPicker(),
+          imageRepository,
+        );
+        final library = BoardSkinLibraryController(
+          definitions,
+          images,
+          preferences,
+        );
+        await preferences.initialize();
+        await images.initialize();
+        await library.initialize();
+        return (
+          session: session,
+          engine: engine,
+          preferences: preferences,
+          images: images,
+          library: library,
+        );
+      }
+
+      void closeControllers(
+        ({
+          BoardSession session,
+          EngineSessionController engine,
+          PreferencesController preferences,
+          BoardSkinImageLibraryController images,
+          BoardSkinLibraryController library,
+        })
+        opened,
+      ) {
+        opened.library.dispose();
+        opened.images.dispose();
+        opened.preferences.dispose();
+        opened.engine.dispose();
+        opened.session.dispose();
+      }
+
+      final first = await openControllers();
+      await first.preferences.setBoardSkin(BoardSkin.jade);
+      expect(await first.library.create(name: '重载棋盘', apply: false), isTrue);
+      final profile = first.library.profiles.single;
+      final geometry = BoardSkinGeometry.standard().copyWith(
+        leftPercent: 16,
+        topPercent: 10,
+        rightPercent: 84,
+        bottomPercent: 90,
+        pieceScalePercent: 118,
+        rotateLandingMarker: true,
+      );
+      expect(await first.library.updateGeometry(profile.id, geometry), isTrue);
+      await first.images.importImages(profile.id, {
+        BoardSkinImageSlot.landingMarker: _png(),
+      });
+      expect(first.preferences.value.selectedBoardSkinId, BoardSkin.jade.name);
+      closeControllers(first);
+
+      final second = await openControllers();
+      expect(second.library.profiles.single.geometry, geometry);
+      expect(second.preferences.value.selectedBoardSkinId, BoardSkin.jade.name);
+      expect(
+        second.images.imagesFor(profile.id)[BoardSkinImageSlot.landingMarker],
+        orderedEquals(_png()),
+      );
+      await second.library.select(profile.id);
+      closeControllers(second);
+
+      final third = await openControllers();
+      expect(third.preferences.value.selectedBoardSkinId, profile.id);
+      expect(third.library.geometryFor(profile.id), geometry);
+      closeControllers(third);
     },
   );
 

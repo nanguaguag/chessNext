@@ -1167,3 +1167,11 @@ M4-74最终门槛：专项`flutter test --concurrency=1 test/widgets/board_skin_
 
 
 M4-74于`c32e2c3 feat(settings): 增加棋盘皮肤草稿编辑`单独提交。后续继续B24跨重载生命周期与登录外功能差距。
+
+
+## 2026-11-05 / M4-75 / F21,B24 file-backed重开生命周期回归
+
+补充真实文件适配器集成测试：FilePreferencesRepository/FileBoardSkinLibraryRepository/FileBoardSkinImageRepository首次持久化非活动皮肤的几何和落点PNG；释放controller后新建三套controller确认几何/图片/原内置选择还原；单独选择用户皮肤后再重建，确认selected ID/geometry保存。`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`9/9。根/analyze/macOS复用待跑。此为项目adapter验证，不是网站reload证据；多文件崩溃一致性仍待审。
+
+
+M4-75最终门槛：定向9/9；根`flutter test --concurrency=1 --reporter expanded`604通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-75.log`，五项需官方Pikafish/NNUE；`flutter analyze --no-pub`通过。macOS复用PID50598 attach同步984ms、热重启1,278ms，脱离后原App存活；根测试仅一个串行tester，无tester/attach残留、新App。只余测试/文档改动，单独中文test commit后继续。

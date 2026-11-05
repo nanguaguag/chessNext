@@ -927,3 +927,7 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 为对照E67“编辑已存皮肤并保存但不应用”，用户棋盘列表新增独立“编辑”入口。`BoardSkinGeometryDraftDialog`在局部草稿上提供9×10双把手、四边滑杆、皮肤棋子缩放、落点旋转和恢复默认；“取消”直接退场不调用写接口，“保存”将geometry一次提交到目标ID且不选择该ID，保存失败保留表单并允许重试。列表“使用”仍是唯一应用目标皮肤的入口。范围不包括图片层草稿/单张文件修改协议。
 
 定向`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart --reporter expanded`3/3；测试确保取消前后manifest值不变、保存更新值但selected ID仍内置、随后使用使BoardDisplayScope显示保存几何。定向`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart --reporter expanded`3/3；根`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-74.log`（5跳过需官方Pikafish/NNUE）；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步978ms、热重启1,171ms，脱离后PID50598存活，无tester/attach残留和新App。源站刷新/重启和跨进程语义仍U。
+
+## M4-75 / F21,B24 / ADR-080,105 file-backed 保存/重开生命周期回归
+
+新增集成测试使用实际`FilePreferencesRepository`、`FileBoardSkinLibraryRepository`与`FileBoardSkinImageRepository`，而非Memory仓储。先设定内置jade为当前皮肤，保存一套不应用的用户定义，修改六项几何属性并写入落点PNG；关闭全部controller后新建全套controller，验证profile几何与图片恢复且当前仍为jade。随后单独“使用”用户皮肤，再次重建controller，验证选中ID和定义几何均恢复。专项`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`9/9；根`flutter test --concurrency=1 --reporter expanded`604通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-75.log`；`flutter analyze --no-pub`和diff-check通过。macOS复用PID50598/runner50125，attach同步984ms、热重启1,278ms；脱离后App存活且无tester/attach残留。此为项目真实文件适配器验证，不证明源站reload行为；目录图片在manifest、清单提交分阶段失败之间的孤儿清理仍另行处理。

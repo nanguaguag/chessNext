@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-75 / F21,B24 真实文件仓储保存/重开回归（待单独提交）
+
+新增跨controller生命周期测试，使用真实`FilePreferencesRepository`、`FileBoardSkinLibraryRepository`、`FileBoardSkinImageRepository`。先持久化当前内置jade，创建一套`apply:false`用户皮肤，写入四边/跨度/棋子比例/落点旋转几何和落点PNG；重建全部controller后几何与PNG仍在、jade仍选中。随后单独使用用户皮肤，再重建controller后用户ID与几何仍恢复。该测试验证本机项目适配器，不说明源站reload或重启行为。多文件崩溃原子性仍待研究。
+
+定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart --reporter expanded`9/9；根`flutter test --concurrency=1 --reporter expanded`604通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-75.log`；五项需官方Pikafish/NNUE，`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598/runner50125，VM service `61579/4bLZ1MhsyEk=`同步984ms、热重启1,278ms；Ctrl-C后原App仍活。根测试单tester，结束后无残留；attach脱离后无残留；未运行`flutter run`/新增GUI。锁屏，视觉not run。
+
+工作树仅有测试、traceability/backlog/session log；应单独中文test commit。之后继续F21多文件图片/profile崩溃原子性和F27完整语言覆盖及其余非登录网站差距，不能在这一片后停。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-74 / F21,B24 / ADR-106 已存棋盘几何草稿编辑（已提交 c32e2c3）
 
 按E67已确认的保存不自动应用，为用户棋盘目录增加“编辑”入口。弹层中格点拖动、四边、皮肤棋子比例、落点旋转与恢复默认都只修改本地草稿；取消不写仓储，保存才一次更新profile几何，仍保持当前内置/用户皮肤不变。保存错误保留草稿；应用通过列表现有“使用”单独操作。未涵盖图片槽草稿/替换事务。新增ADR-106、决策/矩阵/缺口/交互/计划/追踪已更新。参考站重载/重启仍U。

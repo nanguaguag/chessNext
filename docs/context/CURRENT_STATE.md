@@ -1,5 +1,17 @@
 # 当前状态
 
+## 最新进展 M4-75 / F21,B24 file-backed生命周期回归（验证完成，待提交）
+
+新增使用真实文件Preferences、棋盘皮肤清单和图片仓储的controller重建测试。保存非活动皮肤几何/落点PNG后重建controller，值/图像恢复且原内置皮肤仍选中；单独使用该用户皮肤后再次重建，当前ID/几何恢复。定向9/9，根`flutter test --concurrency=1 --reporter expanded`604通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-75.log`；`flutter analyze --no-pub`、diff-check通过。
+
+macOS复用PID50598/runner50125，attach同步984ms、热重启1,278ms，脱离后原App仍活；单tester无残留，没有新开App。锁屏视觉not run。测试/追踪/交接待单独中文test commit。继续分析图片/定义跨仓储崩溃原子性、F27语言覆盖和其它登录外差异；源站reload语义仍U。
+
+## 前序已提交
+
+M4-74 `c34f246`已存皮肤几何草稿编辑；M4-73 `fc60883`保存/应用分离；M4-72 `3c82245`删除失败一致性；M4-71 `45dcb69`拖动预览；M4-70 `283d01f`几何串行写入。
+
+# 当前状态
+
 ## 最新实现 M4-74 / F21,B24 / ADR-106（已提交 c32e2c3）
 
 已保存棋盘皮肤新增独立几何草稿编辑（9×10拖点、四边、专属棋子缩放、落点标记旋转、恢复默认）。取消不写入，保存只更新profile不应用，列表“使用”独立切换。定向3/3；根`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-74.log`；`flutter analyze --no-pub`、diff-check通过。

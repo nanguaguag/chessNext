@@ -105,4 +105,4 @@ M4-63/F31/ADR-095实现问题/建议自建投递：设置可选根地址留空�
 
 最终验证：定向反馈7/7；server `dart test`2/2、`dart analyze lib bin test`干净、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`通过；根全量591通过/5条件跳过/0失败；根`flutter analyze --no-pub`、`git diff --check`干净。两次定向测试早期断言和FileMode接口失败已修复。屏幕锁定未人工视觉验收；无实际外部发送、生产部署或生产收件验证。最终热重启同步1,054ms/1,114ms，测试器运行时和结束后均未多开chessNext。
 
-后续先确认此M4-63单独中文提交及追踪文档，再继续F31版权/交流入口、F21棋盘几何保存生命周期与其它全站设置；保持各项证据O/V/D/P/U和未知边界。五项Pikafish/NNUE用例需配置官方制品才能运行。当前Mac运行实例仍唯一。
+M4-63已单独以`e51388c feat(settings): 支持自建反馈预览与提交`提交；相关追踪、矩阵与ADR-095已写入。下一步继续F31版权/交流入口取证，和F21棋盘几何保存生命周期/其它全站设置；保持O/V/D/P/U边界。五项Pikafish/NNUE用例需配置官方制品才能运行。当前Mac运行实例仍唯一；工作树应保持干净。

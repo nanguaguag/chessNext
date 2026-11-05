@@ -1020,4 +1020,6 @@ E71证据及FEATURE_MATRIX/GAPS/INTERACTION_SPEC/TRACEABILITY/BACKLOG已更新�
 
 M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完整目标地址和显式确认UI；默认无自建服务则离线/入口禁用。只发送用户填写的类别、描述与可选联系方式，不带设备、浏览器、OS、棋谱、诊断字段；预览说明接收服务/托管层可看到来源IP。自建服务可选启用`CHESSNEXT_FEEDBACK_ROOT`收件路由，严格字段和16KiB请求、5,000记录上限，私有目录exclusive文件写入、无读取/列举接口/Dart内不记请求IP；Nginx样例关闭access log但错误日志策略由运营者控制。部署说明涉及systemd可写目录与每IP限流。附件、版权投诉、外部讨论入口、真实服务部署/运营/保留期验收都未完成，F31开放。
 
+实现与测试文档已随`e51388c feat(settings): 支持自建反馈预览与提交`提交。提交后`git status --short`为空。
+
 专项反馈UI/HTTP 7/7，server 2/2、server Dart analyze与compile通过。根全量`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；5跳过因官方Pikafish/NNUE未配置。`flutter analyze --no-pub`与`git diff --check`通过。调试中两轮定向测试因重复文本finder、一次接口误用而失败，修复后专项通过；全量测试通过。屏幕锁定，人工视觉验收not run，真实服务端提交not run。

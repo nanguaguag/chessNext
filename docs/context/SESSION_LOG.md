@@ -1092,3 +1092,11 @@ M4-68代码和ADR-100、矩阵/缺口/追踪、README/部署说明及上下文�
 M4-68提交后继续B24。读取feature-audit skill、矩阵/缺口/证据；参考IAB既有用户tab。只在空白未保存棋盘皮肤草稿上各水平拖动两个把手约20视口像素，没有保存、使用、导出或改动既有皮肤。左上把手后左/上/右/下AX=53.50/32.50/465.18/519.04；再拖右下后左/上保持，右/下=487.02/519.49。图像坐标是截图近似值、未标定；不能由小幅跨轴变化推出公式。浏览器返回弹窗确认丢弃后，设置AX复核默认棋盘/棋子、100%、坐标开、倒置关。
 
 E84已补REFERENCE_EVIDENCE、FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY和上下文。纯文档增量，不跑Flutter门槛；当前待中文docs commit。下一步检查本机BoardGeometryEditor在不同宽高/输入编辑时是否保持期望单轴映射、最小跨度，并查看棋盘皮肤表单保存/应用/恢复生命周期测试覆盖；继续登录外功能。
+
+## 2026-11-05 / M4-69 / F31 / ADR-101 版权投诉证明图片
+
+在M4-68和E84之后继续F31。投诉人可通过平台picker主动选择图片；可预览缩略图、文件名和大小、移除；预览明确接收地址及全部投诉文字和附件元数据，取消不触发网络，只有二次确认后才POST。Dart自建服务对投诉附件复用base64严格校验，但仅存到独立投诉私有收件目录；投诉目录不开放读取/下载，最多1,000条。两个表单的图片限值为项目P，源站E74只观察附件入口与≤3声明，未验证上传成功。投诉证明附件可能含身份/权属信息，不收集也不真实外发。运营访问/留存/删除、外部交流和生产服务仍缺，F31开放。
+
+早期测试发现DTO列表字段初始化错误、测试断言附件在表单/预览同时存在的数量预期不对；修复后专项`flutter test --concurrency=1 test/widgets/copyright_complaint_dialog_test.dart test/adapters/network/http_feedback_service_test.dart test/widgets/about_support_test.dart --reporter expanded`9/9、server`dart test --reporter expanded`6/6。server analyze/compile、root`flutter analyze --no-pub`和diff-check通过。完整root`flutter test --concurrency=1 --reporter expanded`599通过/5跳过/0失败；5项因缺官方Pikafish/NNUE跳过，日志`/tmp/chessnext-root-test-m4-69.log`。macOS attach复用PID50598/runner50125 sync1,174ms/hot restart1,248ms后正常脱离；只有一个根tester，无额外app/残余attach，未运行flutter run；锁屏视觉验收not run。
+
+本片代码与ADR-101、矩阵/缺口/计划/上下文现待单独中文feature commit。之后继续B24响应式几何和草稿保存/应用/重载事务，及F27完整多语言和其他登录外矩阵缺口。

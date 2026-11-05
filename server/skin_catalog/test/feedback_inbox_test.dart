@@ -220,6 +220,13 @@ void main() {
         'work': 'Sample work',
         'ownership': 'Created by complainant',
         'content': 'https://example.test/work',
+        'attachments': [
+          {
+            'name': 'proof.png',
+            'mimeType': 'image/png',
+            'data': base64Encode([137, 80, 78, 71, 13, 10, 26, 10, 1]),
+          },
+        ],
       }),
     );
     final response = await request.close();
@@ -235,6 +242,9 @@ void main() {
             as Map<String, dynamic>;
     expect(saved['complainant'], 'Sample person');
     expect(saved['email'], 'person@example.test');
+    final attachments = (saved['attachments'] as List)
+        .cast<Map<String, dynamic>>();
+    expect(attachments.single['name'] as String, 'proof.png');
     expect(await inboxDir.list().length, 0);
     final read = await client.getUrl(
       Uri.parse('${server.baseUrl}/v1/copyright/complaints'),
@@ -264,6 +274,21 @@ void main() {
         'work': 'x',
         'ownership': 'x',
         'content': 'x',
+      },
+      {
+        'schema': 1,
+        'complainant': 'x',
+        'email': 'x@y',
+        'work': 'x',
+        'ownership': 'x',
+        'content': 'x',
+        'attachments': [
+          {
+            'name': '../proof.png',
+            'mimeType': 'image/png',
+            'data': base64Encode([137, 80, 78, 71, 13, 10, 26, 10, 1]),
+          },
+        ],
       },
     ]) {
       final request = await client.postUrl(

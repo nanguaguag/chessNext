@@ -123,7 +123,17 @@ final class HttpFeedbackService
         'content': complaint.content.trim(),
         if (complaint.details.trim().isNotEmpty)
           'details': complaint.details.trim(),
+        if (complaint.attachments.isNotEmpty)
+          'attachments': [
+            for (final attachment in complaint.attachments)
+              {
+                'name': attachment.name,
+                'mimeType': attachment.mimeType,
+                'data': base64Encode(attachment.bytes),
+              },
+          ],
       },
+      maxRequestBytes: 786432,
     );
   }
 

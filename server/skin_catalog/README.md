@@ -91,13 +91,16 @@ and operators control error-log policy.
 Copyright complaints use a separate private directory and route. To enable,
 set `CHESSNEXT_COPYRIGHT_ROOT` to an existing service-owned directory with mode
 `0700`, and add that exact path to the systemd unit's `ReadWritePaths`. The
-route `POST /v1/copyright/complaints` accepts only bounded text fields under
-schema 1, stores at most 1,000 records, and has no public read/list/delete API,
-email forwarding, attachment upload, or automatic retention cleanup. Because
+route `POST /v1/copyright/complaints` accepts bounded text fields and optional
+user-selected PNG/JPEG proof images (at most three, 256 KiB each/512 KiB total)
+under schema 1, stores at most 1,000 records, and has no public read/list/delete
+API, email forwarding, or automatic retention cleanup. Attachments are base64
+encoded in the private complaint record. Because
 these records contain identifying and legal information, operators must define
 access and deletion procedures before enabling the endpoint. The sample Nginx
-location disables access logs and limits this route to two requests/minute per
-IP; hosting layers can still observe connection metadata.
+location allows a 1 MiB request body, disables access logs and limits this
+route to two requests/minute per IP; hosting layers can still observe
+connection metadata.
 
 ## Linux VM deployment
 

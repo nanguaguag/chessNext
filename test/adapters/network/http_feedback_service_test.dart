@@ -88,6 +88,38 @@ void main() {
   });
 
   test(
+    'includes only explicitly selected complaint proof attachments',
+    () async {
+      final bytes = Uint8List.fromList([137, 80, 78, 71, 13, 10, 26, 10, 1]);
+      await service.submitCopyrightComplaint(
+        endpoint: Uri.parse('http://localhost:${server.port}'),
+        complaint: CopyrightComplaintSubmission(
+          complainant: 'Test Person',
+          email: 'person@example.test',
+          work: 'Test work',
+          ownership: 'Created by complainant',
+          content: 'https://example.test/item',
+          attachments: [
+            FeedbackAttachment(
+              name: 'proof.png',
+              mimeType: 'image/png',
+              bytes: bytes,
+            ),
+          ],
+        ),
+      );
+      expect(requestPath, '/v1/copyright/complaints');
+      expect(requestBody!['attachments'], [
+        {
+          'name': 'proof.png',
+          'mimeType': 'image/png',
+          'data': base64Encode(bytes),
+        },
+      ]);
+    },
+  );
+
+  test(
     'sends explicitly selected attachments as bounded base64 fields',
     () async {
       final bytes = Uint8List.fromList([137, 80, 78, 71, 13, 10, 26, 10, 1]);

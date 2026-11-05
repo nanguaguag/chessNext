@@ -14,8 +14,7 @@ const _maxBookRequestBytes = 32 * 1024;
 const _maxBookEntries = 2000000;
 const _maxReleaseManifestBytes = 1024 * 1024;
 const _maxReleaseEntries = 100;
-const _maxFeedbackTextBytes = 16384;
-const _maxFeedbackRequestBytes = 786432;
+const _maxAttachmentRequestBytes = 786432;
 const _maxFeedbackAttachmentBytes = 256 * 1024;
 const _maxFeedbackAttachments = 3;
 const _maxFeedbackAttachmentTotalBytes = 512 * 1024;
@@ -210,7 +209,10 @@ final class CopyrightComplaintInbox {
     return CopyrightComplaintInbox._(root, count);
   }
 
-  Future<void> store(Map<String, String> fields) async {
+  Future<void> store(
+    Map<String, String> fields, {
+    List<Map<String, Object>> attachments = const [],
+  }) async {
     if (_storedCount >= maxSubmissions) throw const FeedbackInboxFull();
     final random = List<int>.generate(16, (_) => Random.secure().nextInt(256));
     final id = random
@@ -225,6 +227,7 @@ final class CopyrightComplaintInbox {
           'schema': 1,
           'receivedAt': DateTime.now().toUtc().toIso8601String(),
           ...fields,
+          if (attachments.isNotEmpty) 'attachments': attachments,
         }),
         flush: true,
       );
@@ -835,7 +838,7 @@ final class SkinCatalogHttpServer {
     final response = request.response;
     if (request.headers.contentType?.mimeType != 'application/json' ||
         request.contentLength == 0 ||
-        request.contentLength > _maxFeedbackRequestBytes) {
+        request.contentLength > _maxAttachmentRequestBytes) {
       await _json(response, HttpStatus.badRequest, {
         'error': {'code': 'invalid_request'},
       });
@@ -843,7 +846,7 @@ final class SkinCatalogHttpServer {
     }
     final bytes = <int>[];
     await for (final chunk in request) {
-      if (bytes.length + chunk.length > _maxFeedbackRequestBytes) {
+      if (bytes.length + chunk.length > _maxAttachmentRequestBytes) {
         await _json(response, HttpStatus.requestEntityTooLarge, {
           'error': {'code': 'request_too_large'},
         });
@@ -964,7 +967,7 @@ final class SkinCatalogHttpServer {
     final response = request.response;
     if (request.headers.contentType?.mimeType != 'application/json' ||
         request.contentLength == 0 ||
-        request.contentLength > _maxFeedbackTextBytes) {
+        request.contentLength > _maxAttachmentRequestBytes) {
       await _json(response, HttpStatus.badRequest, {
         'error': {'code': 'invalid_request'},
       });
@@ -972,7 +975,7 @@ final class SkinCatalogHttpServer {
     }
     final bytes = <int>[];
     await for (final chunk in request) {
-      if (bytes.length + chunk.length > _maxFeedbackTextBytes) {
+      if (bytes.length + chunk.length > _maxAttachmentRequestBytes) {
         await _json(response, HttpStatus.requestEntityTooLarge, {
           'error': {'code': 'request_too_large'},
         });
@@ -995,6 +998,7 @@ final class SkinCatalogHttpServer {
           value.keys.toSet().difference({
             'schema',
             ...limits.keys,
+            'attachments',
           }).isNotEmpty ||
           limits.entries.any(
             (field) =>
@@ -1024,7 +1028,7 @@ final class SkinCatalogHttpServer {
         for (final key in limits.keys)
           if (value[key] is String && (value[key] as String).trim().isNotEmpty)
             key: (value[key] as String).trim(),
-      });
+      }, attachments: _decodeFeedbackAttachments(value['attachments']));
       await _json(response, HttpStatus.created, {
         'schema': 1,
         'accepted': true,

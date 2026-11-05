@@ -1,3 +1,5 @@
+import 'feedback_service.dart';
+
 abstract interface class CopyrightComplaintService {
   Future<void> submitCopyrightComplaint({
     required Uri endpoint,
@@ -13,7 +15,8 @@ final class CopyrightComplaintSubmission {
     required this.ownership,
     required this.content,
     this.details = '',
-  }) {
+    List<FeedbackAttachment> attachments = const [],
+  }) : attachments = List.unmodifiable(attachments) {
     if (complainant.trim().isEmpty ||
         complainant.length > 160 ||
         email.trim().isEmpty ||
@@ -25,7 +28,10 @@ final class CopyrightComplaintSubmission {
         ownership.length > 2000 ||
         content.trim().isEmpty ||
         content.length > 2000 ||
-        details.length > 2000) {
+        details.length > 2000 ||
+        this.attachments.length > FeedbackAttachment.maxAttachments ||
+        this.attachments.fold<int>(0, (sum, item) => sum + item.bytes.length) >
+            FeedbackAttachment.maxTotalBytes) {
       throw ArgumentError('Invalid copyright complaint');
     }
   }
@@ -36,4 +42,5 @@ final class CopyrightComplaintSubmission {
   final String ownership;
   final String content;
   final String details;
+  final List<FeedbackAttachment> attachments;
 }

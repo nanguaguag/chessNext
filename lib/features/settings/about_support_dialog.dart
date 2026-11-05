@@ -158,6 +158,7 @@ class _AboutSupportDialogState extends State<AboutSupportDialog> {
                 builder: (_) => CopyrightComplaintDialog(
                   endpoint: widget.releaseEndpoint,
                   service: widget.copyrightComplaintService,
+                  attachmentPicker: widget.feedbackAttachmentPicker,
                 ),
               ),
         child: const Text('版权投诉'),

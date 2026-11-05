@@ -1,5 +1,8 @@
+import 'dart:typed_data';
+
 import 'package:chess_next/features/settings/copyright_complaint_dialog.dart';
 import 'package:chess_next/ports/copyright_complaint_service.dart';
+import 'package:chess_next/ports/feedback_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -8,11 +11,13 @@ void main() {
     tester,
   ) async {
     final service = _FakeComplaintService();
+    final picker = _FakeAttachmentPicker();
     await tester.pumpWidget(
       MaterialApp(
         home: CopyrightComplaintDialog(
           endpoint: 'https://support.example.test',
           service: service,
+          attachmentPicker: picker,
         ),
       ),
     );
@@ -44,17 +49,39 @@ void main() {
     final truth = find.byKey(const ValueKey('complaint-truth'));
     await tester.ensureVisible(truth);
     await tester.tap(truth);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('pick-complaint-attachments')),
+    );
+    await tester.tap(find.byKey(const ValueKey('pick-complaint-attachments')));
+    await tester.pumpAndSettle();
+    expect(find.text('proof.png'), findsOneWidget);
+    await tester.ensureVisible(find.byKey(const ValueKey('preview-complaint')));
     await tester.tap(find.byKey(const ValueKey('preview-complaint')));
     await tester.pumpAndSettle();
     expect(service.calls, 0);
     expect(find.textContaining('https://support.example.test'), findsOneWidget);
     expect(find.text('Sample work'), findsNWidgets(2));
+    expect(find.text('proof.png'), findsNWidgets(2));
     await tester.tap(find.byKey(const ValueKey('confirm-send-complaint')));
     await tester.pumpAndSettle();
     expect(service.calls, 1);
     expect(service.complaint?.email, 'person@example.test');
+    expect(service.complaint?.attachments.single.name, 'proof.png');
     expect(tester.takeException(), isNull);
   });
+}
+
+final class _FakeAttachmentPicker implements FeedbackAttachmentPicker {
+  @override
+  Future<List<FeedbackAttachment>?> pickAttachments({
+    required int remaining,
+  }) async => [
+    FeedbackAttachment(
+      name: 'proof.png',
+      mimeType: 'image/png',
+      bytes: Uint8List.fromList([137, 80, 78, 71, 13, 10, 26, 10, 1]),
+    ),
+  ];
 }
 
 final class _FakeComplaintService implements CopyrightComplaintService {

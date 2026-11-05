@@ -8,10 +8,12 @@ class CopyrightComplaintDialog extends StatefulWidget {
     super.key,
     required this.endpoint,
     required this.service,
+    this.attachmentPicker,
   });
 
   final String endpoint;
   final CopyrightComplaintService service;
+  final FeedbackAttachmentPicker? attachmentPicker;
 
   @override
   State<CopyrightComplaintDialog> createState() =>
@@ -25,6 +27,7 @@ class _CopyrightComplaintDialogState extends State<CopyrightComplaintDialog> {
   bool _sending = false;
   bool _sent = false;
   String? _status;
+  final List<FeedbackAttachment> _attachments = [];
 
   @override
   void dispose() {
@@ -47,6 +50,7 @@ class _CopyrightComplaintDialogState extends State<CopyrightComplaintDialog> {
       ownership: _fields[3].text,
       content: _fields[4].text,
       details: _fields[5].text,
+      attachments: _attachments,
     );
     final accepted = await showDialog<bool>(
       context: context,
@@ -75,8 +79,28 @@ class _CopyrightComplaintDialogState extends State<CopyrightComplaintDialog> {
                   SelectableText(pair.$2),
                   const SizedBox(height: 6),
                 ],
+                Text('附件（${complaint.attachments.length}）'),
+                if (complaint.attachments.isEmpty)
+                  const Text('未选择附件')
+                else
+                  for (final attachment in complaint.attachments)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      leading: Image.memory(
+                        attachment.bytes,
+                        width: 52,
+                        height: 52,
+                        fit: BoxFit.cover,
+                        errorBuilder: (_, _, _) =>
+                            const Icon(Icons.image_outlined),
+                      ),
+                      title: Text(attachment.name),
+                      subtitle: Text(
+                        '${attachment.mimeType} · ${attachment.bytes.length} B',
+                      ),
+                    ),
                 const Text(
-                  '只发送以上填写内容。连接会向服务及托管层暴露来源IP等网络信息；数据保存在运营者私有目录，保留期限由运营者设置。附件尚不可用。',
+                  '只发送以上填写内容和明确选择的附件。连接会向服务及托管层暴露来源IP等网络信息；数据保存在运营者私有目录，保留期限由运营者设置。',
                 ),
               ],
             ),
@@ -149,6 +173,43 @@ class _CopyrightComplaintDialogState extends State<CopyrightComplaintDialog> {
               _field(3, '权属/授权证明说明', required: true, max: 2000, lines: 3),
               _field(4, '涉及内容及可定位链接', required: true, max: 2000, lines: 3),
               _field(5, '补充说明（可选）', required: false, max: 2000, lines: 3),
+              Align(
+                alignment: Alignment.centerLeft,
+                child: TextButton.icon(
+                  key: const ValueKey('pick-complaint-attachments'),
+                  onPressed:
+                      _sending ||
+                          widget.attachmentPicker == null ||
+                          _attachments.length >=
+                              FeedbackAttachment.maxAttachments
+                      ? null
+                      : _pickAttachments,
+                  icon: const Icon(Icons.attach_file),
+                  label: Text('添加证明图片（${_attachments.length}/3）'),
+                ),
+              ),
+              for (var index = 0; index < _attachments.length; index++)
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  leading: Image.memory(
+                    _attachments[index].bytes,
+                    width: 40,
+                    height: 40,
+                    fit: BoxFit.cover,
+                    errorBuilder: (_, _, _) => const Icon(Icons.image_outlined),
+                  ),
+                  title: Text(_attachments[index].name),
+                  subtitle: Text(
+                    '${(_attachments[index].bytes.length / 1024).ceil()} KiB',
+                  ),
+                  trailing: IconButton(
+                    tooltip: '移除${_attachments[index].name}',
+                    onPressed: _sending
+                        ? null
+                        : () => setState(() => _attachments.removeAt(index)),
+                    icon: const Icon(Icons.close),
+                  ),
+                ),
               CheckboxListTile(
                 key: const ValueKey('complaint-truth'),
                 contentPadding: EdgeInsets.zero,
@@ -161,7 +222,7 @@ class _CopyrightComplaintDialogState extends State<CopyrightComplaintDialog> {
                 controlAffinity: ListTileControlAffinity.leading,
               ),
               const Text(
-                '附件上传暂不可用，请在文字中提供可核验的权属材料说明。内容仅在预览并确认后发送；服务运营者负责私有保存和保留期限。',
+                '可选添加最多3张PNG/JPEG图片，每张不超过256KiB、合计不超过512KiB。仅在完整预览并确认后发送；服务运营者负责私有保存和保留期限。',
               ),
               if (_status != null)
                 Padding(
@@ -208,4 +269,36 @@ class _CopyrightComplaintDialogState extends State<CopyrightComplaintDialog> {
         ? '请填写$label'
         : null,
   );
+
+  Future<void> _pickAttachments() async {
+    final picker = widget.attachmentPicker;
+    if (picker == null) return;
+    try {
+      final selected = await picker.pickAttachments(
+        remaining: FeedbackAttachment.maxAttachments - _attachments.length,
+      );
+      if (selected == null || !mounted) return;
+      final combined = [..._attachments, ...selected];
+      if (combined.fold<int>(0, (sum, item) => sum + item.bytes.length) >
+          FeedbackAttachment.maxTotalBytes) {
+        setState(() => _status = '附件合计不能超过512KiB，请移除部分图片后重试。');
+        return;
+      }
+      setState(() {
+        _attachments
+          ..clear()
+          ..addAll(combined);
+        _status = null;
+      });
+    } on FeedbackAttachmentPickerException catch (error) {
+      final message = switch (error.reason) {
+        FeedbackAttachmentPickerFailure.limit => '最多选择3张图片。',
+        FeedbackAttachmentPickerFailure.size => '单张不能超过256KiB，附件合计不能超过512KiB。',
+        FeedbackAttachmentPickerFailure.format => '仅支持有效的PNG或JPEG图片。',
+        FeedbackAttachmentPickerFailure.unavailable => '此平台当前无法打开图片选择器。',
+        FeedbackAttachmentPickerFailure.read => '无法读取所选图片。',
+      };
+      if (mounted) setState(() => _status = message);
+    }
+  }
 }

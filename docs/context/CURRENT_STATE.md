@@ -1,3 +1,9 @@
+## M4-87 / F27 棋子样式比例、位置和阴影ARB化（门槛通过，待提交）
+
+将棋子样式比例/当前大小、横纵位置值与四向调节提示/自动对正、阴影开关与无/柔和/明显选项、方向距离模糊浓淡名称和说明迁入zh/en资源。棋子图片入口、样式关联音效说明和全局动画/音效项仍未迁移，根Locale锁zh。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/application/piece_skin_shadow_test.dart --reporter expanded`9/9；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-87.log`；`flutter analyze --no-pub`、格式/diff检查通过。实际macOS运行/视觉未验，未产生额外GUI实例。待单独中文提交。
+
 ## M4-86 / F27,B24 / 格点与边距及格点编辑器ARB化（门槛通过，待提交）
 
 继续将格点/边距标题说明、四边输入与滑杆标签、棋子缩放、落点图旋转、重置/校准按钮与校准对话框迁入zh/en ARB；拖动编辑器预览和左右格点的读屏名称、坐标值、操作提示及四个方向Action均支持本地化。未改几何算法、单位、边界或保存语义；此项仍为项目模型P，站点完整几何规则U。根Locale依然固定zh。

@@ -162,4 +162,63 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get gridPointMoveDown => '格点下移1%';
+
+  @override
+  String pieceSkinScaleCurrent(int percent) {
+    return '当前棋子样式大小：$percent%';
+  }
+
+  @override
+  String get pieceSkinScaleHelp =>
+      '大小只对当前棋子样式生效，并与下方全局棋子大小相乘；默认100%，范围80%–120%。';
+
+  @override
+  String pieceSkinPositionCurrent(int x, int y) {
+    return '当前棋子样式位置：横向$x%，纵向$y%';
+  }
+
+  @override
+  String get skinPieceMoveUp => '棋子上移1%';
+
+  @override
+  String get skinPieceMoveDown => '棋子下移1%';
+
+  @override
+  String get skinPieceMoveLeft => '棋子左移1%';
+
+  @override
+  String get skinPieceMoveRight => '棋子右移1%';
+
+  @override
+  String get skinPieceAutoAlign => '棋子自动对正';
+
+  @override
+  String get pieceSkinPositionHelp => '每次移动当前棋子样式1%格宽，最多±8%；位置仅影响棋子绘制。';
+
+  @override
+  String get pieceShadowLabel => '棋子阴影';
+
+  @override
+  String get pieceShadowNone => '无';
+
+  @override
+  String get pieceShadowSoft => '柔和';
+
+  @override
+  String get pieceShadowProminent => '明显';
+
+  @override
+  String get pieceShadowDirection => '方向';
+
+  @override
+  String get pieceShadowDistance => '距离';
+
+  @override
+  String get pieceShadowBlur => '模糊';
+
+  @override
+  String get pieceShadowOpacity => '浓淡';
+
+  @override
+  String get pieceShadowHelp => '方向0°向右，90°向下；距离、模糊按棋格宽计算，值域为本机设计。';
 }

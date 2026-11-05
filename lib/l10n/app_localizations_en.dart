@@ -170,4 +170,65 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gridPointMoveDown => 'Move grid point down by 1%';
+
+  @override
+  String pieceSkinScaleCurrent(int percent) {
+    return 'Current piece style size: $percent%';
+  }
+
+  @override
+  String get pieceSkinScaleHelp =>
+      'Applies to this piece style and multiplies with the global piece size. Default is 100%; range 80–120%.';
+
+  @override
+  String pieceSkinPositionCurrent(int x, int y) {
+    return 'Current piece style position: horizontal $x%, vertical $y%';
+  }
+
+  @override
+  String get skinPieceMoveUp => 'Move pieces up by 1%';
+
+  @override
+  String get skinPieceMoveDown => 'Move pieces down by 1%';
+
+  @override
+  String get skinPieceMoveLeft => 'Move pieces left by 1%';
+
+  @override
+  String get skinPieceMoveRight => 'Move pieces right by 1%';
+
+  @override
+  String get skinPieceAutoAlign => 'Align pieces automatically';
+
+  @override
+  String get pieceSkinPositionHelp =>
+      'Each step moves this piece style by 1% of the grid width, up to ±8%. Position affects drawing only.';
+
+  @override
+  String get pieceShadowLabel => 'Piece shadow';
+
+  @override
+  String get pieceShadowNone => 'None';
+
+  @override
+  String get pieceShadowSoft => 'Soft';
+
+  @override
+  String get pieceShadowProminent => 'Strong';
+
+  @override
+  String get pieceShadowDirection => 'Direction';
+
+  @override
+  String get pieceShadowDistance => 'Distance';
+
+  @override
+  String get pieceShadowBlur => 'Blur';
+
+  @override
+  String get pieceShadowOpacity => 'Opacity';
+
+  @override
+  String get pieceShadowHelp =>
+      '0° points right and 90° down. Distance and blur use grid width; range is defined by this app.';
 }

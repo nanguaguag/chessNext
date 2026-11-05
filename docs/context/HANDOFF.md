@@ -1,5 +1,11 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-87 / F27 棋子样式比例/位置/阴影本地化（门槛通过，待提交）
+
+BoardDisplayDialog的自定义棋子大小位置与阴影可见静态文案、参数名和控制tooltip已有zh/en资源，阴影预设经实际Dropdown英文选项测试。棋子图片按钮、样式关联音效说明、动画/系统音效等还未迁移；产品仍固定zh。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/application/piece_skin_shadow_test.dart --reporter expanded`9/9；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-87.log`）；`flutter analyze --no-pub`/格式/diff检查通过。根测试一个串行flutter_tester后退出，无新GUI，只有原PID50598。macOS运行/视觉not run以避免启动第二实例。待中文单独提交，继续余下设置资源。
+
 ## M4-86 / F27,B24 格点/边距与校准编辑器本地化（门槛通过，待提交）
 
 M4-84资源管线加M4-85基础显示项后，格点与四边、棋盘皮肤棋子比例、落点旋转、恢复默认、校准弹窗以及可拖格点控件的读屏全部使用zh/en键。没有更改项目几何模型或宣称源站映射已知。

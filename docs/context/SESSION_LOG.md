@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-87 / F27 棋子样式大小/位置/阴影ARB化（门槛通过，待提交）
+
+资源化当前棋子样式比例/位置数值与帮助、四方向tooltip/自动对正、阴影模式/选项、方向/距离/模糊/浓淡滑杆及解释。英文测试打开真实阴影Dropdown验证None/Soft/Strong。两次测试检查错误：先找不可见滑杆文字，再对TextField标签直接tap；最终用Dropdown widget及菜单覆盖完成验证。
+
+定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/application/piece_skin_shadow_test.dart --reporter expanded`9/9；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-87.log`）；`flutter analyze --no-pub`、`dart format`和diff检查通过。串行flutter_tester退出，唯一原GUI PID50598；无新App，未作macOS运行/视觉验证。棋子图片入口、样式关联音效、动画和全局音效文字继续待迁移。代码与交接文档待单独中文提交。
+
 ## 2026-11-05 / M4-86 / F27,B24 棋盘格点、边距与校准读屏本地化（门槛通过，待提交）
 
 ARB扩展至四边标签/输入、棋子比例、格点说明、落点旋转及重置；BoardGeometryEditor格点预览、两端坐标值、提示与方向自定义语义Action支持zh/en。未改变几何值、拖动变换或保存语义。首次定向测试因“Left margin”在文字标签和输入字段各显示一次而错误期待一个；修正为两个后复跑。

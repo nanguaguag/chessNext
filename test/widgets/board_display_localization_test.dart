@@ -1,4 +1,5 @@
 import 'package:chess_next/application/board_session.dart';
+import 'package:chess_next/application/board_appearance.dart';
 import 'package:chess_next/application/engine_session_controller.dart';
 import 'package:chess_next/application/preferences_controller.dart';
 import 'package:chess_next/features/settings/board_display_dialog.dart';
@@ -57,8 +58,34 @@ void main() {
       expect(find.text('Grid and margins'), findsOneWidget);
       expect(find.text('Left margin'), findsNWidgets(2));
       expect(find.text('Rotate the landing marker image'), findsOneWidget);
-      await tester.ensureVisible(find.text('Drag grid points to calibrate'));
-      await tester.tap(find.text('Drag grid points to calibrate'));
+      expect(find.text('Piece shadow'), findsOneWidget);
+      expect(
+        find.textContaining('Current piece style size: 100%'),
+        findsOneWidget,
+      );
+      expect(
+        find.textContaining('Current piece style position: horizontal 0%'),
+        findsOneWidget,
+      );
+      expect(find.byTooltip('Align pieces automatically'), findsOneWidget);
+      final shadowStyle = find.byType(
+        DropdownButtonFormField<PieceShadowStyle>,
+      );
+      await tester.ensureVisible(shadowStyle);
+      await tester.tap(shadowStyle);
+      await tester.pumpAndSettle();
+      expect(find.text('None'), findsOneWidget);
+      expect(find.text('Soft'), findsNWidgets(2));
+      expect(find.text('Strong'), findsOneWidget);
+      await tester.tap(find.text('None'));
+      await tester.pumpAndSettle();
+      final calibrateButton = find.byKey(
+        ValueKey(
+          'board-grid-editor-open-${preferences.value.selectedBoardSkinId}',
+        ),
+      );
+      await tester.ensureVisible(calibrateButton);
+      await tester.tap(calibrateButton);
       await tester.pumpAndSettle();
       expect(find.text('Calibrate by dragging grid points'), findsOneWidget);
       expect(find.text('Done'), findsOneWidget);

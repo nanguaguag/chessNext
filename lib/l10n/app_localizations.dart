@@ -379,6 +379,114 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'格点下移1%'**
   String get gridPointMoveDown;
+
+  /// No description provided for @pieceSkinScaleCurrent.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前棋子样式大小：{percent}%'**
+  String pieceSkinScaleCurrent(int percent);
+
+  /// No description provided for @pieceSkinScaleHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'大小只对当前棋子样式生效，并与下方全局棋子大小相乘；默认100%，范围80%–120%。'**
+  String get pieceSkinScaleHelp;
+
+  /// No description provided for @pieceSkinPositionCurrent.
+  ///
+  /// In zh, this message translates to:
+  /// **'当前棋子样式位置：横向{x}%，纵向{y}%'**
+  String pieceSkinPositionCurrent(int x, int y);
+
+  /// No description provided for @skinPieceMoveUp.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子上移1%'**
+  String get skinPieceMoveUp;
+
+  /// No description provided for @skinPieceMoveDown.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子下移1%'**
+  String get skinPieceMoveDown;
+
+  /// No description provided for @skinPieceMoveLeft.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子左移1%'**
+  String get skinPieceMoveLeft;
+
+  /// No description provided for @skinPieceMoveRight.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子右移1%'**
+  String get skinPieceMoveRight;
+
+  /// No description provided for @skinPieceAutoAlign.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子自动对正'**
+  String get skinPieceAutoAlign;
+
+  /// No description provided for @pieceSkinPositionHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'每次移动当前棋子样式1%格宽，最多±8%；位置仅影响棋子绘制。'**
+  String get pieceSkinPositionHelp;
+
+  /// No description provided for @pieceShadowLabel.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子阴影'**
+  String get pieceShadowLabel;
+
+  /// No description provided for @pieceShadowNone.
+  ///
+  /// In zh, this message translates to:
+  /// **'无'**
+  String get pieceShadowNone;
+
+  /// No description provided for @pieceShadowSoft.
+  ///
+  /// In zh, this message translates to:
+  /// **'柔和'**
+  String get pieceShadowSoft;
+
+  /// No description provided for @pieceShadowProminent.
+  ///
+  /// In zh, this message translates to:
+  /// **'明显'**
+  String get pieceShadowProminent;
+
+  /// No description provided for @pieceShadowDirection.
+  ///
+  /// In zh, this message translates to:
+  /// **'方向'**
+  String get pieceShadowDirection;
+
+  /// No description provided for @pieceShadowDistance.
+  ///
+  /// In zh, this message translates to:
+  /// **'距离'**
+  String get pieceShadowDistance;
+
+  /// No description provided for @pieceShadowBlur.
+  ///
+  /// In zh, this message translates to:
+  /// **'模糊'**
+  String get pieceShadowBlur;
+
+  /// No description provided for @pieceShadowOpacity.
+  ///
+  /// In zh, this message translates to:
+  /// **'浓淡'**
+  String get pieceShadowOpacity;
+
+  /// No description provided for @pieceShadowHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'方向0°向右，90°向下；距离、模糊按棋格宽计算，值域为本机设计。'**
+  String get pieceShadowHelp;
 }
 
 class _AppLocalizationsDelegate

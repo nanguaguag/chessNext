@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-05 / M4-87 / F27 棋子样式比例、偏移和阴影文案
+
+棋子样式独立大小、位置值、四方向/自动归中语义、阴影预设和参数滑杆说明加入zh/en ARB；不改偏好/绘制逻辑。仍有棋子图片/样式与音效说明、动画/声音、皮肤库/导入导出子对话框等文本未迁移。根Locale固定zh。
+
+验收：定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/application/piece_skin_shadow_test.dart --reporter expanded`9/9；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败；`flutter analyze --no-pub`与`git diff --check`通过。macOS GUI未重启，运行/视觉not run。
+
 ## 2026-11-05 / M4-86 / F27,B24 格点与边距本地化
 
 棋盘几何设置中的四边字段、比例、落点旋转、重置和弹窗动作以及BoardGeometryEditor的AX标签/坐标/提示/自定义方向Action加入zh/en ARB。只做本地化，不修改ADR-054项目归一化几何或将其映射到站点未知单位/行为。根Locale保持zh。

@@ -146,6 +146,7 @@ class BoardDisplayDialog extends StatelessWidget {
   };
 
   Widget _pieceShadowControls(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final skin = preferences.value.pieceSkin;
     final profile = _activeProfile(preferences);
     final shadow = profile?.shadow ?? preferences.value.pieceSkinShadows[skin]!;
@@ -153,6 +154,7 @@ class BoardDisplayDialog extends StatelessWidget {
     Widget slider({
       required String key,
       required String label,
+      bool degrees = false,
       required double value,
       required double max,
       required int divisions,
@@ -161,7 +163,7 @@ class BoardDisplayDialog extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          '$label ${value.toStringAsFixed(label == '方向' ? 0 : 1)}${label == '方向' ? '°' : '%'}',
+          '$label ${value.toStringAsFixed(degrees ? 0 : 1)}${degrees ? '°' : '%'}',
         ),
         Slider(
           key: ValueKey('piece-skin-shadow-$shadowKey-$key'),
@@ -169,9 +171,10 @@ class BoardDisplayDialog extends StatelessWidget {
           min: 0,
           max: max,
           divisions: divisions,
-          label: '${value.toStringAsFixed(1)}${label == '方向' ? '°' : '%'}',
+          label:
+              '${value.toStringAsFixed(degrees ? 0 : 1)}${degrees ? '°' : '%'}',
           semanticFormatterCallback: (v) =>
-              '${v.toStringAsFixed(1)}${label == '方向' ? '°' : '%'}',
+              '${v.toStringAsFixed(degrees ? 0 : 1)}${degrees ? '°' : '%'}',
           onChanged:
               preferences.loading ||
                   (profile != null && (pieceSkins?.loading ?? false)) ||
@@ -188,13 +191,19 @@ class BoardDisplayDialog extends StatelessWidget {
           key: ValueKey('piece-skin-shadow-style-$shadowKey-${shadow.style}'),
           initialValue: shadow.style,
           isExpanded: true,
-          decoration: const InputDecoration(labelText: '棋子阴影'),
-          items: const [
-            DropdownMenuItem(value: PieceShadowStyle.none, child: Text('无')),
-            DropdownMenuItem(value: PieceShadowStyle.soft, child: Text('柔和')),
+          decoration: InputDecoration(labelText: l10n.pieceShadowLabel),
+          items: [
+            DropdownMenuItem(
+              value: PieceShadowStyle.none,
+              child: Text(l10n.pieceShadowNone),
+            ),
+            DropdownMenuItem(
+              value: PieceShadowStyle.soft,
+              child: Text(l10n.pieceShadowSoft),
+            ),
             DropdownMenuItem(
               value: PieceShadowStyle.prominent,
-              child: Text('明显'),
+              child: Text(l10n.pieceShadowProminent),
             ),
           ],
           onChanged:
@@ -211,15 +220,16 @@ class BoardDisplayDialog extends StatelessWidget {
         ),
         slider(
           key: 'angle',
-          label: '方向',
+          label: l10n.pieceShadowDirection,
           value: shadow.angleDegrees.toDouble(),
           max: 359,
           divisions: 359,
+          degrees: true,
           update: (v) => shadow.copyWith(angleDegrees: v.round()),
         ),
         slider(
           key: 'distance',
-          label: '距离',
+          label: l10n.pieceShadowDistance,
           value: shadow.distancePercent,
           max: 20,
           divisions: 200,
@@ -227,7 +237,7 @@ class BoardDisplayDialog extends StatelessWidget {
         ),
         slider(
           key: 'blur',
-          label: '模糊',
+          label: l10n.pieceShadowBlur,
           value: shadow.blurPercent,
           max: 20,
           divisions: 200,
@@ -235,13 +245,13 @@ class BoardDisplayDialog extends StatelessWidget {
         ),
         slider(
           key: 'opacity',
-          label: '浓淡',
+          label: l10n.pieceShadowOpacity,
           value: shadow.opacityPercent.toDouble(),
           max: 100,
           divisions: 100,
           update: (v) => shadow.copyWith(opacityPercent: v.round()),
         ),
-        const Text('方向0°向右，90°向下；距离、模糊按棋格宽计算，值域为本机设计。'),
+        Text(l10n.pieceShadowHelp),
       ],
     );
   }
@@ -595,7 +605,7 @@ class BoardDisplayDialog extends StatelessWidget {
                   ),
                 ),
                 const Text('棋子样式会同步决定“随棋子皮肤”的走棋音效。'),
-                Text('当前棋子样式大小：$skinScale%'),
+                Text(l10n.pieceSkinScaleCurrent(skinScale)),
                 Slider(
                   key: ValueKey(
                     'piece-skin-size-${preferences.value.selectedPieceSkinId}',
@@ -612,15 +622,15 @@ class BoardDisplayDialog extends StatelessWidget {
                           _setSkinScale(preferences, value.round()),
                         ),
                 ),
-                const Text('大小只对当前棋子样式生效，并与下方全局棋子大小相乘；默认100%，范围80%–120%。'),
+                Text(l10n.pieceSkinScaleHelp),
                 const SizedBox(height: 8),
-                Text('当前棋子样式位置：横向$skinOffsetX%，纵向$skinOffsetY%'),
+                Text(l10n.pieceSkinPositionCurrent(skinOffsetX, skinOffsetY)),
                 Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
-                        tooltip: '棋子上移1%',
+                        tooltip: l10n.skinPieceMoveUp,
                         onPressed:
                             preferences.loading || skinBusy || skinOffsetY <= -8
                             ? null
@@ -631,7 +641,7 @@ class BoardDisplayDialog extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            tooltip: '棋子左移1%',
+                            tooltip: l10n.skinPieceMoveLeft,
                             onPressed:
                                 preferences.loading ||
                                     skinBusy ||
@@ -642,7 +652,7 @@ class BoardDisplayDialog extends StatelessWidget {
                           ),
                           IconButton(
                             key: const ValueKey('piece-skin-auto-align'),
-                            tooltip: '棋子自动对正',
+                            tooltip: l10n.skinPieceAutoAlign,
                             onPressed:
                                 preferences.loading ||
                                     skinBusy ||
@@ -654,7 +664,7 @@ class BoardDisplayDialog extends StatelessWidget {
                             icon: const Icon(Icons.my_location),
                           ),
                           IconButton(
-                            tooltip: '棋子右移1%',
+                            tooltip: l10n.skinPieceMoveRight,
                             onPressed:
                                 preferences.loading ||
                                     skinBusy ||
@@ -666,7 +676,7 @@ class BoardDisplayDialog extends StatelessWidget {
                         ],
                       ),
                       IconButton(
-                        tooltip: '棋子下移1%',
+                        tooltip: l10n.skinPieceMoveDown,
                         onPressed:
                             preferences.loading || skinBusy || skinOffsetY >= 8
                             ? null
@@ -676,7 +686,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     ],
                   ),
                 ),
-                const Text('每次移动当前棋子样式1%格宽，最多±8%；位置仅影响棋子绘制。'),
+                Text(l10n.pieceSkinPositionHelp),
                 _pieceShadowControls(context),
                 Align(
                   alignment: Alignment.centerRight,

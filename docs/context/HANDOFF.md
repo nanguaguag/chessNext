@@ -74,3 +74,5 @@ M4-58/F21/B24实现本机9列×10行棋盘格预览及双拖柄；左上仅改le
 ## 追加 E74 / F31（2026-11-05）
 
 从关于页进入访客反馈`#/feedback`并展开“查看内容”，确认描述≤2000字符、可选≤3图、联系方式、默认附带设备/版本，展示platform/version/build/bundle/channel/os/model/UA/locale/screen dims；未输入或提交。版权`#/copyright`说明公开邮箱及投诉材料/处理流程；投诉表`#/feedback?type=copyright`要求投诉人、邮箱、作品、权属、涉及内容、真实性确认及可选最多3图。检查更新、更新日志无可见AX结果，是否网络请求U。逐级返回`#/settings`，未改棋谱/账号/设置。E74五份研究追踪及CURRENT_STATE已更新，待中文docs commit。下一步继续F31本机About/支持实现设计与其余登录外缺口，仍不把单片当全站完成。
+
+E75清理：收到用户明确“确认删除（仅本次创建）”后，只删除审计用访客皮肤“我的棋盘”。删除后AX列表已无该项，棋盘设置仍默认棋盘/默认棋子、100%、坐标开、倒置关；无其它数据改变。REFERENCE_EVIDENCE/SESSION_LOG/CURRENT_STATE已记录，待diff check/docs commit。

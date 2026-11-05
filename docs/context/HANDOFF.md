@@ -1,5 +1,17 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-80 / F15,F20 / ADR-110 自建大师谱索引查询服务端（门槛通过，待提交）
+
+服务端新增可选`CHESSNEXT_MASTER_GAMES_ROOT`与`POST /v1/master-games/query`，schema1索引文件仅由运营者供给，不附带站点/第三方棋谱。精确FEN+完整history定位，过滤字段与值域有界；响应只给索引metadata和数据集许可署名。Nginx样例关闭该端点access log并限速。Flutter筛选页面和整局读取未实现；匹配/排序/分页均是项目P，不能声称复刻参考站。E87只观察年份DOM min=1/max=9999，真实键盘/stepper和查询行为U；筛选窗已关且操作来源恢复云库。
+
+定向`flutter test --concurrency=1 test/server/master_games_server_test.dart --reporter expanded`3/3；服务包`dart test`6/6、`dart analyze`无问题；根`flutter test --concurrency=1 --reporter expanded`616通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-80.log`；`flutter analyze --no-pub`及diff-check通过。macOS只attach既有PID50598/runner50125，1,640ms同步、2,180ms热重启；Ctrl-C后原PID50598存活，无tester/attach残留或第二个App。未做UI视觉验收。
+
+提交M4-80后直接推进M4-81：Flutter大师谱过滤模型/客户端，使用独立`MasterGamesService`端口，按明确配置endpoint且用户显式操作才发送当前局面；保留离线行为和许可署名。继续处理完整棋局内容/详情、F27本地化及矩阵其它登录外差异，不停止、不宣称全站对齐。
+
+---
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-79 / F15 云库候选中文记谱（门槛通过，待提交）
 
 `BookLookupController`为每个合法候选从查询时位置生成中文记谱；UI以该记谱为主标题，并附UCI、scoreCp和weight。保留M4-78的显式查询、自建可替换BookService、许可署名、无效响应隔离与不自动走棋边界。

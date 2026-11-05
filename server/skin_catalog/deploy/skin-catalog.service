@@ -11,6 +11,8 @@ Environment=SKIN_CATALOG_ROOT=/srv/chessnext/skin-catalog/public
 # Environment=SKIN_BOARD_CATALOG_ROOT=/srv/chessnext/board-skin-catalog/public
 # Enable only with an operator-supplied, licensed book data set.
 # Environment=CHESSNEXT_BOOK_ROOT=/srv/chessnext/book/public
+# Enable only with an operator-supplied, licensed master-game index.
+# Environment=CHESSNEXT_MASTER_GAMES_ROOT=/srv/chessnext/master-games/public
 # Public version metadata only; release notes are supplied by the operator.
 # Environment=CHESSNEXT_RELEASE_ROOT=/srv/chessnext/releases/public
 # Optional private, append-only feedback inbox. Create it for skin-catalog:skin-catalog first.

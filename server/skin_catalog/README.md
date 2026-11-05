@@ -142,11 +142,12 @@ to the catalog directory.
 - `GET /v1/board-catalog/{id}`
 - `GET /v1/board-catalog/{id}/package`
 - `POST /v1/book/query` (optional book root, JSON schema 1)
+- `POST /v1/master-games/query` (optional licensed master-game index)
 - `POST /v1/feedback` (optional feedback root, JSON schema 1)
 
-Only GET/HEAD, the bounded book-query POST, optional bounded feedback and
-copyright complaint POSTs,
-and CORS preflight are accepted. Feedback accepts only `kind` (`problem` or
+Only GET/HEAD, the bounded book-query and master-game-query POSTs, optional
+bounded feedback and copyright complaint POSTs, and CORS preflight are
+accepted. Feedback accepts only `kind` (`problem` or
 `suggestion`), `message` (1–2,000 characters), optional `contact` (up to
 200 characters), and optionally up to three user-selected PNG/JPEG attachments
 (256 KiB each, 512 KiB total). Attachment bytes are base64-encoded in the
@@ -200,3 +201,37 @@ publish changes. Requests are bounded to 32 KiB and are neither logged nor
 persisted. Queries contain the current position and move history, so the app
 must use an endpoint the user explicitly configured. The supplied Nginx sample
 allows a 32 KiB request body for this endpoint.
+
+### Optional operator supplied master-game index
+
+Set `CHESSNEXT_MASTER_GAMES_ROOT` to a directory containing
+`master-games.json` to enable `POST /v1/master-games/query`. This is a separate
+index from the opening/endgame book endpoint. The version 1 manifest contains
+`dataset: {id, license, attribution}` and `records`. Each record has a unique
+operator-assigned `id`, `category` (`game` or `chessbook`), exact current
+`fen` and complete `history`, red/black player names, event, year from 1 to
+9999, and result (`red_win`, `draw`, or `black_win`). Index only positions and
+metadata from games the operator owns or is licensed to index and display; this
+repository ships no game corpus or sample game records.
+
+The query body uses schema 1 with `fen`, complete `history`, optional
+`category`, optional player/event substring `text`, optional inclusive
+`fromYear`/`toYear`, optional result list, and optional `page`/`pageSize`.
+Omitting `category` means all categories; omitting or sending an empty `results`
+list means all three outcomes.
+Position matching is exact FEN plus exact history. Text matches either player
+or event case-insensitively. Results preserve manifest order and are paged at
+up to 50 metadata rows; responses carry dataset license/attribution. This is a
+project contract proposed from visible filter fields; it does not assert that
+the reference site's position matching, text semantics, ranking, or paging
+behaves the same way. It returns metadata only and does not provide full game
+records in this slice.
+
+The manifest is loaded at startup, limited to 128 MiB and 2,000,000 index rows;
+requests are capped at 32 KiB, history at 512 moves, text at 120 Unicode code
+points, and page size at 50. The service neither logs nor persists request
+bodies. The Nginx sample disables access logs for this route and applies the
+catalog rate limit. Replace the manifest atomically and restart the service to
+publish updates. [`master-games.example.json`](master-games.example.json) is an empty template; replace all
+dataset identity/license details and add only authorized records before
+enabling the endpoint.

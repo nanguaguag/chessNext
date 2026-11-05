@@ -1,3 +1,9 @@
+## M4-80 / F15,F20 / ADR-110 自建大师谱索引查询（验证通过，待提交）
+
+新增可选`POST /v1/master-games/query`服务端契约与operator-supplied索引，不携带站点棋谱；可按精确FEN+history、分类、玩家/赛事子串、年份闭区间、结果和有界分页查询，响应提供索引元数据及license/attribution。默认无环境变量时不装载。具体匹配逻辑为项目P；Flutter客户端过滤器/整局读取和授权运营未完成。E87年份min/max仅是页面DOM声明O。
+
+专项3/3；`dart test`6/6、服务包`dart analyze`通过；根`flutter test --concurrency=1 --reporter expanded`616通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-80.log`；root `flutter analyze --no-pub`及diff-check通过。macOS复用PID50598/runner50125，同步1,640ms、热重启2,180ms；退出后原App存活，无tester/attach副本或新GUI。未做界面视觉验收。单独提交后继续M4-81 Flutter大师谱筛选客户端/失效模型，随后完善整局读取、F27及其余登录外范围；F15和全站仍未完成。
+
 ## M4-79 / F15 / ADR-109 云库候选中文记谱（验证通过，待提交）
 
 云库查询候选现在以查询局面的中文记谱为主，UCI、scoreCp、weight为辅助信息；记谱来自本地捕获位置与已通过合法性过滤的候选，不新增网络字段或自动走棋。专项6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-79.log`；`flutter analyze --no-pub`、`git diff --check`通过。5项跳过需官方Pikafish/NNUE。macOS仅attach既有PID50598/runner50125，同步1,611ms、热重启2,148ms；脱离后PID50598存活，进程检查无tester/attach残留及第二个GUI。测试仅一个串行tester。未做人工视觉验收。代码和追踪文档待单独中文feature commit；随后继续大师谱数据契约/授权部署审计、B24/F27及其它登录外差距，全站仍未对齐。

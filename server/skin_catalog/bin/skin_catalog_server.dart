@@ -36,6 +36,11 @@ Future<void> main(List<String> args) async {
   final bookDatabase = bookRoot == null || bookRoot.trim().isEmpty
       ? null
       : await BookDatabase.load(Directory(bookRoot));
+  final masterGamesRoot = Platform.environment['CHESSNEXT_MASTER_GAMES_ROOT'];
+  final masterGameDatabase =
+      masterGamesRoot == null || masterGamesRoot.trim().isEmpty
+      ? null
+      : await MasterGameDatabase.load(Directory(masterGamesRoot));
   final releaseRoot = Platform.environment['CHESSNEXT_RELEASE_ROOT'];
   final releaseManifest = releaseRoot == null || releaseRoot.trim().isEmpty
       ? null
@@ -53,6 +58,7 @@ Future<void> main(List<String> args) async {
     store: store,
     boardStore: boardStore,
     bookDatabase: bookDatabase,
+    masterGameDatabase: masterGameDatabase,
     releaseManifest: releaseManifest,
     feedbackInbox: feedbackInbox,
     copyrightComplaintInbox: copyrightComplaintInbox,
@@ -67,6 +73,11 @@ Future<void> main(List<String> args) async {
   if (bookDatabase != null) {
     stdout.writeln(
       'Loaded ${bookDatabase.entryCount} operator-supplied book positions.',
+    );
+  }
+  if (masterGameDatabase != null) {
+    stdout.writeln(
+      'Loaded ${masterGameDatabase.recordCount} operator-supplied master-game index entries.',
     );
   }
   if (releaseManifest != null) {

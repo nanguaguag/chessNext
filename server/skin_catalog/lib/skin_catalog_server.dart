@@ -12,6 +12,8 @@ const _maxPackageBytes = 8 * 1024 * 1024;
 const _maxBookManifestBytes = 128 * 1024 * 1024;
 const _maxBookRequestBytes = 32 * 1024;
 const _maxBookEntries = 2000000;
+const _maxMasterGamesRequestBytes = 32 * 1024;
+const _maxMasterGameEntries = 2000000;
 const _maxReleaseManifestBytes = 1024 * 1024;
 const _maxReleaseEntries = 100;
 const _maxAttachmentRequestBytes = 786432;
@@ -445,6 +447,359 @@ final class BookDatabase {
       jsonEncode([kind.name, fen.trim(), history]);
 }
 
+enum MasterGameCategory { game, chessbook }
+
+enum MasterGameResult { redWin, draw, blackWin }
+
+final class MasterGameRecord {
+  const MasterGameRecord({
+    required this.id,
+    required this.category,
+    required this.fen,
+    required this.history,
+    required this.red,
+    required this.black,
+    required this.event,
+    required this.year,
+    required this.result,
+  });
+
+  final String id;
+  final MasterGameCategory category;
+  final String fen;
+  final List<String> history;
+  final String red;
+  final String black;
+  final String event;
+  final int year;
+  final MasterGameResult result;
+
+  Map<String, Object> toJson() => {
+    'id': id,
+    'category': category.name,
+    'red': red,
+    'black': black,
+    'event': event,
+    'year': year,
+    'result': switch (result) {
+      MasterGameResult.redWin => 'red_win',
+      MasterGameResult.draw => 'draw',
+      MasterGameResult.blackWin => 'black_win',
+    },
+  };
+
+  factory MasterGameRecord.fromJson(Object? value) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'id',
+          'category',
+          'fen',
+          'history',
+          'red',
+          'black',
+          'event',
+          'year',
+          'result',
+        }).isNotEmpty ||
+        value['id'] is! String ||
+        !_idPattern.hasMatch(value['id'] as String) ||
+        value['category'] is! String ||
+        value['fen'] is! String ||
+        (value['fen'] as String).trim().isEmpty ||
+        (value['fen'] as String).length > 256 ||
+        value['history'] is! List ||
+        (value['history'] as List).length > 512 ||
+        (value['history'] as List).any(
+          (move) => move is! String || !_xiangqiMovePattern.hasMatch(move),
+        ) ||
+        value['red'] is! String ||
+        !_boundedText(value['red'] as String, 1, 120) ||
+        value['black'] is! String ||
+        !_boundedText(value['black'] as String, 1, 120) ||
+        value['event'] is! String ||
+        !_boundedText(value['event'] as String, 1, 200) ||
+        value['year'] is! int ||
+        (value['year'] as int) < 1 ||
+        (value['year'] as int) > 9999 ||
+        value['result'] is! String) {
+      throw const FormatException('Invalid master-game record');
+    }
+    final category = switch (value['category']) {
+      'game' => MasterGameCategory.game,
+      'chessbook' => MasterGameCategory.chessbook,
+      _ => throw const FormatException('Invalid master-game category'),
+    };
+    final result = switch (value['result']) {
+      'red_win' => MasterGameResult.redWin,
+      'draw' => MasterGameResult.draw,
+      'black_win' => MasterGameResult.blackWin,
+      _ => throw const FormatException('Invalid master-game result'),
+    };
+    return MasterGameRecord(
+      id: value['id'] as String,
+      category: category,
+      fen: (value['fen'] as String).trim(),
+      history: List.unmodifiable((value['history'] as List).cast<String>()),
+      red: (value['red'] as String).trim(),
+      black: (value['black'] as String).trim(),
+      event: (value['event'] as String).trim(),
+      year: value['year'] as int,
+      result: result,
+    );
+  }
+}
+
+final class MasterGameQuery {
+  const MasterGameQuery({
+    required this.fen,
+    required this.history,
+    required this.category,
+    required this.text,
+    required this.fromYear,
+    required this.toYear,
+    required this.results,
+    required this.page,
+    required this.pageSize,
+  });
+
+  final String fen;
+  final List<String> history;
+  final MasterGameCategory? category;
+  final String text;
+  final int? fromYear;
+  final int? toYear;
+  final Set<MasterGameResult> results;
+  final int page;
+  final int pageSize;
+
+  factory MasterGameQuery.fromJson(Object? value) {
+    if (value is! Map<String, dynamic> ||
+        value.keys.toSet().difference({
+          'schema',
+          'fen',
+          'history',
+          'category',
+          'text',
+          'fromYear',
+          'toYear',
+          'results',
+          'page',
+          'pageSize',
+        }).isNotEmpty ||
+        value['schema'] != 1 ||
+        value['fen'] is! String ||
+        (value['fen'] as String).trim().isEmpty ||
+        (value['fen'] as String).length > 256 ||
+        value['history'] is! List ||
+        (value['history'] as List).length > 512 ||
+        (value['history'] as List).any(
+          (move) => move is! String || !_xiangqiMovePattern.hasMatch(move),
+        ) ||
+        (value['category'] != null &&
+            value['category'] != 'game' &&
+            value['category'] != 'chessbook') ||
+        (value['text'] != null &&
+            (value['text'] is! String ||
+                (value['text'] as String).runes.length > 120)) ||
+        (value['fromYear'] != null &&
+            (value['fromYear'] is! int ||
+                (value['fromYear'] as int) < 1 ||
+                (value['fromYear'] as int) > 9999)) ||
+        (value['toYear'] != null &&
+            (value['toYear'] is! int ||
+                (value['toYear'] as int) < 1 ||
+                (value['toYear'] as int) > 9999)) ||
+        (value['results'] != null && value['results'] is! List) ||
+        (value['results'] is List && (value['results'] as List).length > 3) ||
+        (value['results'] is List &&
+            (value['results'] as List).any(
+              (result) =>
+                  result is! String ||
+                  !const {'red_win', 'draw', 'black_win'}.contains(result),
+            )) ||
+        (value['page'] != null &&
+            (value['page'] is! int ||
+                (value['page'] as int) < 1 ||
+                (value['page'] as int) > 100000)) ||
+        (value['pageSize'] != null &&
+            (value['pageSize'] is! int ||
+                (value['pageSize'] as int) < 1 ||
+                (value['pageSize'] as int) > 50))) {
+      throw const FormatException('Invalid master-game query');
+    }
+    final fromYear = value['fromYear'] as int?;
+    final toYear = value['toYear'] as int?;
+    if (fromYear != null && toYear != null && fromYear > toYear) {
+      throw const FormatException('Invalid master-game year interval');
+    }
+    final resultNames = (value['results'] as List? ?? const <Object?>[])
+        .cast<String>();
+    if (resultNames.toSet().length != resultNames.length) {
+      throw const FormatException('Duplicate master-game result filter');
+    }
+    return MasterGameQuery(
+      fen: (value['fen'] as String).trim(),
+      history: List.unmodifiable((value['history'] as List).cast<String>()),
+      category: switch (value['category']) {
+        'game' => MasterGameCategory.game,
+        'chessbook' => MasterGameCategory.chessbook,
+        _ => null,
+      },
+      text: (value['text'] as String? ?? '').trim().toLowerCase(),
+      fromYear: fromYear,
+      toYear: toYear,
+      results: Set.unmodifiable(
+        resultNames.map(
+          (name) => switch (name) {
+            'red_win' => MasterGameResult.redWin,
+            'draw' => MasterGameResult.draw,
+            _ => MasterGameResult.blackWin,
+          },
+        ),
+      ),
+      page: value['page'] as int? ?? 1,
+      pageSize: value['pageSize'] as int? ?? 24,
+    );
+  }
+}
+
+final class MasterGameDatabase {
+  MasterGameDatabase._({
+    required this.id,
+    required this.license,
+    required this.attribution,
+    required List<MasterGameRecord> records,
+  }) : _records = List.unmodifiable(records),
+       _byPosition = _groupByPosition(records);
+
+  final String id;
+  final String license;
+  final String attribution;
+  final List<MasterGameRecord> _records;
+  final Map<String, List<MasterGameRecord>> _byPosition;
+  int get recordCount => _records.length;
+
+  static Future<MasterGameDatabase> load(
+    Directory root, {
+    String fileName = 'master-games.json',
+  }) async {
+    if (await FileSystemEntity.type(root.path, followLinks: false) !=
+            FileSystemEntityType.directory ||
+        !RegExp(r'^[a-z][a-z0-9_-]{0,63}\.json$').hasMatch(fileName)) {
+      throw const FormatException('Invalid master-game data root');
+    }
+    final file = File('${root.path}/$fileName');
+    if (await FileSystemEntity.type(file.path, followLinks: false) !=
+            FileSystemEntityType.file ||
+        await file.length() > _maxBookManifestBytes) {
+      throw const FormatException(
+        'Master-game manifest unavailable or too large',
+      );
+    }
+    final decoded = jsonDecode(await file.readAsString());
+    if (decoded is! Map<String, dynamic> ||
+        decoded.keys.toSet().difference({
+          'schema',
+          'dataset',
+          'records',
+        }).isNotEmpty ||
+        decoded['schema'] != 1 ||
+        decoded['dataset'] is! Map<String, dynamic> ||
+        decoded['records'] is! List ||
+        (decoded['records'] as List).length > _maxMasterGameEntries) {
+      throw const FormatException('Invalid master-game manifest');
+    }
+    final dataset = decoded['dataset'] as Map<String, dynamic>;
+    if (dataset.keys.toSet().difference({
+          'id',
+          'license',
+          'attribution',
+        }).isNotEmpty ||
+        dataset['id'] is! String ||
+        !_idPattern.hasMatch(dataset['id'] as String) ||
+        !_boundedText(
+          dataset['license'] is String ? dataset['license'] as String : '',
+          1,
+          120,
+        ) ||
+        !_boundedText(
+          dataset['attribution'] is String
+              ? dataset['attribution'] as String
+              : '',
+          0,
+          500,
+        )) {
+      throw const FormatException('Master-game license metadata is required');
+    }
+    final records = (decoded['records'] as List)
+        .map(MasterGameRecord.fromJson)
+        .toList(growable: false);
+    final identities = records.map((record) => record.id).toSet();
+    if (identities.length != records.length) {
+      throw const FormatException('Duplicate master-game id');
+    }
+    return MasterGameDatabase._(
+      id: dataset['id'] as String,
+      license: dataset['license'] as String,
+      attribution: dataset['attribution'] as String,
+      records: records,
+    );
+  }
+
+  ({int total, List<MasterGameRecord> records}) query(MasterGameQuery query) {
+    final candidates =
+        _byPosition[_positionKey(query.fen, query.history)] ??
+        const <MasterGameRecord>[];
+    final matches = candidates
+        .where((record) {
+          if (query.category != null && record.category != query.category)
+            return false;
+          if (query.fromYear != null && record.year < query.fromYear!)
+            return false;
+          if (query.toYear != null && record.year > query.toYear!) return false;
+          if (query.results.isNotEmpty &&
+              !query.results.contains(record.result)) {
+            return false;
+          }
+          if (query.text.isNotEmpty &&
+              !'${record.red}\n${record.black}\n${record.event}'
+                  .toLowerCase()
+                  .contains(query.text)) {
+            return false;
+          }
+          return true;
+        })
+        .toList(growable: false);
+    final start = (query.page - 1) * query.pageSize;
+    return (
+      total: matches.length,
+      records: List.unmodifiable(
+        start >= matches.length
+            ? const <MasterGameRecord>[]
+            : matches.skip(start).take(query.pageSize),
+      ),
+    );
+  }
+
+  static Map<String, List<MasterGameRecord>> _groupByPosition(
+    List<MasterGameRecord> records,
+  ) {
+    final grouped = <String, List<MasterGameRecord>>{};
+    for (final record in records) {
+      grouped
+          .putIfAbsent(_positionKey(record.fen, record.history), () => [])
+          .add(record);
+    }
+    return Map.unmodifiable({
+      for (final entry in grouped.entries)
+        entry.key: List<MasterGameRecord>.unmodifiable(entry.value),
+    });
+  }
+
+  static String _positionKey(String fen, List<String> history) =>
+      jsonEncode([fen.trim(), history]);
+}
+
 enum SkinCatalogSort { defaultOrder, likes, name, author, recent }
 
 final class PublicSkin {
@@ -689,6 +1044,7 @@ final class SkinCatalogHttpServer {
     this._store,
     this._boardStore,
     this._bookDatabase,
+    this._masterGameDatabase,
     this._releaseManifest,
     this._feedbackInbox,
     this._copyrightComplaintInbox,
@@ -698,6 +1054,7 @@ final class SkinCatalogHttpServer {
   final SkinCatalogStore _store;
   final SkinCatalogStore? _boardStore;
   final BookDatabase? _bookDatabase;
+  final MasterGameDatabase? _masterGameDatabase;
   final ReleaseManifest? _releaseManifest;
   final FeedbackInbox? _feedbackInbox;
   final CopyrightComplaintInbox? _copyrightComplaintInbox;
@@ -709,6 +1066,7 @@ final class SkinCatalogHttpServer {
     required SkinCatalogStore store,
     SkinCatalogStore? boardStore,
     BookDatabase? bookDatabase,
+    MasterGameDatabase? masterGameDatabase,
     ReleaseManifest? releaseManifest,
     FeedbackInbox? feedbackInbox,
     CopyrightComplaintInbox? copyrightComplaintInbox,
@@ -725,6 +1083,7 @@ final class SkinCatalogHttpServer {
       store,
       boardStore,
       bookDatabase,
+      masterGameDatabase,
       releaseManifest,
       feedbackInbox,
       copyrightComplaintInbox,
@@ -783,6 +1142,12 @@ final class SkinCatalogHttpServer {
       return;
     }
     if (request.method == 'POST' &&
+        request.uri.path == '/v1/master-games/query' &&
+        _masterGameDatabase != null) {
+      await _masterGamesQuery(request, _masterGameDatabase);
+      return;
+    }
+    if (request.method == 'POST' &&
         request.uri.path == '/v1/feedback' &&
         _feedbackInbox != null) {
       await _submitFeedback(request, _feedbackInbox);
@@ -798,6 +1163,8 @@ final class SkinCatalogHttpServer {
       response.headers.set(
         HttpHeaders.allowHeader,
         (request.uri.path == '/v1/book/query' && _bookDatabase != null) ||
+                (request.uri.path == '/v1/master-games/query' &&
+                    _masterGameDatabase != null) ||
                 (request.uri.path == '/v1/feedback' &&
                     _feedbackInbox != null) ||
                 (request.uri.path == '/v1/copyright/complaints' &&
@@ -1104,6 +1471,51 @@ final class SkinCatalogHttpServer {
           'attribution': database.attribution,
         },
         'moves': entry?.moves.map((move) => move.toJson()).toList() ?? [],
+      });
+    } on FormatException {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
+      });
+    }
+  }
+
+  Future<void> _masterGamesQuery(
+    HttpRequest request,
+    MasterGameDatabase database,
+  ) async {
+    final response = request.response;
+    if (request.headers.contentType?.mimeType != 'application/json' ||
+        request.contentLength == 0 ||
+        request.contentLength > _maxMasterGamesRequestBytes) {
+      await _json(response, HttpStatus.badRequest, {
+        'error': {'code': 'invalid_request'},
+      });
+      return;
+    }
+    final bytes = <int>[];
+    await for (final chunk in request) {
+      if (bytes.length + chunk.length > _maxMasterGamesRequestBytes) {
+        await _json(response, HttpStatus.requestEntityTooLarge, {
+          'error': {'code': 'request_too_large'},
+        });
+        return;
+      }
+      bytes.addAll(chunk);
+    }
+    try {
+      final query = MasterGameQuery.fromJson(jsonDecode(utf8.decode(bytes)));
+      final result = database.query(query);
+      await _json(response, HttpStatus.ok, {
+        'schema': 1,
+        'dataset': {
+          'id': database.id,
+          'license': database.license,
+          'attribution': database.attribution,
+        },
+        'page': query.page,
+        'pageSize': query.pageSize,
+        'total': result.total,
+        'records': result.records.map((record) => record.toJson()).toList(),
       });
     } on FormatException {
       await _json(response, HttpStatus.badRequest, {

@@ -956,3 +956,10 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 主界面云库候选不再仅显示UCI：`BookLookupController`在查询响应通过合法着校验后，使用查询时的局面生成中文记谱并作为主标签；UCI、scoreCp与weight保留为辅助信息。记谱只是本地展示，不额外发网络请求、不自动走棋。
 
 定向`flutter test --concurrency=1 test/application/book_lookup_controller_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-79.log`；`flutter analyze --no-pub`无问题，`git diff --check`通过。macOS使用既有PID50598/runner50125，TTY attach同步1,611ms、热重启2,148ms；Ctrl-C后复核原PID50598存活，未发现tester/attach进程或第二个chessNext GUI。测试期间仅一个串行`flutter_tester`。未做人工视觉验收；5项跳过仍需官方Pikafish/NNUE环境。
+
+
+## M4-80 / F15,F20 / ADR-110 自建大师谱索引查询服务端
+
+新增独立可选`MasterGameDatabase`和`POST /v1/master-games/query`。运营者通过`CHESSNEXT_MASTER_GAMES_ROOT`装载自有/授权的索引；按精确FEN+完整history定位候选，并支持all/game/chessbook、玩家/赛事不区分大小写子串、年份闭区间、胜和负集合及有界分页。响应有数据集许可/署名、总量和索引元数据，保留清单顺序；没有第三方样本，也未实现Flutter筛选面板或完整棋局读取。该查询策略是依据可见字段的项目提案P，E87 DOM边界不解释为站点真实执行语义。服务请求体有32KiB上限、不落盘不记录；Nginx示例对此路由关闭access log并限速。
+
+专项`flutter test --concurrency=1 test/server/master_games_server_test.dart --reporter expanded`3/3；服务包`dart test`6/6、`dart analyze`无问题；根`flutter test --concurrency=1 --reporter expanded`616通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-80.log`；`flutter analyze --no-pub`无问题，`git diff --check`通过。5项跳过需官方Pikafish/NNUE环境。macOS复用PID50598/runner50125，TTY attach同步1,640ms、热重启2,180ms；Ctrl-C后核验PID50598存活，无tester/attach副本或第二个GUI。未做UI视觉验收，因本片仅服务端。

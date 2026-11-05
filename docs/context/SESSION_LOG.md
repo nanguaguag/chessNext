@@ -1225,3 +1225,14 @@ M4-78最终验证（2026-11-05）：定向`flutter test --concurrency=1 test/app
 macOS未调用`flutter run`。复用runner PID50125/应用PID50598，`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1,611ms，键入R后热重启2,148ms，Ctrl-C脱离。实际进程核对显示PID50598仍活，无flutter_tester、attach副本或第二个chessNext GUI。未做视觉验收。
 
 变更：`lib/application/book_lookup_controller.dart`创建候选展示DTO并生成合法着中文记谱；`lib/features/workspace/cloud_book_panel.dart`以中文记谱作候选标题并保留UCI/分值/权重副信息；controller测试覆盖记谱与当前局面一致。更新ADR-109、DECISIONS、功能矩阵/缺口/交互规格、BACKLOG、TRACEABILITY与context。工作树变更待M4-79单独提交；本日志及其余文档同该提交纳入。下一步直接审计/设计大师谱数据授权和筛选API，然后继续其它登录外差距，不因单项提交停止。
+
+
+## 2026-11-05 / E87 / M4-80 / F15,F20 大师谱字段与自建索引服务
+
+参考站只读审计：在`https://xiangqiai.com/#/`大师谱模式打开筛选弹窗。可见DOM为文本search placeholder“棋手或赛事”、起止年份number inputs各`min=1,max=9999`且空；未改输入、未选结果、未查询。关弹窗后操作设置恢复云库（AX=1），底层原页面棋谱没有操作；记录E87为字段O、可达范围和触发语义U。期间只使用浏览器已有tab，没有新增tab。
+
+M4-80新增server/skin_catalog的MasterGameDatabase、可选`CHESSNEXT_MASTER_GAMES_ROOT`及`POST /v1/master-games/query`；依据E86/E87提出项目contract，过滤精确位置FEN+完整history、可选category/player-event substring/year interval/result set，分页≤50。只返回license/attribution和metadata，不发整局棋谱；无随仓库内置数据。README/空模板、systemd环境示例、Nginx关闭access log/限速、ADR-110、决策、矩阵/缺口/traceability/backlog更新。新增`test/server/master_games_server_test.dart`覆盖筛选/分页/metadata与非法请求。
+
+验证：专项Flutter路由3/3；`cd server/skin_catalog && dart test`6/6；同目录`dart analyze`无问题；根`flutter test --concurrency=1 --reporter expanded`616通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-80.log`；`flutter analyze --no-pub`无问题；`git diff --check`通过。根测试期间仅一个串行`flutter_tester`，没有新GUI；5项跳过需要官方Pikafish/NNUE。
+
+macOS没有执行新`flutter run`；复用runner50125/App50598 TTY attach `http://127.0.0.1:61579/4bLZ1MhsyEk=/`，同步1,640ms，R热重启2,180ms，Ctrl-C脱离后核验PID50598存活，无tester/attach残留、仅一个chessNext GUI。服务端切片不涉及UI视觉检查。工作树代码/测试/文档待M4-80单独提交。之后做M4-81 Flutter筛选客户端与现有BookService分离端口，再完善整局读取、F27及剩余登录外缺口。

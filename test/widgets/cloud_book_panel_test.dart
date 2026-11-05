@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:chess_next/application/board_session.dart';
+import 'package:chess_next/application/app_preferences.dart';
 import 'package:chess_next/application/book_lookup_controller.dart';
 import 'package:chess_next/application/master_games_lookup_controller.dart';
 import 'package:chess_next/features/workspace/cloud_book_panel.dart';
@@ -15,14 +16,19 @@ void main() {
     final book = BookLookupController(session, _BookService());
     final master = _MasterGamesService();
     final masterController = MasterGamesLookupController(session, master);
+    var source = BookLookupSource.cloud;
     await tester.pumpWidget(
       MaterialApp(
-        home: Scaffold(
-          body: SingleChildScrollView(
-            child: CloudBookPanel(
-              controller: book,
-              masterGamesController: masterController,
-              endpoint: 'http://localhost:8080',
+        home: StatefulBuilder(
+          builder: (context, setState) => Scaffold(
+            body: SingleChildScrollView(
+              child: CloudBookPanel(
+                controller: book,
+                masterGamesController: masterController,
+                endpoint: 'http://localhost:8080',
+                source: source,
+                onSourceChanged: (value) => setState(() => source = value),
+              ),
             ),
           ),
         ),

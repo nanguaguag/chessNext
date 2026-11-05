@@ -74,6 +74,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
   late double aiWalkSeconds;
   late int aiWalkDifficulty, aiWalkMaxDepth;
   late OpeningBookMode openingBookMode;
+  late BookLookupSource bookLookupSource;
   late bool endgameBookEnabled;
   late int leaveBookMoves;
   @override
@@ -94,6 +95,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     aiWalkDifficulty = value.aiWalkDifficulty;
     aiWalkMaxDepth = value.aiWalkMaxDepth;
     openingBookMode = value.openingBookMode;
+    bookLookupSource = value.bookLookupSource;
     endgameBookEnabled = value.endgameBookEnabled;
     leaveBookMoves = value.leaveBookMoves;
     bookServiceUrlController = TextEditingController(
@@ -468,6 +470,26 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                 ),
                 const Divider(height: 28),
                 const Text('开局与残局云库'),
+                DropdownButtonFormField<BookLookupSource>(
+                  key: const ValueKey('book-lookup-source'),
+                  initialValue: bookLookupSource,
+                  decoration: const InputDecoration(labelText: '主界面查询来源'),
+                  items: const [
+                    DropdownMenuItem(
+                      value: BookLookupSource.cloud,
+                      child: Text('云库'),
+                    ),
+                    DropdownMenuItem(
+                      value: BookLookupSource.masterGames,
+                      child: Text('大师谱'),
+                    ),
+                  ],
+                  onChanged: (source) {
+                    if (source != null) {
+                      setState(() => bookLookupSource = source);
+                    }
+                  },
+                ),
                 TextFormField(
                   key: const ValueKey('book-service-url'),
                   controller: bookServiceUrlController,
@@ -591,6 +613,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                       aiWalkTimeMs: (aiWalkSeconds * 1000).round(),
                       aiWalkMaxDepth: aiWalkMaxDepth,
                       openingBookMode: openingBookMode,
+                      bookLookupSource: bookLookupSource,
                       endgameBookEnabled: endgameBookEnabled,
                       leaveBookMoves: leaveBookMoves,
                       bookServiceBaseUrl: bookServiceUrlController.text

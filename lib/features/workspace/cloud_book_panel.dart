@@ -2,10 +2,9 @@ import 'package:flutter/material.dart';
 
 import '../../application/book_lookup_controller.dart';
 import '../../application/master_games_lookup_controller.dart';
+import '../../application/app_preferences.dart';
 import '../../ports/book_service.dart';
 import '../../ports/master_games_service.dart';
-
-enum _LookupSource { cloud, masterGames }
 
 class CloudBookPanel extends StatefulWidget {
   const CloudBookPanel({
@@ -13,18 +12,21 @@ class CloudBookPanel extends StatefulWidget {
     required this.controller,
     required this.masterGamesController,
     required this.endpoint,
+    required this.source,
+    required this.onSourceChanged,
   });
 
   final BookLookupController controller;
   final MasterGamesLookupController masterGamesController;
   final String endpoint;
+  final BookLookupSource source;
+  final ValueChanged<BookLookupSource> onSourceChanged;
 
   @override
   State<CloudBookPanel> createState() => _CloudBookPanelState();
 }
 
 class _CloudBookPanelState extends State<CloudBookPanel> {
-  _LookupSource _source = _LookupSource.cloud;
   final _text = TextEditingController();
   final _fromYear = TextEditingController();
   final _toYear = TextEditingController();
@@ -47,21 +49,20 @@ class _CloudBookPanelState extends State<CloudBookPanel> {
         children: [
           Text('云库／大师谱', style: Theme.of(context).textTheme.titleLarge),
           const SizedBox(height: 8),
-          SegmentedButton<_LookupSource>(
+          SegmentedButton<BookLookupSource>(
             showSelectedIcon: false,
             segments: const [
-              ButtonSegment(value: _LookupSource.cloud, label: Text('云库')),
+              ButtonSegment(value: BookLookupSource.cloud, label: Text('云库')),
               ButtonSegment(
-                value: _LookupSource.masterGames,
+                value: BookLookupSource.masterGames,
                 label: Text('大师谱'),
               ),
             ],
-            selected: {_source},
-            onSelectionChanged: (value) =>
-                setState(() => _source = value.single),
+            selected: {widget.source},
+            onSelectionChanged: (value) => widget.onSourceChanged(value.single),
           ),
           const SizedBox(height: 8),
-          if (_source == _LookupSource.cloud)
+          if (widget.source == BookLookupSource.cloud)
             _buildCloud(context)
           else
             _buildMasterGames(context),

@@ -1544,6 +1544,9 @@ class _BoardPage extends StatelessWidget {
             controller: bookLookup,
             masterGamesController: masterGamesLookup,
             endpoint: preferences.value.bookServiceBaseUrl,
+            source: preferences.value.bookLookupSource,
+            onSourceChanged: (source) =>
+                unawaited(preferences.setBookLookupSource(source)),
           );
           final rightPanels = preferences.value.showPanelSwitchBar
               ? <Widget>[

@@ -231,6 +231,9 @@ class PreferencesController extends ChangeNotifier {
             bookServiceBaseUrl: _edited.contains('bookServiceBaseUrl')
                 ? previous.bookServiceBaseUrl
                 : null,
+            bookLookupSource: _edited.contains('bookLookupSource')
+                ? previous.bookLookupSource
+                : null,
             releaseServiceBaseUrl: _edited.contains('releaseServiceBaseUrl')
                 ? previous.releaseServiceBaseUrl
                 : null,
@@ -450,6 +453,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(lastMoveMarker: style));
   Future<void> setArrowHead(ArrowHeadStyle style) =>
       apply(value.copyWith(arrowHead: style));
+  Future<void> setBookLookupSource(BookLookupSource source) =>
+      apply(value.copyWith(bookLookupSource: source));
   Future<void> retryPersistence() =>
       _allowWrite ? flush(force: true) : initialize();
   Future<void> apply(AppPreferences next) {
@@ -589,6 +594,9 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.bookServiceBaseUrl != value.bookServiceBaseUrl) {
       _edited.add('bookServiceBaseUrl');
+    }
+    if (next.bookLookupSource != value.bookLookupSource) {
+      _edited.add('bookLookupSource');
     }
     if (next.releaseServiceBaseUrl != value.releaseServiceBaseUrl) {
       _edited.add('releaseServiceBaseUrl');

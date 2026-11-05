@@ -971,3 +971,9 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 专项`flutter test --concurrency=1 test/widgets/cloud_book_panel_test.dart test/adapters/network/http_master_games_service_test.dart test/application/master_games_lookup_controller_test.dart --reporter expanded`7/7；根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-81-final.log`；5跳过需官方Pikafish/NNUE。`flutter analyze --no-pub`与`git diff --check`通过；`flutter build macos --no-pub`最终源码构建成功，伴随既有插件SwiftPM及未来Swift兼容警告。macOS复用既有PID50598/runner50125：历史及当前URL附着失败；自动发现也等待连接。未执行`flutter run`、未开第二个GUI。macOS app运行/热重启未验证。根测试只有一个串行flutter_tester，GUI始终唯一PID50598。
 
 源站筛选匹配/分页/排序与实际键盘年份边界、运营者授权语料及完整棋局读取仍U；本片不宣称F15或全站对齐。
+
+## M4-82 / F15,F20 / ADR-112 来源选择记忆
+
+新增`BookLookupSource {cloud, masterGames}`偏好，旧schema缺字段默认为cloud；应用设置和主工作区SegmentedButton共享选择。PreferencesController为编辑字段合并异步加载，实际选择通过统一偏好端口保存，切换源不自动网络请求。E55只V验证同标签路由保留；本机跨重启属于P。
+
+专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/cloud_book_panel_test.dart --reporter expanded`8/8；覆盖schema round-trip、延迟读取期间用户切换不被旧值覆盖、写入以及面板选择不触发大师谱查询。根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-82.log`；`flutter analyze --no-pub`和`git diff --check`通过；`flutter build macos --no-pub`构建通过，提示flutter_tts SwiftPM warning。既有PID50598的VM attach本轮未重新尝试，故macOS实际运行/视觉仍未验；无新App。

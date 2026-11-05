@@ -63,6 +63,8 @@ enum SidePanel { play, analysis, review, candidates }
 
 enum OpeningBookMode { closed, best, randomWithinGap }
 
+enum BookLookupSource { cloud, masterGames }
+
 enum BoardContextAction {
   copyFen,
   copyRecord,
@@ -149,6 +151,7 @@ final class AppPreferences {
     this.endgameBookEnabled = true,
     this.leaveBookMoves = 10,
     this.bookServiceBaseUrl = '',
+    this.bookLookupSource = BookLookupSource.cloud,
     this.releaseServiceBaseUrl = '',
     this.recordPlaybackIntervalMs = 2000,
     this.showMoveList = true,
@@ -294,6 +297,7 @@ final class AppPreferences {
   final bool endgameBookEnabled;
   final int leaveBookMoves;
   final String bookServiceBaseUrl;
+  final BookLookupSource bookLookupSource;
   final String releaseServiceBaseUrl;
   final List<BoardContextAction> boardContextActions;
   final List<SidePanel> sidePanelOrder;
@@ -352,6 +356,7 @@ final class AppPreferences {
     SidePanel? activeSidePanel,
     String? skinCatalogBaseUrl,
     String? bookServiceBaseUrl,
+    BookLookupSource? bookLookupSource,
     String? releaseServiceBaseUrl,
     List<BoardContextAction>? boardContextActions,
     int? guideVersion,
@@ -415,6 +420,7 @@ final class AppPreferences {
     activeSidePanel: activeSidePanel ?? this.activeSidePanel,
     skinCatalogBaseUrl: skinCatalogBaseUrl ?? this.skinCatalogBaseUrl,
     bookServiceBaseUrl: bookServiceBaseUrl ?? this.bookServiceBaseUrl,
+    bookLookupSource: bookLookupSource ?? this.bookLookupSource,
     releaseServiceBaseUrl: releaseServiceBaseUrl ?? this.releaseServiceBaseUrl,
     boardContextActions: boardContextActions ?? this.boardContextActions,
     guideVersion: guideVersion ?? this.guideVersion,
@@ -503,6 +509,8 @@ final class AppPreferences {
     if (showPanelSwitchBar) 'showPanelSwitchBar': true,
     if (skinCatalogBaseUrl.isNotEmpty) 'skinCatalogBaseUrl': skinCatalogBaseUrl,
     if (bookServiceBaseUrl.isNotEmpty) 'bookServiceBaseUrl': bookServiceBaseUrl,
+    if (bookLookupSource != BookLookupSource.cloud)
+      'bookLookupSource': bookLookupSource.name,
     if (releaseServiceBaseUrl.isNotEmpty)
       'releaseServiceBaseUrl': releaseServiceBaseUrl,
     if (activeSidePanel != SidePanel.play)
@@ -586,6 +594,11 @@ final class AppPreferences {
             json['skinCatalogBaseUrl'] is! String) ||
         (json.containsKey('bookServiceBaseUrl') &&
             json['bookServiceBaseUrl'] is! String) ||
+        (json.containsKey('bookLookupSource') &&
+            (json['bookLookupSource'] is! String ||
+                !BookLookupSource.values.any(
+                  (source) => source.name == json['bookLookupSource'],
+                ))) ||
         (json.containsKey('releaseServiceBaseUrl') &&
             json['releaseServiceBaseUrl'] is! String) ||
         (json.containsKey('openingBookMode') &&
@@ -731,6 +744,9 @@ final class AppPreferences {
         ),
         skinCatalogBaseUrl: json['skinCatalogBaseUrl'] as String? ?? '',
         bookServiceBaseUrl: json['bookServiceBaseUrl'] as String? ?? '',
+        bookLookupSource: BookLookupSource.values.byName(
+          json['bookLookupSource'] as String? ?? 'cloud',
+        ),
         releaseServiceBaseUrl: json['releaseServiceBaseUrl'] as String? ?? '',
         openingBookMode: OpeningBookMode.values.firstWhere(
           (mode) => mode.name == json['openingBookMode'],
@@ -864,6 +880,7 @@ final class AppPreferences {
       activeSidePanel == other.activeSidePanel &&
       skinCatalogBaseUrl == other.skinCatalogBaseUrl &&
       bookServiceBaseUrl == other.bookServiceBaseUrl &&
+      bookLookupSource == other.bookLookupSource &&
       releaseServiceBaseUrl == other.releaseServiceBaseUrl &&
       _listEquals(boardContextActions, other.boardContextActions) &&
       _listEquals(sidePanelOrder, other.sidePanelOrder) &&
@@ -928,6 +945,7 @@ final class AppPreferences {
     activeSidePanel,
     skinCatalogBaseUrl,
     bookServiceBaseUrl,
+    bookLookupSource,
     releaseServiceBaseUrl,
     Object.hashAll(boardContextActions),
     Object.hashAll(sidePanelOrder),

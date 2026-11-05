@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-82 / F15,F20 / ADR-112 来源选择持久化
+
+`bookLookupSource`设置本机持久化；应用设置和主面板共享来源；旧字段默认cloud；显式切换仅切换模式，不查询。修复M4-81面板状态离开后复原的问题，覆盖E55已验证的同tab导航保留，不推断源站重启行为。
+
+定向`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/cloud_book_panel_test.dart --reporter expanded`8/8；根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-82.log`；`flutter analyze --no-pub`、`git diff --check`通过；`flutter build macos --no-pub`成功（flutter_tts SwiftPM warning）。没有执行`flutter run`；macOS VM attach/runtime/视觉not run，现有GUI PID50598唯一，测试只用一个串行flutter_tester。代码及ADR-112/context/追踪待单独中文feature commit。
+
 ## 2026-11-05 / M4-81 / F15,F20 / ADR-111 大师谱筛选客户端
 
 接入独立MasterGamesService、受限HTTP适配器、过期保护控制器及云库/大师谱筛选面板。显式查询才发送当前局面、完整历史和筛选字段；离线endpoint为空、筛选输入不查询，metadata可前后分页并带数据集来源，未取完整棋谱/未改变棋树。

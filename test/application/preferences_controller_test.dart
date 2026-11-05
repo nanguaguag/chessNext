@@ -67,6 +67,7 @@ void main() {
         endgameBookEnabled: false,
         leaveBookMoves: 24,
         bookServiceBaseUrl: 'https://books.example.org/api',
+        bookLookupSource: BookLookupSource.masterGames,
         releaseServiceBaseUrl: 'https://updates.example.org/api',
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
@@ -265,6 +266,9 @@ void main() {
       );
       final enablingPanelBar = preferences.setShowPanelSwitchBar(true);
       final choosingPanel = preferences.setActiveSidePanel(SidePanel.review);
+      final choosingBookSource = preferences.setBookLookupSource(
+        BookLookupSource.masterGames,
+      );
       final choosingContextActions = preferences.setBoardContextActions(const [
         BoardContextAction.copyFen,
         BoardContextAction.saveRecord,
@@ -291,6 +295,7 @@ void main() {
       await hidingPlaybackButton;
       await enablingPanelBar;
       await choosingPanel;
+      await choosingBookSource;
       await choosingContextActions;
       await hidingReview;
       await exiting;
@@ -309,6 +314,7 @@ void main() {
       expect(preferences.value.showRecordPlaybackButton, isFalse);
       expect(preferences.value.showPanelSwitchBar, isTrue);
       expect(preferences.value.activeSidePanel, SidePanel.review);
+      expect(preferences.value.bookLookupSource, BookLookupSource.masterGames);
       expect(preferences.value.boardContextActions, const [
         BoardContextAction.copyFen,
         BoardContextAction.saveRecord,

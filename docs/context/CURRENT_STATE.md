@@ -1,4 +1,8 @@
-## M4-81 / F15,F20 / ADR-111 大师谱筛选客户端（验证通过，macOS实际运行未验证）
+## M4-82 / F15,F20 / ADR-112 来源选择跨路由持久化（门槛通过，待提交）
+
+`bookLookupSource`偏好默认cloud且兼容旧schema；设置页和主面板共享云库/大师谱选择，按偏好Controller异步编辑合并规则持久化。来源切换不触发查询。定向8/8；根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-82.log`；`flutter analyze --no-pub`与diff-check通过；`flutter build macos --no-pub`成功（既有flutter_tts SwiftPM warning）。实际App attach/runtime未验，仍仅PID50598一个GUI。本机跨重启保持是P，E55只验证同标签页路由保留。F15/全站仍未对齐。
+
+## M4-81 / F15,F20 / ADR-111 大师谱筛选客户端（已提交 2e44365；macOS实际运行未验证）
 
 主工作区云库卡片可切换云库/大师谱。大师谱提供范围、棋手/赛事、年份和胜和负过滤，显式查询后才向配置的自建索引服务提交当前FEN+完整线路；请求和响应有界、来源字段校验、失败分类、前后分页、位置/过滤变化过期保护。无地址不联网；只展示metadata/许可署名，不读取整局、不落子。筛选匹配/排序/pagination语义为项目P。
 

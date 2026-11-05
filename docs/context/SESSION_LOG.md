@@ -1042,3 +1042,6 @@ M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完�
 本机新增加`nightBoardInDarkMode`设置，默认开，暗色主题+parchment内置默认skin/profile ID时切换原创night base/grid/label colors；其它皮肤/浅色/关时保持原色。PNG/GIF快照包含设置和皮肤身份。色值P，不称参考精确复刻。
 
 专项`night_board_test`最终2/2；偏好7/7、设置3/3、图片快照3/3、GIF5/5于合并专项首轮通过（首轮夜间测试因同一MaterialApp实例主题切换未重置而1失败，调整唯一key后单独重跑夜间2/2）。根`flutter test --concurrency=1 --reporter compact`593通过/5跳过/0失败；`flutter analyze --no-pub`通过，`git diff --check`待。复用PID50598/runner50125 `flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`sync1,022ms/hot restart1,039ms；Ctrl-C后App需复核仍活，根测试单个串行flutter_tester且结束无残留。Mac锁屏，人工视觉验收not run。
+# 2026-11-05 / E80 / F27 English页面覆盖抽样
+
+访客显示设置语言临时切English，实看设置目录、显示、棋盘/棋子与皮肤选择器、分析、标记/箭头、声音及音效选择器、操作/展开长按右键动作、关于、主界面与菜单。样本静态界面文案均以English呈现；主界面着法示例改为ICCS拉丁`C8=5 n2+3`、`N8+7`。线上动态皮肤名/作者、品牌、备案法定链接仍中文或专名。未提交表单/操作、不执行棋谱/设置功能。恢复简体中文，复核Follow System、Azure/晴蓝、夜间棋盘开。证据仅覆盖以上路由，未测完整弹窗、错误、帮助/训练/导入等，不称English全站完整。F27全资源待办。

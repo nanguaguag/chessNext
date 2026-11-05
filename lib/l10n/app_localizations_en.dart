@@ -469,4 +469,19 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get managePieceSkins => 'Manage piece skins';
+
+  @override
+  String editBoardSkinGeometry(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String get resetBoardGeometry => 'Reset geometry';
+
+  @override
+  String get save => 'Save';
+
+  @override
+  String get boardSkinGeometrySaveError =>
+      'This board skin could not be saved on this device. Try again.';
 }

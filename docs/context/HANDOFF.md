@@ -1,4 +1,10 @@
-# 当前交接（2026-11-05，Asia/Shanghai）
+# 当前交接（2026-11-06，Asia/Shanghai）
+
+## M4-91 / F27 已保存棋盘皮肤几何草稿dialog本地化（门槛通过，待提交）
+
+自定义已保存棋盘皮肤编辑草稿弹窗的标题/边距/比例/落点旋转/恢复/取消/保存及保存失败提示迁ARB。独立基础编辑器复用原有国际化资源。事务语义和约束未改变；源站映射未知。
+
+专项6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-91.log`）；`flutter analyze --no-pub`和diff-check通过。`flutter run -d macos --no-pub`Build/Sync/启动成功，PID32137按q退出后只剩原PID50598；无人工视觉验收。下一步继续棋盘/棋子库管理页面、音效配置和其它外观页。
 
 ## M4-90 / F27 棋盘显示主面板余项本地化（门槛通过，待提交）
 

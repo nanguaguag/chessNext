@@ -1,3 +1,9 @@
+## M4-91 / F27 已存棋盘皮肤几何草稿弹窗ARB化（门槛通过，待提交）
+
+几何草稿弹窗皮肤名、格点与边距、棋子缩放、落点图旋转、恢复默认/取消/保存及保存失败信息迁入zh/en ARB。保存/取消事务、几何数值与项目模型未变；实际参考站算法/单位仍U。根Locale保持zh。
+
+专项`flutter test --concurrency=1 test/widgets/board_skin_geometry_draft_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-91.log`；`flutter analyze --no-pub`与diff-check通过。初次分析只指出测试文件一个unused import，已移除并复跑通过。macOS `flutter run -d macos --no-pub` Build/Sync/启动成功，临时PID32137按q退出；原PID50598唯一。未视觉验收。待单独中文提交。
+
 ## M4-90 / F27 棋盘显示剩余资源与管理按钮ARB化（门槛通过，待提交）
 
 棋盘预设名称、棋盘/棋子皮肤库管理入口、图片编辑入口、项目包格式及兼容状态说明迁入zh/en。使BoardDisplayDialog主屏中用户可见静态硬编码基本清空；动态皮肤名/错误文本及其子页面仍需核查。根Locale仍仅zh。

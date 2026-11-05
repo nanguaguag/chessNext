@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-06 / M4-91 / F27 已保存棋盘皮肤几何编辑草稿文案
+
+独立自定义皮肤几何编辑dialog复用ARB标题、边距、比例、标记、复位/取消/保存；将自身失败提示本地化。没有改草稿/保存/应用行为或几何限制。
+
+验收：定向6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败；`flutter analyze --no-pub`和`git diff --check`通过。macOS `flutter run -d macos --no-pub`成功Build/Sync/启动，按q结束(PID32137)，原PID50598唯一；视觉not run。
+
 ## 2026-11-05 / M4-90 / F27 棋盘显示主面板预设名/库入口
 
 BoardDisplayDialog最后的内置棋盘预设名、皮肤库与图像编辑入口、项目包格式兼容提示使用ARB。其动态用户命名和由其他控制器提供的error message仍需分类，未声明整页设置子dialog或全站覆盖。

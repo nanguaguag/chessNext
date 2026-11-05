@@ -448,4 +448,18 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get managePieceSkins => '管理皮肤库';
+
+  @override
+  String editBoardSkinGeometry(String name) {
+    return '编辑$name';
+  }
+
+  @override
+  String get resetBoardGeometry => '恢复默认几何';
+
+  @override
+  String get save => '保存';
+
+  @override
+  String get boardSkinGeometrySaveError => '棋盘皮肤未能保存在本机，请重试。';
 }

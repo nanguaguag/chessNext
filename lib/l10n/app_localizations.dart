@@ -913,6 +913,30 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'管理皮肤库'**
   String get managePieceSkins;
+
+  /// No description provided for @editBoardSkinGeometry.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑{name}'**
+  String editBoardSkinGeometry(String name);
+
+  /// No description provided for @resetBoardGeometry.
+  ///
+  /// In zh, this message translates to:
+  /// **'恢复默认几何'**
+  String get resetBoardGeometry;
+
+  /// No description provided for @save.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存'**
+  String get save;
+
+  /// No description provided for @boardSkinGeometrySaveError.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘皮肤未能保存在本机，请重试。'**
+  String get boardSkinGeometrySaveError;
 }
 
 class _AppLocalizationsDelegate

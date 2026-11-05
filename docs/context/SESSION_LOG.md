@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-06 / M4-91 / F27 已保存棋盘皮肤几何草稿本地化（门槛通过，待提交）
+
+BoardSkinGeometryDraftDialog静态文案和保存失败提示迁ARB。测试打开英文弹窗、核对控制项并模拟save失败；第一轮标签精确值期待未匹配，改用标签包含匹配后通过。分析还报告测试unused import，移除并重跑分析通过。
+
+定向`flutter test --concurrency=1 test/widgets/board_skin_geometry_draft_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-91.log`）；`flutter analyze --no-pub`和`git diff --check`通过。macOS `flutter run -d macos --no-pub`Build/Sync/启动成功(PID32137)，run的q退出后只剩PID50598。无手工视觉验收。持续F27/F21未完成。
+
 ## 2026-11-05 / M4-90 / F27 棋盘显示主面板剩余标签ARB化（门槛通过，待提交）
 
 棋盘内置预设名、管理棋盘/棋子皮肤库按钮、棋盘图片入口和项目ZIP格式/未确认的站点格式说明迁入ARB；没有改设置业务和皮肤模型。

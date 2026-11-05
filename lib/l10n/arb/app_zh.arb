@@ -161,5 +161,10 @@
   "manageBoardSkins": "管理棋盘皮肤库",
   "skinPackageHelp": "棋盘与棋子皮肤均支持项目格式的ZIP导入/导出；站点皮肤ZIP及文件夹格式未确认。",
   "editBoardImages": "编辑棋盘图片",
-  "managePieceSkins": "管理皮肤库"
+  "managePieceSkins": "管理皮肤库",
+  "editBoardSkinGeometry": "编辑{name}",
+  "@editBoardSkinGeometry": { "placeholders": { "name": { "type": "String" } } },
+  "resetBoardGeometry": "恢复默认几何",
+  "save": "保存",
+  "boardSkinGeometrySaveError": "棋盘皮肤未能保存在本机，请重试。"
 }

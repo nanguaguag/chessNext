@@ -161,5 +161,10 @@
   "manageBoardSkins": "Manage board skins",
   "skinPackageHelp": "Board and piece skins support this app's ZIP format for import and export. Site ZIP and folder formats are unverified.",
   "editBoardImages": "Edit board images",
-  "managePieceSkins": "Manage piece skins"
+  "managePieceSkins": "Manage piece skins",
+  "editBoardSkinGeometry": "Edit {name}",
+  "@editBoardSkinGeometry": { "placeholders": { "name": { "type": "String" } } },
+  "resetBoardGeometry": "Reset geometry",
+  "save": "Save",
+  "boardSkinGeometrySaveError": "This board skin could not be saved on this device. Try again."
 }

@@ -1,3 +1,7 @@
+## M4-79 / F15 / ADR-109 云库候选中文记谱（验证通过，待提交）
+
+云库查询候选现在以查询局面的中文记谱为主，UCI、scoreCp、weight为辅助信息；记谱来自本地捕获位置与已通过合法性过滤的候选，不新增网络字段或自动走棋。专项6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-79.log`；`flutter analyze --no-pub`、`git diff --check`通过。5项跳过需官方Pikafish/NNUE。macOS仅attach既有PID50598/runner50125，同步1,611ms、热重启2,148ms；脱离后PID50598存活，进程检查无tester/attach残留及第二个GUI。测试仅一个串行tester。未做人工视觉验收。代码和追踪文档待单独中文feature commit；随后继续大师谱数据契约/授权部署审计、B24/F27及其它登录外差距，全站仍未对齐。
+
 ## 最新审计 E86 / F15,F20 大师谱筛选边界
 
 参考站显示大师谱筛选范围“全部/对局/棋书”、棋手或赛事搜索、起始/截止年和红胜/和/黑胜。未填字段/点击仍然查询。随后在设置明确恢复“云库”，回主界面云库项确认生效；候选列表显现但来源可能是已有缓存或自动请求，保持U。年份范围、筛选执行、数据授权/协议均U。详REFERENCE_EVIDENCE E86。

@@ -949,3 +949,10 @@ E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前�
 主工作区增加独立“云库”只读卡片，显式选择opening/endgame、显式查询当前节点。`BookLookupController`只依赖`BoardSession`和`BookService`端口，将当前FEN及根到当前游标完整线路（上限512步）提交到当前偏好中的自建服务地址；空地址不会请求。返回命中时逐候选以当前合法着集合复核，非法命中不暴露；有效候选显示UCI、scoreCp、weight及服务响应许可/署名，不自动落子、不写棋树。HTTP拒绝、不可达、无效响应及有效miss分别投影。位置/新局/库类型改变使在途任务token失效并清空旧数据。
 
 专项`flutter test --concurrency=1 test/application/book_lookup_controller_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败（日志`/tmp/chessnext-root-test-m4-78-final.log`，5项需官方Pikafish/NNUE）；`flutter analyze --no-pub`无问题；`git diff --check`通过。macOS复用PID50598/runner50125，早期attach同步1,480ms但非TTY未能发送热重启；最终代码的TTY attach同步1,266ms、热重启787ms，Ctrl-C脱离后原PID50598仍在，无测试/attach/chessNext副本。锁屏人工视觉检查未做。首次定向测试暴露测试断言使用`isEmpty`/`hasLength`匹配int的错误；更正后专项通过。首次analyze有两条花括号info，修正后无问题。
+
+
+## M4-79 / F15 / ADR-109 云库候选中文记谱
+
+主界面云库候选不再仅显示UCI：`BookLookupController`在查询响应通过合法着校验后，使用查询时的局面生成中文记谱并作为主标签；UCI、scoreCp与weight保留为辅助信息。记谱只是本地展示，不额外发网络请求、不自动走棋。
+
+定向`flutter test --concurrency=1 test/application/book_lookup_controller_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-79.log`；`flutter analyze --no-pub`无问题，`git diff --check`通过。macOS使用既有PID50598/runner50125，TTY attach同步1,611ms、热重启2,148ms；Ctrl-C后复核原PID50598存活，未发现tester/attach进程或第二个chessNext GUI。测试期间仅一个串行`flutter_tester`。未做人工视觉验收；5项跳过仍需官方Pikafish/NNUE环境。

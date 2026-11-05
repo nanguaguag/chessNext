@@ -1,5 +1,17 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-79 / F15 云库候选中文记谱（门槛通过，待提交）
+
+`BookLookupController`为每个合法候选从查询时位置生成中文记谱；UI以该记谱为主标题，并附UCI、scoreCp和weight。保留M4-78的显式查询、自建可替换BookService、许可署名、无效响应隔离与不自动走棋边界。
+
+专项`flutter test --concurrency=1 test/application/book_lookup_controller_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`613通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-79.log`；`flutter analyze --no-pub`、`git diff --check`通过。macOS复用既有PID50598/runner50125，TTY attach同步1,611ms、热重启2,148ms，Ctrl-C脱离后PID50598仍活。测试期间只有一个串行`flutter_tester`，结束后无tester/attach残留、无新GUI。视觉检查未做。
+
+单独提交后继续推进F15大师谱筛选实际查询/授权数据集与部署方案，以及B24几何未知、F27完整Locale资源和矩阵中其它登录外功能；不可把本片或阶段性覆盖称为全站对齐。
+
+---
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## E86 / F15,F20 大师谱筛选审计
 
 可见字段：全部/对局/棋书范围、棋手/赛事搜索、起始/截止年、红胜/和/黑胜。没有提交。设置已恢复“云库”；返回后候选列表出现但不确定为缓存还是自动查询。边界与数据集授权/部署保持U。参考证据与矩阵已更新。

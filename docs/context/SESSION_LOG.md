@@ -1216,3 +1216,12 @@ M4-78最终验证（2026-11-05）：定向`flutter test --concurrency=1 test/app
 ## 2026-11-05 / E86 / F15,F20 大师谱筛选只读审计
 
 在参考站`#/settings/operations`将谱库来源暂切大师谱，回主界面观察到过滤入口、无大师谱提示及“仍然查询”；筛选窗字段为全部/对局/棋书、棋手或赛事、起始年/截止年、红胜/和/黑胜。未编辑/提交任何筛选或查询。随后设置切回云库并回主界面复核云库单选=1；候选列表出现但不知道是原缓存还是自动查询。无棋谱或偏好改动。来源触发、筛选边界与数据库/许可均U，见REFERENCE_EVIDENCE E86。
+
+
+## 2026-11-05 / M4-79 / F15 云库候选中文记谱
+
+恢复项目事实并核实工作树包含M4-79三处代码改动。用户报告此前测试造成多个chessNext；本次`flutter test --concurrency=1 --reporter expanded`为单次根测试，进程采样始终只有一个`flutter_tester`，没有创建GUI。最终613通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-79.log`；定向`book_lookup_controller_test.dart`6/6；`flutter analyze --no-pub`无问题。5个跳过需要官方Pikafish/NNUE。
+
+macOS未调用`flutter run`。复用runner PID50125/应用PID50598，`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1,611ms，键入R后热重启2,148ms，Ctrl-C脱离。实际进程核对显示PID50598仍活，无flutter_tester、attach副本或第二个chessNext GUI。未做视觉验收。
+
+变更：`lib/application/book_lookup_controller.dart`创建候选展示DTO并生成合法着中文记谱；`lib/features/workspace/cloud_book_panel.dart`以中文记谱作候选标题并保留UCI/分值/权重副信息；controller测试覆盖记谱与当前局面一致。更新ADR-109、DECISIONS、功能矩阵/缺口/交互规格、BACKLOG、TRACEABILITY与context。工作树变更待M4-79单独提交；本日志及其余文档同该提交纳入。下一步直接审计/设计大师谱数据授权和筛选API，然后继续其它登录外差距，不因单项提交停止。

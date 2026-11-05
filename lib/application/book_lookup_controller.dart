@@ -15,6 +15,20 @@ enum BookLookupStatus {
   invalid,
 }
 
+final class BookLookupCandidate {
+  const BookLookupCandidate({
+    required this.uci,
+    required this.notation,
+    required this.scoreCp,
+    required this.weight,
+  });
+
+  final String uci;
+  final String notation;
+  final int scoreCp;
+  final int weight;
+}
+
 /// Explicit, read-only lookup for the current game-tree cursor.
 ///
 /// A query sends only the selected position and its move history to the
@@ -28,7 +42,7 @@ final class BookLookupController extends ChangeNotifier {
   final BookService service;
   BookLookupStatus status = BookLookupStatus.idle;
   BookKind kind = BookKind.opening;
-  List<BookMoveCandidate> candidates = const [];
+  List<BookLookupCandidate> candidates = const [];
   String? datasetId;
   String? license;
   String? attribution;
@@ -86,15 +100,24 @@ final class BookLookupController extends ChangeNotifier {
         ),
       );
       if (!current()) return;
-      final legal = result.candidates
-          .where((candidate) {
-            try {
-              return session.isLegalMove(Move.parse(candidate.uci));
-            } on FormatException {
-              return false;
-            }
-          })
-          .toList(growable: false);
+      final legal = <BookLookupCandidate>[];
+      for (final candidate in result.candidates) {
+        try {
+          final move = Move.parse(candidate.uci);
+          if (session.isLegalMove(move)) {
+            legal.add(
+              BookLookupCandidate(
+                uci: candidate.uci,
+                notation: ChineseNotation.format(session.position, move),
+                scoreCp: candidate.scoreCp,
+                weight: candidate.weight,
+              ),
+            );
+          }
+        } on FormatException {
+          continue;
+        }
+      }
       if (result.hit && legal.isEmpty) {
         _clear(BookLookupStatus.invalid, '云库返回的着法在当前局面均不合法，已隐藏。');
         return;

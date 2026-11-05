@@ -18,8 +18,10 @@ Add a main-workspace cloud-book panel with explicit opening/endgame selection
 and a user-triggered query button. With no configured endpoint it is offline
 and sends nothing. A query sends only the current FEN, selected book kind, and
 the current line's move history to the configured `BookService` endpoint.
-Candidates are rechecked against the current legal move set and displayed with
-operator-supplied dataset/license/attribution metadata. This panel never plays
+Candidates are rechecked against the captured position legal move set. The UI
+uses Chinese notation generated from that captured position as the primary label,
+with UCI and score/weight as supporting details, and displays operator-supplied
+dataset/license/attribution metadata. This panel never plays
 a move. Changing the game-tree cursor or book kind invalidates an outstanding
 response and clears the previous candidates. Network, HTTP rejection, malformed
 data, and a valid miss have distinct user-facing states.

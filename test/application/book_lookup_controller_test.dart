@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:xiangqi_core/xiangqi_core.dart';
 import 'package:chess_next/application/book_lookup_controller.dart';
 import 'package:chess_next/application/board_session.dart';
 import 'package:chess_next/ports/book_service.dart';
@@ -46,6 +47,10 @@ void main() {
       expect(controller.candidates.map((candidate) => candidate.uci), [
         move.toString(),
       ]);
+      expect(
+        controller.candidates.single.notation,
+        ChineseNotation.format(session.position, move),
+      );
       expect(controller.datasetId, 'sample');
       expect(controller.license, 'CC0');
       expect(controller.attribution, 'operator');

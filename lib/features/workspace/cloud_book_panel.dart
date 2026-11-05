@@ -83,9 +83,9 @@ class CloudBookPanel extends StatelessWidget {
                 ListTile(
                   dense: true,
                   contentPadding: EdgeInsets.zero,
-                  title: Text(candidate.uci),
+                  title: Text(candidate.notation),
                   subtitle: Text(
-                    '分值 ${candidate.scoreCp} · 权重 ${candidate.weight}',
+                    '${candidate.uci} · 分值 ${candidate.scoreCp} · 权重 ${candidate.weight}',
                   ),
                 ),
               if (controller.datasetId case final id?)

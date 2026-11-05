@@ -1,4 +1,4 @@
-## M4-82 / F15,F20 / ADR-112 来源选择跨路由持久化（门槛通过，待提交）
+## M4-82 / F15,F20 / ADR-112 来源选择跨路由持久化（已提交 943cc14）
 
 `bookLookupSource`偏好默认cloud且兼容旧schema；设置页和主面板共享云库/大师谱选择，按偏好Controller异步编辑合并规则持久化。来源切换不触发查询。定向8/8；根`flutter test --concurrency=1 --reporter expanded`623通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-82.log`；`flutter analyze --no-pub`与diff-check通过；`flutter build macos --no-pub`成功（既有flutter_tts SwiftPM warning）。实际App attach/runtime未验，仍仅PID50598一个GUI。本机跨重启保持是P，E55只验证同标签页路由保留。F15/全站仍未对齐。
 

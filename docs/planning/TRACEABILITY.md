@@ -823,3 +823,7 @@ App偏好新增可选发布服务根地址，默认空；设置输入仅允许HT
 定向`flutter test --concurrency=1 test/adapters/network/http_feedback_service_test.dart test/widgets/feedback_dialog_test.dart test/widgets/about_support_test.dart --reporter expanded`7/7；server `dart test --reporter expanded`2/2、`dart analyze lib bin test`无问题、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server`成功。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；5跳过因未配置官方Pikafish/NNUE，不是本片失败。`flutter analyze --no-pub`及`git diff --check`通过。调试中曾修正Widget重复文本finder断言及Dart exclusive创建接口误用；最终专项、根测试通过。
 
 macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原Runner，文件同步1,054ms、热重启1,114ms；Ctrl-C脱离后原app PID50598仍存活。测试全程`--concurrency=1`单个flutter_tester；没有调用`flutter run`或启动新chessNext。屏幕锁定，实际视觉验收not run；未连接真实自建服务/部署收件目录，生产投递与运营流程not run。F31仍开放。
+
+## E78 / F27 显示与语言菜单/色调选择审计
+
+来源`REFERENCE_EVIDENCE.md#e78--2026-11-05-显示与语言设置菜单及色调选择访客桌面iab`。显示页观察五种色调、夜间棋盘开关说明及四种语言（O）；选中青玉再复原晴蓝、打开语言菜单后取消均验证（V）。未触碰主题/夜间开关。色调色值与作用范围、夜间皮肤变换/条件、偏好持久性和多语言其余路由仍U。下项按B25检查本机主题/棋盘外观架构并设计独立色调偏好；语言完整覆盖先盘点资源后另案实现。

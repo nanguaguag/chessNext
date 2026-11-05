@@ -1023,3 +1023,8 @@ M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完�
 实现与测试文档已随`e51388c feat(settings): 支持自建反馈预览与提交`提交。提交后`git status --short`为空。
 
 专项反馈UI/HTTP 7/7，server 2/2、server Dart analyze与compile通过。根全量`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；5跳过因官方Pikafish/NNUE未配置。`flutter analyze --no-pub`与`git diff --check`通过。调试中两轮定向测试因重复文本finder、一次接口误用而失败，修复后专项通过；全量测试通过。屏幕锁定，人工视觉验收not run，真实服务端提交not run。
+# 2026-11-05 / E78 / F27 显示与语言设置审计
+
+复核访客显示语言页：观察五种色调、仅默认棋盘有效的深色夜间棋盘开关和简中/繁中/越南语/English候选；青玉选中后再切回晴蓝，AX确认恢复；打开语言菜单后取消仍简体中文。没有改主题/夜间开关或持久化语言。五项研究追踪记录色调作用范围、实际色值、夜间棋盘效果及完整翻译覆盖为U，待diff check和文档commit。
+
+用户反馈测试曾造成多个ChessNext后台实例。本次复核唯一ChessNext PID50598/runner50125，无flutter_tester残留。前次根全量最终591 passed/5 skipped/0 failed；5跳过需本地官方Pikafish/NNUE。`flutter test --concurrency=1`是单个flutter_tester测试宿主，不开App；新GUI实例由`flutter run`导致。后续macOS仅attach现有runner，不重复flutter run。

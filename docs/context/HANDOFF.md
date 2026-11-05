@@ -1,5 +1,13 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## 最新工作续接 / E78 与后台 App 检查
+
+用户要求继续对齐登录以外全站功能/设置，不得每项后停工。已重新读取AGENTS/README/CURRENT_STATE/HANDOFF/DECISIONS及相关Skills，并检查git状态/提交。当前唯一chessNext App PID50598，runner PID50125；没有`flutter_tester`残留。上一完整根测试最终591通过/5跳过/0失败，5跳过因本地未配置官方Pikafish/NNUE。串行根`flutter test --concurrency=1`运行一个测试宿主，不启动App；重复App只会来自`flutter run`/手动开程序。本轮继续禁止新`flutter run`，macOS变更需复用App attach。
+
+新增E78显示语言页证据，目前文档改动待提交：`REFERENCE_EVIDENCE.md`、`FEATURE_MATRIX.md`、`FEATURE_GAPS.md`、`BACKLOG.md`、`TRACEABILITY.md`、`CURRENT_STATE.md`、`HANDOFF.md`。显示页五色调与夜间棋盘开关是观察证据O，青玉选中再恢复晴蓝及语言弹窗取消是V；真实色值/应用范围、夜间效果、其它页面完整译文为U。下一项继续F27的本机色调功能设计/实现，并将未知影响明确标为项目P，不宣称源站完整等同；语言完整资源和夜间棋盘另列待办。
+
+当前工作树含E78文档改动，尚未做diff check/提交。完成文档审计提交后继续独立功能增量，每片串行根测试、analyze，通过后中文Conventional Commit；涉及macOS只attach既有PID50598。会话最终更新SESSION_LOG。全站持续目标未完成；无子代理、无后台flutter测试任务。
+
 ## M4-57 当前进展（已提交7b582ae）
 
 把BookService配置接入持久化偏好和分析AI单步；开局/残局模式、地址、离库步数；地址空不联网，并明示查询会发当前FEN及完整历史。当前局面、规则合法性、epoch/positionRevision/tree门控仍有效；服务miss/网络/协议异常或候选非法回退本机引擎。站点随机分差/残局识别/上界未知，项目暂定100cp、非将棋子≤8、已完成全回合计数、最多255（P），见ADR-089。

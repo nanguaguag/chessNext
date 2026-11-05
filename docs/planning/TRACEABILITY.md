@@ -867,3 +867,7 @@ macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原R
 定向`flutter test --concurrency=1 test/widgets/copyright_complaint_dialog_test.dart test/widgets/about_support_test.dart test/adapters/network/http_feedback_service_test.dart --reporter expanded`7/7；`server/skin_catalog`的`dart test --reporter expanded`4/4、`dart analyze lib bin test`无问题、`dart compile exe bin/skin_catalog_server.dart -o /tmp/chessnext-skin-catalog-server-m4-67`通过。根全量/analyze/macOS attach结果待补。首轮定向测试发现可选字段漏required参数、composition root误加到_boardPage、滚动测试未ensureVisible和重复字段断言，逐项修正后定向通过；服务端测试通过。macOS视觉/实际自建部署/真实投诉投递not run。附件与运营实务未交付，F31开放。
 
 M4-67门槛复核（最终）：根`flutter test --concurrency=1 --reporter expanded`完成595通过/5跳过/0失败，根`flutter analyze --no-pub`与`git diff --check`通过。macOS在原PID50598上attach同步953ms、热重启1085ms；attach CLI及frontend_server短暂残留已退出/清理。未启动额外App。
+
+## E82 / F21,B24 审计样本删除及设置恢复
+
+访客IAB中，棋盘设置皮肤库只看到一个“我的棋盘”本次审计样本，其余为站点在线项。删除确认框明确称不可恢复，用户就该样本确认后执行删除；复读皮肤库该本地条目消失，取消选择器，主设置回到默认棋子/棋盘、全局大小100%、坐标开、对面倒置关。V。只证明删除与状态恢复，不说明几何值或reload行为。操作截图通过本轮UI记录展示，未把站点素材复制到仓库。

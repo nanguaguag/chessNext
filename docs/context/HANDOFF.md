@@ -170,3 +170,7 @@ M4-63已单独以`e51388c feat(settings): 支持自建反馈预览与提交`提�
 根目录最终`flutter test --concurrency=1 --reporter expanded`：595 passed、5 skipped、0 failed；跳过项依赖未配置的官方Pikafish/NNUE。`flutter analyze --no-pub`、server `dart analyze lib bin test`、server `dart test --reporter expanded` 4/4、server exe compile及`git diff --check`通过。专项Flutter 7/7。根全量测试运行一个串行tester，没有GUI App；当前原chessNext PID50598/runner50125维持不变。复用既有VM Service attach sync953ms/hot restart1085ms成功。attach退出遗留PID95102/95152已清理，后续再复核状态；没有执行flutter run。
 
 实现F31投诉文字表单及自建隔离收件并未完成投诉附件、邮箱/群外链、真实运营/保留/法务流程，因此只是M4-67首片，不能关闭F31。全站登录外对齐仍长期目标，继续按矩阵/缺口推进；下一个可执行项优先审计并补B24棋盘几何、格点/四边耦合未知和草稿保存—应用—reload事务，再推进F27完整语言资源，不应在本片后停工。
+
+## E82 样本清理完成
+
+已按用户确认删除唯一“我的棋盘”审计样本；删除后列表不再出现该项，回到棋盘设置确认默认棋子/棋盘、100%、坐标开/倒置关与原值一致。参考站截图在UI操作结果展示，文本证据E82已记录。未改变线上皮肤或局面。若新审计需要另建样本，应优先用未保存草稿并取消，避免再次产生不可恢复数据。

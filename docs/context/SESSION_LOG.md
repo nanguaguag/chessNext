@@ -1068,3 +1068,7 @@ Dart自建server新增可选`CHESSNEXT_COPYRIGHT_ROOT`私有目录和`/v1/copyri
 定向Flutter7/7、server `dart test`4/4；server analyze与exe编译通过。根串行`flutter test --concurrency=1 --reporter expanded`595 passed/5 skipped/0 failed（跳过需官方Pikafish/NNUE）；`flutter analyze --no-pub`与`git diff --check`通过。早期定向/UI测试和一次analyze有失败/信息，已逐项修复并最终重跑通过。macOS复用PID50598/runner50125 attach sync953ms、hot restart1085ms；原App仍在。根测试只有一个flutter_tester，测试后无残留。attach退出后有PID95102/95152残余CLI/frontend_server，已TERM并确认消失；无新App。Mac锁屏，人工视觉、真实服务部署和投诉投递未做。
 
 本片代码和ADR/矩阵/缺口/追踪/上下文待单独中文提交；下一步继续B24棋盘几何及保存应用/reload事务、F27完整语言资源与选择，以及剩余登录外矩阵缺口。总目标未完成。
+
+## 2026-11-05 / E82 / F21,B24 审计样本清理
+
+收到用户针对“仅本次创建样本”的明确不可恢复删除确认。访客设置页列表核对仅有本地“我的棋盘”样本后删除；站点确认框复述不可恢复，用户确认有效。验证条目消失、在线皮肤列表仍在，设置返回默认棋盘/棋子、100%、坐标开、倒置关。E82落入REFERENCE_EVIDENCE/矩阵/缺口/追踪/交接。未动其他数据，原截图未入库。

@@ -83,4 +83,83 @@ class AppLocalizationsZh extends AppLocalizations {
   @override
   String get boardDisplayPersistenceHelp =>
       '实时应用到主棋盘与局面编辑器并保存在本机。翻转或镜像时，路数随棋盘方向变化。';
+
+  @override
+  String get boardGeometryHeading => '格点与边距';
+
+  @override
+  String get boardGeometryHelp => '按画布百分比调整格网四边；所有棋子、标记和交点点击共用此几何。';
+
+  @override
+  String get boardGeometryCalibrate => '拖动格点校准';
+
+  @override
+  String get boardGeometryCalibrateTitle => '拖动格点校准';
+
+  @override
+  String get done => '完成';
+
+  @override
+  String get leftMargin => '左边距';
+
+  @override
+  String get rightMargin => '右边距';
+
+  @override
+  String get topMargin => '上边距';
+
+  @override
+  String get bottomMargin => '下边距';
+
+  @override
+  String boardSkinPieceScale(int percent) {
+    return '棋子缩放 $percent%';
+  }
+
+  @override
+  String get boardSkinPieceScaleHelp =>
+      '棋子只改变面容尺寸，不改变格线间距或交点命中；与全局棋子尺寸、棋子样式比例相乘。';
+
+  @override
+  String get landingMarkerRotation => '落点标记图片旋转';
+
+  @override
+  String get landingMarkerRotationHelp => '每次换步时转一周后静止；系统减少动画或关闭动画速度时静止。';
+
+  @override
+  String get resetBoardGrid => '格网恢复默认';
+
+  @override
+  String get boardGridPreview => '棋盘格点预览，九列十行';
+
+  @override
+  String get topLeftGridPoint => '左上格点';
+
+  @override
+  String get bottomRightGridPoint => '右下格点';
+
+  @override
+  String topLeftGridPointValue(String left, String top) {
+    return '左 $left%，上 $top%';
+  }
+
+  @override
+  String bottomRightGridPointValue(String right, String bottom) {
+    return '右 $right%，下 $bottom%';
+  }
+
+  @override
+  String get gridPointMoveHint => '拖动或聚焦后使用方向键，每次移动1%；读屏可用方向操作调整';
+
+  @override
+  String get gridPointMoveLeft => '格点左移1%';
+
+  @override
+  String get gridPointMoveRight => '格点右移1%';
+
+  @override
+  String get gridPointMoveUp => '格点上移1%';
+
+  @override
+  String get gridPointMoveDown => '格点下移1%';
 }

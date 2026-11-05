@@ -87,4 +87,87 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get boardDisplayPersistenceHelp =>
       'Applies to the main board and position editor, and is saved on this device. Coordinates follow board rotation and mirroring.';
+
+  @override
+  String get boardGeometryHeading => 'Grid and margins';
+
+  @override
+  String get boardGeometryHelp =>
+      'Adjust the four grid edges as a percentage of the canvas. Pieces, markers and intersection taps share this geometry.';
+
+  @override
+  String get boardGeometryCalibrate => 'Drag grid points to calibrate';
+
+  @override
+  String get boardGeometryCalibrateTitle => 'Calibrate by dragging grid points';
+
+  @override
+  String get done => 'Done';
+
+  @override
+  String get leftMargin => 'Left margin';
+
+  @override
+  String get rightMargin => 'Right margin';
+
+  @override
+  String get topMargin => 'Top margin';
+
+  @override
+  String get bottomMargin => 'Bottom margin';
+
+  @override
+  String boardSkinPieceScale(int percent) {
+    return 'Piece scale $percent%';
+  }
+
+  @override
+  String get boardSkinPieceScaleHelp =>
+      'Piece size changes appearance only, not grid spacing or intersection targets. It multiplies with global piece size and the piece style scale.';
+
+  @override
+  String get landingMarkerRotation => 'Rotate the landing marker image';
+
+  @override
+  String get landingMarkerRotationHelp =>
+      'On each move, rotate it once and stop. It stays still when reduced motion is enabled or animation speed is off.';
+
+  @override
+  String get resetBoardGrid => 'Reset grid';
+
+  @override
+  String get boardGridPreview =>
+      'Board grid preview, nine columns and ten rows';
+
+  @override
+  String get topLeftGridPoint => 'Top-left grid point';
+
+  @override
+  String get bottomRightGridPoint => 'Bottom-right grid point';
+
+  @override
+  String topLeftGridPointValue(String left, String top) {
+    return 'Left $left%, top $top%';
+  }
+
+  @override
+  String bottomRightGridPointValue(String right, String bottom) {
+    return 'Right $right%, bottom $bottom%';
+  }
+
+  @override
+  String get gridPointMoveHint =>
+      'Drag or focus the point and use the arrow keys to move by 1%. Screen reader users can use directional actions.';
+
+  @override
+  String get gridPointMoveLeft => 'Move grid point left by 1%';
+
+  @override
+  String get gridPointMoveRight => 'Move grid point right by 1%';
+
+  @override
+  String get gridPointMoveUp => 'Move grid point up by 1%';
+
+  @override
+  String get gridPointMoveDown => 'Move grid point down by 1%';
 }

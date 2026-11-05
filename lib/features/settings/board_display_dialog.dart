@@ -247,6 +247,7 @@ class BoardDisplayDialog extends StatelessWidget {
   }
 
   Widget _geometryControls(BuildContext context) {
+    final l10n = AppLocalizations.of(context);
     final skin = preferences.value.boardSkin;
     final skinId = preferences.value.selectedBoardSkinId;
     final geometry =
@@ -303,8 +304,11 @@ class BoardDisplayDialog extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text('格点与边距', style: Theme.of(context).textTheme.titleSmall),
-        const Text('按画布百分比调整格网四边；所有棋子、标记和交点点击共用此几何。'),
+        Text(
+          l10n.boardGeometryHeading,
+          style: Theme.of(context).textTheme.titleSmall,
+        ),
+        Text(l10n.boardGeometryHelp),
         Align(
           alignment: Alignment.centerRight,
           child: TextButton.icon(
@@ -314,7 +318,7 @@ class BoardDisplayDialog extends StatelessWidget {
                 : () => showDialog<void>(
                     context: context,
                     builder: (dialogContext) => AlertDialog(
-                      title: const Text('拖动格点校准'),
+                      title: Text(l10n.boardGeometryCalibrateTitle),
                       content: SizedBox(
                         width: 216,
                         child: BoardGeometryEditor(
@@ -327,44 +331,44 @@ class BoardDisplayDialog extends StatelessWidget {
                       actions: [
                         TextButton(
                           onPressed: () => Navigator.pop(dialogContext),
-                          child: const Text('完成'),
+                          child: Text(l10n.done),
                         ),
                       ],
                     ),
                   ),
             icon: const Icon(Icons.open_with),
-            label: const Text('拖动格点校准'),
+            label: Text(l10n.boardGeometryCalibrate),
           ),
         ),
         edge(
-          '左边距',
+          l10n.leftMargin,
           geometry.leftPercent,
           BoardSkinGeometry.minEdgePercent,
           geometry.rightPercent - BoardSkinGeometry.minSpanPercent,
           (v) => geometry.copyWith(leftPercent: v),
         ),
         edge(
-          '右边距',
+          l10n.rightMargin,
           geometry.rightPercent,
           geometry.leftPercent + BoardSkinGeometry.minSpanPercent,
           BoardSkinGeometry.maxEdgePercent,
           (v) => geometry.copyWith(rightPercent: v),
         ),
         edge(
-          '上边距',
+          l10n.topMargin,
           geometry.topPercent,
           BoardSkinGeometry.minEdgePercent,
           geometry.bottomPercent - BoardSkinGeometry.minSpanPercent,
           (v) => geometry.copyWith(topPercent: v),
         ),
         edge(
-          '下边距',
+          l10n.bottomMargin,
           geometry.bottomPercent,
           geometry.topPercent + BoardSkinGeometry.minSpanPercent,
           BoardSkinGeometry.maxEdgePercent,
           (v) => geometry.copyWith(bottomPercent: v),
         ),
-        Text('棋子缩放 ${geometry.pieceScalePercent}%'),
+        Text(l10n.boardSkinPieceScale(geometry.pieceScalePercent)),
         Slider(
           key: ValueKey('board-geometry-$skinId-piece-scale'),
           value: geometry.pieceScalePercent.toDouble(),
@@ -383,12 +387,12 @@ class BoardDisplayDialog extends StatelessWidget {
                   ),
                 ),
         ),
-        const Text('棋子只改变面容尺寸，不改变格线间距或交点命中；与全局棋子尺寸、棋子样式比例相乘。'),
+        Text(l10n.boardSkinPieceScaleHelp),
         SwitchListTile(
           key: ValueKey('board-geometry-$skinId-landing-rotation'),
           contentPadding: EdgeInsets.zero,
-          title: const Text('落点标记图片旋转'),
-          subtitle: const Text('每次换步时转一周后静止；系统减少动画或关闭动画速度时静止。'),
+          title: Text(l10n.landingMarkerRotation),
+          subtitle: Text(l10n.landingMarkerRotationHelp),
           value: geometry.rotateLandingMarker,
           onChanged: preferences.loading
               ? null
@@ -405,7 +409,7 @@ class BoardDisplayDialog extends StatelessWidget {
                     setGeometry(const BoardSkinGeometry.standard()),
                   ),
             icon: const Icon(Icons.restart_alt),
-            label: const Text('格网恢复默认'),
+            label: Text(l10n.resetBoardGrid),
           ),
         ),
       ],

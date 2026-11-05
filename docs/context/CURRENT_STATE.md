@@ -1,3 +1,9 @@
+## M4-86 / F27,B24 / 格点与边距及格点编辑器ARB化（门槛通过，待提交）
+
+继续将格点/边距标题说明、四边输入与滑杆标签、棋子缩放、落点图旋转、重置/校准按钮与校准对话框迁入zh/en ARB；拖动编辑器预览和左右格点的读屏名称、坐标值、操作提示及四个方向Action均支持本地化。未改几何算法、单位、边界或保存语义；此项仍为项目模型P，站点完整几何规则U。根Locale依然固定zh。
+
+专项`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-86.log`；`flutter analyze --no-pub`、格式/diff检查通过。首轮专项因边距标签在输入框和滑杆各出现一次导致断言过严，改为双实例后重跑通过。macOS未运行/视觉未验以避免新增GUI实例；单串行tester已结束、原PID50598唯一。待单独中文提交。
+
 ## M4-85 / F27 / 棋盘显示设置基础项ARB化（门槛通过，待提交）
 
 将棋盘显示弹窗标题、棋盘/棋子皮肤字段、全局棋子大小及语义、尺寸帮助、坐标开关、对面棋子旋转开关与本机应用说明迁入zh/en ARB。只覆盖基础显示项，其余皮肤/动画/音效/格点设置仍待逐项迁移；生产根Locale仍锁定zh。

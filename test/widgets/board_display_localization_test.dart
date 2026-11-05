@@ -54,6 +54,16 @@ void main() {
         find.textContaining('Size only affects appearance'),
         findsOneWidget,
       );
+      expect(find.text('Grid and margins'), findsOneWidget);
+      expect(find.text('Left margin'), findsNWidgets(2));
+      expect(find.text('Rotate the landing marker image'), findsOneWidget);
+      await tester.ensureVisible(find.text('Drag grid points to calibrate'));
+      await tester.tap(find.text('Drag grid points to calibrate'));
+      await tester.pumpAndSettle();
+      expect(find.text('Calibrate by dragging grid points'), findsOneWidget);
+      expect(find.text('Done'), findsOneWidget);
+      expect(find.bySemanticsLabel('Top-left grid point'), findsOneWidget);
+      expect(find.bySemanticsLabel('Bottom-right grid point'), findsOneWidget);
       expect(tester.takeException(), isNull);
     },
   );

@@ -1,5 +1,11 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-86 / F27,B24 格点/边距与校准编辑器本地化（门槛通过，待提交）
+
+M4-84资源管线加M4-85基础显示项后，格点与四边、棋盘皮肤棋子比例、落点旋转、恢复默认、校准弹窗以及可拖格点控件的读屏全部使用zh/en键。没有更改项目几何模型或宣称源站映射已知。
+
+专项`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-86.log`；`flutter analyze --no-pub`和格式/diff检查通过。macOS运行/视觉未验（为避免重开GUI）。根测试仅一个串行tester并已退出，唯一原GUI PID50598。首轮测试标签数量断言失败，修正为输入框+滑杆各一个后定向通过。下一步单独提交，并继续棋盘显示设置余项、皮肤库/图片/音效相关静态文案及F21/F27未完成差距。
+
 ## M4-85 / F27 棋盘显示基础项本地化（门槛通过，待提交）
 
 棋盘显示对话框基础标签、大小、坐标、对面棋子方向和本机保存说明已迁入ARB zh/en；补英文组件测试。当前根只开放zh，英文仍仅测试上下文可见。其它大量设置项仍未迁移。

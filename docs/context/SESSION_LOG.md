@@ -1,5 +1,11 @@
 # 会话日志
 
+## 2026-11-05 / M4-86 / F27,B24 棋盘格点、边距与校准读屏本地化（门槛通过，待提交）
+
+ARB扩展至四边标签/输入、棋子比例、格点说明、落点旋转及重置；BoardGeometryEditor格点预览、两端坐标值、提示与方向自定义语义Action支持zh/en。未改变几何值、拖动变换或保存语义。首次定向测试因“Left margin”在文字标签和输入字段各显示一次而错误期待一个；修正为两个后复跑。
+
+命令：`flutter gen-l10n`通过；`dart format lib/features/settings/board_display_dialog.dart lib/features/settings/board_geometry_editor.dart test/widgets/board_display_localization_test.dart`通过；初次定向测试1项断言失败，修正后`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；`flutter analyze --no-pub`通过；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-86.log`）；`git diff --check`通过。根单串行flutter_tester结束退出；检查只有原PID50598 GUI。遵从用户对重复实例的顾虑，未`flutter run -d macos`，macOS运行/视觉未验。待中文单独提交。B24站点几何算法仍U。
+
 ## 2026-11-05 / M4-85 / F27 棋盘显示设置基础项本地化（门槛通过，待提交）
 
 延续M4-84 ARB资源管线，将BoardDisplayDialog标题、两种皮肤字段、棋子大小语义与百分比、尺寸帮助、坐标、对面棋子180°旋转及本机保存说明迁入zh/en资源；英文独立组件测试1/1。

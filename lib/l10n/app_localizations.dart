@@ -235,6 +235,150 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'实时应用到主棋盘与局面编辑器并保存在本机。翻转或镜像时，路数随棋盘方向变化。'**
   String get boardDisplayPersistenceHelp;
+
+  /// No description provided for @boardGeometryHeading.
+  ///
+  /// In zh, this message translates to:
+  /// **'格点与边距'**
+  String get boardGeometryHeading;
+
+  /// No description provided for @boardGeometryHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'按画布百分比调整格网四边；所有棋子、标记和交点点击共用此几何。'**
+  String get boardGeometryHelp;
+
+  /// No description provided for @boardGeometryCalibrate.
+  ///
+  /// In zh, this message translates to:
+  /// **'拖动格点校准'**
+  String get boardGeometryCalibrate;
+
+  /// No description provided for @boardGeometryCalibrateTitle.
+  ///
+  /// In zh, this message translates to:
+  /// **'拖动格点校准'**
+  String get boardGeometryCalibrateTitle;
+
+  /// No description provided for @done.
+  ///
+  /// In zh, this message translates to:
+  /// **'完成'**
+  String get done;
+
+  /// No description provided for @leftMargin.
+  ///
+  /// In zh, this message translates to:
+  /// **'左边距'**
+  String get leftMargin;
+
+  /// No description provided for @rightMargin.
+  ///
+  /// In zh, this message translates to:
+  /// **'右边距'**
+  String get rightMargin;
+
+  /// No description provided for @topMargin.
+  ///
+  /// In zh, this message translates to:
+  /// **'上边距'**
+  String get topMargin;
+
+  /// No description provided for @bottomMargin.
+  ///
+  /// In zh, this message translates to:
+  /// **'下边距'**
+  String get bottomMargin;
+
+  /// No description provided for @boardSkinPieceScale.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子缩放 {percent}%'**
+  String boardSkinPieceScale(int percent);
+
+  /// No description provided for @boardSkinPieceScaleHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋子只改变面容尺寸，不改变格线间距或交点命中；与全局棋子尺寸、棋子样式比例相乘。'**
+  String get boardSkinPieceScaleHelp;
+
+  /// No description provided for @landingMarkerRotation.
+  ///
+  /// In zh, this message translates to:
+  /// **'落点标记图片旋转'**
+  String get landingMarkerRotation;
+
+  /// No description provided for @landingMarkerRotationHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'每次换步时转一周后静止；系统减少动画或关闭动画速度时静止。'**
+  String get landingMarkerRotationHelp;
+
+  /// No description provided for @resetBoardGrid.
+  ///
+  /// In zh, this message translates to:
+  /// **'格网恢复默认'**
+  String get resetBoardGrid;
+
+  /// No description provided for @boardGridPreview.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘格点预览，九列十行'**
+  String get boardGridPreview;
+
+  /// No description provided for @topLeftGridPoint.
+  ///
+  /// In zh, this message translates to:
+  /// **'左上格点'**
+  String get topLeftGridPoint;
+
+  /// No description provided for @bottomRightGridPoint.
+  ///
+  /// In zh, this message translates to:
+  /// **'右下格点'**
+  String get bottomRightGridPoint;
+
+  /// No description provided for @topLeftGridPointValue.
+  ///
+  /// In zh, this message translates to:
+  /// **'左 {left}%，上 {top}%'**
+  String topLeftGridPointValue(String left, String top);
+
+  /// No description provided for @bottomRightGridPointValue.
+  ///
+  /// In zh, this message translates to:
+  /// **'右 {right}%，下 {bottom}%'**
+  String bottomRightGridPointValue(String right, String bottom);
+
+  /// No description provided for @gridPointMoveHint.
+  ///
+  /// In zh, this message translates to:
+  /// **'拖动或聚焦后使用方向键，每次移动1%；读屏可用方向操作调整'**
+  String get gridPointMoveHint;
+
+  /// No description provided for @gridPointMoveLeft.
+  ///
+  /// In zh, this message translates to:
+  /// **'格点左移1%'**
+  String get gridPointMoveLeft;
+
+  /// No description provided for @gridPointMoveRight.
+  ///
+  /// In zh, this message translates to:
+  /// **'格点右移1%'**
+  String get gridPointMoveRight;
+
+  /// No description provided for @gridPointMoveUp.
+  ///
+  /// In zh, this message translates to:
+  /// **'格点上移1%'**
+  String get gridPointMoveUp;
+
+  /// No description provided for @gridPointMoveDown.
+  ///
+  /// In zh, this message translates to:
+  /// **'格点下移1%'**
+  String get gridPointMoveDown;
 }
 
 class _AppLocalizationsDelegate

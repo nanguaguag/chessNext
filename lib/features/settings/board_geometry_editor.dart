@@ -3,6 +3,7 @@ import 'package:flutter/semantics.dart';
 import 'package:flutter/services.dart';
 
 import '../../application/board_skin_geometry.dart';
+import '../../l10n/app_localizations.dart';
 
 /// Project-designed draggable 9×10 grid calibration preview.
 class BoardGeometryEditor extends StatefulWidget {
@@ -139,8 +140,12 @@ class _BoardGeometryEditorState extends State<BoardGeometryEditor> {
     child: LayoutBuilder(
       builder: (context, constraints) {
         final size = Size(constraints.maxWidth, constraints.maxHeight);
+        final l10n = Localizations.of<AppLocalizations>(
+          context,
+          AppLocalizations,
+        );
         return Semantics(
-          label: '棋盘格点预览，九列十行',
+          label: l10n?.boardGridPreview ?? '棋盘格点预览，九列十行',
           child: Stack(
             clipBehavior: Clip.none,
             children: [
@@ -194,15 +199,23 @@ class _BoardGeometryEditorState extends State<BoardGeometryEditor> {
       child: Semantics(
         container: true,
         focusable: widget.enabled,
-        label: topLeft ? '左上格点' : '右下格点',
+        label: _labels(topLeft, context).label,
         value: topLeft
-            ? '左 ${_geometry.leftPercent.toStringAsFixed(1)}%，上 ${_geometry.topPercent.toStringAsFixed(1)}%'
-            : '右 ${_geometry.rightPercent.toStringAsFixed(1)}%，下 ${_geometry.bottomPercent.toStringAsFixed(1)}%',
-        hint: '拖动或聚焦后使用方向键，每次移动1%；读屏可用方向操作调整',
+            ? _labels(topLeft, context).value(
+                _geometry.leftPercent.toStringAsFixed(1),
+                _geometry.topPercent.toStringAsFixed(1),
+              )
+            : _labels(topLeft, context).value(
+                _geometry.rightPercent.toStringAsFixed(1),
+                _geometry.bottomPercent.toStringAsFixed(1),
+              ),
+        hint: _labels(topLeft, context).hint,
         customSemanticsActions: widget.enabled
             ? {
                 for (final direction in _directions)
-                  CustomSemanticsAction(label: direction.label): () =>
+                  CustomSemanticsAction(
+                    label: _directionLabel(direction.dx, direction.dy, context),
+                  ): () =>
                       _move(direction.dx, direction.dy, topLeft: topLeft),
               }
             : const {},
@@ -253,6 +266,40 @@ class _BoardGeometryEditorState extends State<BoardGeometryEditor> {
       ),
     ),
   );
+
+  ({String label, String hint, String Function(String, String) value}) _labels(
+    bool topLeft,
+    BuildContext context,
+  ) {
+    final l10n = Localizations.of<AppLocalizations>(context, AppLocalizations);
+    if (l10n == null) {
+      return (
+        label: topLeft ? '左上格点' : '右下格点',
+        hint: '拖动或聚焦后使用方向键，每次移动1%；读屏可用方向操作调整',
+        value: (a, b) => topLeft ? '左 $a%，上 $b%' : '右 $a%，下 $b%',
+      );
+    }
+    return (
+      label: topLeft ? l10n.topLeftGridPoint : l10n.bottomRightGridPoint,
+      hint: l10n.gridPointMoveHint,
+      value: (a, b) => topLeft
+          ? l10n.topLeftGridPointValue(a, b)
+          : l10n.bottomRightGridPointValue(a, b),
+    );
+  }
+
+  String _directionLabel(double dx, double dy, BuildContext context) {
+    final l10n = Localizations.of<AppLocalizations>(context, AppLocalizations);
+    if (l10n == null) {
+      return _directions
+          .firstWhere((direction) => direction.dx == dx && direction.dy == dy)
+          .label;
+    }
+    if (dx < 0) return l10n.gridPointMoveLeft;
+    if (dx > 0) return l10n.gridPointMoveRight;
+    if (dy < 0) return l10n.gridPointMoveUp;
+    return l10n.gridPointMoveDown;
+  }
 
   static const _directions = <({String label, double dx, double dy})>[
     (label: '格点左移1%', dx: -1, dy: 0),

@@ -1,5 +1,11 @@
 # 需求追踪
 
+## 2026-11-05 / M4-86 / F27,B24 格点与边距本地化
+
+棋盘几何设置中的四边字段、比例、落点旋转、重置和弹窗动作以及BoardGeometryEditor的AX标签/坐标/提示/自定义方向Action加入zh/en ARB。只做本地化，不修改ADR-054项目归一化几何或将其映射到站点未知单位/行为。根Locale保持zh。
+
+验收：定向`flutter test --concurrency=1 test/widgets/board_display_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`631通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-86.log`）；`flutter analyze --no-pub`和`git diff --check`通过。5项引擎测试仍需官方Pikafish/NNUE。macOS运行/视觉not run，为防止GUI实例增殖没有另行`flutter run`。
+
 ## 2026-11-05 / M4-85 / F27 棋盘显示设置基础项本地化
 
 BoardDisplayDialog基础显示项消费M4-84 ARB资源：标题、棋盘/棋子皮肤字段、棋子大小/语义、尺寸帮助、显示坐标、对面一侧棋子旋转与本机应用说明。英文组件测试使用隔离MaterialApp locale，不改变产品根Locale(zh)，避免其它设置仍中文时暴露混合语言。皮肤/动画/声音/阴影/几何等大量设置尚未迁移，F27不关闭。

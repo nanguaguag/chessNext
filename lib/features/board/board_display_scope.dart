@@ -13,6 +13,8 @@ class BoardDisplayScope extends InheritedWidget {
     required this.showCoordinates,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.selectedBoardSkinId = 'parchment',
+    this.nightBoardInDarkMode = true,
     this.geometry = const BoardSkinGeometry.standard(),
     this.pieceSkin = PieceSkin.roundSeal,
     this.pieceSkinShadow,
@@ -38,6 +40,8 @@ class BoardDisplayScope extends InheritedWidget {
   final bool showCoordinates;
   final bool rotateOppositePieces;
   final BoardSkin boardSkin;
+  final String selectedBoardSkinId;
+  final bool nightBoardInDarkMode;
   final BoardSkinGeometry geometry;
   final PieceSkin pieceSkin;
   final PieceSkinShadow? pieceSkinShadow;
@@ -118,6 +122,16 @@ class BoardDisplayScope extends InheritedWidget {
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
           ?.rotateOppositePieces ??
       false;
+  static String selectedBoardSkinIdOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.selectedBoardSkinId ??
+      'parchment';
+  static bool nightBoardInDarkModeOf(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
+          ?.nightBoardInDarkMode ??
+      true;
   static BoardSkin boardSkinOf(BuildContext context) =>
       context
           .dependOnInheritedWidgetOfExactType<BoardDisplayScope>()
@@ -157,6 +171,8 @@ class BoardDisplayScope extends InheritedWidget {
       showCoordinates != oldWidget.showCoordinates ||
       rotateOppositePieces != oldWidget.rotateOppositePieces ||
       boardSkin != oldWidget.boardSkin ||
+      selectedBoardSkinId != oldWidget.selectedBoardSkinId ||
+      nightBoardInDarkMode != oldWidget.nightBoardInDarkMode ||
       geometry != oldWidget.geometry ||
       pieceSkin != oldWidget.pieceSkin ||
       pieceSkinShadow != oldWidget.pieceSkinShadow ||

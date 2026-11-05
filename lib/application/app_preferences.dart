@@ -104,6 +104,7 @@ final class AppPreferences {
   AppPreferences({
     this.theme = ThemePreference.system,
     this.displayTone = DisplayTone.skyBlue,
+    this.nightBoardInDarkMode = true,
     this.boardLayoutPreset = BoardLayoutPreset.centered,
     this.animationSpeed = AnimationSpeed.standard,
     this.playMoveSound = true,
@@ -243,6 +244,7 @@ final class AppPreferences {
 
   final ThemePreference theme;
   final DisplayTone displayTone;
+  final bool nightBoardInDarkMode;
   final BoardLayoutPreset boardLayoutPreset;
   final AnimationSpeed animationSpeed;
   final bool playMoveSound;
@@ -299,6 +301,7 @@ final class AppPreferences {
   AppPreferences copyWith({
     ThemePreference? theme,
     DisplayTone? displayTone,
+    bool? nightBoardInDarkMode,
     BoardLayoutPreset? boardLayoutPreset,
     AnimationSpeed? animationSpeed,
     bool? playMoveSound,
@@ -357,6 +360,7 @@ final class AppPreferences {
   }) => AppPreferences(
     theme: theme ?? this.theme,
     displayTone: displayTone ?? this.displayTone,
+    nightBoardInDarkMode: nightBoardInDarkMode ?? this.nightBoardInDarkMode,
     boardLayoutPreset: boardLayoutPreset ?? this.boardLayoutPreset,
     animationSpeed: animationSpeed ?? this.animationSpeed,
     playMoveSound: playMoveSound ?? this.playMoveSound,
@@ -426,6 +430,7 @@ final class AppPreferences {
       'lastMoveMarker': lastMoveMarker.name,
     'theme': theme.name,
     if (displayTone != DisplayTone.skyBlue) 'displayTone': displayTone.name,
+    if (!nightBoardInDarkMode) 'nightBoardInDarkMode': false,
     if (boardLayoutPreset != BoardLayoutPreset.centered)
       'boardLayoutPreset': boardLayoutPreset.name,
     if (animationSpeed != AnimationSpeed.standard)
@@ -532,6 +537,8 @@ final class AppPreferences {
         (json.containsKey('arrowHead') && json['arrowHead'] is! String) ||
         json['theme'] is! String ||
         (json.containsKey('displayTone') && json['displayTone'] is! String) ||
+        (json.containsKey('nightBoardInDarkMode') &&
+            json['nightBoardInDarkMode'] is! bool) ||
         (json.containsKey('boardLayoutPreset') &&
             json['boardLayoutPreset'] is! String) ||
         (json.containsKey('textSize') && json['textSize'] is! String) ||
@@ -663,6 +670,7 @@ final class AppPreferences {
         displayTone: DisplayTone.values.byName(
           json['displayTone'] as String? ?? 'skyBlue',
         ),
+        nightBoardInDarkMode: json['nightBoardInDarkMode'] as bool? ?? true,
         boardLayoutPreset: BoardLayoutPreset.values.byName(
           json['boardLayoutPreset'] as String? ?? 'centered',
         ),
@@ -812,6 +820,7 @@ final class AppPreferences {
       arrowHead == other.arrowHead &&
       theme == other.theme &&
       displayTone == other.displayTone &&
+      nightBoardInDarkMode == other.nightBoardInDarkMode &&
       boardLayoutPreset == other.boardLayoutPreset &&
       animationSpeed == other.animationSpeed &&
       playMoveSound == other.playMoveSound &&
@@ -871,6 +880,7 @@ final class AppPreferences {
     arrowHead,
     theme,
     displayTone,
+    nightBoardInDarkMode,
     boardLayoutPreset,
     animationSpeed,
     playMoveSound,

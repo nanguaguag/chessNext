@@ -308,6 +308,12 @@ class _BoardSurfaceState extends State<BoardSurface>
             final step = constraints.maxWidth / 9;
             final skin =
                 widget.boardSkin ?? BoardDisplayScope.boardSkinOf(context);
+            final useNightBoard =
+                BoardDisplayScope.nightBoardInDarkModeOf(context) &&
+                Theme.of(context).brightness == Brightness.dark &&
+                skin == BoardSkin.parchment &&
+                BoardDisplayScope.selectedBoardSkinIdOf(context) ==
+                    BoardSkin.parchment.name;
             final boardImages = BoardDisplayScope.boardSkinImagesOf(context);
             final backgroundImage =
                 boardImages[BoardSkinImageSlot.boardBackground];
@@ -320,7 +326,9 @@ class _BoardSurfaceState extends State<BoardSurface>
             return DecoratedBox(
               key: const ValueKey('board-skin-background'),
               decoration: BoxDecoration(
-                color: Color(skin.boardColor),
+                color: Color(
+                  useNightBoard ? skin.nightBoardColor : skin.boardColor,
+                ),
                 borderRadius: BorderRadius.circular(20),
               ),
               child: ClipRect(
@@ -359,7 +367,9 @@ class _BoardSurfaceState extends State<BoardSurface>
                             ),
                           ),
                         Positioned.fill(
-                          child: CustomPaint(painter: _BoardPainter(skin)),
+                          child: CustomPaint(
+                            painter: _BoardPainter(skin, night: useNightBoard),
+                          ),
                         ),
                         if ((widget.showAnalysisArrows ??
                                 BoardDisplayScope.analysisArrowsOf(context)) &&
@@ -847,13 +857,14 @@ class _BoardSurfaceState extends State<BoardSurface>
 }
 
 class _BoardPainter extends CustomPainter {
-  const _BoardPainter(this.skin);
+  const _BoardPainter(this.skin, {this.night = false});
   final BoardSkin skin;
+  final bool night;
   @override
   void paint(Canvas canvas, Size size) {
     final step = size.width / 9;
     final paint = Paint()
-      ..color = Color(skin.gridColor)
+      ..color = Color(night ? skin.nightGridColor : skin.gridColor)
       ..strokeWidth = 1;
     Offset point(double x, double y) =>
         Offset((x + .5) * step, (y + .5) * step);
@@ -876,7 +887,7 @@ class _BoardPainter extends CustomPainter {
       text: TextSpan(
         text: '楚 河          汉 界',
         style: TextStyle(
-          color: Color(skin.labelColor),
+          color: Color(night ? skin.nightLabelColor : skin.labelColor),
           fontSize: 18,
           letterSpacing: 3,
         ),
@@ -892,5 +903,5 @@ class _BoardPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant _BoardPainter oldDelegate) =>
-      skin != oldDelegate.skin;
+      skin != oldDelegate.skin || night != oldDelegate.night;
 }

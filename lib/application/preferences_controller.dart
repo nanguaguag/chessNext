@@ -117,6 +117,9 @@ class PreferencesController extends ChangeNotifier {
             displayTone: _edited.contains('displayTone')
                 ? previous.displayTone
                 : null,
+            nightBoardInDarkMode: _edited.contains('nightBoardInDarkMode')
+                ? previous.nightBoardInDarkMode
+                : null,
             boardLayoutPreset: _edited.contains('boardLayoutPreset')
                 ? previous.boardLayoutPreset
                 : null,
@@ -329,6 +332,8 @@ class PreferencesController extends ChangeNotifier {
       apply(value.copyWith(theme: theme));
   Future<void> setDisplayTone(DisplayTone tone) =>
       apply(value.copyWith(displayTone: tone));
+  Future<void> setNightBoardInDarkMode(bool enabled) =>
+      apply(value.copyWith(nightBoardInDarkMode: enabled));
   Future<void> setBoardLayoutPreset(BoardLayoutPreset preset) =>
       apply(value.copyWith(boardLayoutPreset: preset));
   Future<void> setAnimationSpeed(AnimationSpeed speed) =>
@@ -481,6 +486,9 @@ class PreferencesController extends ChangeNotifier {
     }
     if (next.theme != value.theme) _edited.add('theme');
     if (next.displayTone != value.displayTone) _edited.add('displayTone');
+    if (next.nightBoardInDarkMode != value.nightBoardInDarkMode) {
+      _edited.add('nightBoardInDarkMode');
+    }
     if (next.boardLayoutPreset != value.boardLayoutPreset) {
       _edited.add('boardLayoutPreset');
     }

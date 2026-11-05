@@ -33,6 +33,19 @@ extension BoardSkinPalette on BoardSkin {
     BoardSkin.parchment => 0xffbda177,
     BoardSkin.jade => 0xff9bb3a0,
   };
+
+  int get nightBoardColor => switch (this) {
+    BoardSkin.parchment => 0xff4b4034,
+    BoardSkin.jade => boardColor,
+  };
+  int get nightGridColor => switch (this) {
+    BoardSkin.parchment => 0xffb9aa91,
+    BoardSkin.jade => gridColor,
+  };
+  int get nightLabelColor => switch (this) {
+    BoardSkin.parchment => 0xffc7b794,
+    BoardSkin.jade => labelColor,
+  };
 }
 
 extension PieceSkinPalette on PieceSkin {

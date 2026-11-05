@@ -6,6 +6,12 @@
 
 专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10。首轮因测试断言空值安全编译失败，修正测试断言后专项通过。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；`flutter analyze --no-pub`无问题，`git diff --check`通过。复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`同步1,035ms、热重启1,082ms，Ctrl-C后App仍存活；测试单串行flutter_tester，无多开App。屏幕锁定，人工视觉验收not run。
 
+## 最新进展 M4-65 / F27 / ADR-097（未提交）
+
+E79已实际验证：深色模式同一默认parchment棋盘，夜间开关关时浅米木色，开启后深棕；返回跟随系统、晴蓝、开关开、简中。M4-65新增本机默认开关；只对 dark + selected skin ID parchment + BoardSkin.parchment调色，色值P；浅色/关闭/jade/自定义皮肤不变。PNG/GIF快照记忆该偏好/皮肤ID，偏好旧schema缺字段兼容为开。F27依然开放：语言切换/完整多语言资源、参考站五色值/应用范围、非默认皮肤夜间条件未完成。
+
+专项首轮19通过/1失败，后修正测试Theme状态复用后夜间专项2/2；设置/偏好/图像/GIF专项其它项通过。根`flutter test --concurrency=1 --reporter compact`593通过/5跳过/0失败，`flutter analyze --no-pub`无问题，`git diff --check`待最终检查。复用PID50598/runner50125：attach sync1,022ms、hot restart1,039ms；Ctrl-C脱离后应复核原App仍存活。锁屏本机窗口视觉not run；参考站实际状态已恢复E79前值。用户关心的测试残留：根测试串行单flutter_tester，测试后无残留；未运行flutter run/新App。
+
 ## 最新审计 E78 / F27（2026-11-05）
 
 参考站显示与语言页观察五种色调、默认开启的“深色模式用夜间棋盘（只有默认棋盘有效）”及四种语言候选；色调青玉选择并复原晴蓝、语言菜单取消均有操作验证。色调影响范围/值、夜间显示行为和持久性仍U，未操作主题/夜间开关。审计追踪已更新，待文档提交。本机F27仍缺五色调、夜间棋盘设置和完整语言切换资源。

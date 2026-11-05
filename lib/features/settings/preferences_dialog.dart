@@ -61,6 +61,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
   late final TextEditingController releaseServiceUrlController;
   late ThemePreference theme;
   late DisplayTone displayTone;
+  late bool nightBoardInDarkMode;
   late BoardLayoutPreset boardLayoutPreset;
   late int threads, hash, pv;
   late bool autoHash;
@@ -76,6 +77,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
     final value = widget.preferences.value;
     theme = value.theme;
     displayTone = value.displayTone;
+    nightBoardInDarkMode = value.nightBoardInDarkMode;
     boardLayoutPreset = value.boardLayoutPreset;
     threads = value.threads;
     autoHash = value.autoHash;
@@ -193,6 +195,16 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                   onChanged: (value) {
                     if (value != null) setState(() => displayTone = value);
                   },
+                ),
+                const SizedBox(height: 12),
+                SwitchListTile.adaptive(
+                  key: const ValueKey('night-board-in-dark-mode'),
+                  contentPadding: EdgeInsets.zero,
+                  title: const Text('深色模式用夜间棋盘'),
+                  subtitle: const Text('只对默认棋盘生效'),
+                  value: nightBoardInDarkMode,
+                  onChanged: (value) =>
+                      setState(() => nightBoardInDarkMode = value),
                 ),
                 const SizedBox(height: 12),
                 DropdownButtonFormField<BoardLayoutPreset>(
@@ -559,6 +571,7 @@ class _PreferencesDialogState extends State<PreferencesDialog> {
                     widget.preferences.value.copyWith(
                       theme: theme,
                       displayTone: displayTone,
+                      nightBoardInDarkMode: nightBoardInDarkMode,
                       boardLayoutPreset: boardLayoutPreset,
                       threads: threads,
                       autoHash: autoHash,

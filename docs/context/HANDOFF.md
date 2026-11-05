@@ -1,5 +1,13 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## 最新状态 M4-65 / F27 / ADR-097
+
+E79复核：深色主题下默认棋盘夜间开/关视觉从浅米切换深棕（V），访客页主题/色调/夜间开关/语言均恢复到系统/晴蓝/开/简中。M4-65接入持久化开关，默认开，仅Material暗色+内置parchment皮肤且选择ID为`parchment`时用原创深棕/格线/标签色；浅色、关闭、jade和用户自建皮肤不改变。偏好和默认皮肤身份冻结在PNG/GIF快照。具体颜色是项目P，源站色值、非默认皮肤/OS暗色跟随持久性仍U。F27语言选择与全页面翻译资源尚未实现，整项未关闭。
+
+验证：专项偏好/设置/快照首轮19通过/1测试失败（测试MaterialApp切换主题时状态复用），调整唯一key后`night_board_test`2/2通过；其余同轮专项通过。全根`flutter test --concurrency=1 --reporter compact`593通过/5跳过/0失败；5跳过缺官方Pikafish/NNUE资源。`flutter analyze --no-pub`通过；`git diff --check`待最终。macOS复用PID50598/runner50125：attach sync1,022ms/hot restart1,039ms，Ctrl-C后需最终进程复核；无新flutter run。屏幕锁定，本机视觉验收not run。
+
+本轮连续提交：`4658adc docs(audit): 记录显示语言色调选项`、`642c3f6 feat(settings): 增加界面色调选择`。M4-65代码及ADR-097/E79追踪仍在工作树待diff检查/独立中文feature commit。用户关心测试是否多开App：测试前/后App唯一PID50598/runner50125；根测试单flutter_tester，运行结束无残留；全程未运行flutter run。下一步提交M4-65后继续F27全页面语言资源盘点和全站剩余登录外功能，不停在一项功能上。
+
 ## 最新 M4-64 / F27 / E78
 
 已在App设置接入晴蓝/青玉/枫木/檀木/墨五种色调，作为Material 3明/暗主题seed持久化；偏好缺字段默认晴蓝。具体seed是本机P映射，不控制棋盘皮肤、其它图片图层、棋子/标记，且不实现未经审计的夜间棋盘行为。ADR-096明确历史数据升级默认变化。参考站五色作用范围/值、夜间模式实际变化仍U，F27仍开放。

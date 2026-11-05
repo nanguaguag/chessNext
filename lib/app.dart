@@ -424,6 +424,8 @@ class _ChessNextAppState extends State<ChessNextApp>
         showCoordinates: preferences.value.showCoordinates,
         rotateOppositePieces: preferences.value.rotateOppositePieces,
         boardSkin: preferences.value.boardSkin,
+        selectedBoardSkinId: preferences.value.selectedBoardSkinId,
+        nightBoardInDarkMode: preferences.value.nightBoardInDarkMode,
         geometry: boardSkins.geometryFor(preferences.value.selectedBoardSkinId),
         boardSkinImages: boardSkinImages.imagesFor(
           preferences.value.selectedBoardSkinId,

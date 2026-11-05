@@ -70,11 +70,14 @@ void main() {
         releaseServiceBaseUrl: 'https://updates.example.org/api',
       );
       expect(AppPreferences.fromJson(value.toJson()), value);
-      final legacyTone = AppPreferences().toJson()..remove('displayTone');
+      final legacyTone = AppPreferences().toJson()
+        ..remove('displayTone')
+        ..remove('nightBoardInDarkMode');
       expect(
         AppPreferences.fromJson(legacyTone).displayTone,
         DisplayTone.skyBlue,
       );
+      expect(AppPreferences.fromJson(legacyTone).nightBoardInDarkMode, isTrue);
       expect(
         AppPreferences().copyWith(
           releaseServiceBaseUrl: 'https://updates.example.org/api',
@@ -139,6 +142,7 @@ void main() {
         'schema': 2,
         'theme': 'unknown',
         'displayTone': 'unknown',
+        'nightBoardInDarkMode': 'yes',
         'boardLayoutPreset': 'unknown',
         'threads': 0,
         'multiPv': 257,
@@ -241,6 +245,7 @@ void main() {
       final reading = preferences.initialize();
       final choosing = preferences.setTheme(ThemePreference.light);
       final choosingTone = preferences.setDisplayTone(DisplayTone.maple);
+      final choosingNightBoard = preferences.setNightBoardInDarkMode(false);
       final choosingCatalog = preferences.setSkinCatalogBaseUrl(
         'https://skins.example.org',
       );
@@ -277,6 +282,7 @@ void main() {
       await reading;
       await choosing;
       await choosingTone;
+      await choosingNightBoard;
       await choosingCatalog;
       await choosingLayout;
       await choosingPanels;
@@ -291,6 +297,7 @@ void main() {
       await preferences.flush();
       expect(preferences.value.theme, ThemePreference.light);
       expect(preferences.value.displayTone, DisplayTone.maple);
+      expect(preferences.value.nightBoardInDarkMode, isFalse);
       expect(preferences.value.skinCatalogBaseUrl, 'https://skins.example.org');
       expect(
         preferences.value.boardLayoutPreset,

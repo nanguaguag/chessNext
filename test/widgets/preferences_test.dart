@@ -35,6 +35,11 @@ void main() {
       await tester.pumpAndSettle();
       await tester.tap(find.text('枫木').last);
       await tester.pumpAndSettle();
+      await tester.ensureVisible(
+        find.byKey(const ValueKey('night-board-in-dark-mode')),
+      );
+      await tester.tap(find.byKey(const ValueKey('night-board-in-dark-mode')));
+      await tester.pumpAndSettle();
       await tester.enterText(find.widgetWithText(TextFormField, '分析线程'), '2');
       await tester.enterText(
         find.widgetWithText(TextFormField, '分析内存（MB）'),
@@ -81,6 +86,7 @@ void main() {
       await tester.pumpAndSettle();
       expect(repository.value!.theme, ThemePreference.dark);
       expect(repository.value!.displayTone, DisplayTone.maple);
+      expect(repository.value!.nightBoardInDarkMode, isFalse);
       expect(repository.value!.threads, 2);
       expect(repository.value!.aiWalkTimeMs, 0);
       expect(repository.value!.aiWalkMaxDepth, 42);
@@ -126,6 +132,7 @@ void main() {
         ThemeMode.dark,
       );
       expect(repository.value!.displayTone, DisplayTone.maple);
+      expect(repository.value!.nightBoardInDarkMode, isFalse);
       await tester.pumpWidget(const SizedBox.shrink());
       await tester.pumpAndSettle();
     },

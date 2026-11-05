@@ -1035,3 +1035,10 @@ M4-63增加问题/建议FeedbackService端口、受限HTTP适配器、预览完�
 专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`最终10/10；首轮测试编译失败因测试代码访问nullable `MaterialApp.theme`少`!`，修复后重跑。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；5跳过需本地官方Pikafish/NNUE。`flutter analyze --no-pub`无问题，`git diff --check`通过。macOS用`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`复用PID50598/runner50125，sync1035ms/hot restart1082ms，Ctrl-C后原app存活。屏幕锁定视觉not run。
 
 用户担心测试多开后台App：测试前/中串行，仅一个根flutter_tester；测试后无残留，App仍只有PID50598。非TTY attach未能发送热重启键，已结束该attach客户端且App未终止，后以TTY attach热重启并脱离。全程没有运行`flutter run`。
+# 2026-11-05 / E79 + M4-65 / F27 / ADR-097 夜间棋盘
+
+访客显示设置深色模式下对照同一默认棋盘：关闭夜间开关呈浅米木色，打开后棋盘明显转深棕；在本次IAB内复原系统主题/晴蓝/开关开/简中（V）。非默认皮肤效果/颜色值/持久性未知。
+
+本机新增加`nightBoardInDarkMode`设置，默认开，暗色主题+parchment内置默认skin/profile ID时切换原创night base/grid/label colors；其它皮肤/浅色/关时保持原色。PNG/GIF快照包含设置和皮肤身份。色值P，不称参考精确复刻。
+
+专项`night_board_test`最终2/2；偏好7/7、设置3/3、图片快照3/3、GIF5/5于合并专项首轮通过（首轮夜间测试因同一MaterialApp实例主题切换未重置而1失败，调整唯一key后单独重跑夜间2/2）。根`flutter test --concurrency=1 --reporter compact`593通过/5跳过/0失败；`flutter analyze --no-pub`通过，`git diff --check`待。复用PID50598/runner50125 `flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`sync1,022ms/hot restart1,039ms；Ctrl-C后App需复核仍活，根测试单个串行flutter_tester且结束无残留。Mac锁屏，人工视觉验收not run。

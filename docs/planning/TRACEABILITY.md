@@ -833,3 +833,13 @@ macOS以`flutter attach --debug-uri=http://127.0.0.1:61589/dTmglI9Y_pk=/`连原R
 新增`DisplayTone`五选项偏好，在应用设置选色并点击“应用设置”提交；Material 3 light/dark theme共用所选seed。配色seed属项目P，不改变棋盘皮肤、最后着标记、棋子及引擎。新偏好默认晴蓝，schema1旧数据缺字段兼容映射晴蓝；异步读取时保留用户先选值。E78源站五色具体值/作用域、夜间棋盘真实行为仍U，本切片不宣称像素/全页对标。
 
 专项`flutter test --concurrency=1 test/application/preferences_controller_test.dart test/widgets/preferences_test.dart --reporter expanded`10/10。专项首轮有一项测试代码编译失败（`MaterialApp.theme`可空访问）；添加non-null断言后重跑10/10。根`flutter test --concurrency=1 --reporter compact`591通过/5跳过/0失败；`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598/runner50125：`flutter attach --debug-url=http://127.0.0.1:61589/dTmglI9Y_pk=/ --no-dds`同步1,035ms、TTY热重启1,082ms，Ctrl-C脱离后原PID50598仍存活。测试串行单flutter_tester，无新chessNext。屏幕锁定，人工视觉验收not run。
+
+## E79 / F27 夜间棋盘实际效果审计
+
+参考证据见`REFERENCE_EVIDENCE.md` E79：深色模式下同一默认棋盘开关关闭呈浅米、开启呈深棕（V）；然后复原跟随系统、开关开、晴蓝和简中。F27本机开关及深色/默认皮肤限制可实现；非默认皮肤实际效果及精确色值仍U。
+
+## M4-65 / F27 / ADR-097 默认夜间棋盘
+
+新增偏好开关并限定仅深色+`parchment`内置默认皮肤身份应用原创夜间调色；浅色/用户皮肤/ jade和关选项不变。BoardDisplayScope将偏好/皮肤身份供BoardSurface使用；PNG/GIF快照捕获该设置和当前选择的皮肤ID。seed颜色/夜间色值均P，不等于参考站像素或跨页面完全一致。
+
+专项`flutter test --concurrency=1 test/widgets/night_board_test.dart test/application/preferences_controller_test.dart test/widgets/preferences_test.dart test/application/board_image_snapshot_test.dart test/application/board_gif_test.dart --reporter expanded`首次运行19通过/1失败（Light Theme切换测试组件未重置；调整测试使用唯一MaterialApp key）。随后`flutter test --concurrency=1 test/widgets/night_board_test.dart --reporter expanded`2/2通过；设置及快照其它18项首轮同轮通过。根`flutter test --concurrency=1 --reporter compact`593通过/5跳过/0失败；`flutter analyze --no-pub`与`git diff --check`通过。macOS复用PID50598/runner50125：attach sync1,022ms、hot restart1,039ms，Ctrl-C后原PID50598仍存活。全量根测试单串行flutter_tester，结束无残留；未开新chessNext。Mac锁屏，人工视觉验收not run。

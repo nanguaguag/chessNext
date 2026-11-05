@@ -29,6 +29,8 @@ class BoardImageSnapshot {
     this.mirrored = false,
     this.rotateOppositePieces = false,
     this.boardSkin = BoardSkin.parchment,
+    this.selectedBoardSkinId = 'parchment',
+    this.nightBoardInDarkMode = true,
     this.geometry = const BoardSkinGeometry.standard(),
     this.pieceSkin = PieceSkin.roundSeal,
     this.pieceSkinShadow = const PieceSkinShadow.roundSealDefault(),
@@ -78,6 +80,8 @@ class BoardImageSnapshot {
     mirrored: session.mirrored,
     rotateOppositePieces: prefs.rotateOppositePieces,
     boardSkin: prefs.boardSkin,
+    selectedBoardSkinId: prefs.selectedBoardSkinId,
+    nightBoardInDarkMode: prefs.nightBoardInDarkMode,
     geometry:
         boardSkinGeometry ??
         prefs.boardGeometries[prefs.boardSkin] ??
@@ -113,6 +117,8 @@ class BoardImageSnapshot {
   final List<VariationArrow> variations;
   final bool flipped, mirrored, showCoordinates, rotateOppositePieces;
   final BoardSkin boardSkin;
+  final String selectedBoardSkinId;
+  final bool nightBoardInDarkMode;
   final BoardSkinGeometry geometry;
   final PieceSkin pieceSkin;
   final PieceSkinShadow pieceSkinShadow;

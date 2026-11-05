@@ -1,10 +1,20 @@
 # 当前交接（2026-11-06，Asia/Shanghai）
 
-## M4-91 / F27 已保存棋盘皮肤几何草稿dialog本地化（门槛通过，待提交）
+## M4-92 / F27 棋盘皮肤库与自建在线目录界面ARB化（验收通过，待提交）
+
+本机库、在线目录搜索/排序/分页、动态目录错误、详情、许可证确认、本机ZIP导入导出、创建/重命名/删除等静态界面文案迁入zh/en ARB。`BoardSkinLibraryDialog`无硬编码汉字静态文案；控制器的动态中文`error`字符串仍留待错误码/显示分离。产品根Locale仍仅zh；不宣称F27或全站翻译完成。
+
+专项`flutter test --concurrency=1 test/widgets/board_skin_library_localization_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`4/4；根`flutter test --concurrency=1 --reporter expanded`634通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-92.log`；`flutter analyze --no-pub`和`git diff --check`通过。首轮专项const编译错误、analyze unused import均修正后重跑通过。串行根测试只启动一个headless tester，测试后退出。macOS复用PID50598进行attach同步和热重启（3268ms）；Ctrl-C脱离后该PID仍运行且唯一GUI，无tester/attach残留。没有人工视觉验收。变更及本交接/状态/追踪记录待独立中文feature commit。
+
+下一步继续F27其余设置子对话框、错误/无障碍文本与更多路由本地化，并逐模块审计/推进功能矩阵所有登录外差距；不要开放部分翻译的Locale选择器，也不要将全站标记对齐。
+
+
+## M4-91 / F27 已保存棋盘皮肤几何草稿dialog本地化（门槛通过，已提交 1ba10f4）
 
 自定义已保存棋盘皮肤编辑草稿弹窗的标题/边距/比例/落点旋转/恢复/取消/保存及保存失败提示迁ARB。独立基础编辑器复用原有国际化资源。事务语义和约束未改变；源站映射未知。
 
-专项6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-91.log`）；`flutter analyze --no-pub`和diff-check通过。`flutter run -d macos --no-pub`Build/Sync/启动成功，PID32137按q退出后只剩原PID50598；无人工视觉验收。下一步继续棋盘/棋子库管理页面、音效配置和其它外观页。
+专项6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-91.log`）；`flutter analyze --no-pub`和diff-check通过。`flutter run -d macos --no-pub`Build/Sync/启动成功，PID32137按q退出后只剩原PID50598；无人工视觉验收。作为前置记录保留。
+
 
 ## M4-90 / F27 棋盘显示主面板余项本地化（门槛通过，待提交）
 

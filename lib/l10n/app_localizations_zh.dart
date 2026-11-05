@@ -462,4 +462,227 @@ class AppLocalizationsZh extends AppLocalizations {
 
   @override
   String get boardSkinGeometrySaveError => '棋盘皮肤未能保存在本机，请重试。';
+
+  @override
+  String get onlineBoardCatalog => '自建在线棋盘目录';
+
+  @override
+  String get catalogServiceAddress => '自建目录服务地址';
+
+  @override
+  String get catalogEndpointHelp => '远程需HTTPS；localhost可用于本机部署。';
+
+  @override
+  String get saveAddressConnect => '保存服务地址并连接';
+
+  @override
+  String get searchBoardSkins => '搜索棋盘皮肤';
+
+  @override
+  String get onlineSort => '在线排序';
+
+  @override
+  String get sortDefault => '默认排序';
+
+  @override
+  String get sortLikes => '点赞';
+
+  @override
+  String get sortName => '名称';
+
+  @override
+  String get sortAuthor => '作者';
+
+  @override
+  String get sortRecent => '最近创建';
+
+  @override
+  String offlineCacheAt(String time) {
+    return '离线缓存 · $time';
+  }
+
+  @override
+  String get unknownTime => '时间未知';
+
+  @override
+  String get catalogEmpty => '目录当前没有棋盘皮肤。';
+
+  @override
+  String get catalogUnavailable => '无法连接自建棋盘目录，请检查网络和服务状态。';
+
+  @override
+  String catalogHttpRejected(int status) {
+    return '目录服务返回HTTP $status。';
+  }
+
+  @override
+  String get catalogInvalidResponse => '目录响应无效，未显示远程棋盘皮肤。';
+
+  @override
+  String get catalogRequestFailed => '目录请求失败，请检查服务地址。';
+
+  @override
+  String get catalogNotConfigured => '请先填写并连接自建目录服务。';
+
+  @override
+  String skinDetailsAuthor(String value) {
+    return '作者：$value';
+  }
+
+  @override
+  String skinDetailsLikes(int value) {
+    return '点赞：$value';
+  }
+
+  @override
+  String skinDetailsCreated(String value) {
+    return '创建：$value';
+  }
+
+  @override
+  String skinDetailsLicense(String value) {
+    return '许可证：$value';
+  }
+
+  @override
+  String skinDetailsAttribution(String value) {
+    return '署名：$value';
+  }
+
+  @override
+  String get noExtraAttribution => '无额外署名';
+
+  @override
+  String get downloadConfirmImport => '下载并确认导入';
+
+  @override
+  String confirmBoardSkinImport(String name) {
+    return '确认导入$name？';
+  }
+
+  @override
+  String boardSkinLicenseReview(String license, String attribution) {
+    return '下载包已通过SHA-256与本机棋盘皮肤ZIP格式校验。\n\n许可证：$license\n署名：$attribution\n\n导入将新增并立即使用一套本机棋盘皮肤；许可义务由你自行遵守。';
+  }
+
+  @override
+  String get acceptLicenseImport => '接受许可并导入';
+
+  @override
+  String boardSkinImported(String name) {
+    return '已校验并导入$name。';
+  }
+
+  @override
+  String get boardSkinImportFailed => '导入失败。';
+
+  @override
+  String get remoteDownloadFailed => '下载失败，请检查网络；本机棋盘皮肤未更改。';
+
+  @override
+  String get remotePackageRejected => '下载包校验失败或服务拒绝请求；本机棋盘皮肤未更改。';
+
+  @override
+  String get invalidBoardSkinPackage => '棋盘皮肤包格式无效；本机数据未更改。';
+
+  @override
+  String get remoteBoardSkinImportFailed => '无法导入该远程棋盘皮肤；本机数据未更改。';
+
+  @override
+  String get boardSkinExported => '棋盘皮肤包已导出。';
+
+  @override
+  String get boardSkinExportFailed => '棋盘皮肤导出失败，请检查本机存储后重试。';
+
+  @override
+  String get importBoardSkinPackage => '导入棋盘皮肤包';
+
+  @override
+  String boardSkinPackageSummary(String name, int count) {
+    return '项目格式皮肤包：$name\n包含$count张自定义图片和独立格网设置。导入后会新增并立即使用，不覆盖现有皮肤。';
+  }
+
+  @override
+  String get importAndUse => '导入并使用';
+
+  @override
+  String get invalidBoardSkinPackageSize => '棋盘皮肤包无效或超过大小限制，本机皮肤未更改。';
+
+  @override
+  String get readBoardSkinPackageFailed => '无法读取棋盘皮肤包，本机皮肤未更改。';
+
+  @override
+  String get newBoardSkin => '新建棋盘皮肤';
+
+  @override
+  String get renameBoardSkin => '重命名棋盘皮肤';
+
+  @override
+  String get deleteBoardSkin => '删除棋盘皮肤';
+
+  @override
+  String confirmDeleteBoardSkin(String name) {
+    return '确定删除「$name」？此操作无法撤销。';
+  }
+
+  @override
+  String get builtInSkins => '内置皮肤';
+
+  @override
+  String get builtInPalette => '内置配色';
+
+  @override
+  String get use => '使用';
+
+  @override
+  String get myBoards => '我的棋盘';
+
+  @override
+  String get saveOnly => '仅保存';
+
+  @override
+  String get createAndUse => '新建并使用';
+
+  @override
+  String get noLocalBoardSkins => '还没有本机棋盘皮肤。新建时会复制当前棋盘的配色、格网和图片。';
+
+  @override
+  String basedOnSkin(String skin) {
+    return '基于$skin';
+  }
+
+  @override
+  String editNamedBoardSkin(String name) {
+    return '编辑$name';
+  }
+
+  @override
+  String renameNamedBoardSkin(String name) {
+    return '重命名$name';
+  }
+
+  @override
+  String deleteNamedBoardSkin(String name) {
+    return '删除$name';
+  }
+
+  @override
+  String exportNamedBoardSkin(String name) {
+    return '导出$name';
+  }
+
+  @override
+  String get boardSkinName => '名称';
+
+  @override
+  String get delete => '删除';
+
+  @override
+  String get loadMore => '加载更多棋盘皮肤';
+
+  @override
+  String get invalidCatalogAddress => '服务地址无效：远程地址必须使用HTTPS。';
+
+  @override
+  String get catalogAddressSaveFailed => '服务地址保存失败，可重试。';
 }

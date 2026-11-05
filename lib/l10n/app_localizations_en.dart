@@ -484,4 +484,242 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get boardSkinGeometrySaveError =>
       'This board skin could not be saved on this device. Try again.';
+
+  @override
+  String get onlineBoardCatalog => 'Self-hosted board catalog';
+
+  @override
+  String get catalogServiceAddress => 'Catalog service address';
+
+  @override
+  String get catalogEndpointHelp =>
+      'Remote services require HTTPS; localhost is allowed for local deployment.';
+
+  @override
+  String get saveAddressConnect => 'Save address and connect';
+
+  @override
+  String get searchBoardSkins => 'Search board skins';
+
+  @override
+  String get onlineSort => 'Online sort';
+
+  @override
+  String get sortDefault => 'Default order';
+
+  @override
+  String get sortLikes => 'Likes';
+
+  @override
+  String get sortName => 'Name';
+
+  @override
+  String get sortAuthor => 'Author';
+
+  @override
+  String get sortRecent => 'Recently created';
+
+  @override
+  String offlineCacheAt(String time) {
+    return 'Offline cache · $time';
+  }
+
+  @override
+  String get unknownTime => 'time unknown';
+
+  @override
+  String get catalogEmpty => 'The catalog has no board skins.';
+
+  @override
+  String get catalogUnavailable =>
+      'Could not connect to the self-hosted board catalog. Check the network and service.';
+
+  @override
+  String catalogHttpRejected(int status) {
+    return 'The catalog returned HTTP $status.';
+  }
+
+  @override
+  String get catalogInvalidResponse =>
+      'The catalog response is invalid. Remote board skins were not shown.';
+
+  @override
+  String get catalogRequestFailed =>
+      'The catalog request failed. Check the service address.';
+
+  @override
+  String get catalogNotConfigured =>
+      'Enter and connect to your self-hosted catalog first.';
+
+  @override
+  String skinDetailsAuthor(String value) {
+    return 'Author: $value';
+  }
+
+  @override
+  String skinDetailsLikes(int value) {
+    return 'Likes: $value';
+  }
+
+  @override
+  String skinDetailsCreated(String value) {
+    return 'Created: $value';
+  }
+
+  @override
+  String skinDetailsLicense(String value) {
+    return 'License: $value';
+  }
+
+  @override
+  String skinDetailsAttribution(String value) {
+    return 'Attribution: $value';
+  }
+
+  @override
+  String get noExtraAttribution => 'No additional attribution';
+
+  @override
+  String get downloadConfirmImport => 'Download and review import';
+
+  @override
+  String confirmBoardSkinImport(String name) {
+    return 'Import $name?';
+  }
+
+  @override
+  String boardSkinLicenseReview(String license, String attribution) {
+    return 'The package passed SHA-256 and this app\'s board skin ZIP checks.\n\nLicense: $license\nAttribution: $attribution\n\nImport adds and selects a local board skin. You are responsible for following the license.';
+  }
+
+  @override
+  String get acceptLicenseImport => 'Accept license and import';
+
+  @override
+  String boardSkinImported(String name) {
+    return 'Validated and imported $name.';
+  }
+
+  @override
+  String get boardSkinImportFailed => 'Import failed.';
+
+  @override
+  String get remoteDownloadFailed =>
+      'Download failed. Check the network; local board skins were not changed.';
+
+  @override
+  String get remotePackageRejected =>
+      'Package validation failed or the service rejected the request; local board skins were not changed.';
+
+  @override
+  String get invalidBoardSkinPackage =>
+      'The board skin package is invalid; local data was not changed.';
+
+  @override
+  String get remoteBoardSkinImportFailed =>
+      'Could not import this remote board skin; local data was not changed.';
+
+  @override
+  String get boardSkinExported => 'Board skin package exported.';
+
+  @override
+  String get boardSkinExportFailed =>
+      'Could not export the board skin. Check local storage and try again.';
+
+  @override
+  String get importBoardSkinPackage => 'Import board skin package';
+
+  @override
+  String boardSkinPackageSummary(String name, int count) {
+    return 'Project-format package: $name\nContains $count custom images and independent grid settings. Import adds and selects it without replacing existing skins.';
+  }
+
+  @override
+  String get importAndUse => 'Import and use';
+
+  @override
+  String get invalidBoardSkinPackageSize =>
+      'The board skin package is invalid or exceeds the size limit; local skins were not changed.';
+
+  @override
+  String get readBoardSkinPackageFailed =>
+      'Could not read the board skin package; local skins were not changed.';
+
+  @override
+  String get newBoardSkin => 'New board skin';
+
+  @override
+  String get renameBoardSkin => 'Rename board skin';
+
+  @override
+  String get deleteBoardSkin => 'Delete board skin';
+
+  @override
+  String confirmDeleteBoardSkin(String name) {
+    return 'Delete “$name”? This cannot be undone.';
+  }
+
+  @override
+  String get builtInSkins => 'Built-in skins';
+
+  @override
+  String get builtInPalette => 'Built-in palette';
+
+  @override
+  String get use => 'Use';
+
+  @override
+  String get myBoards => 'My boards';
+
+  @override
+  String get saveOnly => 'Save only';
+
+  @override
+  String get createAndUse => 'Create and use';
+
+  @override
+  String get noLocalBoardSkins =>
+      'No local board skins yet. Creating one copies the current board colors, grid, and images.';
+
+  @override
+  String basedOnSkin(String skin) {
+    return 'Based on $skin';
+  }
+
+  @override
+  String editNamedBoardSkin(String name) {
+    return 'Edit $name';
+  }
+
+  @override
+  String renameNamedBoardSkin(String name) {
+    return 'Rename $name';
+  }
+
+  @override
+  String deleteNamedBoardSkin(String name) {
+    return 'Delete $name';
+  }
+
+  @override
+  String exportNamedBoardSkin(String name) {
+    return 'Export $name';
+  }
+
+  @override
+  String get boardSkinName => 'Name';
+
+  @override
+  String get delete => 'Delete';
+
+  @override
+  String get loadMore => 'Load more board skins';
+
+  @override
+  String get invalidCatalogAddress =>
+      'Invalid service address. Remote services must use HTTPS.';
+
+  @override
+  String get catalogAddressSaveFailed =>
+      'Could not save the service address. Try again.';
 }

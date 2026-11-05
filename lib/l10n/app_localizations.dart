@@ -937,6 +937,384 @@ abstract class AppLocalizations {
   /// In zh, this message translates to:
   /// **'棋盘皮肤未能保存在本机，请重试。'**
   String get boardSkinGeometrySaveError;
+
+  /// No description provided for @onlineBoardCatalog.
+  ///
+  /// In zh, this message translates to:
+  /// **'自建在线棋盘目录'**
+  String get onlineBoardCatalog;
+
+  /// No description provided for @catalogServiceAddress.
+  ///
+  /// In zh, this message translates to:
+  /// **'自建目录服务地址'**
+  String get catalogServiceAddress;
+
+  /// No description provided for @catalogEndpointHelp.
+  ///
+  /// In zh, this message translates to:
+  /// **'远程需HTTPS；localhost可用于本机部署。'**
+  String get catalogEndpointHelp;
+
+  /// No description provided for @saveAddressConnect.
+  ///
+  /// In zh, this message translates to:
+  /// **'保存服务地址并连接'**
+  String get saveAddressConnect;
+
+  /// No description provided for @searchBoardSkins.
+  ///
+  /// In zh, this message translates to:
+  /// **'搜索棋盘皮肤'**
+  String get searchBoardSkins;
+
+  /// No description provided for @onlineSort.
+  ///
+  /// In zh, this message translates to:
+  /// **'在线排序'**
+  String get onlineSort;
+
+  /// No description provided for @sortDefault.
+  ///
+  /// In zh, this message translates to:
+  /// **'默认排序'**
+  String get sortDefault;
+
+  /// No description provided for @sortLikes.
+  ///
+  /// In zh, this message translates to:
+  /// **'点赞'**
+  String get sortLikes;
+
+  /// No description provided for @sortName.
+  ///
+  /// In zh, this message translates to:
+  /// **'名称'**
+  String get sortName;
+
+  /// No description provided for @sortAuthor.
+  ///
+  /// In zh, this message translates to:
+  /// **'作者'**
+  String get sortAuthor;
+
+  /// No description provided for @sortRecent.
+  ///
+  /// In zh, this message translates to:
+  /// **'最近创建'**
+  String get sortRecent;
+
+  /// No description provided for @offlineCacheAt.
+  ///
+  /// In zh, this message translates to:
+  /// **'离线缓存 · {time}'**
+  String offlineCacheAt(String time);
+
+  /// No description provided for @unknownTime.
+  ///
+  /// In zh, this message translates to:
+  /// **'时间未知'**
+  String get unknownTime;
+
+  /// No description provided for @catalogEmpty.
+  ///
+  /// In zh, this message translates to:
+  /// **'目录当前没有棋盘皮肤。'**
+  String get catalogEmpty;
+
+  /// No description provided for @catalogUnavailable.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法连接自建棋盘目录，请检查网络和服务状态。'**
+  String get catalogUnavailable;
+
+  /// No description provided for @catalogHttpRejected.
+  ///
+  /// In zh, this message translates to:
+  /// **'目录服务返回HTTP {status}。'**
+  String catalogHttpRejected(int status);
+
+  /// No description provided for @catalogInvalidResponse.
+  ///
+  /// In zh, this message translates to:
+  /// **'目录响应无效，未显示远程棋盘皮肤。'**
+  String get catalogInvalidResponse;
+
+  /// No description provided for @catalogRequestFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'目录请求失败，请检查服务地址。'**
+  String get catalogRequestFailed;
+
+  /// No description provided for @catalogNotConfigured.
+  ///
+  /// In zh, this message translates to:
+  /// **'请先填写并连接自建目录服务。'**
+  String get catalogNotConfigured;
+
+  /// No description provided for @skinDetailsAuthor.
+  ///
+  /// In zh, this message translates to:
+  /// **'作者：{value}'**
+  String skinDetailsAuthor(String value);
+
+  /// No description provided for @skinDetailsLikes.
+  ///
+  /// In zh, this message translates to:
+  /// **'点赞：{value}'**
+  String skinDetailsLikes(int value);
+
+  /// No description provided for @skinDetailsCreated.
+  ///
+  /// In zh, this message translates to:
+  /// **'创建：{value}'**
+  String skinDetailsCreated(String value);
+
+  /// No description provided for @skinDetailsLicense.
+  ///
+  /// In zh, this message translates to:
+  /// **'许可证：{value}'**
+  String skinDetailsLicense(String value);
+
+  /// No description provided for @skinDetailsAttribution.
+  ///
+  /// In zh, this message translates to:
+  /// **'署名：{value}'**
+  String skinDetailsAttribution(String value);
+
+  /// No description provided for @noExtraAttribution.
+  ///
+  /// In zh, this message translates to:
+  /// **'无额外署名'**
+  String get noExtraAttribution;
+
+  /// No description provided for @downloadConfirmImport.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载并确认导入'**
+  String get downloadConfirmImport;
+
+  /// No description provided for @confirmBoardSkinImport.
+  ///
+  /// In zh, this message translates to:
+  /// **'确认导入{name}？'**
+  String confirmBoardSkinImport(String name);
+
+  /// No description provided for @boardSkinLicenseReview.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载包已通过SHA-256与本机棋盘皮肤ZIP格式校验。\n\n许可证：{license}\n署名：{attribution}\n\n导入将新增并立即使用一套本机棋盘皮肤；许可义务由你自行遵守。'**
+  String boardSkinLicenseReview(String license, String attribution);
+
+  /// No description provided for @acceptLicenseImport.
+  ///
+  /// In zh, this message translates to:
+  /// **'接受许可并导入'**
+  String get acceptLicenseImport;
+
+  /// No description provided for @boardSkinImported.
+  ///
+  /// In zh, this message translates to:
+  /// **'已校验并导入{name}。'**
+  String boardSkinImported(String name);
+
+  /// No description provided for @boardSkinImportFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入失败。'**
+  String get boardSkinImportFailed;
+
+  /// No description provided for @remoteDownloadFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载失败，请检查网络；本机棋盘皮肤未更改。'**
+  String get remoteDownloadFailed;
+
+  /// No description provided for @remotePackageRejected.
+  ///
+  /// In zh, this message translates to:
+  /// **'下载包校验失败或服务拒绝请求；本机棋盘皮肤未更改。'**
+  String get remotePackageRejected;
+
+  /// No description provided for @invalidBoardSkinPackage.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘皮肤包格式无效；本机数据未更改。'**
+  String get invalidBoardSkinPackage;
+
+  /// No description provided for @remoteBoardSkinImportFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法导入该远程棋盘皮肤；本机数据未更改。'**
+  String get remoteBoardSkinImportFailed;
+
+  /// No description provided for @boardSkinExported.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘皮肤包已导出。'**
+  String get boardSkinExported;
+
+  /// No description provided for @boardSkinExportFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘皮肤导出失败，请检查本机存储后重试。'**
+  String get boardSkinExportFailed;
+
+  /// No description provided for @importBoardSkinPackage.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入棋盘皮肤包'**
+  String get importBoardSkinPackage;
+
+  /// No description provided for @boardSkinPackageSummary.
+  ///
+  /// In zh, this message translates to:
+  /// **'项目格式皮肤包：{name}\n包含{count}张自定义图片和独立格网设置。导入后会新增并立即使用，不覆盖现有皮肤。'**
+  String boardSkinPackageSummary(String name, int count);
+
+  /// No description provided for @importAndUse.
+  ///
+  /// In zh, this message translates to:
+  /// **'导入并使用'**
+  String get importAndUse;
+
+  /// No description provided for @invalidBoardSkinPackageSize.
+  ///
+  /// In zh, this message translates to:
+  /// **'棋盘皮肤包无效或超过大小限制，本机皮肤未更改。'**
+  String get invalidBoardSkinPackageSize;
+
+  /// No description provided for @readBoardSkinPackageFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'无法读取棋盘皮肤包，本机皮肤未更改。'**
+  String get readBoardSkinPackageFailed;
+
+  /// No description provided for @newBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建棋盘皮肤'**
+  String get newBoardSkin;
+
+  /// No description provided for @renameBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名棋盘皮肤'**
+  String get renameBoardSkin;
+
+  /// No description provided for @deleteBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除棋盘皮肤'**
+  String get deleteBoardSkin;
+
+  /// No description provided for @confirmDeleteBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'确定删除「{name}」？此操作无法撤销。'**
+  String confirmDeleteBoardSkin(String name);
+
+  /// No description provided for @builtInSkins.
+  ///
+  /// In zh, this message translates to:
+  /// **'内置皮肤'**
+  String get builtInSkins;
+
+  /// No description provided for @builtInPalette.
+  ///
+  /// In zh, this message translates to:
+  /// **'内置配色'**
+  String get builtInPalette;
+
+  /// No description provided for @use.
+  ///
+  /// In zh, this message translates to:
+  /// **'使用'**
+  String get use;
+
+  /// No description provided for @myBoards.
+  ///
+  /// In zh, this message translates to:
+  /// **'我的棋盘'**
+  String get myBoards;
+
+  /// No description provided for @saveOnly.
+  ///
+  /// In zh, this message translates to:
+  /// **'仅保存'**
+  String get saveOnly;
+
+  /// No description provided for @createAndUse.
+  ///
+  /// In zh, this message translates to:
+  /// **'新建并使用'**
+  String get createAndUse;
+
+  /// No description provided for @noLocalBoardSkins.
+  ///
+  /// In zh, this message translates to:
+  /// **'还没有本机棋盘皮肤。新建时会复制当前棋盘的配色、格网和图片。'**
+  String get noLocalBoardSkins;
+
+  /// No description provided for @basedOnSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'基于{skin}'**
+  String basedOnSkin(String skin);
+
+  /// No description provided for @editNamedBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'编辑{name}'**
+  String editNamedBoardSkin(String name);
+
+  /// No description provided for @renameNamedBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'重命名{name}'**
+  String renameNamedBoardSkin(String name);
+
+  /// No description provided for @deleteNamedBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除{name}'**
+  String deleteNamedBoardSkin(String name);
+
+  /// No description provided for @exportNamedBoardSkin.
+  ///
+  /// In zh, this message translates to:
+  /// **'导出{name}'**
+  String exportNamedBoardSkin(String name);
+
+  /// No description provided for @boardSkinName.
+  ///
+  /// In zh, this message translates to:
+  /// **'名称'**
+  String get boardSkinName;
+
+  /// No description provided for @delete.
+  ///
+  /// In zh, this message translates to:
+  /// **'删除'**
+  String get delete;
+
+  /// No description provided for @loadMore.
+  ///
+  /// In zh, this message translates to:
+  /// **'加载更多棋盘皮肤'**
+  String get loadMore;
+
+  /// No description provided for @invalidCatalogAddress.
+  ///
+  /// In zh, this message translates to:
+  /// **'服务地址无效：远程地址必须使用HTTPS。'**
+  String get invalidCatalogAddress;
+
+  /// No description provided for @catalogAddressSaveFailed.
+  ///
+  /// In zh, this message translates to:
+  /// **'服务地址保存失败，可重试。'**
+  String get catalogAddressSaveFailed;
 }
 
 class _AppLocalizationsDelegate

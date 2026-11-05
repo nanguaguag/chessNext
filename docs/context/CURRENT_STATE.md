@@ -1,8 +1,14 @@
-## M4-91 / F27 已存棋盘皮肤几何草稿弹窗ARB化（门槛通过，待提交）
+## M4-92 / F27 棋盘皮肤库与自建在线目录界面ARB化（验证通过）
+
+棋盘皮肤库的本地/在线静态文案、搜索与排序、详情/许可确认、包导入导出、创建/重命名/删除、缓存/请求错误迁入zh/en ARB。BoardSkinLibraryDialog可见代码已无静态中文；由`BoardSkinLibraryController.error`返回的中文动态错误仍未改造。根Locale仍固定zh，English仅隔离组件验证。没有改变目录/许可证/本机皮肤行为。
+
+专项`flutter test --concurrency=1 test/widgets/board_skin_library_localization_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`4/4；根`flutter test --concurrency=1 --reporter expanded`634通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-92.log`；`flutter analyze --no-pub`、`git diff --check`通过。第一次专项编译发现动态文案误置const，修正后复跑通过；analyze首次仅有测试unused import，修正后通过。根测试串行单tester且无GUI。macOS复用PID50598，attach同步成功、热重启3268ms；脱离后PID50598仍唯一GUI，未做人工视觉验收。源站相关显示功能及全站语言覆盖仍未关闭。
+
+## M4-91 / F27 已存棋盘皮肤几何草稿弹窗ARB化（已提交 1ba10f4）
 
 几何草稿弹窗皮肤名、格点与边距、棋子缩放、落点图旋转、恢复默认/取消/保存及保存失败信息迁入zh/en ARB。保存/取消事务、几何数值与项目模型未变；实际参考站算法/单位仍U。根Locale保持zh。
 
-专项`flutter test --concurrency=1 test/widgets/board_skin_geometry_draft_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-91.log`；`flutter analyze --no-pub`与diff-check通过。初次分析只指出测试文件一个unused import，已移除并复跑通过。macOS `flutter run -d macos --no-pub` Build/Sync/启动成功，临时PID32137按q退出；原PID50598唯一。未视觉验收。待单独中文提交。
+专项`flutter test --concurrency=1 test/widgets/board_skin_geometry_draft_localization_test.dart test/widgets/board_geometry_editor_test.dart --reporter expanded`6/6；根`flutter test --concurrency=1 --reporter expanded`633通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-91.log`；`flutter analyze --no-pub`与diff-check通过。macOS复用/视觉未验，记录见前一交接。
 
 ## M4-90 / F27 棋盘显示剩余资源与管理按钮ARB化（门槛通过，待提交）
 

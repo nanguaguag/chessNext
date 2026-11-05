@@ -113,6 +113,8 @@ macOS构建从.local校验制品hash、复制资源并签名继承沙箱helper�
 后台flush与正常退出请求等待；无法保护最新dirty时可返回重试或明确继续退出。ADR-006记录强杀/断电/最后300ms与单窗口边界，不承诺零丢失。
 验证：根flutter test58/58（官方引擎环境），flutter analyze无问题；新增串行写入/读取竞态/失败/新局/销毁、真实临时文件备份损坏恢复和隔离、Widget恢复与退出回调失败保护。macOS自动草稿单项1/1通过（真实沙箱Documents新App实例重开）；完整macOS7/7通过。首轮补正AppExitResponse的dart:ui导入与构造器字段、lint大括号及mounted检查，不将失败命令记通过。未做真实断电或OS强制退出。
 
+M4-92 / F27：棋盘皮肤本机库/在线目录的静态UI与请求/缓存/许可提示完成zh/en ARB化。专项4/4、根634/5、analyze和既有macOS实例attach热重启通过；由控制器返回的动态中文错误仍待分离。继续处理其它设置子dialog和其它主路由；Locale选择保持关闭至完整覆盖。
+
 ## 2026-11-02 / M3-04 / F22,F24,F25,F27部分 → B08 设置持久化
 
 AppPreferences/schema1与PreferencesRepository，ApplicationSupport独立文件、备份/损坏原件保留、读取失败默认值/明确重试；主题/线程/Hash/MultiPV/AI用时持久化，旧参数面板更改同样保存。初始化逐字段合并并发编辑，串行最新值写入，退出flush等待初始化，不恢复AI角色。握手后按设备/引擎能力钳制；主题改变不重启搜索。Material3统一设置对话框含200%窄窗/NaN校验。

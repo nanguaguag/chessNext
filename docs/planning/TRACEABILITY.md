@@ -1,3 +1,9 @@
+## 2026-11-06 / M4-92 / F27 棋盘皮肤库与在线目录文案本地化
+
+BoardSkinLibraryDialog将静态文案迁入ARB：自建目录地址/搜索/排序/分页、离线缓存、请求失败、详情字段、SHA与许可证/署名确认、在线包下载导入、项目ZIP导入导出、本机内置/用户皮肤管理和名称表单。目录地址校验与错误分支均使用本地化资源。动态`BoardSkinLibraryController.error`仍为中文，未修改错误模型；动态作者/皮肤名/许可证内容为服务数据，按用户提供字段显示。根Locale仍固定zh。
+
+验收：专项`flutter test --concurrency=1 test/widgets/board_skin_library_localization_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`4/4；根`flutter test --concurrency=1 --reporter expanded`634通过/5跳过/0失败（`/tmp/chessnext-root-test-m4-92.log`）；`flutter analyze --no-pub`和`git diff --check`通过。第一次专项因动态文字误留const编译失败，移除const后通过；analyze首次指出测试unused import，移除并复跑通过。全量测试串行执行、只出现一个`flutter_tester`，GUI未被测试启动。macOS复用App PID50598，VM attach同步及热重启成功（3268ms），Ctrl-C脱离后原PID仍唯一；未人工视觉验收。
+
 # 需求追踪
 
 ## 2026-11-06 / M4-91 / F27 已保存棋盘皮肤几何编辑草稿文案

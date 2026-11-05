@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:crypto/crypto.dart';
+import '../../l10n/app_localizations.dart';
 
 import '../../application/board_skin_library_controller.dart';
 import '../../application/board_skin_package_codec.dart';
@@ -58,6 +59,7 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
   }
 
   Future<void> _connect() async {
+    final l10n = AppLocalizations.of(context);
     final raw = _endpoint.text.trim().replaceFirst(RegExp(r'/+$'), '');
     final endpoint = Uri.tryParse(raw);
     if (endpoint == null ||
@@ -68,25 +70,26 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
         (endpoint.scheme != 'https' &&
             !(endpoint.scheme == 'http' &&
                 {'localhost', '127.0.0.1', '::1'}.contains(endpoint.host)))) {
-      setState(() => _remoteError = '服务地址无效：远程地址必须使用HTTPS。');
+      setState(() => _remoteError = l10n.invalidCatalogAddress);
       return;
     }
     await widget.library.preferences.setSkinCatalogBaseUrl(raw);
     if (!mounted) return;
     if (widget.library.preferences.error != null) {
-      setState(() => _remoteError = '服务地址保存失败，可重试。');
+      setState(() => _remoteError = l10n.catalogAddressSaveFailed);
       return;
     }
     await _loadRemote();
   }
 
   Future<void> _loadRemote({bool nextPage = false}) async {
+    final l10n = AppLocalizations.of(context);
     if (widget.catalog == null) return;
     final endpoint = Uri.tryParse(
       widget.library.preferences.value.skinCatalogBaseUrl,
     );
     if (endpoint == null || endpoint.host.isEmpty) {
-      setState(() => _remoteError = '请先填写并连接自建目录服务。');
+      setState(() => _remoteError = l10n.catalogNotConfigured);
       return;
     }
     final requestedPage = nextPage ? _page + 1 : 1;
@@ -113,44 +116,51 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
         _page = requestedPage;
         _total = result.total;
         _cacheStatus = result.isStale
-            ? '离线缓存 · ${result.cachedAt?.toLocal().toString() ?? '时间未知'}'
+            ? l10n.offlineCacheAt(
+                result.cachedAt?.toLocal().toString() ?? l10n.unknownTime,
+              )
             : null;
-        _remoteError = result.items.isEmpty && !nextPage ? '目录当前没有棋盘皮肤。' : null;
+        _remoteError = result.items.isEmpty && !nextPage
+            ? l10n.catalogEmpty
+            : null;
       });
     } on PieceSkinCatalogUnavailable {
-      if (mounted) setState(() => _remoteError = '无法连接自建棋盘目录，请检查网络和服务状态。');
+      if (mounted) setState(() => _remoteError = l10n.catalogUnavailable);
     } on PieceSkinCatalogRejected catch (error) {
       if (mounted) {
-        setState(() => _remoteError = '目录服务返回HTTP ${error.statusCode}。');
+        setState(
+          () => _remoteError = l10n.catalogHttpRejected(error.statusCode),
+        );
       }
     } on PieceSkinCatalogException {
-      if (mounted) setState(() => _remoteError = '目录响应无效，未显示远程棋盘皮肤。');
+      if (mounted) setState(() => _remoteError = l10n.catalogInvalidResponse);
     } catch (_) {
-      if (mounted) setState(() => _remoteError = '目录请求失败，请检查服务地址。');
+      if (mounted) setState(() => _remoteError = l10n.catalogRequestFailed);
     } finally {
       if (mounted) setState(() => _remoteLoading = false);
     }
   }
 
   Future<void> _details(PublicBoardSkin item) async {
+    final l10n = AppLocalizations.of(context);
     await showDialog<void>(
       context: context,
       builder: (context) => AlertDialog(
         title: Text(item.name),
         content: SingleChildScrollView(
           child: Text(
-            '${item.description}\n\n作者：${item.author}\n点赞：${item.likes}\n创建：${item.publishedAt.toLocal()}\n许可证：${item.license}\n署名：${item.attribution.isEmpty ? '无额外署名' : item.attribution}',
+            '${item.description}\n\n${l10n.skinDetailsAuthor(item.author)}\n${l10n.skinDetailsLikes(item.likes)}\n${l10n.skinDetailsCreated(item.publishedAt.toLocal().toString())}\n${l10n.skinDetailsLicense(item.license)}\n${l10n.skinDetailsAttribution(item.attribution.isEmpty ? l10n.noExtraAttribution : item.attribution)}',
           ),
         ),
         actions: [
           FilledButton.icon(
             onPressed: () => _downloadAndImport(context, item),
             icon: const Icon(Icons.download_outlined),
-            label: const Text('下载并确认导入'),
+            label: Text(l10n.downloadConfirmImport),
           ),
           TextButton(
             onPressed: () => Navigator.pop(context),
-            child: const Text('关闭'),
+            child: Text(l10n.close),
           ),
         ],
       ),
@@ -161,6 +171,7 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
     BuildContext dialogContext,
     PublicBoardSkin item,
   ) async {
+    final l10n = AppLocalizations.of(dialogContext);
     try {
       final endpoint = Uri.parse(
         widget.library.preferences.value.skinCatalogBaseUrl,
@@ -181,20 +192,25 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
       final accepted = await showDialog<bool>(
         context: dialogContext,
         builder: (context) => AlertDialog(
-          title: Text('确认导入${item.name}？'),
+          title: Text(l10n.confirmBoardSkinImport(item.name)),
           content: SingleChildScrollView(
             child: Text(
-              '下载包已通过SHA-256与本机棋盘皮肤ZIP格式校验。\n\n许可证：${item.license}\n署名：${item.attribution.isEmpty ? '无额外署名' : item.attribution}\n\n导入将新增并立即使用一套本机棋盘皮肤；许可义务由你自行遵守。',
+              l10n.boardSkinLicenseReview(
+                item.license,
+                item.attribution.isEmpty
+                    ? l10n.noExtraAttribution
+                    : item.attribution,
+              ),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('接受许可并导入'),
+              child: Text(l10n.acceptLicenseImport),
             ),
           ],
         ),
@@ -209,7 +225,9 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
       ScaffoldMessenger.maybeOf(dialogContext)?.showSnackBar(
         SnackBar(
           content: Text(
-            imported ? '已校验并导入${item.name}。' : widget.library.error ?? '导入失败。',
+            imported
+                ? l10n.boardSkinImported(item.name)
+                : widget.library.error ?? l10n.boardSkinImportFailed,
           ),
         ),
       );
@@ -218,25 +236,25 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
       if (dialogContext.mounted) {
         ScaffoldMessenger.maybeOf(
           dialogContext,
-        )?.showSnackBar(const SnackBar(content: Text('下载失败，请检查网络；本机棋盘皮肤未更改。')));
+        )?.showSnackBar(SnackBar(content: Text(l10n.remoteDownloadFailed)));
       }
     } on PieceSkinCatalogException {
       if (dialogContext.mounted) {
-        ScaffoldMessenger.maybeOf(dialogContext)?.showSnackBar(
-          const SnackBar(content: Text('下载包校验失败或服务拒绝请求；本机棋盘皮肤未更改。')),
-        );
+        ScaffoldMessenger.maybeOf(
+          dialogContext,
+        )?.showSnackBar(SnackBar(content: Text(l10n.remotePackageRejected)));
       }
     } on FormatException {
       if (dialogContext.mounted) {
         ScaffoldMessenger.maybeOf(
           dialogContext,
-        )?.showSnackBar(const SnackBar(content: Text('棋盘皮肤包格式无效；本机数据未更改。')));
+        )?.showSnackBar(SnackBar(content: Text(l10n.invalidBoardSkinPackage)));
       }
     } catch (_) {
       if (dialogContext.mounted) {
-        ScaffoldMessenger.maybeOf(
-          dialogContext,
-        )?.showSnackBar(const SnackBar(content: Text('无法导入该远程棋盘皮肤；本机数据未更改。')));
+        ScaffoldMessenger.maybeOf(dialogContext)?.showSnackBar(
+          SnackBar(content: Text(l10n.remoteBoardSkinImportFailed)),
+        );
       }
     }
   }
@@ -245,6 +263,7 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
     BuildContext context,
     BoardSkinDefinition profile,
   ) async {
+    final l10n = AppLocalizations.of(context);
     if (exporter == null) return;
     try {
       final bytes = library.exportPackage(profile.id);
@@ -261,17 +280,18 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
       }
       ScaffoldMessenger.maybeOf(
         context,
-      )?.showSnackBar(const SnackBar(content: Text('棋盘皮肤包已导出。')));
+      )?.showSnackBar(SnackBar(content: Text(l10n.boardSkinExported)));
     } catch (_) {
       if (context.mounted) {
         ScaffoldMessenger.maybeOf(
           context,
-        )?.showSnackBar(const SnackBar(content: Text('棋盘皮肤导出失败，请检查本机存储后重试。')));
+        )?.showSnackBar(SnackBar(content: Text(l10n.boardSkinExportFailed)));
       }
     }
   }
 
   Future<void> _import(BuildContext context) async {
+    final l10n = AppLocalizations.of(context);
     if (picker == null) return;
     try {
       final bytes = await picker!.pickZip();
@@ -280,19 +300,21 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
       final accepted = await showDialog<bool>(
         context: context,
         builder: (context) => AlertDialog(
-          title: const Text('导入棋盘皮肤包'),
+          title: Text(l10n.importBoardSkinPackage),
           content: Text(
-            '项目格式皮肤包：${package.profile.name}\n'
-            '包含${package.images.length}张自定义图片和独立格网设置。导入后会新增并立即使用，不覆盖现有皮肤。',
+            l10n.boardSkinPackageSummary(
+              package.profile.name,
+              package.images.length,
+            ),
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.pop(context, false),
-              child: const Text('取消'),
+              child: Text(l10n.cancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(context, true),
-              child: const Text('导入并使用'),
+              child: Text(l10n.importAndUse),
             ),
           ],
         ),
@@ -301,21 +323,21 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
       final imported = await library.importPackage(package);
       if (!context.mounted) return;
       if (!imported) {
-        ScaffoldMessenger.maybeOf(
-          context,
-        )?.showSnackBar(SnackBar(content: Text(library.error ?? '棋盘皮肤导入失败。')));
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(content: Text(library.error ?? l10n.boardSkinImportFailed)),
+        );
       }
     } on FormatException {
       if (context.mounted) {
         ScaffoldMessenger.maybeOf(context)?.showSnackBar(
-          const SnackBar(content: Text('棋盘皮肤包无效或超过大小限制，本机皮肤未更改。')),
+          SnackBar(content: Text(l10n.invalidBoardSkinPackageSize)),
         );
       }
     } catch (_) {
       if (context.mounted) {
-        ScaffoldMessenger.maybeOf(
-          context,
-        )?.showSnackBar(const SnackBar(content: Text('无法读取棋盘皮肤包，本机皮肤未更改。')));
+        ScaffoldMessenger.maybeOf(context)?.showSnackBar(
+          SnackBar(content: Text(l10n.readBoardSkinPackageFailed)),
+        );
       }
     }
   }
@@ -330,7 +352,10 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
   );
 
   Future<void> _create(BuildContext context, {required bool apply}) async {
-    final name = await _name(context, title: '新建棋盘皮肤');
+    final name = await _name(
+      context,
+      title: AppLocalizations.of(context).newBoardSkin,
+    );
     if (name == null || !context.mounted) return;
     final saved = await library.create(name: name, apply: apply);
     if (!saved && context.mounted && library.error != null) {
@@ -344,7 +369,11 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
     BuildContext context,
     BoardSkinDefinition profile,
   ) async {
-    final name = await _name(context, title: '重命名棋盘皮肤', initial: profile.name);
+    final name = await _name(
+      context,
+      title: AppLocalizations.of(context).renameBoardSkin,
+      initial: profile.name,
+    );
     if (name == null || !context.mounted) return;
     final saved = await library.rename(profile.id, name);
     if (!saved && context.mounted && library.error != null) {
@@ -371,19 +400,20 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
     BuildContext context,
     BoardSkinDefinition profile,
   ) async {
+    final l10n = AppLocalizations.of(context);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (context) => AlertDialog(
-        title: const Text('删除棋盘皮肤'),
-        content: Text('确定删除「${profile.name}」？此操作无法撤销。'),
+        title: Text(l10n.deleteBoardSkin),
+        content: Text(l10n.confirmDeleteBoardSkin(profile.name)),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
-            child: const Text('取消'),
+            child: Text(l10n.cancel),
           ),
           FilledButton(
             onPressed: () => Navigator.pop(context, true),
-            child: const Text('删除'),
+            child: Text(l10n.delete),
           ),
         ],
       ),
@@ -400,245 +430,272 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
   @override
   Widget build(BuildContext context) => ListenableBuilder(
     listenable: library,
-    builder: (context, _) => AlertDialog(
-      title: const Text('棋盘皮肤库'),
-      content: SizedBox(
-        width: 480,
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxHeight: 520),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              if (widget.catalog != null) ...[
-                Text('自建在线棋盘目录', style: Theme.of(context).textTheme.titleSmall),
-                TextField(
-                  controller: _endpoint,
-                  decoration: InputDecoration(
-                    labelText: '自建目录服务地址',
-                    hintText: 'https://skins.example.com',
-                    helperText: '远程需HTTPS；localhost可用于本机部署。',
-                    suffixIcon: IconButton(
-                      tooltip: '保存服务地址并连接',
-                      onPressed: _remoteLoading ? null : _connect,
-                      icon: const Icon(Icons.cloud_sync_outlined),
-                    ),
+    builder: (context, _) {
+      final l10n = AppLocalizations.of(context);
+      return AlertDialog(
+        title: Text(l10n.manageBoardSkins),
+        content: SizedBox(
+          width: 480,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 520),
+            child: ListView(
+              shrinkWrap: true,
+              children: [
+                if (widget.catalog != null) ...[
+                  Text(
+                    l10n.onlineBoardCatalog,
+                    style: Theme.of(context).textTheme.titleSmall,
                   ),
-                  keyboardType: TextInputType.url,
-                  textInputAction: TextInputAction.done,
-                  onSubmitted: (_) => _connect(),
-                ),
-                Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: _query,
-                        decoration: const InputDecoration(labelText: '搜索棋盘皮肤'),
-                        textInputAction: TextInputAction.search,
-                        onSubmitted: (_) => _loadRemote(),
+                  TextField(
+                    controller: _endpoint,
+                    decoration: InputDecoration(
+                      labelText: l10n.catalogServiceAddress,
+                      hintText: 'https://skins.example.com',
+                      helperText: l10n.catalogEndpointHelp,
+                      suffixIcon: IconButton(
+                        tooltip: l10n.saveAddressConnect,
+                        onPressed: _remoteLoading ? null : _connect,
+                        icon: const Icon(Icons.cloud_sync_outlined),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    IconButton(
-                      tooltip: '搜索棋盘皮肤',
-                      onPressed: _remoteLoading ? null : _loadRemote,
-                      icon: const Icon(Icons.search),
-                    ),
-                  ],
-                ),
-                DropdownButtonFormField<PublicBoardSkinSort>(
-                  key: ValueKey('board-skin-catalog-sort-$_sort'),
-                  initialValue: _sort,
-                  decoration: const InputDecoration(labelText: '在线排序'),
-                  items: const [
-                    DropdownMenuItem(
-                      value: PublicBoardSkinSort.defaultOrder,
-                      child: Text('默认排序'),
-                    ),
-                    DropdownMenuItem(
-                      value: PublicBoardSkinSort.likes,
-                      child: Text('点赞'),
-                    ),
-                    DropdownMenuItem(
-                      value: PublicBoardSkinSort.name,
-                      child: Text('名称'),
-                    ),
-                    DropdownMenuItem(
-                      value: PublicBoardSkinSort.author,
-                      child: Text('作者'),
-                    ),
-                    DropdownMenuItem(
-                      value: PublicBoardSkinSort.recent,
-                      child: Text('最近创建'),
-                    ),
-                  ],
-                  onChanged: _remoteLoading
-                      ? null
-                      : (value) {
-                          if (value == null) return;
-                          setState(() => _sort = value);
-                          _loadRemote();
-                        },
-                ),
-                if (_cacheStatus != null)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(_cacheStatus!),
+                    keyboardType: TextInputType.url,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => _connect(),
                   ),
-                if (_remoteLoading) const LinearProgressIndicator(),
-                if (_remoteError != null)
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Text(
-                      _remoteError!,
-                      style: TextStyle(
-                        color: Theme.of(context).colorScheme.error,
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _query,
+                          decoration: InputDecoration(
+                            labelText: l10n.searchBoardSkins,
+                          ),
+                          textInputAction: TextInputAction.search,
+                          onSubmitted: (_) => _loadRemote(),
+                        ),
                       ),
-                    ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        tooltip: l10n.searchBoardSkins,
+                        onPressed: _remoteLoading ? null : _loadRemote,
+                        icon: const Icon(Icons.search),
+                      ),
+                    ],
                   ),
-                for (final item in _items)
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: Text(item.name),
-                    subtitle: Text(
-                      '${item.author} · ${item.likes}人点赞 · ${item.license}',
-                    ),
-                    trailing: const Icon(Icons.info_outline),
-                    onTap: () => _details(item),
-                  ),
-                if (_items.length < _total)
-                  TextButton(
-                    onPressed: _remoteLoading
+                  DropdownButtonFormField<PublicBoardSkinSort>(
+                    key: ValueKey('board-skin-catalog-sort-$_sort'),
+                    initialValue: _sort,
+                    decoration: InputDecoration(labelText: l10n.onlineSort),
+                    items: [
+                      DropdownMenuItem(
+                        value: PublicBoardSkinSort.defaultOrder,
+                        child: Text(l10n.sortDefault),
+                      ),
+                      DropdownMenuItem(
+                        value: PublicBoardSkinSort.likes,
+                        child: Text(l10n.sortLikes),
+                      ),
+                      DropdownMenuItem(
+                        value: PublicBoardSkinSort.name,
+                        child: Text(l10n.sortName),
+                      ),
+                      DropdownMenuItem(
+                        value: PublicBoardSkinSort.author,
+                        child: Text(l10n.sortAuthor),
+                      ),
+                      DropdownMenuItem(
+                        value: PublicBoardSkinSort.recent,
+                        child: Text(l10n.sortRecent),
+                      ),
+                    ],
+                    onChanged: _remoteLoading
                         ? null
-                        : () => _loadRemote(nextPage: true),
-                    child: const Text('加载更多棋盘皮肤'),
+                        : (value) {
+                            if (value == null) return;
+                            setState(() => _sort = value);
+                            _loadRemote();
+                          },
+                  ),
+                  if (_cacheStatus != null)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(_cacheStatus!),
+                    ),
+                  if (_remoteLoading) const LinearProgressIndicator(),
+                  if (_remoteError != null)
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Text(
+                        _remoteError!,
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
+                      ),
+                    ),
+                  for (final item in _items)
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(item.name),
+                      subtitle: Text(
+                        '${item.author} · ${l10n.skinDetailsLikes(item.likes)} · ${item.license}',
+                      ),
+                      trailing: const Icon(Icons.info_outline),
+                      onTap: () => _details(item),
+                    ),
+                  if (_items.length < _total)
+                    TextButton(
+                      onPressed: _remoteLoading
+                          ? null
+                          : () => _loadRemote(nextPage: true),
+                      child: Text(l10n.loadMore),
+                    ),
+                  const Divider(),
+                ],
+                Text(
+                  l10n.builtInSkins,
+                  style: Theme.of(context).textTheme.titleSmall,
+                ),
+                for (final skin in BoardSkin.values)
+                  ListTile(
+                    leading: const Icon(Icons.grid_on),
+                    title: Text(
+                      skin == BoardSkin.parchment
+                          ? l10n.boardSkinParchment
+                          : l10n.boardSkinJade,
+                    ),
+                    subtitle: Text(l10n.builtInPalette),
+                    trailing:
+                        library.preferences.value.selectedBoardSkinId ==
+                            skin.name
+                        ? const Icon(Icons.check_circle)
+                        : TextButton(
+                            onPressed: library.loading
+                                ? null
+                                : () => library.selectBuiltIn(skin),
+                            child: Text(l10n.use),
+                          ),
                   ),
                 const Divider(),
-              ],
-              Text('内置皮肤', style: Theme.of(context).textTheme.titleSmall),
-              for (final skin in BoardSkin.values)
-                ListTile(
-                  leading: const Icon(Icons.grid_on),
-                  title: Text(skin.label),
-                  subtitle: const Text('内置配色'),
-                  trailing:
-                      library.preferences.value.selectedBoardSkinId == skin.name
-                      ? const Icon(Icons.check_circle)
-                      : TextButton(
-                          onPressed: library.loading
-                              ? null
-                              : () => library.selectBuiltIn(skin),
-                          child: const Text('使用'),
-                        ),
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      l10n.myBoards,
+                      style: Theme.of(context).textTheme.titleSmall,
+                    ),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: Wrap(
+                        alignment: WrapAlignment.end,
+                        spacing: 4,
+                        children: [
+                          TextButton.icon(
+                            key: const ValueKey('save-board-skin-without-use'),
+                            onPressed: library.loading
+                                ? null
+                                : () => _create(context, apply: false),
+                            icon: const Icon(Icons.save_outlined),
+                            label: Text(l10n.saveOnly),
+                          ),
+                          FilledButton.tonalIcon(
+                            onPressed: library.loading
+                                ? null
+                                : () => _create(context, apply: true),
+                            icon: const Icon(Icons.add),
+                            label: Text(l10n.createAndUse),
+                          ),
+                          IconButton(
+                            tooltip: l10n.importBoardSkinPackage,
+                            onPressed: picker == null || library.loading
+                                ? null
+                                : () => _import(context),
+                            icon: const Icon(Icons.archive_outlined),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              const Divider(),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('我的棋盘', style: Theme.of(context).textTheme.titleSmall),
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Wrap(
-                      alignment: WrapAlignment.end,
-                      spacing: 4,
+                if (library.profiles.isEmpty)
+                  Padding(
+                    padding: EdgeInsets.symmetric(vertical: 16),
+                    child: Text(l10n.noLocalBoardSkins),
+                  ),
+                for (final profile in library.profiles)
+                  ListTile(
+                    leading: const Icon(Icons.dashboard_customize_outlined),
+                    title: Text(profile.name),
+                    subtitle: Text(
+                      l10n.basedOnSkin(
+                        profile.baseSkin == BoardSkin.parchment
+                            ? l10n.boardSkinParchment
+                            : l10n.boardSkinJade,
+                      ),
+                    ),
+                    trailing: Wrap(
+                      spacing: 2,
                       children: [
-                        TextButton.icon(
-                          key: const ValueKey('save-board-skin-without-use'),
+                        if (library.preferences.value.selectedBoardSkinId ==
+                            profile.id)
+                          const Icon(Icons.check_circle)
+                        else
+                          TextButton(
+                            onPressed: library.loading
+                                ? null
+                                : () => library.select(profile.id),
+                            child: Text(l10n.use),
+                          ),
+                        IconButton(
+                          tooltip: l10n.editNamedBoardSkin(profile.name),
                           onPressed: library.loading
                               ? null
-                              : () => _create(context, apply: false),
-                          icon: const Icon(Icons.save_outlined),
-                          label: const Text('仅保存'),
-                        ),
-                        FilledButton.tonalIcon(
-                          onPressed: library.loading
-                              ? null
-                              : () => _create(context, apply: true),
-                          icon: const Icon(Icons.add),
-                          label: const Text('新建并使用'),
+                              : () => _editGeometry(context, profile),
+                          icon: const Icon(Icons.tune),
                         ),
                         IconButton(
-                          tooltip: '导入棋盘皮肤包',
-                          onPressed: picker == null || library.loading
+                          tooltip: l10n.renameNamedBoardSkin(profile.name),
+                          onPressed: library.loading
                               ? null
-                              : () => _import(context),
-                          icon: const Icon(Icons.archive_outlined),
+                              : () => _rename(context, profile),
+                          icon: const Icon(Icons.edit_outlined),
+                        ),
+                        IconButton(
+                          tooltip: l10n.deleteNamedBoardSkin(profile.name),
+                          onPressed: library.loading
+                              ? null
+                              : () => _delete(context, profile),
+                          icon: const Icon(Icons.delete_outline),
+                        ),
+                        IconButton(
+                          tooltip: l10n.exportNamedBoardSkin(profile.name),
+                          onPressed: exporter == null || library.loading
+                              ? null
+                              : () => _export(context, profile),
+                          icon: const Icon(Icons.file_upload_outlined),
                         ),
                       ],
                     ),
                   ),
-                ],
-              ),
-              if (library.profiles.isEmpty)
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16),
-                  child: Text('还没有本机棋盘皮肤。新建时会复制当前棋盘的配色、格网和图片。'),
-                ),
-              for (final profile in library.profiles)
-                ListTile(
-                  leading: const Icon(Icons.dashboard_customize_outlined),
-                  title: Text(profile.name),
-                  subtitle: Text('基于${profile.baseSkin.label}'),
-                  trailing: Wrap(
-                    spacing: 2,
-                    children: [
-                      if (library.preferences.value.selectedBoardSkinId ==
-                          profile.id)
-                        const Icon(Icons.check_circle)
-                      else
-                        TextButton(
-                          onPressed: library.loading
-                              ? null
-                              : () => library.select(profile.id),
-                          child: const Text('使用'),
-                        ),
-                      IconButton(
-                        tooltip: '编辑${profile.name}',
-                        onPressed: library.loading
-                            ? null
-                            : () => _editGeometry(context, profile),
-                        icon: const Icon(Icons.tune),
-                      ),
-                      IconButton(
-                        tooltip: '重命名${profile.name}',
-                        onPressed: library.loading
-                            ? null
-                            : () => _rename(context, profile),
-                        icon: const Icon(Icons.edit_outlined),
-                      ),
-                      IconButton(
-                        tooltip: '删除${profile.name}',
-                        onPressed: library.loading
-                            ? null
-                            : () => _delete(context, profile),
-                        icon: const Icon(Icons.delete_outline),
-                      ),
-                      IconButton(
-                        tooltip: '导出${profile.name}',
-                        onPressed: exporter == null || library.loading
-                            ? null
-                            : () => _export(context, profile),
-                        icon: const Icon(Icons.file_upload_outlined),
-                      ),
-                    ],
+                if (library.loading) const LinearProgressIndicator(),
+                if (library.error != null)
+                  Text(
+                    library.error!,
+                    style: TextStyle(
+                      color: Theme.of(context).colorScheme.error,
+                    ),
                   ),
-                ),
-              if (library.loading) const LinearProgressIndicator(),
-              if (library.error != null)
-                Text(
-                  library.error!,
-                  style: TextStyle(color: Theme.of(context).colorScheme.error),
-                ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: const Text('关闭'),
-        ),
-      ],
-    ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(l10n.close),
+          ),
+        ],
+      );
+    },
   );
 }
 
@@ -674,17 +731,19 @@ final class _BoardSkinNameDialogState extends State<_BoardSkinNameDialog> {
       controller: controller,
       autofocus: true,
       maxLength: BoardSkinDefinition.maxNameRunes,
-      decoration: const InputDecoration(labelText: '名称'),
+      decoration: InputDecoration(
+        labelText: AppLocalizations.of(context).boardSkinName,
+      ),
       onSubmitted: (value) => Navigator.pop(context, value),
     ),
     actions: [
       TextButton(
         onPressed: () => Navigator.pop(context),
-        child: const Text('取消'),
+        child: Text(AppLocalizations.of(context).cancel),
       ),
       FilledButton(
         onPressed: () => Navigator.pop(context, controller.text),
-        child: const Text('保存'),
+        child: Text(AppLocalizations.of(context).save),
       ),
     ],
   );

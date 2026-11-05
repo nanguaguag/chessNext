@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:flutter/foundation.dart';
@@ -19,6 +20,8 @@ final class BoardSkinLibraryController extends ChangeNotifier {
   bool loading = false;
   String? error;
   bool _disposed = false;
+  final Map<String, BoardSkinGeometry> _pendingGeometry = {};
+  final Map<String, Future<bool>> _geometryWrites = {};
 
   BoardSkinDefinition? definitionFor(String id) =>
       profiles.where((profile) => profile.id == id).firstOrNull;
@@ -154,7 +157,6 @@ final class BoardSkinLibraryController extends ChangeNotifier {
 
   Future<bool> updateGeometry(String id, BoardSkinGeometry geometry) async {
     final profile = definitionFor(id);
-    if (loading) return false;
     if (profile == null) {
       await preferences.setBoardSkinGeometry(
         preferences.value.boardSkin,
@@ -162,13 +164,41 @@ final class BoardSkinLibraryController extends ChangeNotifier {
       );
       return true;
     }
-    return _save(
-      profiles
-          .map(
-            (item) => item.id == id ? item.copyWith(geometry: geometry) : item,
-          )
-          .toList(),
+    _pendingGeometry[id] = geometry;
+    final activeWrite = _geometryWrites[id];
+    if (activeWrite != null) return activeWrite;
+    final write = Future<bool>.microtask(() => _flushGeometryUpdates(id));
+    _geometryWrites[id] = write;
+    unawaited(
+      write.then<void>((_) {
+        if (identical(_geometryWrites[id], write)) _geometryWrites.remove(id);
+      }),
     );
+    return write;
+  }
+
+  Future<bool> _flushGeometryUpdates(String id) async {
+    var succeeded = true;
+    while (!_disposed) {
+      while (loading && !_disposed) {
+        await Future<void>.delayed(const Duration(milliseconds: 1));
+      }
+      if (_disposed) return false;
+      final geometry = _pendingGeometry.remove(id);
+      if (geometry == null) return succeeded;
+      final profile = definitionFor(id);
+      if (profile == null) return false;
+      final saved = await _save(
+        profiles
+            .map(
+              (item) =>
+                  item.id == id ? item.copyWith(geometry: geometry) : item,
+            )
+            .toList(),
+      );
+      succeeded = saved && succeeded;
+    }
+    return false;
   }
 
   Uint8List exportPackage(String id) {

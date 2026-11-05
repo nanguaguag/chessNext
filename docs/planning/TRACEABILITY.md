@@ -895,3 +895,11 @@ M4-67门槛复核（最终）：根`flutter test --concurrency=1 --reporter expa
 版权投诉表将`FeedbackAttachmentPicker`端口注入到About的投诉流程。用户可显式选择PNG/JPEG最多3张、每张256KiB/合计512KiB，表单显示缩略图、文件名/大小和移除操作；完整预览列投诉字段、已配置目标、每份附件元数据，预览/取消不发送，仅二次确认后才发送。投诉payload仍与一般反馈分离，进入`/v1/copyright/complaints`及独立`CHESSNEXT_COPYRIGHT_ROOT`私有目录；服务器复用严格附件格式/尺寸校验和768KiB JSON请求限制，Nginx location body limit 1MiB，投诉inbox仍最多1,000条且没有公开读取/下载。投诉附件可能含个人/权属证明，运营者必须设置私有目录访问和留存删除流程；项目未部署或代用户真实发送。
 
 定向`flutter test --concurrency=1 test/widgets/copyright_complaint_dialog_test.dart test/adapters/network/http_feedback_service_test.dart test/widgets/about_support_test.dart --reporter expanded`9/9；`cd server/skin_catalog && dart test --reporter expanded`6/6；server `dart analyze lib bin test`与exe编译通过；root `flutter analyze --no-pub`、`git diff --check`通过；最终root `flutter test --concurrency=1 --reporter expanded`599通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-69.log`（5跳过仍缺本地官方Pikafish/NNUE）。macOS复用PID50598/runner50125，VM Service `61579/4bLZ1MhsyEk=` attach sync1,174ms、hot restart1,248ms，脱离后原PID不变。全量根测试期间一个串行`flutter_tester`，结束无残留；未运行`flutter run`，无额外ChessNext。屏幕锁定，人工视觉not run。外发、生产部署、实际运营收件未做；F31开放。
+
+## M4-70 / F21,B24 / ADR-102 自定义棋盘几何写入串行合并
+
+验收：用户连续拖动自定义棋盘格点或调整边距时，存储目录短暂忙碌也不能静默丢掉最终几何值；中间值可以合并，控件最终值与重载值保持一致。`BoardSkinLibraryController.updateGeometry`为每个用户皮肤保留最新待写几何并串行冲刷，等正在进行的目录写操作完成后保存，避免`_save`因`loading`直接返回false造成拖动尾值丢失。内置皮肤仍走偏好仓储。
+
+测试`test/application/board_skin_library_test.dart`以延迟仓储阻塞首写入，在等待期间连续提交三次几何值，确认所有调用得到成功、仓储最终值及controller状态均为最后一次几何。定向命令`flutter test --concurrency=1 test/application/board_skin_library_test.dart test/widgets/board_geometry_editor_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`13/13。根`flutter test --concurrency=1 --reporter expanded`600通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-70.log`；5跳过依赖未配置的官方Pikafish/NNUE。根`flutter analyze --no-pub`及`git diff --check`通过。
+
+macOS复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:61579/4bLZ1MhsyEk=/ --no-dds`同步1,186ms、热重启1,027ms；Ctrl-C脱离后PID50598仍存活。测试用单并发单tester，结束无残留；未使用`flutter run`或另开GUI。屏幕锁定，人工窗口视觉验收not run。该提交仅修复本机持久化竞态，不证明源站边距/格点映射公式；F21/B24与登录外全站对齐仍开放。

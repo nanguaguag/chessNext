@@ -1,5 +1,17 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-70 / F21,B24 / ADR-102 棋盘几何串行持久化（验证完成，待提交）
+
+修复`BoardSkinLibraryController.updateGeometry`在目录控制器`loading`时将拖动更新传入`_save`并立即返回false、可能丢失最后位置的问题。每个用户皮肤现只启动一个写入冲刷器，合并中间拖动值并在忙碌操作完成后写入最新值。测试使用延迟仓储阻塞首写，连续发送三次几何，验证三次Future成功、最终仓储与controller均为第三次值。新增ADR-102，矩阵/缺口/交互规格/待办已记录。此为本机可靠性修复；参考站跨轴微变、边界及完整公式仍U。
+
+定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart test/widgets/board_geometry_editor_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`13/13。根`flutter test --concurrency=1 --reporter expanded`600通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-70.log`；5跳过需官方Pikafish/NNUE。根`flutter analyze --no-pub`、`git diff --check`通过。macOS复用PID50598/runner50125，VM service `61579/4bLZ1MhsyEk=` attach同步1,186ms、热重启1,027ms，Ctrl-C后原PID仍活。根测试一个串行tester且无残留，未运行`flutter run`，未新开App。锁屏，人工视觉验收not run。
+
+本轮关于重复窗口：`flutter test --concurrency=1`只启动无GUI的`flutter_tester`；曾造成额外ChessNext窗口的风险来自以`flutter run -d macos`验证。此后macOS验证改为attach复用原实例，前后核对进程。当前实查PID50598仍是唯一chessNext，runner PID50125仍在；无tester/attach残留。
+
+工作树的代码、测试、ADR-102、DECISIONS、FEATURE_MATRIX/GAPS、INTERACTION_SPEC、BACKLOG、TRACEABILITY和context待以独立中文feature commit提交。提交后不中断总体目标：继续B24格点/边距映射与草稿保存、使用、reload事务核验；并推进F27完整语言资源与功能矩阵其它登录外未完成项。不得宣称全站已对齐。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-67 / F31 / ADR-099 版权投诉表单与自建隔离收件（功能验证完成，提交待做）
 
 用户明确要求继续登录外全站功能/设置对齐，不以一个功能结束。此次处理问题/建议之后的版权投诉文字首片：About入口复用已配置的自建发布根地址；独立投诉端口/表单，必填投诉人与邮箱、作品/权属、涉及内容链接，可选说明，须勾选真实性声明；先完整预览目标和字段，再二次确认发送。未实现附件，不能视为F31完成。

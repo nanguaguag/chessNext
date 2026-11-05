@@ -1100,3 +1100,12 @@ E84已补REFERENCE_EVIDENCE、FEATURE_MATRIX、FEATURE_GAPS、INTERACTION_SPEC�
 早期测试发现DTO列表字段初始化错误、测试断言附件在表单/预览同时存在的数量预期不对；修复后专项`flutter test --concurrency=1 test/widgets/copyright_complaint_dialog_test.dart test/adapters/network/http_feedback_service_test.dart test/widgets/about_support_test.dart --reporter expanded`9/9、server`dart test --reporter expanded`6/6。server analyze/compile、root`flutter analyze --no-pub`和diff-check通过。完整root`flutter test --concurrency=1 --reporter expanded`599通过/5跳过/0失败；5项因缺官方Pikafish/NNUE跳过，日志`/tmp/chessnext-root-test-m4-69.log`。macOS attach复用PID50598/runner50125 sync1,174ms/hot restart1,248ms后正常脱离；只有一个根tester，无额外app/残余attach，未运行flutter run；锁屏视觉验收not run。
 
 本片代码与ADR-101、矩阵/缺口/计划/上下文现待单独中文feature commit。之后继续B24响应式几何和草稿保存/应用/重载事务，及F27完整多语言和其他登录外矩阵缺口。
+
+
+## 2026-11-05 / M4-70 / F21,B24 / ADR-102 自定义棋盘几何串行写入
+
+修复自定义棋盘几何拖动与目录忙碌时的竞态：原`updateGeometry`调用`_save`，`_save`看到`loading`会立即返回false，可能导致拖动尾值没有持久化。控制器为每个皮肤保留最新待写值、单冲刷串行写，等待当前目录操作结束后落盘。测试延迟仓储阻塞首写、并发提交三次值，断言最终仓储及controller均为最后值。增加ADR-102，更新F21矩阵/缺口/交互规格/待办/追踪。源站整体公式仍U。
+
+定向Flutter13/13；根`flutter test --concurrency=1 --reporter expanded`600通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-70.log`；五项需本机未配置的官方Pikafish/NNUE。`flutter analyze --no-pub`、`git diff --check`通过。macOS复用PID50598/runner50125，VM service attach同步1,186ms、热重启1,027ms；脱离后原App存活。根测试串行单tester，测试前后无额外chessNext/残留tester/attach；没有执行`flutter run`。锁屏视觉验收not run。
+
+用户担心多开：根Flutter测试不会打开GUI，重复ChessNext来自macOS `flutter run`校验流程的风险；后续只attach既有App并核对PID。本功能及上下文待commit，下一项继续B24事务审计/修复与登录外全站缺口。

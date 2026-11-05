@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 import 'dart:typed_data';
 
@@ -166,6 +167,63 @@ void main() {
     },
   );
 
+  test(
+    'coalesces rapid custom geometry writes and persists the latest drag',
+    () async {
+      const initial = BoardSkinGeometry.standard();
+      final profile = BoardSkinDefinition(
+        id: 'custom-12345678-abcd',
+        name: '拖动测试',
+        baseSkin: BoardSkin.parchment,
+        geometry: initial,
+      );
+      final repository = _DelayedBoardSkinLibraryRepository([profile]);
+      final session = BoardSession();
+      final engine = EngineSessionController(session, null);
+      final preferences = PreferencesController(
+        engine,
+        MemoryPreferencesRepository(),
+      );
+      final boardImages = BoardSkinImageLibraryController(
+        _NoopPicker(),
+        MemoryBoardSkinImageRepository(),
+      );
+      final controller = BoardSkinLibraryController(
+        repository,
+        boardImages,
+        preferences,
+      );
+      try {
+        await preferences.initialize();
+        await boardImages.initialize();
+        await controller.initialize();
+        repository.blockNextSave();
+        final intermediate = initial.copyWith(leftPercent: 12);
+        final finalGeometry = initial.copyWith(leftPercent: 14);
+        final firstWrite = controller.updateGeometry(profile.id, intermediate);
+        await repository.saveStarted.future;
+        final secondWrite = controller.updateGeometry(
+          profile.id,
+          initial.copyWith(leftPercent: 13),
+        );
+        final thirdWrite = controller.updateGeometry(profile.id, finalGeometry);
+        repository.releaseSave.complete();
+
+        expect(await firstWrite, isTrue);
+        expect(await secondWrite, isTrue);
+        expect(await thirdWrite, isTrue);
+        expect(repository.profiles.single.geometry, finalGeometry);
+        expect(controller.geometryFor(profile.id), finalGeometry);
+      } finally {
+        controller.dispose();
+        boardImages.dispose();
+        preferences.dispose();
+        engine.dispose();
+        session.dispose();
+      }
+    },
+  );
+
   test('create rejects blank duplicate and over-capacity profiles', () async {
     final session = BoardSession();
     final engine = EngineSessionController(session, null);
@@ -268,4 +326,33 @@ void main() {
 final class _NoopPicker implements PieceImagePicker {
   @override
   Future<SelectedPieceImage?> pickImage() async => null;
+}
+
+final class _DelayedBoardSkinLibraryRepository
+    implements BoardSkinLibraryRepository {
+  _DelayedBoardSkinLibraryRepository(this.profiles);
+
+  List<BoardSkinDefinition> profiles;
+  Completer<void> saveStarted = Completer<void>();
+  Completer<void> releaseSave = Completer<void>();
+  bool _blockNext = false;
+
+  void blockNextSave() {
+    _blockNext = true;
+    saveStarted = Completer<void>();
+    releaseSave = Completer<void>();
+  }
+
+  @override
+  Future<List<BoardSkinDefinition>> load() async => profiles;
+
+  @override
+  Future<void> save(List<BoardSkinDefinition> profiles) async {
+    if (_blockNext) {
+      _blockNext = false;
+      saveStarted.complete();
+      await releaseSave.future;
+    }
+    this.profiles = List.unmodifiable(profiles);
+  }
 }

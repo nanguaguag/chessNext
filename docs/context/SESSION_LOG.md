@@ -1154,3 +1154,16 @@ M4-72于`6bee7ed fix(settings): 保持棋盘删除失败状态一致`单独提�
 
 
 M4-73最终根门槛：首次全量出现`engine_candidates_test.dart`并发抢占既有用例30秒timeout；独立`flutter test --concurrency=1 test/application/engine_candidates_test.dart --plain-name 'analysis, AI and batch review preempt the same candidate engine' --reporter expanded`1/1通过。全量复跑`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-73-final.log`；analyze无问题。macOS复用PID50598 attach同步984ms、热重启2,045ms，脱离后仍存活；测试串行仅一个tester，无attach/tester残留或新App。M4-73及ADR-105等文档等候单独commit。
+
+
+## 2026-11-05 / M4-74 / F21,B24 / ADR-106 已存皮肤几何草稿编辑
+
+E67证明已保存皮肤可修改格点/边距后保存而不自动应用。本机库列表新增编辑入口，独立draft dialog处理9×10拖点、四边滑杆、皮肤棋子缩放、落点旋转、恢复默认。取消不写；保存一次提交至profile但不改变选择；以后单独点列表“使用”才应用。当前不包含图片层草稿编辑。
+
+`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart --reporter expanded`3/3通过，覆盖取消/保存/应用边界。根/analyze/macOS复用待执行，新增ADR-106并更新决策/矩阵/差距/交互/追踪。源站跨reload仍U。
+
+
+M4-74最终门槛：专项`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart --reporter expanded`3/3；根`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-74.log`；`flutter analyze --no-pub`通过。macOS复用PID50598 attach同步978ms、热重启1,171ms；脱离后原App存活。测试单tester且无残留，未开新App。M4-74代码及ADR-106等更新待提交。
+
+
+M4-74于`c32e2c3 feat(settings): 增加棋盘皮肤草稿编辑`单独提交。后续继续B24跨重载生命周期与登录外功能差距。

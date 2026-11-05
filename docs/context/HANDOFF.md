@@ -1,5 +1,15 @@
 # 当前交接（2026-11-05，Asia/Shanghai）
 
+## M4-74 / F21,B24 / ADR-106 已存棋盘几何草稿编辑（已提交 c32e2c3）
+
+按E67已确认的保存不自动应用，为用户棋盘目录增加“编辑”入口。弹层中格点拖动、四边、皮肤棋子比例、落点旋转与恢复默认都只修改本地草稿；取消不写仓储，保存才一次更新profile几何，仍保持当前内置/用户皮肤不变。保存错误保留草稿；应用通过列表现有“使用”单独操作。未涵盖图片槽草稿/替换事务。新增ADR-106、决策/矩阵/缺口/交互/计划/追踪已更新。参考站重载/重启仍U。
+
+定向`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart --reporter expanded`3/3。根`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-74.log`，5项依赖未配置的官方Pikafish/NNUE；`flutter analyze --no-pub`及`git diff --check`通过。macOS复用PID50598/runner50125，VM service `61579/4bLZ1MhsyEk=`同步978ms、热重启1,171ms；Ctrl-C后原App仍存活。全程串行单tester，测试/attach均无残留；没有新App，未用`flutter run`。屏幕锁定，人工视觉验收not run。
+
+M4-74代码/测试、ADR-106、决策及矩阵/追踪/context已于`c32e2c3 feat(settings): 增加棋盘皮肤草稿编辑`单独提交。之后继续B24本机file-backed图像与定义保存/重开/删除的失败矩阵、源站其它格点/图片边界；继续F27语言切换和所有其它登录外未完成项，不能宣称F21或全站完整。
+
+# 当前交接（2026-11-05，Asia/Shanghai）
+
 ## M4-73 / F21,B24 / ADR-105 棋盘皮肤保存与应用分离（验证完成，待提交）
 
 E67验证源站新建页“保存”后仍留在编辑器，当前设置仍是默认棋盘；列表出现“我的棋盘”，之后单独点“使用这套”才切换。已存皮肤重新编辑并保存也不自动应用。项目原来只有“新建并使用”，现controller create显式接收apply；棋盘库有“仅保存”和“新建并使用”，未选定义可从列表独立“使用”。复制格网/几何与图片、偏好选择/失败边界保留原逻辑。跨reload/重启持久性仍U。

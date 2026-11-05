@@ -920,3 +920,10 @@ macOS复用PID50598/runner50125，`flutter attach --debug-url=http://127.0.0.1:6
 E67操作验证：源站空白编辑页“保存”后仍在编辑页，当前设置保持默认，选择器出现“我的棋盘”；稍后单独选择“使用这套”才应用；编辑已存皮肤改值再次保存也不自动应用。站点仅在当前会话重新进入可读回几何，reload/重启U。
 
 本机`BoardSkinLibraryController.create`增加`apply`意图；皮肤库新增“仅保存”与“新建并使用”，两者从当前皮肤复制几何及图层并保存独立定义。仅保存不改变偏好选择，已存未选中项可由列表独立使用；保留原创建即使用流程兼容。Widget测试验证仅保存新增profile且当前ID和BoardDisplayScope仍为默认内置棋盘；原“新建并使用”测试继续验证新ID被选中。定向`flutter test --concurrency=1 test/application/board_skin_library_test.dart test/widgets/board_skin_library_dialog_test.dart --reporter expanded`11/11。首轮根`flutter test --concurrency=1 --reporter expanded`603项中遇到一项既有`engine_candidates_test.dart`并发抢占用例30秒间歇超时（602完成、1失败）；该用例单独重跑1/1通过，完整根测试复跑`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-73-final.log`。根`flutter analyze --no-pub`通过。macOS复用PID50598/runner50125，attach同步984ms、热重启2,045ms；脱离后原App存活，测试/attach无残留。源站跨reload/重启仍U；项目ZIP导入另有显式导入并使用协议。
+
+
+## M4-74 / F21,B24 / ADR-106 已保存棋盘几何草稿编辑
+
+为对照E67“编辑已存皮肤并保存但不应用”，用户棋盘列表新增独立“编辑”入口。`BoardSkinGeometryDraftDialog`在局部草稿上提供9×10双把手、四边滑杆、皮肤棋子缩放、落点旋转和恢复默认；“取消”直接退场不调用写接口，“保存”将geometry一次提交到目标ID且不选择该ID，保存失败保留表单并允许重试。列表“使用”仍是唯一应用目标皮肤的入口。范围不包括图片层草稿/单张文件修改协议。
+
+定向`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart --reporter expanded`3/3；测试确保取消前后manifest值不变、保存更新值但selected ID仍内置、随后使用使BoardDisplayScope显示保存几何。定向`flutter test --concurrency=1 test/widgets/board_skin_library_dialog_test.dart --reporter expanded`3/3；根`flutter test --concurrency=1 --reporter expanded`603通过/5跳过/0失败，日志`/tmp/chessnext-root-test-m4-74.log`（5跳过需官方Pikafish/NNUE）；`flutter analyze --no-pub`和`git diff --check`通过。macOS复用PID50598/runner50125，attach同步978ms、热重启1,171ms，脱离后PID50598存活，无tester/attach残留和新App。源站刷新/重启和跨进程语义仍U。

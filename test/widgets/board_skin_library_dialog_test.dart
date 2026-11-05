@@ -244,11 +244,39 @@ void main() {
       preferences.value?.selectedBoardSkinId ?? BoardSkin.parchment.name,
       BoardSkin.parchment.name,
     );
+    await tester.tap(find.byTooltip('编辑仅保存的棋盘'));
+    await tester.pumpAndSettle();
+    tester
+        .widget<Slider>(find.byKey(const ValueKey('board-skin-draft-edge-左边距')))
+        .onChanged!(30);
+    await tester.pumpAndSettle();
+    expect((await skins.load()).single.geometry, profile.geometry);
+    await tester.tap(find.text('取消').last);
+    await tester.pumpAndSettle();
+    expect((await skins.load()).single.geometry, profile.geometry);
+
+    await tester.tap(find.byTooltip('编辑仅保存的棋盘'));
+    await tester.pumpAndSettle();
+    tester
+        .widget<Slider>(find.byKey(const ValueKey('board-skin-draft-edge-左边距')))
+        .onChanged!(31);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('保存').last);
+    await tester.pumpAndSettle();
+    expect((await skins.load()).single.geometry.leftPercent, 31);
+    expect(
+      preferences.value?.selectedBoardSkinId ?? BoardSkin.parchment.name,
+      BoardSkin.parchment.name,
+    );
+    await tester.tap(find.text('使用').last);
+    await tester.pumpAndSettle();
+    expect(preferences.value!.selectedBoardSkinId, profile.id);
     expect(
       tester
           .widget<BoardDisplayScope>(find.byType(BoardDisplayScope))
-          .boardSkin,
-      BoardSkin.parchment,
+          .geometry
+          .leftPercent,
+      31,
     );
   });
 }

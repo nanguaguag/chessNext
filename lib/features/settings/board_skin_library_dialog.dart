@@ -9,6 +9,7 @@ import '../../ports/piece_skin_package_exporter.dart';
 import '../../ports/piece_skin_package_picker.dart';
 import '../../ports/record_file_exporter.dart';
 import '../../ports/piece_skin_catalog.dart';
+import 'board_skin_geometry_draft_dialog.dart';
 
 final class BoardSkinLibraryDialog extends StatefulWidget {
   const BoardSkinLibraryDialog({
@@ -353,6 +354,19 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
     }
   }
 
+  Future<void> _editGeometry(
+    BuildContext context,
+    BoardSkinDefinition profile,
+  ) async {
+    await showDialog<bool>(
+      context: context,
+      builder: (_) => BoardSkinGeometryDraftDialog(
+        profile: profile,
+        onSave: (geometry) => library.updateGeometry(profile.id, geometry),
+      ),
+    );
+  }
+
   Future<void> _delete(
     BuildContext context,
     BoardSkinDefinition profile,
@@ -577,6 +591,13 @@ final class _BoardSkinLibraryDialogState extends State<BoardSkinLibraryDialog> {
                               : () => library.select(profile.id),
                           child: const Text('使用'),
                         ),
+                      IconButton(
+                        tooltip: '编辑${profile.name}',
+                        onPressed: library.loading
+                            ? null
+                            : () => _editGeometry(context, profile),
+                        icon: const Icon(Icons.tune),
+                      ),
                       IconButton(
                         tooltip: '重命名${profile.name}',
                         onPressed: library.loading
